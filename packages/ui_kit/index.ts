@@ -1,0 +1,12 @@
+import type { App } from 'vue'
+import WPButton from '../../src/components/wp-button/WPButton.vue'
+import WPCard from '../../src/components/wp-card/WPCard.vue'
+import WPProgress from '../../src/components/wp-progress/WPProgress.vue'
+import WPWordCard from '../../src/components/wp-word-card/WPWordCard.vue'
+import WPPetAvatar from '../../src/components/wp-pet-avatar/WPPetAvatar.vue'
+import WPPetCompanion from '../../src/components/wp-pet-companion/WPPetCompanion.vue'
+import WPTaskCard from '../../src/components/wp-task-card/WPTaskCard.vue'
+import WPThemePreview from '../../src/components/wp-theme-preview/WPThemePreview.vue'
+import WPPetAsset from '../../src/components/WPPetAsset.vue'
+export {WPButton,WPCard,WPProgress,WPWordCard,WPPetAvatar,WPPetCompanion,WPTaskCard,WPThemePreview,WPPetAsset}
+export function installUIKit(app:App){Object.entries({WPButton,WPCard,WPProgress,WPWordCard,WPPetAvatar,WPPetCompanion,WPTaskCard,WPThemePreview,WPPetAsset}).forEach(([name,component])=>app.component(name,component))}

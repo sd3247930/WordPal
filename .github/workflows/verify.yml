@@ -1,0 +1,21 @@
+name: WordPal verification
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: powershell -ExecutionPolicy Bypass -File tools/preflight-scan.ps1
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build:h5
+      - run: npm run build:app
+      - run: npm run check:compiler
+      - run: npm run build:mp-weixin
+      - run: npx playwright install chromium
+      - run: npm run test:ui

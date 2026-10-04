@@ -1,0 +1,9 @@
+#!/bin/sh
+set -eu
+if command -v powershell.exe >/dev/null 2>&1; then
+  powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/preflight-scan.ps1 -Staged
+elif command -v pwsh >/dev/null 2>&1; then
+  pwsh -NoProfile -File tools/preflight-scan.ps1 -Staged
+else
+  node tools/preflight-scan.mjs --staged
+fi

@@ -1,0 +1,54 @@
+# WordPal · 单词小搭子
+
+自然拼读、FSRS 间隔重复与水 / 火 / 土 / 风伙伴陪伴的离线学习应用。
+uni-app + Vue 3 + TypeScript + Pinia，支持 HBuilderX Android 标准基座调试。
+
+```sh
+npm install
+npm run dev:h5
+npm run typecheck
+npm test
+npm run test:ui
+npm run build:app
+npm run build:mp-weixin
+```
+
+HBuilderX 导入本工程目录。CLI 项目的 manifest 和 pages 配置位于 src。
+运行 → 运行到手机或模拟器 → Android 设备 → 标准基座。
+CLI 编译器与手机调试基座需匹配 5.26；更新后先停止旧编译，再执行 `npm ci`。标准基座的应用图标由基座自身决定，正式图标需要独立打包验证。
+
+本轮 UI v2 完成 Phase 0–12：紧凑首页、横向学习模式、头像宠物列表、单词本空状态和六区块设置。四主题分别采用不等宽 Bento、克制 Swiss、奶油 Soft 与低眩光 OLED，支持导航轨、侧栏与多栏平板布局。
+四宠使用经过元数据清理的用户插画。DCloud CLI 依赖与 Android 5.26 标准基座已对齐；更新后先停止旧编译，再执行 npm ci。
+
+宠物屋增加四象领地、状态浮层、独立场景切换、喂食确认、成长 / 装扮面板与阶段解锁相册，保留原学习与养成规则。
+
+学习页包含自动混合题型、每轮错词回看、儿童评分与相对复习日期；单词本支持搜索、重点/系统建议、稍后标记、四点记忆状态及手机 Sheet / 平板详情。五页导航共用原创 SVG 与小程序 PNG 兼容资源。正式学习、SRS 与奖励沿用原规则，家长清除同时清除新增的界面进度和单词标记。
+
+功能包括到期复习优先、五种学习模式、任务异常恢复、四宠独立成长、四主题、五档窗口布局、键盘快捷键、大字体、减少动效、家长设置和本地数据删除。
+示例词表含 20 个原创启蒙单词和 4 课，未冒充出版社教材。
+语音评分、多孩子、云同步、Apple Pencil 属于后续扩展。
+
+```text
+src/pages         七个业务页面
+src/components    共享 UI 组件与宠物资源入口
+src/layouts       自适应应用壳
+src/stores        学习、复习、宠物、主题、档案
+src/services      本地存储、音频、窗口、导航、系统外观
+src/styles        语义 token、四主题、响应布局、可访问性
+packages          学习领域、FSRS、拼读、内容 schema、宠物、UI Kit
+tests             领域测试、交互测试、截图基线
+```
+
+运行 npm run sync:hbuilder 可同步到同级 HBuilderProjects 下的 WordPal，目标可通过脚本参数覆盖。
+调试同步复制源码、工具、测试和本机文档，不复制 private、依赖、构建产物或本地凭据；它不是 Git 发布流程。
+
+项目根目录下的 `docs/` 与 `private/` 仅保留在本机，严禁纳入 Git、强制添加或上传。测试结果、trace、HAR、覆盖率、构建产物和依赖也被忽略；测试源码及合成视觉基线正常存档。
+
+```sh
+npm run git:hooks
+npm run purity
+```
+
+每个新克隆的工作区先安装版本化 hooks。每次 Git 存档前运行纯净扫描；提交钩子检查整个暂存区的实际内容，提交信息钩子检查秘密、隐私和本地路径，推送钩子复查本地提交历史。扫描失败或无法运行会阻止操作，不能使用 `--no-verify` 绕过。
+
+需要检查本机保留内容时运行 `powershell -ExecutionPolicy Bypass -File tools/preflight-scan.ps1 -IncludeLocalOnly`。命中报告仅显示类别和相对位置，原始值不会打印。公开候选中的真实姓名、地址、图像内容及素材许可仍需人工核对，自动模式不能替代这一步。

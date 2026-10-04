@@ -1,0 +1,61 @@
+{
+  "pages": [
+    {
+      "path": "pages/home/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "WordPal · Home"
+      }
+    },
+    {
+      "path": "pages/learn/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "WordPal · Study"
+      }
+    },
+    {
+      "path": "pages/review/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "WordPal · Wordbook"
+      }
+    },
+    {
+      "path": "pages/pet/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "WordPal · PetHouse"
+      }
+    },
+    {
+      "path": "pages/achievements/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "WordPal · Achievements"
+      }
+    },
+    {
+      "path": "pages/parent/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "WordPal · Parents"
+      }
+    },
+    {
+      "path": "pages/settings/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "WordPal · Settings"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationStyle": "custom",
+    "navigationBarTitleText": "WordPal",
+    "backgroundColor": "#f7f8f3"
+  },
+  "easycom": {
+    "autoscan": true
+  }
+}

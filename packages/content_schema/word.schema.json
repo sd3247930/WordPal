@@ -1,0 +1,14 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#", "title": "WordPal content v1",
+  "type": "object", "additionalProperties": false,
+  "required": ["version", "license", "lessons", "words"],
+  "properties": {
+    "version": {"const": 1}, "license": {"type": "string", "minLength": 1},
+    "lessons": {"type":"array", "minItems":1, "items": {"type":"object", "required":["id","name","unit","wordIds"], "properties":{"id":{"type":"string"},"name":{"type":"string"},"unit":{"type":"string"},"wordIds":{"type":"array","items":{"type":"string"}}},"additionalProperties":false}},
+    "words": {"type":"array","minItems":1,"items":{"type":"object","additionalProperties":false,"required":["id","word","ipa","meaning","pos","phonics","phonemes","syllables","audio","image","example","unit","lesson","difficulty","distractors"],"properties":{
+      "id":{"type":"string","pattern":"^[a-z][a-z0-9-]*$"},"word":{"type":"string","minLength":1},"ipa":{"type":"string"},"meaning":{"type":"string","minLength":1},"pos":{"type":"string"},
+      "phonics":{"type":"array","minItems":1,"items":{"type":"string"}},"phonemes":{"type":"array","minItems":1,"items":{"type":"string"}},"syllables":{"type":"array","minItems":1,"items":{"type":"string"}},
+      "audio":{"type":"string"},"image":{"type":"string"},"example":{"type":"string"},"unit":{"type":"string"},"lesson":{"type":"string"},"difficulty":{"type":"integer","minimum":1,"maximum":5},"distractors":{"type":"array","minItems":3,"items":{"type":"string"}}
+    }}}
+  }
+}

@@ -1,0 +1,9 @@
+.wp-app.large-text { --wp-font-body: 20px; --wp-font-small: 16px; --wp-font-title: 34px; --wp-font-word: 80px; }
+.large-text .small {font-size:var(--wp-font-small)}
+.large-text .nav-item,.large-text .preference-row {min-height:64px}
+.reduce-motion *, .reduce-motion *::before, .reduce-motion *::after {animation:none !important;transition:none !important;scroll-behavior:auto !important;}
+.high-contrast .wp-card {border-width:2px}
+.has-native-safe-top .topbar {padding-top:calc(18px + var(--wp-native-top));}
+.has-native-safe-top .sidebar {padding-top:calc(30px + var(--wp-native-top));}
+.app-shell {padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);}
+@media (prefers-reduced-motion: reduce) { .wp-app *, .wp-app *::before, .wp-app *::after {animation:none!important;transition:none!important;} }

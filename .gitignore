@@ -1,0 +1,86 @@
+# ===== 本机文档与私有素材：严禁提交 =====
+/docs/
+/private/
+
+# ===== 依赖与包管理 =====
+node_modules/
+package-lock.json.bak
+yarn-error.log
+
+# ===== 构建产物与缓存 =====
+dist/
+build/
+unpackage/
+.hbuilderx/
+.cache/
+.temp/
+.tmp/
+tmp/
+temp/
+*.tsbuildinfo
+
+# ===== 环境变量与密钥 =====
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.keystore
+*.jks
+*.mobileprovision
+*.pfx
+*.crt
+*.cer
+.git-credentials
+.netrc
+.npmrc
+.pypirc
+
+# ===== 临时 / 垃圾文件 =====
+*.log
+*.tmp
+*.temp
+*.bak
+*.old
+*.orig
+*.swp
+*.swo
+*~
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# ===== 编辑器 / IDE =====
+.idea/
+.vscode/
+*.code-workspace
+
+# ===== 测试与覆盖率输出 =====
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+blob-report/
+test-output/
+test-artifacts/
+screenshots/
+*.trace.zip
+*.har
+
+# ===== 本机安装包、数据库与备份 =====
+*.apk
+*.aab
+*.ipa
+*.exe
+*.msi
+*.dmg
+*.sqlite
+*.sqlite3
+*.db
+*.zip
+*.7z
+*.rar

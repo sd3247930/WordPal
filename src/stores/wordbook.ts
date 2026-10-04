@@ -1,0 +1,39 @@
+import {defineStore} from 'pinia'
+import {ref,computed} from 'vue'
+import {words,wordById} from '../../packages/content_schema'
+import {useProfileStore} from './profile'
+import {useLearningStore} from './learning'
+import {useReviewStore} from './review'
+import {readStorage,writeStorage} from '../services/storage'
+import {needsRecentPractice} from '../services/study-presentation'
+export type WordbookFilter='due'|'weak'|'mistakes'|'all'
+interface Preferences {favorites:string[];later:string[]}
+const key='wordpal.wordbook.preferences.v1'
+function clean(value:unknown):string[]{return Array.isArray(value)?[...new Set(value.filter((id):id is string=>typeof id==='string'&&!!wordById[id]))]:[]}
+export const useWordbookStore=defineStore('wordbook',()=>{
+ const profile=useProfileStore(),learning=useLearningStore(),review=useReviewStore()
+ const raw=readStorage<Partial<Preferences>|null>(key,null),preferences=ref<Preferences>({favorites:clean(raw?.favorites),later:clean(raw?.later)}),error=ref('')
+ const historyByWord=computed(()=>Object.fromEntries(words.map(word=>[word.id,profile.db.history.filter(answer=>answer.wordId===word.id)])))
+ const mistakes=computed(()=>words.filter(word=>needsRecentPractice(historyByWord.value[word.id])).map(word=>word.id))
+ const suggestions=computed(()=>review.weak.map(card=>card.wordId).filter(id=>!!wordById[id]&&!preferences.value.favorites.includes(id)))
+ const weak=computed(()=>[...new Set([...preferences.value.favorites,...suggestions.value])])
+ function toggle(field:keyof Preferences,id:string){
+  if(!wordById[id])return false
+  const next={...preferences.value,[field]:preferences.value[field].includes(id)?preferences.value[field].filter(word=>word!==id):[...preferences.value[field],id]}
+  try{writeStorage(key,next);preferences.value=next;error.value='';return true}catch{error.value='标记暂时无法保存，请释放设备空间后重试。';return false}
+ }
+ function list(filter:WordbookFilter,query:string){
+  const ids=filter==='due'?review.due.map(card=>card.wordId):filter==='weak'?weak.value:filter==='mistakes'?mistakes.value:words.map(word=>word.id)
+  const text=query.trim().toLowerCase()
+  return ids.map(id=>wordById[id]).filter(word=>word&&(!text||[word.word,word.meaning,word.unit,word.lesson].join(' ').toLowerCase().includes(text))).sort((a,b)=>{
+   const ca=profile.db.cards[a.id],cb=profile.db.cards[b.id]
+   const da=ca?+new Date(ca.due):Infinity,db=cb?+new Date(cb.due):Infinity,now=Date.now()
+   if((da<=now)!==(db<=now))return da<=now?-1:1
+   if(da<=now&&db<=now)return da-db || a.word.localeCompare(b.word)
+   const risk=(cb?.lapses||0)-(ca?.lapses||0) || (cb?.difficulty||0)-(ca?.difficulty||0)
+   return risk || Number(b.unit===learning.lesson.unit)-Number(a.unit===learning.lesson.unit) || Number(preferences.value.later.includes(a.id))-Number(preferences.value.later.includes(b.id)) || a.word.localeCompare(b.word)
+  })
+ }
+ function reset(){try{const next={favorites:[],later:[]};writeStorage(key,next);preferences.value=next;error.value='';return true}catch{error.value='界面标记清除失败，请检查设备存储。';return false}}
+ return {preferences,error,historyByWord,mistakes,suggestions,weak,toggle,list,reset}
+})

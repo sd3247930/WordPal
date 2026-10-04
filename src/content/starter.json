@@ -1,0 +1,690 @@
+{
+  "version": 1,
+  "license": "原创教学示例；非特定出版社教材，可在本项目中使用。",
+  "words": [
+    {
+      "id": "cat",
+      "word": "cat",
+      "ipa": "/kæt/",
+      "meaning": "猫",
+      "pos": "n.",
+      "phonics": [
+        "c",
+        "a",
+        "t"
+      ],
+      "phonemes": [
+        "/k/",
+        "/æ/",
+        "/t/"
+      ],
+      "syllables": [
+        "cat"
+      ],
+      "audio": "/static/audio/cat.wav",
+      "image": "",
+      "example": "The cat is on the mat.",
+      "unit": "探索单元 1",
+      "lesson": "lesson-1",
+      "difficulty": 1,
+      "distractors": [
+        "dog",
+        "fish",
+        "bird"
+      ]
+    },
+    {
+      "id": "dog",
+      "word": "dog",
+      "ipa": "/dɒɡ/",
+      "meaning": "狗",
+      "pos": "n.",
+      "phonics": [
+        "d",
+        "o",
+        "g"
+      ],
+      "phonemes": [
+        "/d/",
+        "/ɒ/",
+        "/ɡ/"
+      ],
+      "syllables": [
+        "dog"
+      ],
+      "audio": "/static/audio/dog.wav",
+      "image": "",
+      "example": "I play with my dog.",
+      "unit": "探索单元 1",
+      "lesson": "lesson-1",
+      "difficulty": 1,
+      "distractors": [
+        "fish",
+        "bird",
+        "duck"
+      ]
+    },
+    {
+      "id": "fish",
+      "word": "fish",
+      "ipa": "/fɪʃ/",
+      "meaning": "鱼",
+      "pos": "n.",
+      "phonics": [
+        "f",
+        "i",
+        "sh"
+      ],
+      "phonemes": [
+        "/f/",
+        "/ɪ/",
+        "/ʃ/"
+      ],
+      "syllables": [
+        "fish"
+      ],
+      "audio": "/static/audio/fish.wav",
+      "image": "",
+      "example": "The fish is in the water.",
+      "unit": "探索单元 1",
+      "lesson": "lesson-1",
+      "difficulty": 1,
+      "distractors": [
+        "bird",
+        "duck",
+        "apple"
+      ]
+    },
+    {
+      "id": "bird",
+      "word": "bird",
+      "ipa": "/bɜːd/",
+      "meaning": "鸟",
+      "pos": "n.",
+      "phonics": [
+        "b",
+        "ir",
+        "d"
+      ],
+      "phonemes": [
+        "/b/",
+        "/ɜː/",
+        "/d/"
+      ],
+      "syllables": [
+        "bird"
+      ],
+      "audio": "/static/audio/bird.wav",
+      "image": "",
+      "example": "A bird can fly.",
+      "unit": "探索单元 1",
+      "lesson": "lesson-1",
+      "difficulty": 1,
+      "distractors": [
+        "cat",
+        "dog",
+        "fish"
+      ]
+    },
+    {
+      "id": "duck",
+      "word": "duck",
+      "ipa": "/dʌk/",
+      "meaning": "鸭子",
+      "pos": "n.",
+      "phonics": [
+        "d",
+        "u",
+        "ck"
+      ],
+      "phonemes": [
+        "/d/",
+        "/ʌ/",
+        "/k/"
+      ],
+      "syllables": [
+        "duck"
+      ],
+      "audio": "/static/audio/duck.wav",
+      "image": "",
+      "example": "The duck can swim.",
+      "unit": "探索单元 1",
+      "lesson": "lesson-1",
+      "difficulty": 1,
+      "distractors": [
+        "dog",
+        "fish",
+        "bird"
+      ]
+    },
+    {
+      "id": "apple",
+      "word": "apple",
+      "ipa": "/ˈæp.əl/",
+      "meaning": "苹果",
+      "pos": "n.",
+      "phonics": [
+        "a",
+        "pp",
+        "le"
+      ],
+      "phonemes": [
+        "/æ/",
+        "/p/",
+        "/əl/"
+      ],
+      "syllables": [
+        "ap",
+        "ple"
+      ],
+      "audio": "/static/audio/apple.wav",
+      "image": "",
+      "example": "I eat an apple.",
+      "unit": "探索单元 1",
+      "lesson": "lesson-2",
+      "difficulty": 1,
+      "distractors": [
+        "fish",
+        "bird",
+        "duck"
+      ]
+    },
+    {
+      "id": "egg",
+      "word": "egg",
+      "ipa": "/eɡ/",
+      "meaning": "鸡蛋",
+      "pos": "n.",
+      "phonics": [
+        "e",
+        "gg"
+      ],
+      "phonemes": [
+        "/e/",
+        "/ɡ/"
+      ],
+      "syllables": [
+        "egg"
+      ],
+      "audio": "/static/audio/egg.wav",
+      "image": "",
+      "example": "I have an egg.",
+      "unit": "探索单元 1",
+      "lesson": "lesson-2",
+      "difficulty": 1,
+      "distractors": [
+        "cat",
+        "dog",
+        "fish"
+      ]
+    },
+    {
+      "id": "milk",
+      "word": "milk",
+      "ipa": "/mɪlk/",
+      "meaning": "牛奶",
+      "pos": "n.",
+      "phonics": [
+        "m",
+        "i",
+        "l",
+        "k"
+      ],
+      "phonemes": [
+        "/m/",
+        "/ɪ/",
+        "/l/",
+        "/k/"
+      ],
+      "syllables": [
+        "milk"
+      ],
+      "audio": "/static/audio/milk.wav",
+      "image": "",
+      "example": "I drink milk.",
+      "unit": "探索单元 1",
+      "lesson": "lesson-2",
+      "difficulty": 1,
+      "distractors": [
+        "dog",
+        "fish",
+        "bird"
+      ]
+    },
+    {
+      "id": "bread",
+      "word": "bread",
+      "ipa": "/bred/",
+      "meaning": "面包",
+      "pos": "n.",
+      "phonics": [
+        "b",
+        "r",
+        "ea",
+        "d"
+      ],
+      "phonemes": [
+        "/b/",
+        "/r/",
+        "/e/",
+        "/d/"
+      ],
+      "syllables": [
+        "bread"
+      ],
+      "audio": "/static/audio/bread.wav",
+      "image": "",
+      "example": "This bread is soft.",
+      "unit": "探索单元 1",
+      "lesson": "lesson-2",
+      "difficulty": 1,
+      "distractors": [
+        "fish",
+        "bird",
+        "duck"
+      ]
+    },
+    {
+      "id": "cake",
+      "word": "cake",
+      "ipa": "/keɪk/",
+      "meaning": "蛋糕",
+      "pos": "n.",
+      "phonics": [
+        "c",
+        "a",
+        "ke"
+      ],
+      "phonemes": [
+        "/k/",
+        "/eɪ/",
+        "/k/"
+      ],
+      "syllables": [
+        "cake"
+      ],
+      "audio": "/static/audio/cake.wav",
+      "image": "",
+      "example": "I like this cake.",
+      "unit": "探索单元 1",
+      "lesson": "lesson-2",
+      "difficulty": 1,
+      "distractors": [
+        "cat",
+        "dog",
+        "fish"
+      ]
+    },
+    {
+      "id": "sun",
+      "word": "sun",
+      "ipa": "/sʌn/",
+      "meaning": "太阳",
+      "pos": "n.",
+      "phonics": [
+        "s",
+        "u",
+        "n"
+      ],
+      "phonemes": [
+        "/s/",
+        "/ʌ/",
+        "/n/"
+      ],
+      "syllables": [
+        "sun"
+      ],
+      "audio": "/static/audio/sun.wav",
+      "image": "",
+      "example": "The sun is warm.",
+      "unit": "探索单元 2",
+      "lesson": "lesson-3",
+      "difficulty": 1,
+      "distractors": [
+        "dog",
+        "fish",
+        "bird"
+      ]
+    },
+    {
+      "id": "rain",
+      "word": "rain",
+      "ipa": "/reɪn/",
+      "meaning": "雨",
+      "pos": "n.",
+      "phonics": [
+        "r",
+        "ai",
+        "n"
+      ],
+      "phonemes": [
+        "/r/",
+        "/eɪ/",
+        "/n/"
+      ],
+      "syllables": [
+        "rain"
+      ],
+      "audio": "/static/audio/rain.wav",
+      "image": "",
+      "example": "I can hear the rain.",
+      "unit": "探索单元 2",
+      "lesson": "lesson-3",
+      "difficulty": 1,
+      "distractors": [
+        "fish",
+        "bird",
+        "duck"
+      ]
+    },
+    {
+      "id": "tree",
+      "word": "tree",
+      "ipa": "/triː/",
+      "meaning": "树",
+      "pos": "n.",
+      "phonics": [
+        "t",
+        "r",
+        "ee"
+      ],
+      "phonemes": [
+        "/t/",
+        "/r/",
+        "/iː/"
+      ],
+      "syllables": [
+        "tree"
+      ],
+      "audio": "/static/audio/tree.wav",
+      "image": "",
+      "example": "The tree is tall.",
+      "unit": "探索单元 2",
+      "lesson": "lesson-3",
+      "difficulty": 1,
+      "distractors": [
+        "cat",
+        "dog",
+        "fish"
+      ]
+    },
+    {
+      "id": "leaf",
+      "word": "leaf",
+      "ipa": "/liːf/",
+      "meaning": "叶子",
+      "pos": "n.",
+      "phonics": [
+        "l",
+        "ea",
+        "f"
+      ],
+      "phonemes": [
+        "/l/",
+        "/iː/",
+        "/f/"
+      ],
+      "syllables": [
+        "leaf"
+      ],
+      "audio": "/static/audio/leaf.wav",
+      "image": "",
+      "example": "This leaf is green.",
+      "unit": "探索单元 2",
+      "lesson": "lesson-3",
+      "difficulty": 1,
+      "distractors": [
+        "dog",
+        "fish",
+        "bird"
+      ]
+    },
+    {
+      "id": "wind",
+      "word": "wind",
+      "ipa": "/wɪnd/",
+      "meaning": "风",
+      "pos": "n.",
+      "phonics": [
+        "w",
+        "i",
+        "n",
+        "d"
+      ],
+      "phonemes": [
+        "/w/",
+        "/ɪ/",
+        "/n/",
+        "/d/"
+      ],
+      "syllables": [
+        "wind"
+      ],
+      "audio": "/static/audio/wind.wav",
+      "image": "",
+      "example": "The wind is gentle.",
+      "unit": "探索单元 2",
+      "lesson": "lesson-3",
+      "difficulty": 1,
+      "distractors": [
+        "fish",
+        "bird",
+        "duck"
+      ]
+    },
+    {
+      "id": "book",
+      "word": "book",
+      "ipa": "/bʊk/",
+      "meaning": "书",
+      "pos": "n.",
+      "phonics": [
+        "b",
+        "oo",
+        "k"
+      ],
+      "phonemes": [
+        "/b/",
+        "/ʊ/",
+        "/k/"
+      ],
+      "syllables": [
+        "book"
+      ],
+      "audio": "/static/audio/book.wav",
+      "image": "",
+      "example": "I read a book.",
+      "unit": "探索单元 2",
+      "lesson": "lesson-4",
+      "difficulty": 1,
+      "distractors": [
+        "cat",
+        "dog",
+        "fish"
+      ]
+    },
+    {
+      "id": "pen",
+      "word": "pen",
+      "ipa": "/pen/",
+      "meaning": "钢笔",
+      "pos": "n.",
+      "phonics": [
+        "p",
+        "e",
+        "n"
+      ],
+      "phonemes": [
+        "/p/",
+        "/e/",
+        "/n/"
+      ],
+      "syllables": [
+        "pen"
+      ],
+      "audio": "/static/audio/pen.wav",
+      "image": "",
+      "example": "This is my pen.",
+      "unit": "探索单元 2",
+      "lesson": "lesson-4",
+      "difficulty": 1,
+      "distractors": [
+        "dog",
+        "fish",
+        "bird"
+      ]
+    },
+    {
+      "id": "bag",
+      "word": "bag",
+      "ipa": "/bæɡ/",
+      "meaning": "书包",
+      "pos": "n.",
+      "phonics": [
+        "b",
+        "a",
+        "g"
+      ],
+      "phonemes": [
+        "/b/",
+        "/æ/",
+        "/ɡ/"
+      ],
+      "syllables": [
+        "bag"
+      ],
+      "audio": "/static/audio/bag.wav",
+      "image": "",
+      "example": "My book is in the bag.",
+      "unit": "探索单元 2",
+      "lesson": "lesson-4",
+      "difficulty": 1,
+      "distractors": [
+        "fish",
+        "bird",
+        "duck"
+      ]
+    },
+    {
+      "id": "desk",
+      "word": "desk",
+      "ipa": "/desk/",
+      "meaning": "课桌",
+      "pos": "n.",
+      "phonics": [
+        "d",
+        "e",
+        "s",
+        "k"
+      ],
+      "phonemes": [
+        "/d/",
+        "/e/",
+        "/s/",
+        "/k/"
+      ],
+      "syllables": [
+        "desk"
+      ],
+      "audio": "/static/audio/desk.wav",
+      "image": "",
+      "example": "The pen is on the desk.",
+      "unit": "探索单元 2",
+      "lesson": "lesson-4",
+      "difficulty": 1,
+      "distractors": [
+        "cat",
+        "dog",
+        "fish"
+      ]
+    },
+    {
+      "id": "pencil",
+      "word": "pencil",
+      "ipa": "/ˈpen.səl/",
+      "meaning": "铅笔",
+      "pos": "n.",
+      "phonics": [
+        "p",
+        "e",
+        "n",
+        "c",
+        "i",
+        "l"
+      ],
+      "phonemes": [
+        "/p/",
+        "/e/",
+        "/n/",
+        "/s/",
+        "/ə/",
+        "/l/"
+      ],
+      "syllables": [
+        "pen",
+        "cil"
+      ],
+      "audio": "/static/audio/pencil.wav",
+      "image": "",
+      "example": "I draw with a pencil.",
+      "unit": "探索单元 2",
+      "lesson": "lesson-4",
+      "difficulty": 1,
+      "distractors": [
+        "dog",
+        "fish",
+        "bird"
+      ]
+    }
+  ],
+  "lessons": [
+    {
+      "id": "lesson-1",
+      "name": "动物朋友",
+      "unit": "探索单元 1",
+      "wordIds": [
+        "cat",
+        "dog",
+        "fish",
+        "bird",
+        "duck"
+      ]
+    },
+    {
+      "id": "lesson-2",
+      "name": "我的早餐",
+      "unit": "探索单元 1",
+      "wordIds": [
+        "apple",
+        "egg",
+        "milk",
+        "bread",
+        "cake"
+      ]
+    },
+    {
+      "id": "lesson-3",
+      "name": "自然小世界",
+      "unit": "探索单元 2",
+      "wordIds": [
+        "sun",
+        "rain",
+        "tree",
+        "leaf",
+        "wind"
+      ]
+    },
+    {
+      "id": "lesson-4",
+      "name": "我的书包",
+      "unit": "探索单元 2",
+      "wordIds": [
+        "book",
+        "pen",
+        "bag",
+        "desk",
+        "pencil"
+      ]
+    }
+  ]
+}
