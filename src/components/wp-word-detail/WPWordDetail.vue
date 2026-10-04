@@ -4,8 +4,10 @@
   <view class="word-detail-heading"><text class="section-title">单词详情</text><WPIconButton v-if="modal" class="word-detail-close" label="关闭单词详情" @click="$emit('close')">×</WPIconButton></view>
   <view class="detail-word-hero"><view class="detail-word-copy"><text class="detail-word">{{word.word}}</text><text class="ipa muted">{{word.ipa}}</text><text>{{word.pos}} · {{word.meaning}}</text></view><text class="detail-illustration" aria-hidden="true">{{wordIllustrations[word.id]||'📖'}}</text></view>
   <WPAudioButton :url="word.audio" @click="play" :label="'播放 '+word.word+' 的标准发音'" text="听标准发音"/>
+  <text v-if="word.phoneticUK||word.phoneticUS" class="small muted block">{{word.phoneticUK?'英 '+word.phoneticUK+' ':''}}{{word.phoneticUS?'美 '+word.phoneticUS:''}}</text>
+  <text v-if="word.tags?.includes('offline-system-en-us')" class="small muted block">离线英语合成语音 · 美式</text>
   <text v-if="audioError" class="notice error" role="alert">{{audioError}}</text>
-  <view class="detail-example"><text class="eyebrow">读一读</text><text>{{word.example}}</text></view>
+  <view class="detail-example"><text class="eyebrow">读一读</text><text>{{word.example||'例句正在补充，可以先记住单词和词义。'}}</text><text v-if="word.examples?.[0]?.zh" class="small muted">{{word.examples[0].zh}}</text></view>
   <WPMemoryMeter :card="card"/>
   <view class="detail-facts"><view><text class="small muted">复习次数</text><text>{{card?.reps||0}} 次</text></view><view><text class="small muted">回答准确率</text><text>{{history.length?Math.round(history.filter(a=>a.correct).length/history.length*100)+'%':'暂无记录'}}</text></view><view><text class="small muted">下次复习</text><text>{{nextReviewLabel(card?.due)}}</text></view></view>
   <text v-if="card" class="small muted block">复习日期 {{formatLocalDate(card.due)}}</text>

@@ -2,7 +2,7 @@ import {strToU8} from 'fflate'
 import {validateCourse,type CoursePack,type SourceRecord,type Issue,type VocabularyEntry} from '../../../packages/content_schema/course'
 import type {Word} from '../../../packages/core_learning'
 import {sha256} from '../content/digest'
-export interface ImportMetadata {courseId:string;title:string;contentVersion?:string;route:CoursePack['route'];level:string;publisher?:string;editionYear?:number;grade?:number;semester?:string;sourceType:SourceRecord['type'];sourceNote:string;declared:boolean}
+export interface ImportMetadata {courseId:string;title:string;contentVersion?:string;route:CoursePack['route'];level:string;publisher?:string;editionYear?:number;edition?:string;startGrade?:1|3|null;grade?:number;semester?:string;sourceType:SourceRecord['type'];sourceNote:string;declared:boolean}
 export interface ImportPreview {pack:CoursePack|null;issues:Issue[];duplicates:number;reuse:Record<string,string>;newCount:number;missingAudio:number;missingPhonics:number;missingImages:number;digest:string}
 export const defaultImportMetadata=():ImportMetadata=>({courseId:'my-course',title:'我的自编课程',contentVersion:'1.0.0',route:'theme',level:'L1',sourceType:'user-provided',sourceNote:'家长提供的本机私用词表',declared:false})
 export function parseCsv(text:string){
@@ -34,7 +34,7 @@ export function csvToCourse(text:string,meta:ImportMetadata,mapping:Record<strin
   const unitId=data.unit_id||'u01',lessonId=data.lesson_id||'l01';let unit=units.find(u=>u.id===unitId);if(!unit){unit={id:unitId,title:data.unit_title||'自编单元',lessons:[]};units.push(unit)}
   let lesson=unit.lessons.find(l=>l.id===lessonId);if(!lesson){lesson={id:lessonId,title:data.lesson_title||'自编课节',wordIds:[],activities:['flash','connect','spell']};unit.lessons.push(lesson)}if(!lesson.wordIds.includes(id))lesson.wordIds.push(id)
  }
- const pack:CoursePack={schemaVersion:2,courseId:meta.courseId,contentVersion:meta.contentVersion||'1.0.0',title:meta.title,route:meta.route,abilityLevels:[meta.level],publisher:meta.publisher||null,editionYear:meta.editionYear||null,grade:meta.grade||null,semester:meta.semester||null,sources:[{id:sourceId,type:meta.sourceType,rightsStatus:meta.declared?'private-use-declared':'pending-review',attribution:meta.sourceNote,revision:sha256(text),declaredAt:meta.declared?new Date().toISOString():undefined}],vocabulary,units,assets:[]}
+ const pack:CoursePack={schemaVersion:2,courseId:meta.courseId,contentVersion:meta.contentVersion||'1.0.0',title:meta.title,route:meta.route,abilityLevels:[meta.level],publisher:meta.publisher||null,editionYear:meta.editionYear||null,...(meta.edition?{edition:meta.edition}:{}),...(meta.startGrade!==undefined?{startGrade:meta.startGrade}:{}),grade:meta.grade||null,semester:meta.semester||null,sources:[{id:sourceId,type:meta.sourceType,rightsStatus:meta.declared?'private-use-declared':'pending-review',attribution:meta.sourceNote,revision:sha256(text),declaredAt:meta.declared?new Date().toISOString():undefined}],vocabulary,units,assets:[]}
  return {pack,duplicates,lines}
 }
 export function markdownToCsv(text:string){

@@ -11,6 +11,8 @@
   <template v-else-if="activity.current">
    <WPProgress :value="activity.state.index" :total="activity.total" label="独立活动进度"/>
    <text class="small muted block">{{activity.state.index+1}} / {{activity.total}}</text>
+   <text v-if="activity.state.kind==='challenge'" class="notice">连续记住 {{run}} 个 · 本轮最好 {{bestRun}} 个；慢慢想，答错后继续。</text>
+   <view v-if="activity.state.kind==='speed'&&!answer" class="notice"><text class="strong block">剩余 {{Math.ceil(remaining/1000)}} 秒</text><text class="small muted block">每题 15 秒，收起页面会暂停；随时可以休息。</text><WPButton kind="secondary" @click="activity.state.timer?.runningSince===null?activity.resumeTimer():activity.pauseTimer()">{{activity.state.timer?.runningSince===null?'准备好，开始计时':'暂停计时'}}</WPButton></view>
    <template v-if="activity.state.kind==='story'">
     <text class="section-title">{{activity.state.storySnapshot?.title}}</text>
     <view class="story-sentence" v-for="(sentence,i) in activity.state.storySnapshot?.sentences" :key="i"><template v-for="(part,j) in storyParts(sentence)" :key="j"><WPActionTile v-if="part.word" class="story-word" :aria-label="'查看 '+part.text+' 的词义'" @click="lookup=part.word.id">{{part.text}}</WPActionTile><text v-else>{{part.text}}</text></template></view>
@@ -25,7 +27,7 @@
     <text v-if="activity.state.kind==='letters'" class="instruction">{{activity.current.meaning}} · 把字母拼起来</text>
     <template v-if="activity.state.kind==='sentence'"><text class="instruction">把词块排成一句话</text><text class="small muted block">{{activity.current.meaning}}</text></template>
     <text v-if="activity.state.kind==='cloze'" class="instruction">{{cloze}}</text>
-    <view v-if="['check','pair','picture','listen-picture'].includes(activity.state.kind)" class="choice-grid"><WPActionTile v-for="choice in activity.choices" :key="choice.id" class="answer-choice" :selected="activity.state.selected===choice.id" :disabled="!!answer" @click="activity.select(choice.id)"><image v-if="activity.state.kind==='listen-picture'&&choice.image" class="activity-picture small-picture" :src="choice.image" mode="aspectFit"/><text>{{activity.state.kind==='picture'?choice.word:choice.meaning}}</text></WPActionTile></view>
+    <view v-if="['check','pair','picture','listen-picture','challenge','speed'].includes(activity.state.kind)" class="choice-grid"><WPActionTile v-for="choice in activity.choices" :key="choice.id" class="answer-choice" :selected="activity.state.selected===choice.id" :disabled="!!answer||activity.state.kind==='speed'&&activity.state.timer?.runningSince===null" @click="activity.select(choice.id)"><image v-if="activity.state.kind==='listen-picture'&&choice.image" class="activity-picture small-picture" :src="choice.image" mode="aspectFit"/><text>{{activity.state.kind==='picture'?choice.word:choice.meaning}}</text></WPActionTile></view>
     <template v-if="['letters','sentence'].includes(activity.state.kind)"><view class="token-answer">{{activity.state.input||'点击词块，在这里拼装'}}</view><view class="token-bank"><WPButton v-for="token in tokens" :key="token.id" kind="secondary" :disabled="!!answer||usedToken(token.id)" @click="addToken(token.id)">{{token.text===' '?'空格':token.text}}</WPButton></view><WPButton kind="quiet" :disabled="!!answer||!activity.state.input" @click="undo">退回一步</WPButton></template>
     <input v-if="activity.state.kind==='cloze'" class="spelling-input" :value="activity.state.input" :disabled="!!answer" :maxlength="100" aria-label="输入句子缺少的单词" @input="activity.input(($event as any).detail.value)"/>
     <template v-if="activity.state.kind==='phonics'"><view v-for="rule in rules" :key="rule.id" class="notice"><text class="strong">{{rule.graphemes.join(' / ')}} · {{rule.phonemes.join(' / ')}}</text><text class="small block">{{rule.explanation}}</text><text v-if="rule.prerequisites?.length" class="small muted block">建议先认识：{{rule.prerequisites.join('、')}}</text></view><view class="phonics-row"><view v-for="segment in segments(activity.current)" :key="segment.letters+segment.sound" class="phonics-segment"><text>{{segment.letters}}</text><text class="small muted">{{segment.sound}}</text></view></view><text class="small muted block">拼读为人工审核片段；跟读仅作自我对照，不自动评分。</text><WPPronunciationPractice :word="activity.current"/></template>
@@ -38,7 +40,7 @@
  </WPCard>
 </template>
 <script setup lang="ts">
-import {computed,ref,watch} from 'vue'
+import {computed,ref,watch,onMounted,onUnmounted} from 'vue'
 import {useActivitiesStore,type ActivityKind} from '../../stores/activities'
 import {useCourseStore} from '../../stores/course'
 import {courseRegistry,getCourseWord,courseSnapshot} from '../../services/content/ContentRegistry'
@@ -51,11 +53,16 @@ import WPCard from '../wp-card/WPCard.vue'
 import WPProgress from '../wp-progress/WPProgress.vue'
 import WPPronunciationPractice from '../WPPronunciationPractice.vue'
 const activity=useActivitiesStore(),course=useCourseStore(),lookup=ref('')
-const names:Record<ActivityKind,string>={check:'整课检查',pair:'词义配对',letters:'字母拼装',sentence:'句子排序',cloze:'句子填空',story:'故事阅读',picture:'看图选词','listen-picture':'听音选图',phonics:'自然拼读与跟读'}
+const names:Record<ActivityKind,string>={check:'整课检查',pair:'词义配对',letters:'字母拼装',sentence:'句子排序',cloze:'句子填空',story:'故事阅读',picture:'看图选词','listen-picture':'听音选图',phonics:'自然拼读与跟读',challenge:'连胜挑战',speed:'闪电判断'}
 const activities=computed(()=>Object.entries(names).map(([id,name])=>({id:id as ActivityKind,name,disabled:!course.lesson.wordIds.some(wordId=>{const w=getCourseWord(course.currentId,wordId),example=course.lesson.examples?.[wordId]||w.example;return id==='picture'?!!w.image:id==='listen-picture'?!!w.image&&!!w.audio:id==='phonics'?!!w.audio&&!!w.phonics.length:id==='cloze'?example.toLowerCase().split(/[^a-z'-]+/).includes(w.word.toLowerCase()):id==='sentence'?!!example:id==='story'?!!course.lesson.storyId:true})})))
 const title=computed(()=>activity.state?names[activity.state.kind]:''),answer=computed(()=>activity.state?.answers[activity.state.index]),correct=computed(()=>activity.state?.answers.filter(a=>a.correct).length||0),question=computed(()=>activity.state?.storySnapshot?.questions?.[activity.state.index])
 const rules=computed(()=>{const state=activity.state;if(!state)return [];const pack=courseSnapshot(state.courseId,state.contentVersion),lesson=pack?.units.flatMap(unit=>unit.lessons).find(item=>item.id===state.lessonId);return pack?.phonicsRules?.filter(rule=>lesson?.phonicsRuleIds?.includes(rule.id))||[]})
-const canSubmit=computed(()=>!!activity.state&&(activity.state.kind==='phonics'?true:activity.state.kind==='story'?!question.value||!!activity.state.selected:['check','pair','picture','listen-picture'].includes(activity.state.kind)?!!activity.state.selected:!!activity.state.input.trim()))
+const canSubmit=computed(()=>!!activity.state&&(activity.state.kind!=='speed'||activity.state.timer?.runningSince!==null)&&(activity.state.kind==='phonics'?true:activity.state.kind==='story'?!question.value||!!activity.state.selected:['check','pair','picture','listen-picture','challenge','speed'].includes(activity.state.kind)?!!activity.state.selected:!!activity.state.input.trim()))
+const run=computed(()=>{let n=0;for(const a of [...(activity.state?.answers||[])].reverse()){if(!a.correct)break;n++}return n}),bestRun=computed(()=>{let n=0,best=0;for(const a of activity.state?.answers||[]){n=a.correct?n+1:0;best=Math.max(n,best)}return best})
+const clock=ref(Date.now()),remaining=computed(()=>activity.remainingMs(clock.value))
+let ticker:ReturnType<typeof setInterval>|undefined
+onMounted(()=>{ticker=setInterval(()=>{clock.value=Date.now();if(activity.state?.timer?.runningSince!==null&&activity.state?.kind==='speed')activity.expireTimer(clock.value)},250)})
+onUnmounted(()=>{clearInterval(ticker);activity.pauseTimer()})
 const tokens=computed(()=>{const text=activity.state?.kind==='sentence'?activity.current?.example||'':activity.current?.word||'',parts=activity.state?.kind==='sentence'?text.split(/\s+/):[...text];return parts.map((text,id)=>({text,id})).sort((a,b)=>(a.id*7%11)-(b.id*7%11))})
 const chosen=computed(()=>{let rest=activity.state?.input||'',ids:number[]=[];while(rest){const token=tokens.value.find(t=>!ids.includes(t.id)&&(rest===t.text||rest.startsWith(t.text+(activity.state?.kind==='sentence'?' ':''))));if(!token)break;ids.push(token.id);rest=rest.slice(token.text.length);if(activity.state?.kind==='sentence')rest=rest.trimStart()}return ids})
 function usedToken(id:number){return chosen.value.includes(id)}

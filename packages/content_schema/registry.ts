@@ -11,6 +11,13 @@ export const courseRegistry=reactive<Record<string,CoursePack>>({starter:starter
 export const archiveStatus=reactive<Record<string,boolean>>({})
 export const sourceMappings=reactive<Record<string,string>>({})
 const assetUrls=reactive(new Map<string,string>()),versions=new Map<string,CoursePack>()
+let localCourses:CoursePack[]=[]
+export const isBundledCourse=(id:string)=>['starter','original-primary'].includes(id)||localCourses.some(c=>c.courseId===id)
+export function configureLocalCourses(packs:CoursePack[]){
+ if(!Array.isArray(packs)||new Set(packs.map(p=>p?.courseId)).size!==packs.length)throw new Error('本机课程目录重复或无效。')
+ for(const pack of packs)if(validateCourse(pack).some(i=>i.severity==='error')||['starter','original-primary'].includes(pack.courseId))throw new Error('本机课程目录无效。')
+ localCourses=JSON.parse(JSON.stringify(packs))
+}
 export const resourceStatus=reactive<Record<string,string>>({})
 export function registerCourse(pack:CoursePack,resolver:(id:string)=>string=()=>'',aliases:Record<string,string>={}){
  const errors=validateCourse(pack).filter(i=>i.severity==='error');if(errors.length)throw new Error(errors[0].message)
@@ -39,7 +46,7 @@ export function resolveFrozenWord(word:Word|undefined,courseId?:string,version?:
  const entry=versions.get(courseId+'@'+version)?.vocabulary.find(e=>e.id===word.id)
  if(!entry)return word
  // Resource handles expire across reloads; the frozen text and answers stay intact.
- return {...word,audio:entry.assetRefs?.audio?resolveCourseAsset(courseId,entry.assetRefs?.audio,version):word.audio,image:entry.assetRefs?.image?resolveCourseAsset(courseId,entry.assetRefs?.image,version):word.image}
+ return {...word,audio:entry.assetRefs?.audio?resolveCourseAsset(courseId,entry.assetRefs?.audio,version):word.audio,audioUS:entry.tags?.includes('offline-system-en-us')&&entry.assetRefs?.audio?resolveCourseAsset(courseId,entry.assetRefs.audio,version):word.audioUS,image:entry.assetRefs?.image?resolveCourseAsset(courseId,entry.assetRefs?.image,version):word.image}
 }
 export function getCourseWord(courseId:string,id:string){const c=courseRegistry[courseId],entry=c?.vocabulary.find(w=>w.id===id),canonical=wordById[id];if(!entry)return canonical;const word=entryWord(entry,c,assetId=>resolveCourseAsset(courseId,assetId));return {...canonical,...word,audio:word.audio||canonical?.audio||'',ipa:word.ipa||canonical?.ipa||'',phonics:word.phonics.length?word.phonics:canonical?.phonics||[],phonemes:word.phonemes.length?word.phonemes:canonical?.phonemes||[],syllables:word.syllables.length?word.syllables:canonical?.syllables||[],distractors:canonical?.distractors||[],acceptedSpellings:[...new Set([...(canonical?.acceptedSpellings||[]),...(word.acceptedSpellings||[])])]}}
 export const courseSnapshot=(id:string,version:string)=>versions.get(id+'@'+version)||courseRegistry[id]
@@ -53,6 +60,7 @@ export function loadCourseRegistry(){
  for(const id of Object.keys(sourceMappings))delete sourceMappings[id]
  versions.clear();assetUrls.clear()
  registerCourse(starterPack);registerCourse(original as CoursePack)
+ for(const pack of localCourses){registerCourse(pack,id=>{const asset=pack.assets.find(a=>a.id===id);return asset?(asset.sourceId==='wordpal-original-audio'?'/static/audio/':'/static/local-master-audio/')+asset.path.split('/').pop():''});archiveStatus[pack.courseId]=readStorage<boolean>('wordpal.content.archive.'+pack.courseId,false)}
  archiveStatus['original-primary']=readStorage<boolean>('wordpal.content.archive.original-primary',false)
  const catalog=readStorage<{key:string;previousKey?:string;versions?:{key:string;aliases:Record<string,string>}[];archived:boolean;aliases?:Record<string,string>;previousAliases?:Record<string,string>}[]>('wordpal.content.catalog.v2',[])
  for(const record of catalog){try{for(const version of record.versions||[]){const older=readStorage<CoursePack|null>(version.key,null);if(older)registerCourse(older,()=>'',version.aliases)}if(record.previousKey){const previous=readStorage<CoursePack|null>(record.previousKey,null);if(previous)registerCourse(previous,()=>'',record.previousAliases)}const pack=readStorage<CoursePack|null>(record.key,null);if(pack){registerCourse(pack,()=>'',record.aliases);archiveStatus[pack.courseId]=record.archived}}catch{ /* Invalid local candidates do not replace usable built-in courses. */ }}

@@ -7,6 +7,7 @@ export interface Word {
   audio: string; image: string; example: string; unit: string; lesson: string
   difficulty: number; distractors: string[]
   acceptedSpellings?: string[]; senseId?:string; sourceId?:string
+  phoneticUK?:string;phoneticUS?:string;audioUK?:string;audioUS?:string;examples?:{en:string;zh:string}[];tags?:string[];learningLevel?:number
 }
 export interface Lesson { id: string; name: string; unit: string; wordIds: string[];courseId?:string;unitId?:string;activities?:string[];storyId?:string;phonicsRuleIds?:string[];examples?:Record<string,string> }
 export interface MemoryCard {

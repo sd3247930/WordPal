@@ -44,7 +44,7 @@ test('宠物切换和喂养不影响 SRS，数据删除需家长验证与明确�
 })
 test('键盘快捷键与焦点行为，大字体和减少动效',async({page})=>{
  await setAppearance(page,'soft','light',{largeText:true,reducedMotion:true});await go(page,'home');await expect(app(page)).toHaveClass(/large-text/);await expect(app(page)).toHaveClass(/reduce-motion/)
- await page.locator('.hero-cta').click();await page.locator('body').click({position:{x:5,y:5}});await page.keyboard.press('Enter');await expect(page.locator('.rating-grid')).toBeVisible();await page.keyboard.press('3');await expect(page.locator('.answer-feedback')).toBeVisible();await page.keyboard.press('ArrowRight');expect((await database(page)).session.index).toBe(1)
+ await page.locator('.hero-cta').click();await expect(page.locator('.learn-workspace')).toBeVisible();await page.locator('body').click({position:{x:5,y:5}});await page.keyboard.press('Enter');await expect(page.locator('.rating-grid')).toBeVisible();await page.keyboard.press('3');await expect(page.locator('.answer-feedback')).toBeVisible();await page.keyboard.press('ArrowRight');expect((await database(page)).session.index).toBe(1)
  await page.keyboard.press('Control+3');await expect(page.locator('.pet-workspace')).toBeVisible()
 })
 test('五档窗口与手机平板横竖屏无水平溢出，导航合适',async({page})=>{
@@ -54,8 +54,8 @@ test('五档窗口与手机平板横竖屏无水平溢出，导航合适',async(
   if(width<600)await expect(page.locator('.bottom-nav')).toBeVisible();else await expect(page.locator('.sidebar')).toBeVisible()
  }
 })
-test('没有外部统计、广告或业务请求',async({page})=>{
- const external:string[]=[];page.on('request',request=>{if(/^https?:/.test(request.url())&&!request.url().startsWith('http://localhost:5173'))external.push(request.url())})
+test('没有外部统计、广告或业务请求',async({page,baseURL})=>{
+ const external:string[]=[];page.on('request',request=>{if(/^https?:/.test(request.url())&&new URL(request.url()).origin!==new URL(baseURL!).origin)external.push(request.url())})
  for(const screen of ['home','learn','pet','parent','settings'])await go(page,screen)
  expect(external).toEqual([])
 })

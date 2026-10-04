@@ -12,6 +12,8 @@ const forbiddenBinary = /\.(?:pem|key|p12|pfx|jks|keystore|mobileprovision|crt|c
 const media = new Set(['.png','.jpg','.jpeg','.webp','.wav','.mp3','.ogg','.ico','.woff','.woff2','.ttf'])
 // Reviewed public DCloud release IDs; only exempt version values in manifests.
 const compilerBuildIds = new Set([['50204','20260813003'].join(''),['50206','20260917001'].join('')])
+// Reviewed public source commit; numeric runs inside this exact Git SHA are not accounts.
+const publicVocabularyRevision=['5dd252c7df0e698','76442492814428','c5fc6d63880'].join('')
 const rules = [
  ['credential assignment', /["']?\b(?:api[_-]?key|access[_-]?key|secret[_-]?key|app[_-]?secret|client[_-]?secret|private[_-]?key|auth[_-]?token|access[_-]?token|refresh[_-]?token|_authToken|password|passwd|pwd|pin)\b["']?\s*[:=]\s*(["'])([^"'\r\n]+)\1/gi],
  ['numeric credential', /["']?\b(?:password|passwd|pwd|pin)\b["']?\s*[:=]\s*(\d+)/gi],
@@ -37,6 +39,7 @@ export function forbiddenPath(name) {
 }
 
 function exempt(label,match,name) {
+ if(label==='identity/account digits'&&name==='tools/master-vocabulary/index.ts'){const start=match.input.lastIndexOf('\n',match.index)+1,end=match.input.indexOf('\n',match.index);return match.input.slice(start,end<0?undefined:end).trim()==="const revision='"+publicVocabularyRevision+"'"}
  if(label==='email address')return /@(?:example\.(?:com|org)|[^@]*\.invalid|users\.noreply\.github\.com)$/i.test(match[0])
  if(label==='identity/account digits' && /(?:^|\/)package(?:-lock)?\.json$/.test(name))return compilerBuildIds.has(match[0]) && match.input.slice(match.index-6,match.index)==='3.0.0-'
  if(label==='credential assignment')return /^(?:YOUR_[A-Z_]+|<[^>]+>|\$\{[^}]+\})$/.test(match[2])

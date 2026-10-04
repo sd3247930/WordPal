@@ -21,7 +21,7 @@
 <script setup lang="ts">
 import WPSegmentedButton from '../../components/button/WPSegmentedButton.vue'
 import {useCourseStore} from '../../stores/course'
-import {courseMemberships} from '../../services/content/ContentRegistry'
+import {courseMemberships,getCourseWord} from '../../services/content/ContentRegistry'
 import WPActionTile from "../../components/button/WPActionTile.vue"
 
 import {computed,ref,watch,onUnmounted} from 'vue'
@@ -48,7 +48,7 @@ const filters=computed(()=>[{id:'due' as const,name:'到期复习',short:'到期
 const list=computed(()=>book.list(filter.value,query.value,unitScope.value))
 const pages=computed(()=>Math.max(1,Math.ceil(list.value.length/30))),pageWords=computed(()=>list.value.slice(pageIndex.value*30,pageIndex.value*30+30))
 watch([filter,query,scope,unitIndex],()=>{pageIndex.value=0})
-const detail=computed(()=>{const word=wordById[selected.value];if(!word)return undefined;return {...word,example:courseMemberships(word.id).find(m=>m.courseId===course.currentId)?.example||word.example}})
+const detail=computed(()=>{if(!wordById[selected.value])return undefined;const word=getCourseWord(course.currentId,selected.value);return {...word,example:courseMemberships(word.id).find(m=>m.courseId===course.currentId)?.example||word.example}})
 function selectFilter(id:WordbookFilter){filter.value=id}
 function open(id:string){selected.value=id;sheetOpen.value=true}
 function begin(){learning.start();navigate('learn')}

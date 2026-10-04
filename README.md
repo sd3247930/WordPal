@@ -31,6 +31,12 @@ CLI 编译器与手机调试基座需匹配 5.26；更新后先停止旧编译�
 
 跨课程同义词共享一张记忆卡，课节进度独立。整课检查、词义配对、字母拼装、句子排序/填空、故事阅读及媒体练习独立保存，不重复改变 FSRS 或发奖。v1 档案通过备份、读回校验和指针切换迁移，冻结正式队列与输入；损坏最新档案时停止写入。学习备份只在本机保存和恢复，与公开课程包区分。
 
+主词库导入工具将社区 CSV 清洗为 WordPal 课程，保留来源摘要、重复引用和资源缺项，页面只读取标准课程。已在本机接入 901 条来源记录、795 个唯一词条、12 册、72 单元、210 课节，并生成 783 个离线 en-US 系统语音片段，其余复用已有音频。可按教材系列、起始年级、年级、册次与 Unit 选择；L1–L5 保持独立能力起点。来源未明确教材系列和年份，界面标记待核对，不能当作已认证的 PEP 三年级起点词库。
+
+新增连胜挑战与每题 15 秒的闪电判断，限时题显式开始、退后台或切页暂停、重启等待继续。游戏记录不改变正式排程、奖励或能力推荐；正式学习仍包括闪现、连接、听音、拼写、听写与每轮错词回看。
+
+第三方词表、生成音频和本机 ZIP 不进入公开 Git。公开检出通过安装脚本生成空目录；实际本机内容位于被忽略的 `src/content/local-courses/`、`src/static/local-master-audio/` 和 `private/master-vocabulary/`。原始数据及 QA 参考文件保留在系统临时目录。音标、双口音、例句、词图与人工审核拼读可按 schema 补充，缺项不自动编造。
+
 H5 导入、备份恢复、刷新媒体恢复与离线播放已自动验证；Android 5.26 标准基座已实测文件/ZIP 导入、重启资源读回和同词十次重播。Android 物理断网重启、iOS 与微信真机验证仍待补齐。iOS 文件选择入口保持粘贴降级；小程序构建通过不等于真机验证。
 语音评分、多孩子、云同步、Apple Pencil 属于后续扩展。
 
@@ -50,7 +56,14 @@ tests             领域测试、交互测试、截图基线
 ```sh
 npm run course:validate
 npm run course:import -- --file private/lesson.csv --course-id my-course --title 自编词表 --local-use --output private/course.json
+npm run vocabulary:import -- --local-use
 ```
+
+主词库工具使用 gh 读取固定提交，也可通过 `--file` 导入本机 CSV；非固定摘要的文件会记录为本机未核对来源。生成音频需要 Windows 离线英语系统语音。开发运行自动使用本机词库，可设置 `VITE_WORDPAL_LOCAL_CONTENT=0` 隔离；包含这些私用资源的发行构建必须显式设置 `VITE_WORDPAL_LOCAL_CONTENT=1`，该开关只表示构建本机测试包，不授予再分发许可。公开发行应从不含私用资源的干净检出构建。
+
+数据结构参考 [pep-english-vocabulary](https://github.com/billyjr/pep-english-vocabulary)，PEP 与音标 QA 参考 [pep-english-words](https://github.com/cyforkk/pep-english-words) 和 [english-words](https://github.com/jinronga/english-words)，未复制其未授权例句、图片或音频。架构与玩法仅借鉴通用思路，没有引入第三方应用代码。
+
+运行本机词库专属界面验证时，设置 `WORDPAL_TEST_LOCAL_CONTENT=1` 和独立的 `WORDPAL_TEST_PORT`，再执行 `npx playwright test tests/ui/master-vocabulary.spec.ts`。默认 UI 测试隔离本机内容；已占用的开发服务器应停止或改用独立测试端口。
 
 无来源与再分发许可的导入内容留在本机。ZIP 使用 fflate 0.8.3，许可见 THIRD_PARTY_NOTICES.md。
 

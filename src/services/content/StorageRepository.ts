@@ -1,4 +1,4 @@
-import {courseRegistry,archiveStatus,registerCourse,wordById,resourceStatus} from './ContentRegistry'
+import {courseRegistry,archiveStatus,registerCourse,wordById,resourceStatus,isBundledCourse} from './ContentRegistry'
 import {validateCourse,type CoursePack} from '../../../packages/content_schema/course'
 import {readStorage,writeStorage} from '../storage'
 import {sha256} from './digest'
@@ -11,7 +11,7 @@ async function commitCourse(pack:CoursePack,aliases:Record<string,string>,mediaR
  if(validateCourse(pack).some(i=>i.severity==='error'))throw new Error('课程校验未通过，请重新预览。')
  if(pack.sources.some(s=>s.rightsStatus==='pending-review'))throw new Error('请先完成本机用途与来源声明。')
  if(pack.assets.length&&!mediaReady)throw new Error('媒体课程需通过 ZIP 导入并校验资源。')
- if(['starter','original-primary'].includes(pack.courseId))throw new Error('内置课程 ID 保留，请使用新的课程 ID。')
+ if(isBundledCourse(pack.courseId))throw new Error('内置课程 ID 保留，请使用新的课程 ID。')
  validateConflicts(pack,aliases)
  const serialized=JSON.stringify(pack),key='wordpal.content.pack.'+pack.courseId+'.'+sha256(serialized).slice(0,16),catalog=readStorage<CatalogEntry[]>(CATALOG_KEY,[]),old=catalog.find(entry=>entry.courseId===pack.courseId)
  if(old&&old.key!==key){const previous=readStorage<CoursePack|null>(old.key,null);if(previous?.contentVersion===pack.contentVersion){const stable=(value:CoursePack)=>JSON.stringify({...value,sources:value.sources.map(({declaredAt,...source})=>source)});if(stable(previous)===stable(pack)&&JSON.stringify(old.aliases)===JSON.stringify(aliases))return old.key;throw new Error('该内容版本已安装且内容不同，请增加 contentVersion 后重新导入。')}}
@@ -34,7 +34,7 @@ export async function installTextCourse(pack:CoursePack,aliases:Record<string,st
 export async function installMediaCourse(pack:CoursePack,files:Record<string,Uint8Array>,aliases:Record<string,string>={},progress?:(completed:number,total:number)=>void){
  const key='wordpal.content.pack.'+pack.courseId+'.'+sha256(JSON.stringify(pack)).slice(0,16)
  if(validateCourse(pack).some(i=>i.severity==='error'))throw new Error('课程校验未通过。');validateConflicts(pack,aliases)
- if(pack.sources.some(s=>s.rightsStatus==='pending-review')||['starter','original-primary'].includes(pack.courseId))throw new Error('先确认课程来源并使用非内置课程 ID。')
+ if(pack.sources.some(s=>s.rightsStatus==='pending-review')||isBundledCourse(pack.courseId))throw new Error('先确认课程来源并使用非内置课程 ID。')
  try{
   await saveMedia(key,pack,files,progress);await readMedia(key,pack);const installedKey=await commitCourse(pack,aliases,true)
   if(installedKey!==key){await readMedia(installedKey,pack);await discardUnreferencedCandidate(key,pack)}
@@ -50,4 +50,4 @@ export async function hydrateMedia(){for(const entry of readStorage<CatalogEntry
 export function setArchived(courseId:string,archived:boolean){if(courseId==='starter')throw new Error('默认兼容课程需保留。');const catalog=readStorage<CatalogEntry[]>(CATALOG_KEY,[]);if(!catalog.some(e=>e.courseId===courseId)){if(courseRegistry[courseId]){writeStorage('wordpal.content.archive.'+courseId,archived);archiveStatus[courseId]=archived;return}throw new Error('课程不存在。')}writeStorage(CATALOG_KEY,catalog.map(e=>e.courseId===courseId?{...e,archived}:e));archiveStatus[courseId]=archived}
 export async function rollbackCourse(courseId:string){const catalog=readStorage<CatalogEntry[]>(CATALOG_KEY,[]),entry=catalog.find(e=>e.courseId===courseId);if(!entry?.previousKey)throw new Error('没有可恢复的上一内容版本。');const pack=readStorage<CoursePack|null>(entry.previousKey,null);if(!pack||validateCourse(pack).some(i=>i.severity==='error'))throw new Error('上一内容版本无法读取。');const aliases=entry.previousAliases||{};validateConflicts(pack,aliases);if(pack.assets.length)await readMedia(entry.previousKey,pack);writeStorage(CATALOG_KEY,catalog.map(e=>e===entry?{...e,key:entry.previousKey!,previousKey:entry.key,aliases,previousAliases:entry.aliases}:e));registerCourse(pack,id=>mediaUrl(entry.previousKey!,id,pack),aliases)}
 export async function exportCourse(courseId:string){const pack=courseRegistry[courseId];if(!pack||validateCourse(pack,{publicUse:true}).some(i=>i.severity==='error'))throw new Error('这份课程仅允许本机使用，不能公开导出。');const entry=readStorage<CatalogEntry[]>(CATALOG_KEY,[]).find(e=>e.courseId===courseId);const files=pack.assets.length&&entry?await readMedia(entry.key,pack):{};assertPublicMedia(pack,files);return {pack,files}}
-export async function clearInstalledCourses(){const catalog=readStorage<CatalogEntry[]>(CATALOG_KEY,[]);for(const entry of catalog)for(const version of [{key:entry.key},...(entry.versions||[]),...(entry.previousKey?[{key:entry.previousKey}]:[])]){const pack=readStorage<CoursePack|null>(version.key,null);if(pack)await removeContentVersion(version.key,pack)}writeStorage(CATALOG_KEY,[]);uni.removeStorageSync('wordpal.content.archive.original-primary');for(const id of Object.keys(courseRegistry))if(!['starter','original-primary'].includes(id))delete courseRegistry[id];for(const id of Object.keys(archiveStatus))delete archiveStatus[id]}
+export async function clearInstalledCourses(){const catalog=readStorage<CatalogEntry[]>(CATALOG_KEY,[]);for(const entry of catalog)for(const version of [{key:entry.key},...(entry.versions||[]),...(entry.previousKey?[{key:entry.previousKey}]:[])]){const pack=readStorage<CoursePack|null>(version.key,null);if(pack)await removeContentVersion(version.key,pack)}writeStorage(CATALOG_KEY,[]);for(const id of Object.keys(courseRegistry))if(isBundledCourse(id))uni.removeStorageSync('wordpal.content.archive.'+id);for(const id of Object.keys(courseRegistry))if(!isBundledCourse(id))delete courseRegistry[id];for(const id of Object.keys(archiveStatus))delete archiveStatus[id]}

@@ -1,6 +1,8 @@
 # ===== 本机文档与私有素材：严禁提交 =====
 /docs/
 /private/
+/src/content/local-courses/
+/src/static/local-master-audio/
 
 # ===== 依赖与包管理 =====
 node_modules/

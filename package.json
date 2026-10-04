@@ -18,13 +18,17 @@
     "purity": "powershell -ExecutionPolicy Bypass -File tools/preflight-scan.ps1",
     "git:hooks": "node tools/install-git-hooks.mjs",
     "pets:export": "node tools/export-pet-assets.mjs",
-    "predev:h5": "node tools/check-compiler.mjs --dependencies-only",
-    "prebuild:h5": "node tools/check-compiler.mjs --dependencies-only",
-    "prebuild:app": "node tools/check-compiler.mjs --dependencies-only",
-    "prebuild:mp-weixin": "node tools/check-compiler.mjs --dependencies-only",
+    "predev:h5": "node tools/prepare-local-content.mjs && node tools/check-compiler.mjs --dependencies-only",
+    "prebuild:h5": "node tools/prepare-local-content.mjs --release && node tools/check-compiler.mjs --dependencies-only",
+    "prebuild:app": "node tools/prepare-local-content.mjs --release && node tools/check-compiler.mjs --dependencies-only",
+    "prebuild:mp-weixin": "node tools/prepare-local-content.mjs --release && node tools/check-compiler.mjs --dependencies-only",
     "course:import": "tsx tools/import-course/index.ts",
     "course:validate": "tsx tools/import-course/index.ts --file src/content/courses/original-primary.json --public",
-    "icons:controls": "tsx tools/export-control-icons.ts"
+    "icons:controls": "tsx tools/export-control-icons.ts",
+    "pretest": "node tools/prepare-local-content.mjs",
+    "pretypecheck": "node tools/prepare-local-content.mjs",
+    "postinstall": "node tools/prepare-local-content.mjs",
+    "vocabulary:import": "tsx tools/master-vocabulary/index.ts"
   },
   "dependencies": {
     "@dcloudio/uni-app": "3.0.0-5020620260917001",

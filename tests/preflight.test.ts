@@ -10,6 +10,12 @@ import {scanBytes,forbiddenPath,imageMetadata,runAudit} from '../tools/preflight
 const scanner=fileURLToPath(new URL('../tools/preflight-scan.mjs',import.meta.url))
 const secret=()=>['gh','p_', 'a'.repeat(32)].join('')
 const windowsPath=()=>String.fromCharCode(67,58,92)+'local'+String.fromCharCode(92)+'fixture'
+test('公开词库 Git SHA 豁免仅限审核过的整行，邻行同一数字和其他文件仍阻断',()=>{
+ const name='tools/master-vocabulary/index.ts',line=fs.readFileSync(name,'utf8').split('\n').find(row=>row.startsWith('const revision='))!,digits=line.match(/\d{16,19}/)![0]
+ assert.deepEqual(scanBytes(name,Buffer.from(line)),[])
+ assert.equal(scanBytes(name,Buffer.from(line+'\naccount = '+digits)).filter((h:any)=>h.category==='identity/account digits').length,1)
+ assert.ok(scanBytes('other.ts',Buffer.from(line)).some((h:any)=>h.category==='identity/account digits'))
+})
 function fixture(action:(root:string)=>void){
  const parent=fs.realpathSync(os.tmpdir()),root=fs.mkdtempSync(path.join(parent,'wordpal-purity-fixture-'))
  try{action(root)}finally{const resolved=fs.realpathSync(root);assert.equal(path.dirname(resolved),parent);assert.ok(path.basename(resolved).startsWith('wordpal-purity-fixture-'));fs.rmSync(resolved,{recursive:true,force:true})}

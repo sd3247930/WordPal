@@ -1,29 +1,634 @@
 {
- "$schema":"http://json-schema.org/draft-07/schema#",
- "$id":"wordpal-course-v2",
- "title":"WordPal course pack v2",
- "type":"object",
- "required":["schemaVersion","courseId","contentVersion","title","route","abilityLevels","sources","vocabulary","units","assets"],
- "additionalProperties":false,
- "properties":{
-  "schemaVersion":{"const":2},"courseId":{"$ref":"#/definitions/id"},"contentVersion":{"type":"string","minLength":1},"title":{"type":"string","minLength":1},
-  "route":{"enum":["theme","textbook","phonics"]},"abilityLevels":{"type":"array","minItems":1,"uniqueItems":true,"items":{"enum":["L1","L2","L3","L4","L5"]}},
-  "grade":{"type":["integer","null"],"minimum":1,"maximum":6},"editionYear":{"type":["integer","null"],"minimum":1900,"maximum":2200},"publisher":{"type":["string","null"]},"semester":{"type":["string","null"]},
-  "sources":{"type":"array","minItems":1,"items":{"$ref":"#/definitions/source"}},
-  "vocabulary":{"type":"array","minItems":1,"maxItems":2000,"items":{"$ref":"#/definitions/word"}},
-  "units":{"type":"array","minItems":1,"items":{"$ref":"#/definitions/unit"}},
-  "assets":{"type":"array","items":{"$ref":"#/definitions/asset"}},
-  "stories":{"type":"array","items":{"$ref":"#/definitions/story"}},
-  "phonicsRules":{"type":"array","items":{"$ref":"#/definitions/rule"}}
- },
- "definitions":{
-  "id":{"type":"string","pattern":"^[a-z][a-z0-9-]*$"},"textList":{"type":"array","items":{"type":"string"}},"idList":{"type":"array","uniqueItems":true,"items":{"$ref":"#/definitions/id"}},
-  "source":{"type":"object","required":["id","type","rightsStatus","attribution"],"additionalProperties":false,"properties":{"id":{"$ref":"#/definitions/id"},"type":{"enum":["author-created","authorized","user-provided"]},"rightsStatus":{"enum":["pending-review","private-use-declared","redistribution-approved"]},"attribution":{"type":"string","minLength":1},"url":{"type":"string"},"revision":{"type":"string"},"textLicense":{"type":["string","null"]},"imageLicense":{"type":["string","null"]},"audioLicense":{"type":["string","null"]},"declaredAt":{"type":"string"},"fileSha256":{"type":"string","pattern":"^[a-f0-9]{64}$"}}},
-  "word":{"type":"object","required":["id","language","lemma","meaning","sourceId"],"additionalProperties":false,"properties":{"id":{"$ref":"#/definitions/id"},"language":{"const":"en"},"lemma":{"type":"string","minLength":1},"meaning":{"type":"string","minLength":1},"pos":{"type":"string"},"ipa":{"type":"string"},"senseId":{"type":"string"},"sourceId":{"$ref":"#/definitions/id"},"sourceWordId":{"type":"string"},"phonics":{"$ref":"#/definitions/textList"},"phonemes":{"$ref":"#/definitions/textList"},"syllables":{"$ref":"#/definitions/textList"},"example":{"type":"string"},"acceptedSpellings":{"$ref":"#/definitions/textList"},"audio":{"type":"string"},"image":{"type":"string"},"assetRefs":{"type":"object","additionalProperties":false,"properties":{"audio":{"$ref":"#/definitions/id"},"image":{"$ref":"#/definitions/id"}}}}},
-  "lesson":{"type":"object","required":["id","title","wordIds"],"additionalProperties":false,"properties":{"id":{"$ref":"#/definitions/id"},"title":{"type":"string","minLength":1},"wordIds":{"allOf":[{"$ref":"#/definitions/idList"},{"minItems":1}]},"objectives":{"$ref":"#/definitions/textList"},"activities":{"$ref":"#/definitions/textList"},"storyId":{"$ref":"#/definitions/id"},"examples":{"type":"object","additionalProperties":{"type":"string"}},"phonicsRuleIds":{"$ref":"#/definitions/idList"}}},
-  "unit":{"type":"object","required":["id","title","lessons"],"additionalProperties":false,"properties":{"id":{"$ref":"#/definitions/id"},"title":{"type":"string","minLength":1},"lessons":{"type":"array","minItems":1,"items":{"$ref":"#/definitions/lesson"}}}},
-  "asset":{"type":"object","required":["id","path","mediaType","bytes","sha256","sourceId","license"],"additionalProperties":false,"properties":{"id":{"$ref":"#/definitions/id"},"path":{"type":"string","minLength":1},"mediaType":{"enum":["audio/wav","audio/mpeg","image/png","image/jpeg"]},"bytes":{"type":"integer","minimum":1,"maximum":5242880},"sha256":{"type":"string","pattern":"^[a-f0-9]{64}$"},"sourceId":{"$ref":"#/definitions/id"},"license":{"type":"string","minLength":1}}},
-  "story":{"type":"object","required":["id","title","sentences","targetWordIds"],"additionalProperties":false,"properties":{"id":{"$ref":"#/definitions/id"},"title":{"type":"string"},"sentences":{"allOf":[{"$ref":"#/definitions/textList"},{"minItems":1}]},"targetWordIds":{"$ref":"#/definitions/idList"},"audioRef":{"$ref":"#/definitions/id"},"questions":{"type":"array","items":{"type":"object","required":["question","options","answer"],"additionalProperties":false,"properties":{"question":{"type":"string"},"options":{"type":"array","minItems":2,"items":{"type":"string"}},"answer":{"type":"integer","minimum":0}}}}}},
-  "rule":{"type":"object","required":["id","graphemes","phonemes","explanation","exampleWordIds"],"additionalProperties":false,"properties":{"id":{"$ref":"#/definitions/id"},"graphemes":{"$ref":"#/definitions/textList"},"phonemes":{"$ref":"#/definitions/textList"},"explanation":{"type":"string"},"exampleWordIds":{"$ref":"#/definitions/idList"},"prerequisites":{"$ref":"#/definitions/idList"}}}
- }
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "wordpal-course-v2",
+  "title": "WordPal course pack v2",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "courseId",
+    "contentVersion",
+    "title",
+    "route",
+    "abilityLevels",
+    "sources",
+    "vocabulary",
+    "units",
+    "assets"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": {
+      "const": 2
+    },
+    "courseId": {
+      "$ref": "#/definitions/id"
+    },
+    "contentVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "route": {
+      "enum": [
+        "theme",
+        "textbook",
+        "phonics"
+      ]
+    },
+    "abilityLevels": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "L1",
+          "L2",
+          "L3",
+          "L4",
+          "L5"
+        ]
+      }
+    },
+    "grade": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "maximum": 6
+    },
+    "editionYear": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1900,
+      "maximum": 2200
+    },
+    "publisher": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "semester": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/source"
+      }
+    },
+    "vocabulary": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2000,
+      "items": {
+        "$ref": "#/definitions/word"
+      }
+    },
+    "units": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/unit"
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/asset"
+      }
+    },
+    "stories": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/story"
+      }
+    },
+    "phonicsRules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/rule"
+      }
+    },
+    "edition": {
+      "type": "string",
+      "minLength": 1
+    },
+    "startGrade": {
+      "enum": [
+        1,
+        3,
+        null
+      ]
+    }
+  },
+  "definitions": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "textList": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "idList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions/id"
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "rightsStatus",
+        "attribution"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "type": {
+          "enum": [
+            "author-created",
+            "authorized",
+            "user-provided"
+          ]
+        },
+        "rightsStatus": {
+          "enum": [
+            "pending-review",
+            "private-use-declared",
+            "redistribution-approved"
+          ]
+        },
+        "attribution": {
+          "type": "string",
+          "minLength": 1
+        },
+        "url": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "textLicense": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "imageLicense": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "audioLicense": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "declaredAt": {
+          "type": "string"
+        },
+        "fileSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "word": {
+      "type": "object",
+      "required": [
+        "id",
+        "language",
+        "lemma",
+        "meaning",
+        "sourceId"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "language": {
+          "const": "en"
+        },
+        "lemma": {
+          "type": "string",
+          "minLength": 1
+        },
+        "meaning": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pos": {
+          "type": "string"
+        },
+        "ipa": {
+          "type": "string"
+        },
+        "senseId": {
+          "type": "string"
+        },
+        "sourceId": {
+          "$ref": "#/definitions/id"
+        },
+        "sourceWordId": {
+          "type": "string"
+        },
+        "phonics": {
+          "$ref": "#/definitions/textList"
+        },
+        "phonemes": {
+          "$ref": "#/definitions/textList"
+        },
+        "syllables": {
+          "$ref": "#/definitions/textList"
+        },
+        "example": {
+          "type": "string"
+        },
+        "acceptedSpellings": {
+          "$ref": "#/definitions/textList"
+        },
+        "audio": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "assetRefs": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "audio": {
+              "$ref": "#/definitions/id"
+            },
+            "image": {
+              "$ref": "#/definitions/id"
+            }
+          }
+        },
+        "phoneticUK": {
+          "type": "string"
+        },
+        "phoneticUS": {
+          "type": "string"
+        },
+        "audioUK": {
+          "type": "string"
+        },
+        "audioUS": {
+          "type": "string"
+        },
+        "learningLevel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "tags": {
+          "$ref": "#/definitions/textList"
+        },
+        "examples": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "en",
+              "zh"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "en": {
+                "type": "string",
+                "minLength": 1
+              },
+              "zh": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "lesson": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "wordIds"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "wordIds": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/idList"
+            },
+            {
+              "minItems": 1
+            }
+          ]
+        },
+        "objectives": {
+          "$ref": "#/definitions/textList"
+        },
+        "activities": {
+          "$ref": "#/definitions/textList"
+        },
+        "storyId": {
+          "$ref": "#/definitions/id"
+        },
+        "examples": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "phonicsRuleIds": {
+          "$ref": "#/definitions/idList"
+        }
+      }
+    },
+    "unit": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "lessons"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "lessons": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/lesson"
+          }
+        },
+        "order": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "asset": {
+      "type": "object",
+      "required": [
+        "id",
+        "path",
+        "mediaType",
+        "bytes",
+        "sha256",
+        "sourceId",
+        "license"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mediaType": {
+          "enum": [
+            "audio/wav",
+            "audio/mpeg",
+            "image/png",
+            "image/jpeg"
+          ]
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5242880
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        },
+        "sourceId": {
+          "$ref": "#/definitions/id"
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "story": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "sentences",
+        "targetWordIds"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "title": {
+          "type": "string"
+        },
+        "sentences": {
+          "allOf": [
+            {
+              "$ref": "#/definitions/textList"
+            },
+            {
+              "minItems": 1
+            }
+          ]
+        },
+        "targetWordIds": {
+          "$ref": "#/definitions/idList"
+        },
+        "audioRef": {
+          "$ref": "#/definitions/id"
+        },
+        "questions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "question",
+              "options",
+              "answer"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "question": {
+                "type": "string"
+              },
+              "options": {
+                "type": "array",
+                "minItems": 2,
+                "items": {
+                  "type": "string"
+                }
+              },
+              "answer": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "rule": {
+      "type": "object",
+      "required": [
+        "id",
+        "graphemes",
+        "phonemes",
+        "explanation",
+        "exampleWordIds"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/id"
+        },
+        "graphemes": {
+          "$ref": "#/definitions/textList"
+        },
+        "phonemes": {
+          "$ref": "#/definitions/textList"
+        },
+        "explanation": {
+          "type": "string"
+        },
+        "exampleWordIds": {
+          "$ref": "#/definitions/idList"
+        },
+        "prerequisites": {
+          "$ref": "#/definitions/idList"
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "route": {
+            "const": "textbook"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "publisher",
+          "grade",
+          "semester"
+        ],
+        "properties": {
+          "publisher": {
+            "type": "string",
+            "minLength": 1
+          },
+          "grade": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 6
+          },
+          "semester": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "anyOf": [
+          {
+            "required": [
+              "editionYear"
+            ],
+            "properties": {
+              "editionYear": {
+                "type": "integer",
+                "minimum": 1900,
+                "maximum": 2200
+              }
+            }
+          },
+          {
+            "required": [
+              "edition"
+            ],
+            "properties": {
+              "edition": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "startGrade"
+        ],
+        "properties": {
+          "startGrade": {
+            "const": 3
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "grade": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 3,
+            "maximum": 6
+          }
+        }
+      }
+    }
+  ]
 }

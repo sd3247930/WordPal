@@ -9,8 +9,9 @@ async function main(){
  const meta=defaultImportMetadata();meta.courseId=args.includes('--course-id')?value('--course-id'):meta.courseId;meta.title=args.includes('--title')?value('--title'):meta.title;meta.declared=args.includes('--local-use')
  if(args.includes('--content-version'))meta.contentVersion=value('--content-version')
  if(args.includes('--route'))meta.route=value('--route') as typeof meta.route;if(args.includes('--level'))meta.level=value('--level')
- for(const field of ['publisher','semester'] as const)if(args.includes('--'+field))meta[field]=value('--'+field)
+ for(const field of ['publisher','semester','edition'] as const)if(args.includes('--'+field))meta[field]=value('--'+field)
  for(const [arg,field] of [['--edition-year','editionYear'],['--grade','grade']] as const)if(args.includes(arg))meta[field]=Number(value(arg))
+ if(args.includes('--start-grade'))meta.startGrade=Number(value('--start-grade')) as 1|3
  const text=readFileSync(file,'utf8'),format=/\.md$/i.test(file)?'markdown':/\.csv$/i.test(file)?'csv':'json',preview=previewImport(text,format,meta,{})
  const issues=[...preview.issues,...(preview.pack&&args.includes('--public')?validateCourse(preview.pack,{publicUse:true}):[])]
  for(const issue of issues)console.log(`${issue.severity} 第 ${issue.line} 行 ${issue.field}：${issue.message} ${issue.fix}`)
