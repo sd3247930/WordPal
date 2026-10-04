@@ -8,5 +8,8 @@ import WPPetCompanion from '../../src/components/wp-pet-companion/WPPetCompanion
 import WPTaskCard from '../../src/components/wp-task-card/WPTaskCard.vue'
 import WPThemePreview from '../../src/components/wp-theme-preview/WPThemePreview.vue'
 import WPPetAsset from '../../src/components/WPPetAsset.vue'
+import WPActionTile from '../../src/components/button/WPActionTile.vue'
+import WPIconButton from '../../src/components/button/WPIconButton.vue'
+import WPSegmentedButton from '../../src/components/button/WPSegmentedButton.vue'
 export {WPButton,WPCard,WPProgress,WPWordCard,WPPetAvatar,WPPetCompanion,WPTaskCard,WPThemePreview,WPPetAsset}
-export function installUIKit(app:App){Object.entries({WPButton,WPCard,WPProgress,WPWordCard,WPPetAvatar,WPPetCompanion,WPTaskCard,WPThemePreview,WPPetAsset}).forEach(([name,component])=>app.component(name,component))}
+export function installUIKit(app:App){Object.entries({WPButton,WPCard,WPProgress,WPWordCard,WPPetAvatar,WPPetCompanion,WPTaskCard,WPThemePreview,WPPetAsset,WPActionTile,WPIconButton,WPSegmentedButton}).forEach(([name,component])=>app.component(name,component))}

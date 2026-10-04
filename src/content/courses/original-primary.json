@@ -1,0 +1,2406 @@
+{
+  "schemaVersion": 2,
+  "courseId": "original-primary",
+  "contentVersion": "1.0.0",
+  "title": "原创小学主题英语 · 120 词",
+  "route": "theme",
+  "abilityLevels": [
+    "L1",
+    "L2",
+    "L3"
+  ],
+  "sources": [
+    {
+      "id": "wordpal-primary-original",
+      "type": "author-created",
+      "rightsStatus": "redistribution-approved",
+      "textLicense": "原创教学文本，可在 WordPal 项目中使用。",
+      "attribution": "WordPal 原创主题教学文本；非出版社教材",
+      "revision": "original-primary-1"
+    }
+  ],
+  "vocabulary": [
+    {
+      "id": "cat",
+      "language": "en",
+      "lemma": "cat",
+      "meaning": "猫",
+      "pos": "n.",
+      "ipa": "/kæt/",
+      "phonics": [
+        "c",
+        "a",
+        "t"
+      ],
+      "phonemes": [
+        "/k/",
+        "/æ/",
+        "/t/"
+      ],
+      "syllables": [
+        "cat"
+      ],
+      "audio": "/static/audio/cat.wav",
+      "example": "The cat is on the mat.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "cat"
+    },
+    {
+      "id": "dog",
+      "language": "en",
+      "lemma": "dog",
+      "meaning": "狗",
+      "pos": "n.",
+      "ipa": "/dɒɡ/",
+      "phonics": [
+        "d",
+        "o",
+        "g"
+      ],
+      "phonemes": [
+        "/d/",
+        "/ɒ/",
+        "/ɡ/"
+      ],
+      "syllables": [
+        "dog"
+      ],
+      "audio": "/static/audio/dog.wav",
+      "example": "I play with my dog.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "dog"
+    },
+    {
+      "id": "fish",
+      "language": "en",
+      "lemma": "fish",
+      "meaning": "鱼",
+      "pos": "n.",
+      "ipa": "/fɪʃ/",
+      "phonics": [
+        "f",
+        "i",
+        "sh"
+      ],
+      "phonemes": [
+        "/f/",
+        "/ɪ/",
+        "/ʃ/"
+      ],
+      "syllables": [
+        "fish"
+      ],
+      "audio": "/static/audio/fish.wav",
+      "example": "The fish is in the water.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "fish"
+    },
+    {
+      "id": "bird",
+      "language": "en",
+      "lemma": "bird",
+      "meaning": "鸟",
+      "pos": "n.",
+      "ipa": "/bɜːd/",
+      "phonics": [
+        "b",
+        "ir",
+        "d"
+      ],
+      "phonemes": [
+        "/b/",
+        "/ɜː/",
+        "/d/"
+      ],
+      "syllables": [
+        "bird"
+      ],
+      "audio": "/static/audio/bird.wav",
+      "example": "A bird can fly.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "bird"
+    },
+    {
+      "id": "duck",
+      "language": "en",
+      "lemma": "duck",
+      "meaning": "鸭子",
+      "pos": "n.",
+      "ipa": "/dʌk/",
+      "phonics": [
+        "d",
+        "u",
+        "ck"
+      ],
+      "phonemes": [
+        "/d/",
+        "/ʌ/",
+        "/k/"
+      ],
+      "syllables": [
+        "duck"
+      ],
+      "audio": "/static/audio/duck.wav",
+      "example": "The duck can swim.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "duck"
+    },
+    {
+      "id": "bear",
+      "language": "en",
+      "lemma": "bear",
+      "meaning": "熊",
+      "pos": "n.",
+      "example": "The bear is big.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "bear"
+    },
+    {
+      "id": "lion",
+      "language": "en",
+      "lemma": "lion",
+      "meaning": "狮子",
+      "pos": "n.",
+      "example": "The lion has a long tail.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "lion"
+    },
+    {
+      "id": "tiger",
+      "language": "en",
+      "lemma": "tiger",
+      "meaning": "老虎",
+      "pos": "n.",
+      "example": "The tiger can run.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "tiger"
+    },
+    {
+      "id": "horse",
+      "language": "en",
+      "lemma": "horse",
+      "meaning": "马",
+      "pos": "n.",
+      "example": "I see a horse.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "horse"
+    },
+    {
+      "id": "sheep",
+      "language": "en",
+      "lemma": "sheep",
+      "meaning": "绵羊",
+      "pos": "n.",
+      "example": "The sheep eats grass.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "sheep"
+    },
+    {
+      "id": "goat",
+      "language": "en",
+      "lemma": "goat",
+      "meaning": "山羊",
+      "pos": "n.",
+      "example": "The goat is on the hill.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "goat"
+    },
+    {
+      "id": "cow",
+      "language": "en",
+      "lemma": "cow",
+      "meaning": "奶牛",
+      "pos": "n.",
+      "example": "The cow gives us milk.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "cow"
+    },
+    {
+      "id": "pig",
+      "language": "en",
+      "lemma": "pig",
+      "meaning": "猪",
+      "pos": "n.",
+      "example": "The pig is pink.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "pig"
+    },
+    {
+      "id": "rabbit",
+      "language": "en",
+      "lemma": "rabbit",
+      "meaning": "兔子",
+      "pos": "n.",
+      "example": "The rabbit has long ears.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "rabbit"
+    },
+    {
+      "id": "mouse",
+      "language": "en",
+      "lemma": "mouse",
+      "meaning": "老鼠",
+      "pos": "n.",
+      "example": "The mouse is small.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "mouse"
+    },
+    {
+      "id": "monkey",
+      "language": "en",
+      "lemma": "monkey",
+      "meaning": "猴子",
+      "pos": "n.",
+      "example": "The monkey likes bananas.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "monkey"
+    },
+    {
+      "id": "elephant",
+      "language": "en",
+      "lemma": "elephant",
+      "meaning": "大象",
+      "pos": "n.",
+      "example": "The elephant has a long nose.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "elephant"
+    },
+    {
+      "id": "panda",
+      "language": "en",
+      "lemma": "panda",
+      "meaning": "熊猫",
+      "pos": "n.",
+      "example": "The panda is black and white.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "panda"
+    },
+    {
+      "id": "frog",
+      "language": "en",
+      "lemma": "frog",
+      "meaning": "青蛙",
+      "pos": "n.",
+      "example": "The frog can jump.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "frog"
+    },
+    {
+      "id": "butterfly",
+      "language": "en",
+      "lemma": "butterfly",
+      "meaning": "蝴蝶",
+      "pos": "n.",
+      "example": "A butterfly is on the flower.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "butterfly"
+    },
+    {
+      "id": "apple",
+      "language": "en",
+      "lemma": "apple",
+      "meaning": "苹果",
+      "pos": "n.",
+      "ipa": "/ˈæp.əl/",
+      "phonics": [
+        "a",
+        "pp",
+        "le"
+      ],
+      "phonemes": [
+        "/æ/",
+        "/p/",
+        "/əl/"
+      ],
+      "syllables": [
+        "ap",
+        "ple"
+      ],
+      "audio": "/static/audio/apple.wav",
+      "example": "I eat an apple.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "apple"
+    },
+    {
+      "id": "egg",
+      "language": "en",
+      "lemma": "egg",
+      "meaning": "鸡蛋",
+      "pos": "n.",
+      "ipa": "/eɡ/",
+      "phonics": [
+        "e",
+        "gg"
+      ],
+      "phonemes": [
+        "/e/",
+        "/ɡ/"
+      ],
+      "syllables": [
+        "egg"
+      ],
+      "audio": "/static/audio/egg.wav",
+      "example": "I have an egg.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "egg"
+    },
+    {
+      "id": "milk",
+      "language": "en",
+      "lemma": "milk",
+      "meaning": "牛奶",
+      "pos": "n.",
+      "ipa": "/mɪlk/",
+      "phonics": [
+        "m",
+        "i",
+        "l",
+        "k"
+      ],
+      "phonemes": [
+        "/m/",
+        "/ɪ/",
+        "/l/",
+        "/k/"
+      ],
+      "syllables": [
+        "milk"
+      ],
+      "audio": "/static/audio/milk.wav",
+      "example": "I drink milk.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "milk"
+    },
+    {
+      "id": "bread",
+      "language": "en",
+      "lemma": "bread",
+      "meaning": "面包",
+      "pos": "n.",
+      "ipa": "/bred/",
+      "phonics": [
+        "b",
+        "r",
+        "ea",
+        "d"
+      ],
+      "phonemes": [
+        "/b/",
+        "/r/",
+        "/e/",
+        "/d/"
+      ],
+      "syllables": [
+        "bread"
+      ],
+      "audio": "/static/audio/bread.wav",
+      "example": "This bread is soft.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "bread"
+    },
+    {
+      "id": "cake",
+      "language": "en",
+      "lemma": "cake",
+      "meaning": "蛋糕",
+      "pos": "n.",
+      "ipa": "/keɪk/",
+      "phonics": [
+        "c",
+        "a",
+        "ke"
+      ],
+      "phonemes": [
+        "/k/",
+        "/eɪ/",
+        "/k/"
+      ],
+      "syllables": [
+        "cake"
+      ],
+      "audio": "/static/audio/cake.wav",
+      "example": "I like this cake.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "cake"
+    },
+    {
+      "id": "rice",
+      "language": "en",
+      "lemma": "rice",
+      "meaning": "米饭",
+      "pos": "n.",
+      "example": "I eat rice for lunch.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "rice"
+    },
+    {
+      "id": "water",
+      "language": "en",
+      "lemma": "water",
+      "meaning": "水",
+      "pos": "n.",
+      "example": "I drink water every day.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "water"
+    },
+    {
+      "id": "banana",
+      "language": "en",
+      "lemma": "banana",
+      "meaning": "香蕉",
+      "pos": "n.",
+      "example": "This banana is yellow.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "banana"
+    },
+    {
+      "id": "orange",
+      "language": "en",
+      "lemma": "orange",
+      "meaning": "橙子",
+      "pos": "n.",
+      "example": "I have an orange.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "orange"
+    },
+    {
+      "id": "pear",
+      "language": "en",
+      "lemma": "pear",
+      "meaning": "梨",
+      "pos": "n.",
+      "example": "The pear is sweet.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "pear"
+    },
+    {
+      "id": "grape",
+      "language": "en",
+      "lemma": "grape",
+      "meaning": "葡萄",
+      "pos": "n.",
+      "example": "I like grapes.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "grape"
+    },
+    {
+      "id": "meat",
+      "language": "en",
+      "lemma": "meat",
+      "meaning": "肉",
+      "pos": "n.",
+      "example": "We have meat for dinner.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "meat"
+    },
+    {
+      "id": "chicken",
+      "language": "en",
+      "lemma": "chicken",
+      "meaning": "鸡肉",
+      "pos": "n.",
+      "example": "I like chicken and rice.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "chicken"
+    },
+    {
+      "id": "juice",
+      "language": "en",
+      "lemma": "juice",
+      "meaning": "果汁",
+      "pos": "n.",
+      "example": "This is orange juice.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "juice"
+    },
+    {
+      "id": "tea",
+      "language": "en",
+      "lemma": "tea",
+      "meaning": "茶",
+      "pos": "n.",
+      "example": "The tea is warm.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "tea"
+    },
+    {
+      "id": "potato",
+      "language": "en",
+      "lemma": "potato",
+      "meaning": "土豆",
+      "pos": "n.",
+      "example": "We cook a potato.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "potato"
+    },
+    {
+      "id": "tomato",
+      "language": "en",
+      "lemma": "tomato",
+      "meaning": "西红柿",
+      "pos": "n.",
+      "example": "The tomato is red.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "tomato"
+    },
+    {
+      "id": "carrot",
+      "language": "en",
+      "lemma": "carrot",
+      "meaning": "胡萝卜",
+      "pos": "n.",
+      "example": "The rabbit likes carrots.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "carrot"
+    },
+    {
+      "id": "cheese",
+      "language": "en",
+      "lemma": "cheese",
+      "meaning": "奶酪",
+      "pos": "n.",
+      "example": "I have bread and cheese.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "cheese"
+    },
+    {
+      "id": "candy",
+      "language": "en",
+      "lemma": "candy",
+      "meaning": "糖果",
+      "pos": "n.",
+      "example": "This candy is sweet.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "candy"
+    },
+    {
+      "id": "sun",
+      "language": "en",
+      "lemma": "sun",
+      "meaning": "太阳",
+      "pos": "n.",
+      "ipa": "/sʌn/",
+      "phonics": [
+        "s",
+        "u",
+        "n"
+      ],
+      "phonemes": [
+        "/s/",
+        "/ʌ/",
+        "/n/"
+      ],
+      "syllables": [
+        "sun"
+      ],
+      "audio": "/static/audio/sun.wav",
+      "example": "The sun is warm.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "sun"
+    },
+    {
+      "id": "rain",
+      "language": "en",
+      "lemma": "rain",
+      "meaning": "雨",
+      "pos": "n.",
+      "ipa": "/reɪn/",
+      "phonics": [
+        "r",
+        "ai",
+        "n"
+      ],
+      "phonemes": [
+        "/r/",
+        "/eɪ/",
+        "/n/"
+      ],
+      "syllables": [
+        "rain"
+      ],
+      "audio": "/static/audio/rain.wav",
+      "example": "I can hear the rain.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "rain"
+    },
+    {
+      "id": "tree",
+      "language": "en",
+      "lemma": "tree",
+      "meaning": "树",
+      "pos": "n.",
+      "ipa": "/triː/",
+      "phonics": [
+        "t",
+        "r",
+        "ee"
+      ],
+      "phonemes": [
+        "/t/",
+        "/r/",
+        "/iː/"
+      ],
+      "syllables": [
+        "tree"
+      ],
+      "audio": "/static/audio/tree.wav",
+      "example": "The tree is tall.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "tree"
+    },
+    {
+      "id": "leaf",
+      "language": "en",
+      "lemma": "leaf",
+      "meaning": "叶子",
+      "pos": "n.",
+      "ipa": "/liːf/",
+      "phonics": [
+        "l",
+        "ea",
+        "f"
+      ],
+      "phonemes": [
+        "/l/",
+        "/iː/",
+        "/f/"
+      ],
+      "syllables": [
+        "leaf"
+      ],
+      "audio": "/static/audio/leaf.wav",
+      "example": "This leaf is green.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "leaf"
+    },
+    {
+      "id": "wind",
+      "language": "en",
+      "lemma": "wind",
+      "meaning": "风",
+      "pos": "n.",
+      "ipa": "/wɪnd/",
+      "phonics": [
+        "w",
+        "i",
+        "n",
+        "d"
+      ],
+      "phonemes": [
+        "/w/",
+        "/ɪ/",
+        "/n/",
+        "/d/"
+      ],
+      "syllables": [
+        "wind"
+      ],
+      "audio": "/static/audio/wind.wav",
+      "example": "The wind is gentle.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "wind"
+    },
+    {
+      "id": "moon",
+      "language": "en",
+      "lemma": "moon",
+      "meaning": "月亮",
+      "pos": "n.",
+      "example": "The moon is in the sky.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "moon"
+    },
+    {
+      "id": "star",
+      "language": "en",
+      "lemma": "star",
+      "meaning": "星星",
+      "pos": "n.",
+      "example": "I see a little star.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "star"
+    },
+    {
+      "id": "cloud",
+      "language": "en",
+      "lemma": "cloud",
+      "meaning": "云",
+      "pos": "n.",
+      "example": "The cloud is white.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "cloud"
+    },
+    {
+      "id": "snow",
+      "language": "en",
+      "lemma": "snow",
+      "meaning": "雪",
+      "pos": "n.",
+      "example": "The snow is cold.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "snow"
+    },
+    {
+      "id": "flower",
+      "language": "en",
+      "lemma": "flower",
+      "meaning": "花",
+      "pos": "n.",
+      "example": "The flower is yellow.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "flower"
+    },
+    {
+      "id": "grass",
+      "language": "en",
+      "lemma": "grass",
+      "meaning": "草",
+      "pos": "n.",
+      "example": "The grass is green.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "grass"
+    },
+    {
+      "id": "river",
+      "language": "en",
+      "lemma": "river",
+      "meaning": "河流",
+      "pos": "n.",
+      "example": "The river is long.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "river"
+    },
+    {
+      "id": "lake",
+      "language": "en",
+      "lemma": "lake",
+      "meaning": "湖",
+      "pos": "n.",
+      "example": "The lake is blue.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "lake"
+    },
+    {
+      "id": "sea",
+      "language": "en",
+      "lemma": "sea",
+      "meaning": "海",
+      "pos": "n.",
+      "example": "The sea is big.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "sea"
+    },
+    {
+      "id": "mountain",
+      "language": "en",
+      "lemma": "mountain",
+      "meaning": "山",
+      "pos": "n.",
+      "example": "The mountain is high.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "mountain"
+    },
+    {
+      "id": "sky",
+      "language": "en",
+      "lemma": "sky",
+      "meaning": "天空",
+      "pos": "n.",
+      "example": "The sky is blue.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "sky"
+    },
+    {
+      "id": "day",
+      "language": "en",
+      "lemma": "day",
+      "meaning": "白天",
+      "pos": "n.",
+      "example": "We play in the day.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "day"
+    },
+    {
+      "id": "night",
+      "language": "en",
+      "lemma": "night",
+      "meaning": "夜晚",
+      "pos": "n.",
+      "example": "We sleep at night.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "night"
+    },
+    {
+      "id": "hot",
+      "language": "en",
+      "lemma": "hot",
+      "meaning": "热的",
+      "pos": "adj.",
+      "example": "It is hot today.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "hot"
+    },
+    {
+      "id": "cold",
+      "language": "en",
+      "lemma": "cold",
+      "meaning": "冷的",
+      "pos": "adj.",
+      "example": "It is cold today.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "cold"
+    },
+    {
+      "id": "book",
+      "language": "en",
+      "lemma": "book",
+      "meaning": "书",
+      "pos": "n.",
+      "ipa": "/bʊk/",
+      "phonics": [
+        "b",
+        "oo",
+        "k"
+      ],
+      "phonemes": [
+        "/b/",
+        "/ʊ/",
+        "/k/"
+      ],
+      "syllables": [
+        "book"
+      ],
+      "audio": "/static/audio/book.wav",
+      "example": "I read a book.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "book"
+    },
+    {
+      "id": "pen",
+      "language": "en",
+      "lemma": "pen",
+      "meaning": "钢笔",
+      "pos": "n.",
+      "ipa": "/pen/",
+      "phonics": [
+        "p",
+        "e",
+        "n"
+      ],
+      "phonemes": [
+        "/p/",
+        "/e/",
+        "/n/"
+      ],
+      "syllables": [
+        "pen"
+      ],
+      "audio": "/static/audio/pen.wav",
+      "example": "This is my pen.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "pen"
+    },
+    {
+      "id": "bag",
+      "language": "en",
+      "lemma": "bag",
+      "meaning": "书包",
+      "pos": "n.",
+      "ipa": "/bæɡ/",
+      "phonics": [
+        "b",
+        "a",
+        "g"
+      ],
+      "phonemes": [
+        "/b/",
+        "/æ/",
+        "/ɡ/"
+      ],
+      "syllables": [
+        "bag"
+      ],
+      "audio": "/static/audio/bag.wav",
+      "example": "My book is in the bag.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "bag"
+    },
+    {
+      "id": "desk",
+      "language": "en",
+      "lemma": "desk",
+      "meaning": "课桌",
+      "pos": "n.",
+      "ipa": "/desk/",
+      "phonics": [
+        "d",
+        "e",
+        "s",
+        "k"
+      ],
+      "phonemes": [
+        "/d/",
+        "/e/",
+        "/s/",
+        "/k/"
+      ],
+      "syllables": [
+        "desk"
+      ],
+      "audio": "/static/audio/desk.wav",
+      "example": "The pen is on the desk.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "desk"
+    },
+    {
+      "id": "pencil",
+      "language": "en",
+      "lemma": "pencil",
+      "meaning": "铅笔",
+      "pos": "n.",
+      "ipa": "/ˈpen.səl/",
+      "phonics": [
+        "p",
+        "e",
+        "n",
+        "c",
+        "i",
+        "l"
+      ],
+      "phonemes": [
+        "/p/",
+        "/e/",
+        "/n/",
+        "/s/",
+        "/ə/",
+        "/l/"
+      ],
+      "syllables": [
+        "pen",
+        "cil"
+      ],
+      "audio": "/static/audio/pencil.wav",
+      "example": "I draw with a pencil.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "pencil"
+    },
+    {
+      "id": "chair",
+      "language": "en",
+      "lemma": "chair",
+      "meaning": "椅子",
+      "pos": "n.",
+      "example": "I sit on a chair.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "chair"
+    },
+    {
+      "id": "eraser",
+      "language": "en",
+      "lemma": "eraser",
+      "meaning": "橡皮",
+      "pos": "n.",
+      "example": "This is my eraser.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "eraser"
+    },
+    {
+      "id": "ruler",
+      "language": "en",
+      "lemma": "ruler",
+      "meaning": "尺子",
+      "pos": "n.",
+      "example": "The ruler is long.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "ruler"
+    },
+    {
+      "id": "crayon",
+      "language": "en",
+      "lemma": "crayon",
+      "meaning": "蜡笔",
+      "pos": "n.",
+      "example": "I use a blue crayon.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "crayon"
+    },
+    {
+      "id": "paper",
+      "language": "en",
+      "lemma": "paper",
+      "meaning": "纸",
+      "pos": "n.",
+      "example": "I draw on paper.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "paper"
+    },
+    {
+      "id": "classroom",
+      "language": "en",
+      "lemma": "classroom",
+      "meaning": "教室",
+      "pos": "n.",
+      "example": "Our classroom is clean.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "classroom"
+    },
+    {
+      "id": "teacher",
+      "language": "en",
+      "lemma": "teacher",
+      "meaning": "老师",
+      "pos": "n.",
+      "example": "The teacher reads a book.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "teacher"
+    },
+    {
+      "id": "student",
+      "language": "en",
+      "lemma": "student",
+      "meaning": "学生",
+      "pos": "n.",
+      "example": "I am a student.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "student"
+    },
+    {
+      "id": "school",
+      "language": "en",
+      "lemma": "school",
+      "meaning": "学校",
+      "pos": "n.",
+      "example": "I go to school.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "school"
+    },
+    {
+      "id": "read",
+      "language": "en",
+      "lemma": "read",
+      "meaning": "阅读",
+      "pos": "v.",
+      "example": "I read a book.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "read"
+    },
+    {
+      "id": "write",
+      "language": "en",
+      "lemma": "write",
+      "meaning": "书写",
+      "pos": "v.",
+      "example": "I write with a pencil.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "write"
+    },
+    {
+      "id": "draw",
+      "language": "en",
+      "lemma": "draw",
+      "meaning": "画画",
+      "pos": "v.",
+      "example": "I draw a cat.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "draw"
+    },
+    {
+      "id": "open",
+      "language": "en",
+      "lemma": "open",
+      "meaning": "打开",
+      "pos": "v.",
+      "example": "Please open the book.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "open"
+    },
+    {
+      "id": "table",
+      "language": "en",
+      "lemma": "table",
+      "meaning": "桌子",
+      "pos": "n.",
+      "example": "The book is on the table.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "table"
+    },
+    {
+      "id": "door",
+      "language": "en",
+      "lemma": "door",
+      "meaning": "门",
+      "pos": "n.",
+      "example": "Please open the door.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "door"
+    },
+    {
+      "id": "mother",
+      "language": "en",
+      "lemma": "mother",
+      "meaning": "母亲",
+      "pos": "n.",
+      "example": "This is my mother.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "mother"
+    },
+    {
+      "id": "father",
+      "language": "en",
+      "lemma": "father",
+      "meaning": "父亲",
+      "pos": "n.",
+      "example": "This is my father.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "father"
+    },
+    {
+      "id": "sister",
+      "language": "en",
+      "lemma": "sister",
+      "meaning": "姐妹",
+      "pos": "n.",
+      "example": "I play with my sister.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "sister"
+    },
+    {
+      "id": "brother",
+      "language": "en",
+      "lemma": "brother",
+      "meaning": "兄弟",
+      "pos": "n.",
+      "example": "My brother can swim.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "brother"
+    },
+    {
+      "id": "grandmother",
+      "language": "en",
+      "lemma": "grandmother",
+      "meaning": "祖母",
+      "pos": "n.",
+      "example": "My grandmother likes flowers.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "grandmother"
+    },
+    {
+      "id": "grandfather",
+      "language": "en",
+      "lemma": "grandfather",
+      "meaning": "祖父",
+      "pos": "n.",
+      "example": "My grandfather reads a book.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "grandfather"
+    },
+    {
+      "id": "family",
+      "language": "en",
+      "lemma": "family",
+      "meaning": "家庭",
+      "pos": "n.",
+      "example": "This is my family.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "family"
+    },
+    {
+      "id": "baby",
+      "language": "en",
+      "lemma": "baby",
+      "meaning": "婴儿",
+      "pos": "n.",
+      "example": "The baby is sleeping.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "baby"
+    },
+    {
+      "id": "friend",
+      "language": "en",
+      "lemma": "friend",
+      "meaning": "朋友",
+      "pos": "n.",
+      "example": "You are my friend.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "friend"
+    },
+    {
+      "id": "name",
+      "language": "en",
+      "lemma": "name",
+      "meaning": "名字",
+      "pos": "n.",
+      "example": "What is your name?",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "name"
+    },
+    {
+      "id": "home",
+      "language": "en",
+      "lemma": "home",
+      "meaning": "家",
+      "pos": "n.",
+      "example": "I am at home.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "home"
+    },
+    {
+      "id": "house",
+      "language": "en",
+      "lemma": "house",
+      "meaning": "房子",
+      "pos": "n.",
+      "example": "Our house has a red door.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "house"
+    },
+    {
+      "id": "room",
+      "language": "en",
+      "lemma": "room",
+      "meaning": "房间",
+      "pos": "n.",
+      "example": "My room is clean.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "room"
+    },
+    {
+      "id": "bed",
+      "language": "en",
+      "lemma": "bed",
+      "meaning": "床",
+      "pos": "n.",
+      "example": "The cat is on the bed.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "bed"
+    },
+    {
+      "id": "window",
+      "language": "en",
+      "lemma": "window",
+      "meaning": "窗户",
+      "pos": "n.",
+      "example": "Please open the window.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "window"
+    },
+    {
+      "id": "lamp",
+      "language": "en",
+      "lemma": "lamp",
+      "meaning": "灯",
+      "pos": "n.",
+      "example": "The lamp is on the desk.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "lamp"
+    },
+    {
+      "id": "clock",
+      "language": "en",
+      "lemma": "clock",
+      "meaning": "钟",
+      "pos": "n.",
+      "example": "The clock is on the wall.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "clock"
+    },
+    {
+      "id": "wash",
+      "language": "en",
+      "lemma": "wash",
+      "meaning": "洗",
+      "pos": "v.",
+      "example": "I wash my hands.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "wash"
+    },
+    {
+      "id": "sleep",
+      "language": "en",
+      "lemma": "sleep",
+      "meaning": "睡觉",
+      "pos": "v.",
+      "example": "I sleep at night.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "sleep"
+    },
+    {
+      "id": "happy",
+      "language": "en",
+      "lemma": "happy",
+      "meaning": "开心的",
+      "pos": "adj.",
+      "example": "I am happy today.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "happy"
+    },
+    {
+      "id": "red",
+      "language": "en",
+      "lemma": "red",
+      "meaning": "红色的",
+      "pos": "adj.",
+      "example": "The apple is red.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "red"
+    },
+    {
+      "id": "blue",
+      "language": "en",
+      "lemma": "blue",
+      "meaning": "蓝色的",
+      "pos": "adj.",
+      "example": "The sky is blue.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "blue"
+    },
+    {
+      "id": "green",
+      "language": "en",
+      "lemma": "green",
+      "meaning": "绿色的",
+      "pos": "adj.",
+      "example": "The leaf is green.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "green"
+    },
+    {
+      "id": "yellow",
+      "language": "en",
+      "lemma": "yellow",
+      "meaning": "黄色的",
+      "pos": "adj.",
+      "example": "The banana is yellow.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "yellow"
+    },
+    {
+      "id": "black",
+      "language": "en",
+      "lemma": "black",
+      "meaning": "黑色的",
+      "pos": "adj.",
+      "example": "The cat is black.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "black"
+    },
+    {
+      "id": "white",
+      "language": "en",
+      "lemma": "white",
+      "meaning": "白色的",
+      "pos": "adj.",
+      "example": "The cloud is white.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "white"
+    },
+    {
+      "id": "pink",
+      "language": "en",
+      "lemma": "pink",
+      "meaning": "粉色的",
+      "pos": "adj.",
+      "example": "The flower is pink.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "pink"
+    },
+    {
+      "id": "purple",
+      "language": "en",
+      "lemma": "purple",
+      "meaning": "紫色的",
+      "pos": "adj.",
+      "example": "The grape is purple.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "purple"
+    },
+    {
+      "id": "brown",
+      "language": "en",
+      "lemma": "brown",
+      "meaning": "棕色的",
+      "pos": "adj.",
+      "example": "The bear is brown.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "brown"
+    },
+    {
+      "id": "color",
+      "language": "en",
+      "lemma": "color",
+      "meaning": "颜色",
+      "pos": "n.",
+      "example": "What color is your bag?",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "color",
+      "acceptedSpellings": [
+        "colour"
+      ]
+    },
+    {
+      "id": "run",
+      "language": "en",
+      "lemma": "run",
+      "meaning": "跑",
+      "pos": "v.",
+      "example": "I can run.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "run"
+    },
+    {
+      "id": "walk",
+      "language": "en",
+      "lemma": "walk",
+      "meaning": "走",
+      "pos": "v.",
+      "example": "We walk to school.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "walk"
+    },
+    {
+      "id": "jump",
+      "language": "en",
+      "lemma": "jump",
+      "meaning": "跳",
+      "pos": "v.",
+      "example": "The frog can jump.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "jump"
+    },
+    {
+      "id": "swim",
+      "language": "en",
+      "lemma": "swim",
+      "meaning": "游泳",
+      "pos": "v.",
+      "example": "The duck can swim.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "swim"
+    },
+    {
+      "id": "sing",
+      "language": "en",
+      "lemma": "sing",
+      "meaning": "唱歌",
+      "pos": "v.",
+      "example": "We sing a song.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "sing"
+    },
+    {
+      "id": "dance",
+      "language": "en",
+      "lemma": "dance",
+      "meaning": "跳舞",
+      "pos": "v.",
+      "example": "I can dance.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "dance"
+    },
+    {
+      "id": "play",
+      "language": "en",
+      "lemma": "play",
+      "meaning": "玩",
+      "pos": "v.",
+      "example": "We play together.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "play"
+    },
+    {
+      "id": "see",
+      "language": "en",
+      "lemma": "see",
+      "meaning": "看见",
+      "pos": "v.",
+      "example": "I see a bird.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "see"
+    },
+    {
+      "id": "hear",
+      "language": "en",
+      "lemma": "hear",
+      "meaning": "听见",
+      "pos": "v.",
+      "example": "I hear the rain.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "hear"
+    },
+    {
+      "id": "help",
+      "language": "en",
+      "lemma": "help",
+      "meaning": "帮助",
+      "pos": "v.",
+      "example": "I help my friend.",
+      "sourceId": "wordpal-primary-original",
+      "senseId": "help"
+    }
+  ],
+  "units": [
+    {
+      "id": "u01",
+      "title": "动物朋友",
+      "lessons": [
+        {
+          "id": "u01-l01",
+          "title": "动物朋友 · 1",
+          "wordIds": [
+            "cat",
+            "dog",
+            "fish",
+            "bird",
+            "duck"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u01",
+          "phonicsRuleIds": [
+            "short-a",
+            "short-i",
+            "digraph-sh"
+          ]
+        },
+        {
+          "id": "u01-l02",
+          "title": "动物朋友 · 2",
+          "wordIds": [
+            "bear",
+            "lion",
+            "tiger",
+            "horse",
+            "sheep"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u01",
+          "phonicsRuleIds": []
+        },
+        {
+          "id": "u01-l03",
+          "title": "动物朋友 · 3",
+          "wordIds": [
+            "goat",
+            "cow",
+            "pig",
+            "rabbit",
+            "mouse"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u01",
+          "phonicsRuleIds": []
+        },
+        {
+          "id": "u01-l04",
+          "title": "动物朋友 · 4",
+          "wordIds": [
+            "monkey",
+            "elephant",
+            "panda",
+            "frog",
+            "butterfly"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u01",
+          "phonicsRuleIds": []
+        }
+      ]
+    },
+    {
+      "id": "u02",
+      "title": "食物与饮品",
+      "lessons": [
+        {
+          "id": "u02-l01",
+          "title": "食物与饮品 · 1",
+          "wordIds": [
+            "apple",
+            "egg",
+            "milk",
+            "bread",
+            "cake"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u02",
+          "phonicsRuleIds": [
+            "short-i"
+          ]
+        },
+        {
+          "id": "u02-l02",
+          "title": "食物与饮品 · 2",
+          "wordIds": [
+            "rice",
+            "water",
+            "banana",
+            "orange",
+            "pear"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u02",
+          "phonicsRuleIds": []
+        },
+        {
+          "id": "u02-l03",
+          "title": "食物与饮品 · 3",
+          "wordIds": [
+            "grape",
+            "meat",
+            "chicken",
+            "juice",
+            "tea"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u02",
+          "phonicsRuleIds": []
+        },
+        {
+          "id": "u02-l04",
+          "title": "食物与饮品 · 4",
+          "wordIds": [
+            "potato",
+            "tomato",
+            "carrot",
+            "cheese",
+            "candy"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u02",
+          "phonicsRuleIds": []
+        }
+      ]
+    },
+    {
+      "id": "u03",
+      "title": "自然与天气",
+      "lessons": [
+        {
+          "id": "u03-l01",
+          "title": "自然与天气 · 1",
+          "wordIds": [
+            "sun",
+            "rain",
+            "tree",
+            "leaf",
+            "wind"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u03",
+          "phonicsRuleIds": []
+        },
+        {
+          "id": "u03-l02",
+          "title": "自然与天气 · 2",
+          "wordIds": [
+            "moon",
+            "star",
+            "cloud",
+            "snow",
+            "flower"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u03",
+          "phonicsRuleIds": []
+        },
+        {
+          "id": "u03-l03",
+          "title": "自然与天气 · 3",
+          "wordIds": [
+            "grass",
+            "river",
+            "lake",
+            "sea",
+            "mountain"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u03",
+          "phonicsRuleIds": []
+        },
+        {
+          "id": "u03-l04",
+          "title": "自然与天气 · 4",
+          "wordIds": [
+            "sky",
+            "day",
+            "night",
+            "hot",
+            "cold"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u03",
+          "phonicsRuleIds": []
+        }
+      ]
+    },
+    {
+      "id": "u04",
+      "title": "学校生活",
+      "lessons": [
+        {
+          "id": "u04-l01",
+          "title": "学校生活 · 1",
+          "wordIds": [
+            "book",
+            "pen",
+            "bag",
+            "desk",
+            "pencil"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u04",
+          "phonicsRuleIds": []
+        },
+        {
+          "id": "u04-l02",
+          "title": "学校生活 · 2",
+          "wordIds": [
+            "chair",
+            "eraser",
+            "ruler",
+            "crayon",
+            "paper"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u04",
+          "phonicsRuleIds": []
+        },
+        {
+          "id": "u04-l03",
+          "title": "学校生活 · 3",
+          "wordIds": [
+            "classroom",
+            "teacher",
+            "student",
+            "school",
+            "read"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u04",
+          "phonicsRuleIds": []
+        },
+        {
+          "id": "u04-l04",
+          "title": "学校生活 · 4",
+          "wordIds": [
+            "write",
+            "draw",
+            "open",
+            "table",
+            "door"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u04",
+          "phonicsRuleIds": []
+        }
+      ]
+    },
+    {
+      "id": "u05",
+      "title": "家人与家园",
+      "lessons": [
+        {
+          "id": "u05-l01",
+          "title": "家人与家园 · 1",
+          "wordIds": [
+            "mother",
+            "father",
+            "sister",
+            "brother",
+            "grandmother"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u05",
+          "phonicsRuleIds": []
+        },
+        {
+          "id": "u05-l02",
+          "title": "家人与家园 · 2",
+          "wordIds": [
+            "grandfather",
+            "family",
+            "baby",
+            "friend",
+            "name"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u05",
+          "phonicsRuleIds": []
+        },
+        {
+          "id": "u05-l03",
+          "title": "家人与家园 · 3",
+          "wordIds": [
+            "home",
+            "house",
+            "room",
+            "bed",
+            "window"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u05",
+          "phonicsRuleIds": []
+        },
+        {
+          "id": "u05-l04",
+          "title": "家人与家园 · 4",
+          "wordIds": [
+            "lamp",
+            "clock",
+            "wash",
+            "sleep",
+            "happy"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u05",
+          "phonicsRuleIds": []
+        }
+      ]
+    },
+    {
+      "id": "u06",
+      "title": "动作与颜色",
+      "lessons": [
+        {
+          "id": "u06-l01",
+          "title": "动作与颜色 · 1",
+          "wordIds": [
+            "red",
+            "blue",
+            "green",
+            "yellow",
+            "black"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u06",
+          "phonicsRuleIds": []
+        },
+        {
+          "id": "u06-l02",
+          "title": "动作与颜色 · 2",
+          "wordIds": [
+            "white",
+            "pink",
+            "purple",
+            "brown",
+            "color"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u06",
+          "phonicsRuleIds": []
+        },
+        {
+          "id": "u06-l03",
+          "title": "动作与颜色 · 3",
+          "wordIds": [
+            "run",
+            "walk",
+            "jump",
+            "swim",
+            "sing"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u06",
+          "phonicsRuleIds": []
+        },
+        {
+          "id": "u06-l04",
+          "title": "动作与颜色 · 4",
+          "wordIds": [
+            "dance",
+            "play",
+            "see",
+            "hear",
+            "help"
+          ],
+          "objectives": [
+            "认识目标词，在例句中理解词义"
+          ],
+          "activities": [
+            "flash",
+            "connect",
+            "spell",
+            "pair",
+            "letters",
+            "sentence",
+            "cloze",
+            "story"
+          ],
+          "storyId": "story-u06",
+          "phonicsRuleIds": []
+        }
+      ]
+    }
+  ],
+  "assets": [],
+  "stories": [
+    {
+      "id": "story-u01",
+      "title": "A Little Friend",
+      "sentences": [
+        "I see a rabbit.",
+        "The rabbit is small.",
+        "The rabbit can jump."
+      ],
+      "targetWordIds": [
+        "rabbit",
+        "jump"
+      ],
+      "questions": [
+        {
+          "question": "Which animal is in the story?",
+          "options": [
+            "A rabbit",
+            "A tiger"
+          ],
+          "answer": 0
+        }
+      ]
+    },
+    {
+      "id": "story-u02",
+      "title": "My Breakfast",
+      "sentences": [
+        "I have an egg.",
+        "I drink milk.",
+        "I like bread."
+      ],
+      "targetWordIds": [
+        "egg",
+        "milk",
+        "bread"
+      ],
+      "questions": [
+        {
+          "question": "What do I drink?",
+          "options": [
+            "Milk",
+            "Tea"
+          ],
+          "answer": 0
+        }
+      ]
+    },
+    {
+      "id": "story-u03",
+      "title": "A Green Tree",
+      "sentences": [
+        "The sun is bright.",
+        "A bird is in the tree.",
+        "The leaf is green."
+      ],
+      "targetWordIds": [
+        "sun",
+        "bird",
+        "tree",
+        "leaf",
+        "green"
+      ],
+      "questions": [
+        {
+          "question": "Where is the bird?",
+          "options": [
+            "In the tree",
+            "In the sea"
+          ],
+          "answer": 0
+        }
+      ]
+    },
+    {
+      "id": "story-u04",
+      "title": "My School Bag",
+      "sentences": [
+        "This is my bag.",
+        "My book is in the bag.",
+        "I read the book at school."
+      ],
+      "targetWordIds": [
+        "bag",
+        "book",
+        "read",
+        "school"
+      ],
+      "questions": [
+        {
+          "question": "What is in the bag?",
+          "options": [
+            "A book",
+            "A cake"
+          ],
+          "answer": 0
+        }
+      ]
+    },
+    {
+      "id": "story-u05",
+      "title": "At Home",
+      "sentences": [
+        "I am at home.",
+        "My father reads a book.",
+        "I help my mother."
+      ],
+      "targetWordIds": [
+        "home",
+        "father",
+        "read",
+        "book",
+        "help",
+        "mother"
+      ],
+      "questions": [
+        {
+          "question": "Who reads a book?",
+          "options": [
+            "My father",
+            "A tiger"
+          ],
+          "answer": 0
+        }
+      ]
+    },
+    {
+      "id": "story-u06",
+      "title": "We Play Together",
+      "sentences": [
+        "I can run.",
+        "I can jump.",
+        "We play together."
+      ],
+      "targetWordIds": [
+        "run",
+        "jump",
+        "play"
+      ],
+      "questions": [
+        {
+          "question": "What can I do?",
+          "options": [
+            "Run and jump",
+            "Fly"
+          ],
+          "answer": 0
+        }
+      ]
+    }
+  ],
+  "phonicsRules": [
+    {
+      "id": "short-a",
+      "graphemes": [
+        "a"
+      ],
+      "phonemes": [
+        "/æ/"
+      ],
+      "explanation": "观察 cat 中的 a，听标准发音，再把 c、a、t 连起来。",
+      "exampleWordIds": [
+        "cat"
+      ]
+    },
+    {
+      "id": "short-i",
+      "graphemes": [
+        "i"
+      ],
+      "phonemes": [
+        "/ɪ/"
+      ],
+      "explanation": "对照 fish 与 milk 中的 i，先听词音，再尝试跟读。",
+      "exampleWordIds": [
+        "fish",
+        "milk"
+      ]
+    },
+    {
+      "id": "digraph-sh",
+      "graphemes": [
+        "sh"
+      ],
+      "phonemes": [
+        "/ʃ/"
+      ],
+      "explanation": "fish 中的 sh 是两个字母组成的一个发音片段。",
+      "exampleWordIds": [
+        "fish"
+      ],
+      "prerequisites": [
+        "short-i"
+      ]
+    }
+  ]
+}

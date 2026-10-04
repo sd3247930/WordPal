@@ -8,6 +8,8 @@ import {automaticMode,revisitWords} from '../services/study-presentation'
 import {wordById} from '../../packages/content_schema'
 import {isCorrectSpelling} from '../../packages/phonics'
 import type {LearningMode,ReviewRating} from '../../packages/core_learning'
+import {availableModes} from '../../packages/content_schema/course'
+import {readFeedbackSettings} from './feedback'
 interface RevisitAnswer {wordId:string;correct:boolean}
 interface Presentation {sessionId:string;manual:boolean;revisitStarted:boolean;queue:string[];index:number;input:string;selected:string;revealed:boolean;answer:RevisitAnswer|null;answers:RevisitAnswer[];finished:boolean;petId:string;startExp:number;rewardTracked:boolean}
 const key='wordpal.study.presentation.v1'
@@ -28,7 +30,8 @@ export const useStudyPresentation=defineStore('study-presentation',()=>{
   if(session.completedAt){
    if(!state.value.revisitStarted)patch({revisitStarted:true,queue:revisitWords(session.answers),finished:revisitWords(session.answers).length===0})
   }else if(!state.value.manual&&!session.answers[session.index]&&!session.input&&!session.selected&&!session.revealed){
-   const mode=automaticMode(session.index,session.kind)
+   const allowed=learning.current?availableModes(learning.current,Object.values(session.wordSnapshot||wordById),readFeedbackSettings().sound):['flash']
+   const desired=automaticMode(session.index,session.kind),mode=allowed.includes(desired)?desired:'flash'
    if(mode!==session.mode)learning.setMode(mode)
   }
  }
@@ -43,7 +46,7 @@ export const useStudyPresentation=defineStore('study-presentation',()=>{
  const total=computed(()=>revisiting.value?state.value.queue.length:learning.session?.wordIds.length||0)
  const completed=computed(()=>!!learning.session?.completedAt&&!revisiting.value&&state.value.finished)
  const earnedExp=computed(()=>state.value.rewardTracked?Math.max(0,pet.all.reduce((sum,item)=>sum+item.exp,0)-state.value.startExp):null)
- function chooseMode(value:LearningMode){if(!revisiting.value&&!answer.value&&patch({manual:true}))learning.setMode(value)}
+ function chooseMode(value:LearningMode){if(!revisiting.value&&!answer.value&&learning.current&&availableModes(learning.current,Object.values(learning.session?.wordSnapshot||wordById),readFeedbackSettings().sound).includes(value)&&patch({manual:true}))learning.setMode(value)}
  function automatic(){if(!revisiting.value&&!answer.value&&patch({manual:false})){learning.patch({input:'',selected:'',revealed:false});sync()}}
  function updateInput(value:string){if(answer.value)return;if(revisiting.value)patch({input:value});else learning.patch({input:value})}
  function select(value:string){if(!answer.value&&!revisiting.value)learning.patch({selected:value})}

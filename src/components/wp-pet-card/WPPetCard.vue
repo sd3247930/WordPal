@@ -1,10 +1,12 @@
 <template>
- <button role="button" tabindex="0" class="pet-choice wp-pet-card" :class="['element-'+pet.element,{selected}]" :aria-label="'选择'+info.name+'陪伴并查看详情'" :aria-pressed="selected" @click="$emit('choose',pet.element)">
+ <WPActionTile role="button" tabindex="0" class="pet-choice wp-pet-card" :class="['element-'+pet.element,{selected}]" :aria-label="'选择'+info.name+'陪伴并查看详情'" :aria-pressed="selected" @click="$emit('choose',pet.element)">
   <WPPetAsset :element="pet.element" variant="avatar" :size="48"/>
   <view class="pet-card-copy"><text class="pet-card-name">{{info.name}}</text><text class="pet-card-element">{{info.elementName}}精灵</text><text class="pet-card-meta">Lv.{{pet.level}} · {{moods[pet.mood]}}</text><text class="pet-card-status">{{selected?'✓ 陪伴中':'查看详情 →'}}</text></view>
- </button>
+ </WPActionTile>
 </template>
 <script setup lang="ts">
+import WPActionTile from "../button/WPActionTile.vue"
+
 import {computed} from 'vue'
 import WPPetAsset from '../WPPetAsset.vue'
 import {petInfo,type PetState} from '../../../packages/pet_engine'

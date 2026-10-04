@@ -1,21 +1,25 @@
 <template>
  <view v-if="modal" class="word-sheet-scrim" aria-hidden="true" @click="$emit('close')"/>
  <view class="word-detail-panel" :class="{'word-detail-sheet':modal}" :role="modal?'dialog':'region'" :aria-modal="modal||undefined" :aria-label="word.word+' 单词详情'">
-  <view class="word-detail-heading"><text class="section-title">单词详情</text><button v-if="modal" role="button" tabindex="0" class="word-detail-close" aria-label="关闭单词详情" @click="$emit('close')">×</button></view>
+  <view class="word-detail-heading"><text class="section-title">单词详情</text><WPIconButton v-if="modal" class="word-detail-close" label="关闭单词详情" @click="$emit('close')">×</WPIconButton></view>
   <view class="detail-word-hero"><view class="detail-word-copy"><text class="detail-word">{{word.word}}</text><text class="ipa muted">{{word.ipa}}</text><text>{{word.pos}} · {{word.meaning}}</text></view><text class="detail-illustration" aria-hidden="true">{{wordIllustrations[word.id]||'📖'}}</text></view>
-  <WPButton kind="secondary" @click="play" :label="'播放 '+word.word+' 的标准发音'">听标准发音</WPButton>
+  <WPAudioButton :url="word.audio" @click="play" :label="'播放 '+word.word+' 的标准发音'" text="听标准发音"/>
   <text v-if="audioError" class="notice error" role="alert">{{audioError}}</text>
   <view class="detail-example"><text class="eyebrow">读一读</text><text>{{word.example}}</text></view>
   <WPMemoryMeter :card="card"/>
   <view class="detail-facts"><view><text class="small muted">复习次数</text><text>{{card?.reps||0}} 次</text></view><view><text class="small muted">回答准确率</text><text>{{history.length?Math.round(history.filter(a=>a.correct).length/history.length*100)+'%':'暂无记录'}}</text></view><view><text class="small muted">下次复习</text><text>{{nextReviewLabel(card?.due)}}</text></view></view>
   <text v-if="card" class="small muted block">复习日期 {{formatLocalDate(card.due)}}</text>
-  <view class="detail-source"><text class="small muted">原创启蒙课程 · {{word.unit}}</text><text>{{lessonName}}</text></view>
+  <view class="detail-source"><view v-for="membership in memberships" :key="membership.courseId+membership.lessonId"><text class="small muted">{{membership.courseTitle}} · {{membership.unitTitle}}{{archiveStatus[membership.courseId]?' · 已归档':''}}</text><text class="block">{{membership.lessonTitle}}</text></view></view>
   <view class="detail-mark-actions"><WPButton kind="secondary" :label="favorite?'取消我的重点':'标记为我的重点'" @click="$emit('favorite')">{{favorite?'★ 已加入重点':'☆ 我的重点'}}</WPButton><WPButton kind="quiet" @click="$emit('later')">{{later?'已收至稍后 · 取消':'稍后再看'}}</WPButton></view>
   <text class="small muted block">“稍后”只标记查看顺序，复习日期不变。</text>
   <WPButton kind="secondary" @click="$emit('practice')">轻松练习这个单词</WPButton>
  </view>
 </template>
 <script setup lang="ts">
+import WPAudioButton from "../button/WPAudioButton.vue"
+import WPIconButton from "../button/WPIconButton.vue"
+import {courseMemberships,archiveStatus} from '../../services/content/ContentRegistry'
+
 import {computed,ref,onMounted,onUnmounted,nextTick,watch} from 'vue'
 import type {Word,MemoryCard,Answer} from '../../../packages/core_learning'
 import {lessons} from '../../../packages/content_schema'
@@ -28,6 +32,7 @@ import {playWord,stopAudio} from '../../services/audio'
 const props=defineProps<{word:Word;card?:MemoryCard;history:Answer[];favorite:boolean;later:boolean;modal:boolean}>()
 const emit=defineEmits<{close:[];favorite:[];later:[];practice:[]}>(),audioError=ref('')
 const lessonName=computed(()=>lessons.find(lesson=>lesson.id===props.word.lesson)?.name||props.word.lesson)
+const memberships=computed(()=>courseMemberships(props.word.id))
 function play(){audioError.value='';playWord(props.word,message=>audioError.value=message)}
 watch(()=>props.word.id,()=>{audioError.value='';stopAudio()})
 // #ifdef H5

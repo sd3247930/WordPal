@@ -15,7 +15,7 @@ test('学习输入在旋转、五档缩放、换主题及异常退出后保留',
  await expect(page.locator('.answer-feedback')).toContainText('很棒，记住啦')
  const saved=await database(page);expect(saved.cards.cat.strategy).toBe('fsrs');expect(saved.history).toHaveLength(1);expect(saved.gems).toBe(2)
  await page.reload();expect((await database(page)).history).toHaveLength(1);expect((await database(page)).gems).toBe(2)
- await page.evaluate(()=>{const db=JSON.parse(localStorage.getItem('wordpal.database.v1')!);db.cards.cat.due='2000-01-01T00:00:00Z';localStorage.setItem('wordpal.database.v1',JSON.stringify(db))})
+ await page.evaluate(()=>{const pointer=JSON.parse(localStorage.getItem('wordpal.database.active.v2')!);const key=pointer==='v2'?'wordpal.database.v2':pointer.key;const db=JSON.parse(localStorage.getItem(key)!);db.cards.cat.due='2000-01-01T00:00:00Z';localStorage.setItem(key,JSON.stringify(db))})
  await go(page,'review');await page.reload();await expect(app(page)).toBeVisible();const pending=await database(page);await page.getByRole('button',{name:'继续当前学习',exact:true}).click();await expect(page.locator('.answer-feedback')).toBeVisible();expect(await database(page)).toEqual(pending)
 })
 test('到期复习优先于请求的新词和自由练习',async({page})=>{

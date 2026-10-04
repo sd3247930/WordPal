@@ -1,0 +1,3 @@
+unit_id,unit_title,lesson_id,lesson_title,word,meaning,pos,ipa,example
+u01,动物朋友,l01,认识动物,cat,猫,n.,/kæt/,The cat is on the mat.
+u01,动物朋友,l01,认识动物,dog,狗,n.,/dɒɡ/,I see a dog.

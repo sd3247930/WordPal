@@ -3,7 +3,7 @@
   <view class="app-shell">
    <WPSidebar :page="page"/>
    <view class="app-body">
-    <view class="topbar"><view class="compact-brand"><image src="/static/icons/logo-128.png" class="brand-logo" aria-label="WordPal 应用标志"/><view class="header-brand-copy"><text class="brand-name">WordPal</text><text class="brand-subtitle">{{pageSubtitle}}</text></view></view><view class="topbar-actions"><view class="gem-chip"><text aria-hidden="true">◇</text><text>{{profile.db.gems}} 灵石</text></view><button role="button" tabindex="0" class="profile-button" aria-label="打开家长中心" @click="navigate('parent')">小<text class="online-dot"/></button></view></view>
+    <WPBrandHeader :page="page" :spirit-stone="profile.db.gems"/>
     <view class="main-content">
      <view v-if="profile.storageError" class="notice error" role="alert">{{profile.storageError}}</view>
      <slot />
@@ -11,11 +11,13 @@
     <view class="app-footer"><text>一点进步，也是很棒的一步。</text><text>WordPal · 单词小搭子</text></view>
    </view>
   </view>
-  <view class="bottom-nav" role="navigation" aria-label="底部导航"><button role="button" tabindex="0" v-for="item in ['home','learn','pet','review','settings'].map(id=>navigation.find(n=>n.id===id)!)" :key="item.id" class="bottom-item" :class="{active:page===item.id}" :aria-label="item.name" :aria-current="page===item.id?'page':undefined" @click="navigate(item.id)"><view class="nav-icon-container"><WPNavIcon :name="item.id as NavIconName" :active="page===item.id"/></view><text>{{item.name}}</text></button></view>
+  <view class="bottom-nav" role="navigation" aria-label="底部导航"><WPActionTile role="button" tabindex="0" v-for="item in ['home','learn','pet','review','settings'].map(id=>navigation.find(n=>n.id===id)!)" :key="item.id" class="bottom-item" :class="{active:page===item.id}" :aria-label="item.name" :aria-current="page===item.id?'page':undefined" @click="navigate(item.id)"><view class="nav-icon-container"><WPNavIcon :name="item.id as NavIconName" :active="page===item.id"/></view><text>{{item.name}}</text></WPActionTile></view>
   <KeyboardBridge />
  </view>
 </template>
 <script setup lang="ts">
+import WPActionTile from "../components/button/WPActionTile.vue"
+
 import {computed,onMounted,onUnmounted} from 'vue'
 import {onShow,onReady} from '@dcloudio/uni-app'
 import {windowLayout as layout} from '../services/window'
@@ -24,6 +26,7 @@ import {useProfileStore} from '../stores/profile'
 import {useReviewStore} from '../stores/review'
 import {navigation,navigate,type PageId} from '../services/navigation'
 import KeyboardBridge from '../components/KeyboardBridge.vue'
+import WPBrandHeader from '../components/brand/WPBrandHeader.vue'
 import WPSidebar from '../components/wp-sidebar/WPSidebar.vue'
 import WPNavIcon from '../components/wp-nav-icon/WPNavIcon.vue'
 import type {NavIconName} from '../services/nav-icons'

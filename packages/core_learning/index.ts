@@ -6,8 +6,9 @@ export interface Word {
   phonics: string[]; phonemes: string[]; syllables: string[]
   audio: string; image: string; example: string; unit: string; lesson: string
   difficulty: number; distractors: string[]
+  acceptedSpellings?: string[]; senseId?:string; sourceId?:string
 }
-export interface Lesson { id: string; name: string; unit: string; wordIds: string[] }
+export interface Lesson { id: string; name: string; unit: string; wordIds: string[];courseId?:string;unitId?:string;activities?:string[];storyId?:string;phonicsRuleIds?:string[];examples?:Record<string,string> }
 export interface MemoryCard {
   wordId: string; due: string; stability: number; difficulty: number
   elapsed_days: number; scheduled_days: number; reps: number; lapses: number
@@ -27,6 +28,7 @@ export interface LearningSession {
   id: string; startedAt: string; date: string; kind: 'review_due' | 'new_word' | 'practice'
   wordIds: string[]; index: number; mode: LearningMode; input: string
   revealed: boolean; selected: string; answers: Answer[]; completedAt?: string
+  courseId?:string;contentVersion?:string;lessonId?:string;wordSnapshot?:Record<string,Word>;seed?:number
 }
 export const localDate = (date = new Date()) => `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`
 export function mastery(card?: MemoryCard): MasteryState {

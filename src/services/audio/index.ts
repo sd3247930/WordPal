@@ -1,13 +1,12 @@
 import type {Word} from '../../../packages/core_learning'
+import {wordById} from '../../../packages/content_schema'
 import {readFeedbackSettings} from '../../stores/feedback'
-let audio:UniApp.InnerAudioContext | undefined
-let errorHandler:((error:any)=>void)|undefined
+import {audioPlayback} from './AudioPlaybackService'
+export {audioPlayback,AudioPlaybackService} from './AudioPlaybackService'
+export interface WordAudio {wordId:string;url:string;accent?:'US'|'UK'}
+export function getWordAudio(wordId:string):WordAudio{return {wordId,url:wordById[wordId]?.audio||''}}
 export function playWord(word:Word,onError?:(message:string)=>void){
- if(!readFeedbackSettings().sound){onError?.('学习发音已关闭，可在设置中开启。');return}
- if(!audio)audio=uni.createInnerAudioContext()
- audio.stop();if(errorHandler)audio.offError(errorHandler)
- errorHandler=()=>onError?.('发音暂时无法播放，请检查音量或重新打开应用。')
- audio.onError(errorHandler)
- audio.src=word.audio;audio.play()
+ if(!readFeedbackSettings().sound){audioPlayback.stop();onError?.('学习发音已关闭，可在设置中开启。');return Promise.resolve()}
+ return audioPlayback.play(word.audio).catch(error=>onError?.((error as Error).message))
 }
-export function stopAudio(){audio?.destroy();audio=undefined;errorHandler=undefined}
+export function stopAudio(){audioPlayback.stop()}

@@ -9,4 +9,4 @@ export async function setAppearance(page:Page,themeId:string,colorMode:string,ex
 export async function seedDatabase(page:Page,db:object){
  await page.addInitScript(db=>{if(!localStorage.getItem('wordpal.database.v1'))localStorage.setItem('wordpal.database.v1',JSON.stringify(db))},db)
 }
-export async function database(page:Page){return page.evaluate(()=>JSON.parse(localStorage.getItem('wordpal.database.v1')!))}
+export async function database(page:Page){return page.evaluate(()=>{const pointer=JSON.parse(localStorage.getItem('wordpal.database.active.v2')||'null'),key=pointer==='v2'?'wordpal.database.v2':pointer?.version===2?pointer.key:'wordpal.database.v1';return JSON.parse(localStorage.getItem(key)!)} )}

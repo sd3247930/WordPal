@@ -7,25 +7,30 @@ import {isCorrectSpelling} from '../../packages/phonics'
 import {applyLearningReward} from '../../packages/pet_engine'
 import {useProfileStore} from './profile'
 import {useReviewStore} from './review'
+import {useCourseStore} from './course'
+import {availableModes} from '../../packages/content_schema/course'
+import {readFeedbackSettings} from './feedback'
+import {initialProgress} from '../services/storage/MigrationV1toV2'
+import {getCourseWord,resolveFrozenWord} from '../services/content/ContentRegistry'
 export const modes:{id:LearningMode;name:string;description:string}[]=[{id:'flash',name:'闪现',description:'看看单词，回想它的意思'},{id:'connect',name:'连接',description:'为单词找到正确的中文意思'},{id:'listen',name:'听音',description:'听发音，选出对应的单词'},{id:'spell',name:'拼写',description:'看中文，用字母拼出单词'},{id:'dictation',name:'听写',description:'听发音，写出这个单词'}]
 export const useLearningStore=defineStore('learning',()=>{
- const profile=useProfileStore(),review=useReviewStore()
+ const profile=useProfileStore(),review=useReviewStore(),course=useCourseStore()
  const session=computed(()=>profile.db.session)
- const current=computed(()=>session.value ? wordById[session.value.wordIds[session.value.index]]:undefined)
+ const current=computed(()=>session.value ? resolveFrozenWord(session.value.wordSnapshot?.[session.value.wordIds[session.value.index]]||wordById[session.value.wordIds[session.value.index]],session.value.courseId,session.value.contentVersion):undefined)
  const todayAnswers=computed(()=>profile.db.history.filter(a=>localDate(new Date(a.at))===localDate()))
  const newToday=computed(()=>new Set(todayAnswers.value.filter(a=>a.source==='new_word').map(a=>a.wordId)).size)
- const lesson=computed(()=>lessons[Math.min(profile.db.lessonIndex,lessons.length-1)])
+ const lesson=computed(()=>course.lesson)
  const newWords=computed(()=>{
   if(review.due.length || (session.value && !session.value.completedAt && session.value.kind==='review_due'))return []
   const remaining=Math.max(0,profile.db.dailyLimit-newToday.value)
   return lesson.value.wordIds.filter(id=>!profile.db.cards[id]).slice(0,remaining)
  })
- const needsConsolidation=computed(()=>profile.db.lastLessonAccuracy!==null && profile.db.lastLessonAccuracy<.8)
+ const needsConsolidation=computed(()=>course.currentId==='starter'&&profile.db.lastLessonAccuracy!==null && profile.db.lastLessonAccuracy<.8)
  const choices=computed(()=>{
   if(!current.value)return []
-  const ids=[current.value.id,...current.value.distractors]
-  const offset=(session.value?.index??0)%4
-  return [...ids.slice(offset),...ids.slice(0,offset)].map(id=>wordById[id])
+  const pool=session.value?.wordSnapshot||wordById,ids=[current.value.id,...current.value.distractors.filter(id=>pool[id])]
+  const offset=(session.value?.index??0)%ids.length
+  return [...ids.slice(offset),...ids.slice(0,offset)].map(id=>pool[id])
  })
  function start(request?:string[]){
   review.refresh()
@@ -36,10 +41,12 @@ export const useLearningStore=defineStore('learning',()=>{
   else if(needsConsolidation.value){ids=lesson.value.wordIds.filter(id=>profile.db.cards[id]);kind='practice'}
   else{ids=newWords.value;kind='new_word'}
   if(!ids.length)return false
-  return profile.transact(d=>{d.session={id:`session-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,startedAt:new Date().toISOString(),date:localDate(),kind,wordIds:ids,index:0,mode:'flash',input:'',selected:'',revealed:false,answers:[]}})
+  const snapshot:Record<string,typeof wordById[string]>={}
+  for(const id of ids){const source=getCourseWord(course.currentId,id);if(!source)continue;const word=JSON.parse(JSON.stringify({...source,example:lesson.value.examples?.[id]||source.example}));if(!word.distractors.length){const candidates=course.wordIds.map(id=>wordById[id]).filter(w=>w&&w.id!==word.id&&w.word!==word.word&&w.meaning!==word.meaning);word.distractors=candidates.filter((w,i)=>candidates.findIndex(other=>other.meaning===w.meaning)===i).slice(0,3).map(w=>w.id)}snapshot[id]=word;for(const distractor of word.distractors)if(wordById[distractor])snapshot[distractor]=JSON.parse(JSON.stringify(wordById[distractor]))}
+  return profile.transact(d=>{d.session={id:`session-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,startedAt:new Date().toISOString(),date:localDate(),kind,wordIds:ids,index:0,mode:'flash',input:'',selected:'',revealed:false,answers:[],courseId:course.currentId,contentVersion:course.current.contentVersion,lessonId:lesson.value.id,wordSnapshot:snapshot,seed:Date.now()}})
  }
  function patch(change:Partial<LearningSession>){return profile.transact(d=>{if(d.session && !d.session.completedAt)Object.assign(d.session,change)})}
- function setMode(mode:LearningMode){if(session.value?.answers[session.value.index])return false;return patch({mode,input:'',selected:'',revealed:false})}
+ function setMode(mode:LearningMode){if(session.value?.answers[session.value.index]||!current.value||!availableModes(current.value,Object.values(session.value?.wordSnapshot||wordById),readFeedbackSettings().sound).includes(mode))return false;return patch({mode,input:'',selected:'',revealed:false})}
  function reveal(){return patch({revealed:true})}
  function hint(){return profile.transact(d=>{if(d.session&&!d.session.revealed&&!d.session.answers[d.session.index]){d.gems=Math.max(0,d.gems-1);d.session.revealed=true}})}
  function submit(rating?:ReviewRating){
@@ -71,15 +78,18 @@ export const useLearningStore=defineStore('learning',()=>{
    if(s.index<s.wordIds.length-1){s.index++;s.input='';s.selected='';s.revealed=false}
    else{
     s.completedAt=new Date().toISOString()
-    if(s.kind==='new_word'||s.kind==='practice'){
+    if((s.courseId||'starter')==='starter'&&(s.kind==='new_word'||s.kind==='practice')){
      d.lastLessonAccuracy=s.answers.filter(a=>a.correct).length/s.answers.length
      if(canUnlockNextUnit(s.answers)&&s.wordIds.every(id=>lesson.value.wordIds.includes(id))&&lesson.value.wordIds.every(id=>d.cards[id]))d.lessonIndex=Math.min(d.lessonIndex+1,lessons.length-1)
+     d.courseProgress??={};d.courseProgress.starter??=initialProgress('starter');d.courseProgress.starter.lastLessonAccuracy=d.lastLessonAccuracy;d.courseProgress.starter.currentLessonId=lessons[d.lessonIndex].id
+    }else if(s.kind==='new_word'){
+     const courseId=s.courseId!;d.courseProgress??={};d.courseProgress[courseId]??=initialProgress(courseId);d.courseProgress[courseId].lastLessonAccuracy=s.answers.filter(a=>a.correct).length/s.answers.length
     }
    }
   })
  }
  function previous(){if(!session.value || session.value.index===0)return false;return patch({index:session.value.index-1,input:session.value.answers[session.value.index-1]?.input??'',revealed:true})}
  const learnedCount=computed(()=>Object.keys(profile.db.cards).length)
- const remainingCount=computed(()=>words.length-learnedCount.value)
+ const remainingCount=computed(()=>course.wordIds.filter(id=>!profile.db.cards[id]).length)
  return {session,current,choices,todayAnswers,newToday,newWords,lesson,needsConsolidation,learnedCount,remainingCount,start,patch,setMode,reveal,hint,submit,next,previous}
 })
