@@ -1,4 +1,5 @@
 import type {PhonicsData} from '../phonics/types'
+import type {DailyNewWordLimit,EntryLevel} from '../parent_settings'
 export type ReviewRating = 1 | 2 | 3 | 4
 export type MasteryState = 'new' | 'learning' | 'review' | 'mastered'
 export type LearningMode = 'flash' | 'connect' | 'listen' | 'spell' | 'dictation'
@@ -32,6 +33,8 @@ export interface LearningSession {
   wordIds: string[]; index: number; mode: LearningMode; input: string
   revealed: boolean; selected: string; answers: Answer[]; completedAt?: string
   courseId?:string;contentVersion?:string;lessonId?:string;wordSnapshot?:Record<string,Word>;seed?:number
+  wordSources?:Record<string,'review_due'|'new_word'|'practice'>
+  plannerConfig?:{dailyNewWordLimit:DailyNewWordLimit;entryLevel:EntryLevel}
 }
 export const localDate = (date = new Date()) => `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`
 export function mastery(card?: MemoryCard): MasteryState {

@@ -11,7 +11,8 @@
   <text v-if="course.current.route==='textbook'" class="small muted block">{{course.current.edition||course.current.editionYear}} · {{course.current.startGrade?course.current.startGrade+' 年级起点':'起始年级待核对'}} · {{course.current.grade}} 年级{{course.current.semester}} · 单元归属请与正在使用的课本核对</text>
   <picker v-if="course.current.route==='textbook'" :range="course.current.units" range-key="title" :value="unitIndex" aria-label="选择课程单元" @change="chooseUnit"><view class="course-picker small">{{course.current.units[unitIndex]?.title}} ⌄</view></picker>
   <picker :range="lessonChoices" range-key="name" :value="lessonIndex" aria-label="选择课节起点" @change="course.chooseLesson(lessonChoices[+($event as any).detail.value].id)"><view class="course-picker small"><text>{{course.lesson?.unit}} · {{course.lesson?.name}}</text><text aria-hidden="true">⌄</text></view></picker>
-  <text class="small muted">能力起点 {{profile.db.abilityLevel||'L1'}} · {{course.current.abilityLevels.includes(profile.db.abilityLevel||'L1')?'当前课程适合此起点':'可请家长选择匹配此起点的课程'}}</text>
+  <text class="small muted">能力起点 L{{course.recommendation.entryLevel}} · {{course.recommendation.meta.title}} · {{course.recommendation.currentMatches?'当前课程适合此起点':'可请家长选择匹配此起点的课程'}}</text>
+  <text class="small muted block">{{course.recommendation.courses.length?'推荐课程：'+course.recommendation.courses.slice(0,3).map(c=>c.title).join('、'):'暂无匹配此起点的已安装课程，可继续当前课程。'}}</text>
   <text v-if="course.current.route==='textbook'" class="small muted block">L1–L5 是学习起点建议，不代表教材标准；可在家长设置调整。</text>
   <text v-if="profile.db.pendingCourseId" class="small muted">先继续当前学习，已保留待切换课程。</text>
  </view>

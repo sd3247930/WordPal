@@ -2,16 +2,19 @@ import type {Database} from '../../stores/profile'
 import {getCourseLessons,wordById} from '../content/ContentRegistry'
 import {sha256} from '../content/digest'
 import {writeStorage} from './index'
+import {validParentSettings,DAILY_NEW_WORD_LIMITS} from '../../../packages/parent_settings'
 export const V1_KEY='wordpal.database.v1',V2_KEY='wordpal.database.v2',POINTER_KEY='wordpal.database.active.v2'
 export interface CourseProgress {currentLessonId:string;completedLessons:string[];lastLessonAccuracy:number|null;checkAccuracy:Record<string,number>;checkAttempts:Record<string,number>}
 export const initialProgress=(courseId:string,index=0):CourseProgress=>({currentLessonId:getCourseLessons(courseId)[index]?.id||getCourseLessons(courseId)[0]?.id||'',completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{}})
 export function validateDatabase(value:unknown){
  const d=value as Database
- if(!d||typeof d!=='object'||![1,2].includes(d.version)||!d.cards||Array.isArray(d.cards)||!Array.isArray(d.history)||!Array.isArray(d.rewardIds)||d.rewardIds.some(id=>typeof id!=='string')||!d.pets||!['water','fire','earth','wind'].every(id=>d.pets[id]&&Number.isFinite(d.pets[id].exp))||!Array.isArray(d.streakDates)||!Number.isFinite(d.gems)||d.gems<0||![3,5,10].includes(d.dailyLimit)||!Number.isInteger(d.lessonIndex)||d.lessonIndex<0)return false
+ if(!d||typeof d!=='object'||![1,2].includes(d.version)||!d.cards||Array.isArray(d.cards)||!Array.isArray(d.history)||!Array.isArray(d.rewardIds)||d.rewardIds.some(id=>typeof id!=='string')||!d.pets||!['water','fire','earth','wind'].every(id=>d.pets[id]&&Number.isFinite(d.pets[id].exp))||!Array.isArray(d.streakDates)||!Number.isFinite(d.gems)||d.gems<0||!validParentSettings(d)||!Number.isInteger(d.lessonIndex)||d.lessonIndex<0)return false
  if(Object.entries(d.cards).some(([id,c])=>!c||c.wordId!==id||!Number.isFinite(Date.parse(c.due))||['stability','difficulty','elapsed_days','scheduled_days','reps','lapses','learning_steps','state'].some(field=>!Number.isFinite(c[field as keyof typeof c]))))return false
  if(d.history.some(a=>!a||typeof a.wordId!=='string'||typeof a.id!=='string'||!Number.isFinite(Date.parse(a.at))||![1,2,3,4].includes(a.rating)||typeof a.correct!=='boolean'))return false
  const s=d.session
  if(s&&(!Array.isArray(s.wordIds)||!s.wordIds.length||s.wordIds.some(id=>typeof id!=='string')||new Set(s.wordIds).size!==s.wordIds.length||!Number.isInteger(s.index)||s.index<0||s.index>=s.wordIds.length||!Array.isArray(s.answers)||s.answers.length>s.wordIds.length||typeof s.input!=='string'||typeof s.selected!=='string'||!['flash','connect','listen','spell','dictation'].includes(s.mode)))return false
+ if(s?.wordSources&&(typeof s.wordSources!=='object'||s.wordIds.some(id=>!['review_due','new_word','practice'].includes(s.wordSources![id]))||Object.keys(s.wordSources).some(id=>!s.wordIds.includes(id))))return false
+ if(s?.plannerConfig&&(!DAILY_NEW_WORD_LIMITS.includes(s.plannerConfig.dailyNewWordLimit)||![1,2,3,4,5].includes(s.plannerConfig.entryLevel)))return false
  if(d.version===2&&(!d.courseProgress||typeof d.courseProgress!=='object'||Object.values(d.courseProgress).some(p=>!p||typeof p.currentLessonId!=='string'||!Array.isArray(p.completedLessons)||!p.checkAccuracy||!p.checkAttempts)||!Array.isArray(d.auxiliaryRecords)))return false
  return true
 }

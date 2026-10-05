@@ -3,6 +3,8 @@ import {newCard} from '../../packages/srs_fsrs'
 import {createPet} from '../../packages/pet_engine'
 export function goldenDatabase(){
  const db=freshDatabase();const date='2026-10-03T07:00:00.000Z'
+ // Keep this existing-user archive independent of changes to new-install defaults.
+ db.dailyLimit=5;db.abilityLevel='L1';delete db.parentSettingsVersion;delete db.parentSettingsUpdatedAt
  for(const id of ['cat','dog','fish','bird','duck','apple','egg','milk']){
   db.cards[id]={...newCard(id,new Date(['cat','dog','fish'].includes(id)?date:'2026-10-10T08:00:00.000Z')),reps:3,state:2,stability:4,difficulty:5,last_review:'2026-10-01T08:00:00.000Z',lapses:id==='dog'?1:0}
  }

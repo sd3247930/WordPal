@@ -21,7 +21,7 @@ test('学习输入在旋转、五档缩放、换主题及异常退出后保留',
 test('到期复习优先于请求的新词和自由练习',async({page})=>{
  const db=freshDatabase();db.cards.cat=newCard('cat',new Date('2020-01-01T00:00:00Z'));db.cards.cat.reps=1;db.cards.cat.stability=1;db.cards.cat.difficulty=5;db.cards.cat.state=2;db.cards.cat.last_review='2020-01-01T00:00:00Z'
  await seedDatabase(page,db);await go(page,'home');await expect(page.locator('.hero-counts')).toContainText('0');await page.locator('.hero-cta').click()
- const saved=await database(page);expect(saved.session.kind).toBe('review_due');expect(saved.session.wordIds).toEqual(['cat'])
+ const saved=await database(page);expect(saved.session.kind).toBe('review_due');expect(saved.session.wordIds[0]).toBe('cat');expect(saved.session.wordSources.cat).toBe('review_due');expect(Object.values(saved.session.wordSources).filter(s=>s==='new_word').length).toBeLessThanOrEqual(saved.dailyLimit)
 })
 test('首次错误进入本轮回看，灵石不能负数，低准确率巩固',async({page})=>{
  await go(page,'home');await page.locator('.hero-cta').click()

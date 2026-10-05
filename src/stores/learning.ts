@@ -12,20 +12,30 @@ import {availableModes} from '../../packages/content_schema/course'
 import {readFeedbackSettings} from './feedback'
 import {initialProgress} from '../services/storage/MigrationV1toV2'
 import {getCourseWord,resolveFrozenWord} from '../services/content/ContentRegistry'
+import {useParentSettingsStore} from './parent-settings'
+import {planDailySession} from '../services/learning/SessionPlanner'
+import {needsRecentPractice} from '../services/study-presentation'
 export const modes:{id:LearningMode;name:string;description:string}[]=[{id:'flash',name:'闪现',description:'看看单词，回想它的意思'},{id:'connect',name:'连接',description:'为单词找到正确的中文意思'},{id:'listen',name:'听音',description:'听发音，选出对应的单词'},{id:'spell',name:'拼写',description:'看中文，用字母拼出单词'},{id:'dictation',name:'听写',description:'听发音，写出这个单词'}]
 export const useLearningStore=defineStore('learning',()=>{
- const profile=useProfileStore(),review=useReviewStore(),course=useCourseStore()
+ const profile=useProfileStore(),review=useReviewStore(),course=useCourseStore(),parent=useParentSettingsStore()
  const session=computed(()=>profile.db.session)
  const current=computed(()=>session.value ? resolveFrozenWord(session.value.wordSnapshot?.[session.value.wordIds[session.value.index]]||wordById[session.value.wordIds[session.value.index]],session.value.courseId,session.value.contentVersion):undefined)
  const todayAnswers=computed(()=>profile.db.history.filter(a=>localDate(new Date(a.at))===localDate()))
  const newToday=computed(()=>new Set(todayAnswers.value.filter(a=>a.source==='new_word').map(a=>a.wordId)).size)
  const lesson=computed(()=>course.lesson)
+ const newCandidates=computed(()=>lesson.value.wordIds.filter(id=>!profile.db.cards[id]))
  const newWords=computed(()=>{
   if(review.due.length || (session.value && !session.value.completedAt && session.value.kind==='review_due'))return []
-  const remaining=Math.max(0,profile.db.dailyLimit-newToday.value)
-  return lesson.value.wordIds.filter(id=>!profile.db.cards[id]).slice(0,remaining)
+  const remaining=Math.max(0,parent.plannerConfig.dailyNewWordLimit-newToday.value)
+  return newCandidates.value.slice(0,remaining)
  })
  const needsConsolidation=computed(()=>course.currentId==='starter'&&profile.db.lastLessonAccuracy!==null && profile.db.lastLessonAccuracy<.8)
+ const dailyPlan=computed(()=>{
+  const weak=new Set(review.weak.map(c=>c.wordId)),history=new Map<string,Answer[]>()
+  for(const answer of profile.db.history){if(!history.has(answer.wordId))history.set(answer.wordId,[]);history.get(answer.wordId)!.push(answer)}
+  return planDailySession({config:parent.plannerConfig,dueIds:review.due.map(c=>c.wordId),weakIds:lesson.value.wordIds.filter(id=>profile.db.cards[id]&&(needsConsolidation.value||weak.has(id)||needsRecentPractice(history.get(id)||[]))),newIds:needsConsolidation.value?[]:newCandidates.value,newToday:newToday.value})
+ })
+ const currentSource=computed(()=>session.value?.wordSources?.[current.value?.id||'']||session.value?.kind||'practice')
  const choices=computed(()=>{
   if(!current.value)return []
   const pool=session.value?.wordSnapshot||wordById,ids=[current.value.id,...current.value.distractors.filter(id=>pool[id])]
@@ -35,15 +45,15 @@ export const useLearningStore=defineStore('learning',()=>{
  function start(request?:string[]){
   review.refresh()
   if(session.value && !session.value.completedAt)return true
-  let ids:string[],kind:LearningSession['kind']
-  if(review.due.length){ids=review.due.map(c=>c.wordId);kind='review_due'}
+  let ids:string[],kind:LearningSession['kind'],wordSources:LearningSession['wordSources']
+  if(review.due.length&&request?.length){ids=review.due.map(c=>c.wordId);kind='review_due'}
   else if(request?.length){ids=request.filter(id=>wordById[id]);kind='practice'}
-  else if(needsConsolidation.value){ids=lesson.value.wordIds.filter(id=>profile.db.cards[id]);kind='practice'}
-  else{ids=newWords.value;kind='new_word'}
+  else if(needsConsolidation.value&&!review.due.length){ids=lesson.value.wordIds.filter(id=>profile.db.cards[id]);kind='practice'}
+  else{const plan=dailyPlan.value;ids=plan.wordIds;wordSources=plan.wordSources;kind=plan.dueIds.length?'review_due':plan.newIds.length?'new_word':'practice'}
   if(!ids.length)return false
   const snapshot:Record<string,typeof wordById[string]>={}
   for(const id of ids){const source=getCourseWord(course.currentId,id);if(!source)continue;const word=JSON.parse(JSON.stringify({...source,example:lesson.value.examples?.[id]||source.example}));if(!word.distractors.length){const candidates=course.wordIds.map(id=>wordById[id]).filter(w=>w&&w.id!==word.id&&w.word!==word.word&&w.meaning!==word.meaning);word.distractors=candidates.filter((w,i)=>candidates.findIndex(other=>other.meaning===w.meaning)===i).slice(0,3).map(w=>w.id)}snapshot[id]=word;for(const distractor of word.distractors)if(wordById[distractor])snapshot[distractor]=JSON.parse(JSON.stringify(wordById[distractor]))}
-  return profile.transact(d=>{d.session={id:`session-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,startedAt:new Date().toISOString(),date:localDate(),kind,wordIds:ids,index:0,mode:'flash',input:'',selected:'',revealed:false,answers:[],courseId:course.currentId,contentVersion:course.current.contentVersion,lessonId:lesson.value.id,wordSnapshot:snapshot,seed:Date.now()}})
+  return profile.transact(d=>{d.session={id:`session-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,startedAt:new Date().toISOString(),date:localDate(),kind,wordIds:ids,index:0,mode:'flash',input:'',selected:'',revealed:false,answers:[],courseId:course.currentId,contentVersion:course.current.contentVersion,lessonId:lesson.value.id,wordSnapshot:snapshot,seed:Date.now(),wordSources,plannerConfig:{...parent.plannerConfig}}})
  }
  function patch(change:Partial<LearningSession>){return profile.transact(d=>{if(d.session && !d.session.completedAt)Object.assign(d.session,change)})}
  function setMode(mode:LearningMode){if(session.value?.answers[session.value.index]||!current.value||!availableModes(current.value,Object.values(session.value?.wordSnapshot||wordById),readFeedbackSettings().sound).includes(mode))return false;return patch({mode,input:'',selected:'',revealed:false})}
@@ -51,17 +61,17 @@ export const useLearningStore=defineStore('learning',()=>{
  function hint(){return profile.transact(d=>{if(d.session&&!d.session.revealed&&!d.session.answers[d.session.index]){d.gems=Math.max(0,d.gems-1);d.session.revealed=true}})}
  function submit(rating?:ReviewRating){
   if(!session.value||!current.value||session.value.completedAt||session.value.answers[session.value.index])return false
-  const s=session.value,w=current.value
+  const s=session.value,w=current.value,source=currentSource.value
   if(s.mode!=='flash' && ((s.mode==='connect'||s.mode==='listen')?!s.selected:!s.input.trim()))return false
   if(s.mode==='flash' && !s.revealed)return false
   const correct=s.mode==='flash' ? rating!==1 : (s.mode==='spell'||s.mode==='dictation') ? isCorrectSpelling(s.input,w) : s.selected===w.id
   const actualRating:ReviewRating=correct?(s.revealed&&s.mode!=='flash'?2:rating??3):1
   const now=new Date()
-  const answer:Answer={id:`${s.id}:${s.index}`,wordId:w.id,correct,rating:actualRating,at:now.toISOString(),source:s.kind==='review_due'?'review_due':'new_word',mode:s.mode,input:s.input||s.selected}
+  const answer:Answer={id:`${s.id}:${s.index}`,wordId:w.id,correct,rating:actualRating,at:now.toISOString(),source:source==='review_due'?'review_due':'new_word',mode:s.mode,input:s.input||s.selected}
   const ok=profile.transact(d=>{
    if(!d.session || d.session.answers[d.session.index])return
    d.session.answers.push(answer)
-   if(s.kind!=='practice'){
+   if(source!=='practice'){
     d.cards[w.id]=new FSRSScheduler().schedule(d.cards[w.id]??newCard(w.id,now),actualRating,now).card
     d.history.push(answer)
     applyLearningReward(d,answer)
@@ -78,7 +88,15 @@ export const useLearningStore=defineStore('learning',()=>{
    if(s.index<s.wordIds.length-1){s.index++;s.input='';s.selected='';s.revealed=false}
    else{
     s.completedAt=new Date().toISOString()
-    if((s.courseId||'starter')==='starter'&&(s.kind==='new_word'||s.kind==='practice')){
+    if(s.wordSources&&Object.values(s.wordSources).includes('new_word')){
+     const answers=s.answers.filter(a=>s.wordSources![a.wordId]==='new_word'),accuracy=answers.filter(a=>a.correct).length/answers.length,courseId=s.courseId||'starter'
+     d.courseProgress??={};d.courseProgress[courseId]??=initialProgress(courseId);d.courseProgress[courseId].lastLessonAccuracy=accuracy
+     if(courseId==='starter'){
+      d.lastLessonAccuracy=accuracy
+      if(canUnlockNextUnit(answers)&&lesson.value.wordIds.every(id=>d.cards[id]))d.lessonIndex=Math.min(d.lessonIndex+1,lessons.length-1)
+      d.courseProgress.starter.currentLessonId=lessons[d.lessonIndex].id
+     }
+    }else if((s.courseId||'starter')==='starter'&&(s.kind==='new_word'||s.kind==='practice')){
      d.lastLessonAccuracy=s.answers.filter(a=>a.correct).length/s.answers.length
      if(canUnlockNextUnit(s.answers)&&s.wordIds.every(id=>lesson.value.wordIds.includes(id))&&lesson.value.wordIds.every(id=>d.cards[id]))d.lessonIndex=Math.min(d.lessonIndex+1,lessons.length-1)
      d.courseProgress??={};d.courseProgress.starter??=initialProgress('starter');d.courseProgress.starter.lastLessonAccuracy=d.lastLessonAccuracy;d.courseProgress.starter.currentLessonId=lessons[d.lessonIndex].id
@@ -91,5 +109,5 @@ export const useLearningStore=defineStore('learning',()=>{
  function previous(){if(!session.value || session.value.index===0)return false;return patch({index:session.value.index-1,input:session.value.answers[session.value.index-1]?.input??'',revealed:true})}
  const learnedCount=computed(()=>Object.keys(profile.db.cards).length)
  const remainingCount=computed(()=>course.wordIds.filter(id=>!profile.db.cards[id]).length)
- return {session,current,choices,todayAnswers,newToday,newWords,lesson,needsConsolidation,learnedCount,remainingCount,start,patch,setMode,reveal,hint,submit,next,previous}
+ return {session,current,currentSource,choices,todayAnswers,newToday,newWords,dailyPlan,lesson,needsConsolidation,learnedCount,remainingCount,start,patch,setMode,reveal,hint,submit,next,previous}
 })

@@ -31,7 +31,7 @@ export const useStudyPresentation=defineStore('study-presentation',()=>{
    if(!state.value.revisitStarted)patch({revisitStarted:true,queue:revisitWords(session.answers),finished:revisitWords(session.answers).length===0})
   }else if(!state.value.manual&&!session.answers[session.index]&&!session.input&&!session.selected&&!session.revealed){
    const allowed=learning.current?availableModes(learning.current,Object.values(session.wordSnapshot||wordById),readFeedbackSettings().sound):['flash']
-   const desired=automaticMode(session.index,session.kind),mode=allowed.includes(desired)?desired:'flash'
+   const desired=automaticMode(session.index,session.kind,session.plannerConfig?.entryLevel),mode=allowed.includes(desired)?desired:'flash'
    if(mode!==session.mode)learning.setMode(mode)
   }
  }

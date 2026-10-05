@@ -1,8 +1,10 @@
 import type {Answer,LearningMode,LearningSession,MemoryCard} from '../../packages/core_learning'
 import {mastery} from '../../packages/core_learning'
+import {abilityMeta,type EntryLevel} from '../../packages/parent_settings'
 
 export const childRatings=['再学一次','有点难','记住了','很熟练'] as const
-export function automaticMode(index:number,kind:LearningSession['kind']):LearningMode {
+export function automaticMode(index:number,kind:LearningSession['kind'],entryLevel?:EntryLevel):LearningMode {
+ if(entryLevel){const order=abilityMeta(entryLevel).modes;return order[Math.max(0,index)%order.length]}
  const order:LearningMode[]=kind==='review_due'?['flash','listen','connect','spell','dictation']:['flash','connect','listen','spell','dictation']
  return order[Math.max(0,index)%order.length]
 }
