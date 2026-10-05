@@ -1,4 +1,7 @@
 import type { Word } from '../core_learning'
+export * from './types'
+export * from './chunks'
+export * from './timeline'
 export function segments(word: Word) {
   return word.phonics.map((letters, i) => ({ letters, sound: word.phonemes[i] || '' }))
 }

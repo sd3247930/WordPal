@@ -14,4 +14,4 @@ onLaunch(()=>{startWindowService();useProfileStore();void hydrateMedia()})
 onShow(()=>useReviewStore().refresh())
 onHide(()=>{stopAudio();useActivitiesStore().pauseTimer()})
 </script>
-<style lang="scss">@use './styles/tokens.scss';@use './styles/app.scss';@use './styles/study-wordbook.scss';@use './styles/accessibility.scss';@use './styles/controls.scss';@use './styles/courses.scss';</style>
+<style lang="scss">@use './styles/tokens.scss';@use './styles/app.scss';@use './styles/study-wordbook.scss';@use './styles/accessibility.scss';@use './styles/controls.scss';@use './styles/courses.scss';@use './styles/phonics.scss';</style>

@@ -1,0 +1,23 @@
+.phonics-word-frame.word{width:100%;max-width:100%;overflow-x:auto;overflow-y:hidden;white-space:nowrap;overflow-wrap:normal;padding:0;line-height:1.15;letter-spacing:0;font-weight:700;scrollbar-width:thin}
+.phonics-word{display:inline-flex;gap:0;flex-wrap:nowrap;align-items:baseline;max-width:none}
+.phonics-chunk{color:var(--phonics-ink);position:relative;flex-shrink:0;transition:color 150ms ease,background 150ms ease,transform 150ms ease;transform-origin:50% 80%}
+.phonics-word .phonics-chunk{display:inline-flex;align-items:baseline;background:transparent;line-height:1.15;padding:0;margin:0}
+.chunk-grapheme{position:relative;font-weight:700;line-height:1.15;transition:opacity 150ms ease}
+.chunk-grapheme::after{content:'';position:absolute;left:0;right:0;bottom:0;height:3px;background:currentColor;opacity:0;transition:opacity 150ms ease}
+.phonics-chunk.is-active .chunk-grapheme{font-weight:800}
+.phonics-chunk.is-active .chunk-grapheme::after{opacity:1}
+.phonics-chunk.is-active{transform:scale(1.03)}
+.phonics-chunk.is-upcoming .chunk-grapheme{opacity:.75}
+.phonics-card{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--phonics-soft);padding:10px 12px;border:2px solid transparent;border-radius:var(--wp-radius-sm);min-width:48px;font-size:22px}
+.phonics-card.is-active{border-color:var(--phonics-ink)}
+.chunk-phoneme{color:var(--wp-foreground);font-weight:400;line-height:1.4}
+.phonics-breakdown.phonics-row{gap:8px;margin:12px 0;align-items:stretch}
+.phonics-timing-note{line-height:1.5;margin-top:8px}
+.wp-app .wp-word-card .word-core{max-width:100%;width:100%}
+.high-contrast .phonics-chunk{color:var(--wp-foreground)}
+.high-contrast .phonics-card{background:var(--wp-surface);border-color:var(--wp-border)}
+.high-contrast .phonics-card.is-active{border-color:var(--wp-foreground)}
+.high-contrast .phonics-chunk.is-upcoming .chunk-grapheme{opacity:1}
+.reduce-motion .phonics-chunk,.reduce-motion .chunk-grapheme,.reduce-motion .chunk-grapheme::after{transition-duration:60ms;transform:none}
+@media(prefers-reduced-motion:reduce){.phonics-chunk,.chunk-grapheme,.chunk-grapheme::after{transition-duration:60ms;transform:none!important}}
+@media(max-width:599px){.study-space .wp-word-card .word-content.word-wide .word-core{flex-basis:100%;width:100%}.study-space .word-wide .word-definition{flex-direction:row;flex-basis:auto;gap:8px}.phonics-card{padding:8px 10px}}

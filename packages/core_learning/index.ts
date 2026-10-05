@@ -1,9 +1,11 @@
+import type {PhonicsData} from '../phonics/types'
 export type ReviewRating = 1 | 2 | 3 | 4
 export type MasteryState = 'new' | 'learning' | 'review' | 'mastered'
 export type LearningMode = 'flash' | 'connect' | 'listen' | 'spell' | 'dictation'
 export interface Word {
   id: string; word: string; ipa: string; meaning: string; pos: string
   phonics: string[]; phonemes: string[]; syllables: string[]
+  phonicsData?:PhonicsData
   audio: string; image: string; example: string; unit: string; lesson: string
   difficulty: number; distractors: string[]
   acceptedSpellings?: string[]; senseId?:string; sourceId?:string
