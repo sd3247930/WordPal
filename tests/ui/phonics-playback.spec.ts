@@ -4,6 +4,7 @@ import {go,database,setAppearance} from './helpers'
 import {freshDatabase} from '../../src/stores/profile'
 import {wordById} from '../../packages/content_schema'
 import {resolvePhonics} from '../../packages/phonics'
+import {phonicsColor} from '../../src/styles/phonics'
 import type {Word,LearningMode} from '../../packages/core_learning'
 
 function sample(lemma='apple'):Word{
@@ -96,6 +97,34 @@ test('前后台事件清理声音与高亮，系统减少动效切换立即关�
  await active(page,null);await expect(audioButton(page)).not.toHaveClass(/playing/);await audioButton(page).click();await active(page,0);expect(await database(page)).toEqual(before)
 })
 
+const rgbCases=(['bento','swiss','soft','oled'] as const).flatMap(theme=>(['light','dark'] as const).map(mode=>({theme,mode,highContrast:false})))
+rgbCases.push({theme:'bento',mode:'light',highContrast:true},{theme:'oled',mode:'dark',highContrast:true})
+for(const {theme,mode,highContrast} of rgbCases)test(`${theme} ${mode}${highContrast?' 高对比':''} 红绿蓝循环、Active色与下划线双处同步，结束及重播恢复`,async({page})=>{
+ const word:Word={...sample(),id:'blends',word:'blends',ipa:'/blendz/',meaning:'混合',example:'It blends well.',phonics:['b','l','e','n','d','s'],phonemes:['/b/','/l/','/e/','/n/','/d/','/z/'],syllables:['blends']}
+ word.phonicsData={...resolvePhonics(word).data,chunks:resolvePhonics(word).data.chunks.map((chunk,i)=>({...chunk,startMs:i*140,endMs:(i+1)*140}))}
+ await setAppearance(page,theme,mode,{highContrast});await mockClock(page);await seed(page,word);await go(page,'learn');const before=await database(page)
+ const names=['red','green','blue','red','green','blue'],rgb=(hex:string)=>'rgb('+[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)).join(', ')+')'
+ const colors=async(selector:string)=>page.locator(selector+' .chunk-grapheme').evaluateAll(nodes=>nodes.map(n=>getComputedStyle(n).color))
+ const base=names.map((_,i)=>rgb(phonicsColor(i,theme,mode)[highContrast?'active':'ink']))
+ for(const selector of ['.phonics-word','.phonics-breakdown']){
+  expect(await page.locator(selector+' .phonics-chunk').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('data-color')))).toEqual(names)
+  expect(await colors(selector)).toEqual(base)
+ }
+ await audioButton(page).click()
+ for(let index=0;index<6;index++){
+  await tick(page,(index*140+20)/1000);await active(page,index)
+  const expected=[...base];expected[index]=rgb(phonicsColor(index,theme,mode).active)
+  for(const selector of ['.phonics-word','.phonics-breakdown'])await expect.poll(()=>colors(selector)).toEqual(expected)
+  const underline=await page.locator('.phonics-word .is-active .chunk-grapheme').evaluate(n=>({weight:getComputedStyle(n).fontWeight,height:getComputedStyle(n,'::after').height,opacity:getComputedStyle(n,'::after').opacity,color:getComputedStyle(n,'::after').backgroundColor}))
+  expect(underline).toEqual({weight:'800',height:'3px',opacity:'1',color:expected[index]})
+  expect(await page.locator('.phonics-card.is-active').evaluate(n=>getComputedStyle(n).borderTopColor)).toBe(expected[index])
+ }
+ await audioButton(page).click();await active(page,0);await tick(page,.31);await active(page,2);await event(page,'ended');await active(page,null)
+ for(const selector of ['.phonics-word','.phonics-breakdown'])await expect.poll(()=>colors(selector)).toEqual(base)
+ await expect.poll(()=>page.locator('.phonics-word .chunk-grapheme').evaluateAll(nodes=>nodes.map(n=>getComputedStyle(n,'::after').opacity))).toEqual(Array(6).fill('0'))
+ expect(await database(page)).toEqual(before);expect(await page.evaluate(()=>(window as any).phonicsTest.players())).toBe(1)
+})
+
 for(const mode of ['flash','connect','listen','spell','dictation'] as const)test(`${mode} 音块遵守题面隐藏，反馈后可重播且不改排程`,async({page})=>{
  await mockClock(page);await seed(page,sample('rain'),mode);await go(page,'learn');const before=await database(page),hidden=['listen','spell','dictation'].includes(mode)
  await expect(page.locator('.phonics-word')).toHaveCount(hidden?0:1);await expect(page.locator('.phonics-breakdown')).toHaveCount(hidden?0:1)
@@ -118,9 +147,9 @@ for(const theme of ['bento','swiss','soft','oled'])for(const mode of ['light','d
 })
 
 test('手机和平板音块视觉样本',async({browser})=>{
- mkdirSync('private/verification/phonics',{recursive:true})
+ mkdirSync('private/verification/phonics-rgb',{recursive:true})
  for(const [theme,mode,width,height] of [['bento','light',390,844],['soft','light',1280,900],['oled','dark',1024,900]] as const){
   const page=await browser.newPage({viewport:{width,height}});await setAppearance(page,theme,mode);await mockClock(page);await seed(page);await go(page,'learn');await audioButton(page).click();await tick(page,.4);await active(page,1)
-  await page.screenshot({path:`private/verification/phonics/${theme}-${width}.png`,fullPage:true});await page.close()
+  await page.screenshot({path:`private/verification/phonics-rgb/${theme}-${width}.png`,fullPage:true});await page.close()
  }
 })
