@@ -1,3 +1,4 @@
+import {openCustomPractice,openExploration} from './helpers'
 import {test,expect,type Page} from '@playwright/test'
 import {mkdirSync} from 'node:fs'
 import {go,database,setAppearance} from './helpers'
@@ -10,10 +11,10 @@ import type {Word,LearningMode} from '../../packages/core_learning'
 function sample(lemma='apple'):Word{
  return JSON.parse(JSON.stringify(wordById[lemma]||{...wordById.apple,id:lemma,word:lemma,ipa:'/ʃɪp/',meaning:'船',phonics:[],phonemes:[],syllables:[],audio:'/static/audio/apple.wav'}))
 }
-async function seed(page:Page,word=sample(),mode:LearningMode='flash'){
+async function seed(page:Page,word=sample(),mode:LearningMode='flash',revealed=mode==='flash'){
  const db={...freshDatabase(),version:2,currentCourseId:'starter',courseProgress:{starter:{currentLessonId:'l01',completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{}}},auxiliaryRecords:[]}
  const words=[word,sample('dog'),sample('fish'),sample('cat')];word.distractors=words.slice(1).map(w=>w.id)
- db.session={id:'phonics-session',date:'2026-10-05',startedAt:'2026-10-05T08:00:00Z',kind:'practice',wordIds:[word.id,'dog'],index:0,mode,input:'',selected:'',revealed:false,answers:[],courseId:'starter',contentVersion:'1.0.0',wordSnapshot:Object.fromEntries(words.map(w=>[w.id,w]))}
+ db.session={id:'phonics-session',date:'2026-10-05',startedAt:'2026-10-05T08:00:00Z',kind:'practice',wordIds:[word.id,'dog'],index:0,mode,input:'',selected:'',revealed,answers:[],courseId:'starter',contentVersion:'1.0.0',wordSnapshot:Object.fromEntries(words.map(w=>[w.id,w]))}
  await page.addInitScript(db=>{
   if(!localStorage.getItem('wordpal.database.active.v2')){localStorage.setItem('wordpal.database.v2',JSON.stringify(db));localStorage.setItem('wordpal.database.active.v2',JSON.stringify('v2'))}
  },db)
@@ -42,7 +43,7 @@ async function tick(page:Page,time:number){await page.evaluate(time=>(window as 
 async function event(page:Page,name:string){await page.evaluate(name=>(window as any).phonicsTest.event(name),name)}
 
 test('真实离线 apple 发音连续重播10次，主词与拆分同步且完整档案不变',async({page})=>{
- test.setTimeout(45000);await seed(page);await go(page,'learn');const before=await database(page)
+ test.setTimeout(45000);await seed(page);await go(page,'learn');await openCustomPractice(page);await openExploration(page);const before=await database(page)
  const response=await page.request.get('/static/audio/apple.wav');expect(response.ok()).toBeTruthy()
  for(let i=0;i<10;i++){
   await page.evaluate(()=>{
@@ -64,16 +65,16 @@ test('真实离线 apple 发音连续重播10次，主词与拆分同步且完�
 
 test('精确元数据同步、播放中重播、错误恢复、切模式/切词/离页均无残留',async({page})=>{
  const word=sample(),bounds=[0,260,480,920];word.phonicsData={...resolvePhonics(word).data,chunks:resolvePhonics(word).data.chunks.map((chunk,i)=>({...chunk,startMs:bounds[i],endMs:bounds[i+1]}))}
- await mockClock(page);await seed(page,word);await go(page,'learn');const before=await database(page)
+ await mockClock(page);await seed(page,word);await go(page,'learn');await openCustomPractice(page);await openExploration(page);const before=await database(page)
  await audioButton(page).click();await active(page,0);await tick(page,.28);await active(page,1);await tick(page,.6);await active(page,2)
  await expect(page.locator('.phonics-timing-note')).toHaveAttribute('data-timing','exact')
  await audioButton(page).click();await active(page,0);await tick(page,.6);await active(page,2);await event(page,'ended');await active(page,null)
   await audioButton(page).click();await event(page,'error');await active(page,null);await expect(audioButton(page)).toContainText('重试播放')
  await audioButton(page).click();await active(page,0);expect(await database(page)).toEqual(before)
- await page.locator('.mode-button').filter({hasText:'连接'}).click();await active(page,null)
+ await page.locator('.mode-button').filter({hasText:'连接'}).click();await active(page,null);await page.getByRole('button',{name:/^查看提示/}).click();await openExploration(page)
  await audioButton(page).click();await active(page,0)
  await page.locator('.answer-choice').filter({hasText:'苹果'}).click();await page.locator('.answer-actions .wp-button').filter({hasText:'确认答案'}).click();await page.locator('.answer-feedback .wp-button').click()
- await expect(page.locator('.word')).toHaveText('dog');await active(page,null)
+ await expect(page.locator('.word')).toHaveText('dog');await page.getByRole('button',{name:/^查看提示/}).click();await openExploration(page);await active(page,null)
  await audioButton(page).click();await expect(page.locator('.phonics-word .is-active')).toHaveCount(1)
  await page.getByRole('button',{name:'单词本',exact:true}).click();await expect(page.locator('.phonics-word')).toHaveCount(0)
  expect(await page.evaluate(()=>(window as any).phonicsTest.paused())).toBeTruthy();expect(await page.evaluate(()=>(window as any).phonicsTest.players())).toBe(1)
@@ -81,14 +82,14 @@ test('精确元数据同步、播放中重播、错误恢复、切模式/切词/
 })
 
 test('无时间能力使用明确教育提示，apple/ship/rain 的拼写与音块连续无缝',async({page})=>{
- await mockClock(page,false);await seed(page,sample('ship'));await go(page,'learn');const at=new Date('2026-10-05T08:00:00Z');await page.clock.install({time:at});await page.clock.pauseAt(at)
+ await mockClock(page,false);await seed(page,sample('ship'));await go(page,'learn');await openCustomPractice(page);await openExploration(page);const at=new Date('2026-10-05T08:00:00Z');await page.clock.install({time:at});await page.clock.pauseAt(at)
  await expect(page.locator('.phonics-word .chunk-grapheme')).toHaveText(['sh','i','p']);await audioButton(page).click();await active(page,0);await page.clock.runFor(450);await active(page,1);await page.clock.runFor(350);await active(page,2)
  await expect(page.locator('.phonics-timing-note')).toContainText('仅作跟读提示');await expect(page.locator('.phonics-timing-note')).toHaveAttribute('data-timing','visual')
  await event(page,'ended');await active(page,null)
 })
 
 test('前后台事件清理声音与高亮，系统减少动效切换立即关闭缩放',async({page})=>{
- await setAppearance(page,'bento','light',{reducedMotion:false});await mockClock(page);await seed(page);await go(page,'learn');const before=await database(page)
+ await setAppearance(page,'bento','light',{reducedMotion:false});await mockClock(page);await seed(page);await go(page,'learn');await openCustomPractice(page);await openExploration(page);const before=await database(page)
  await audioButton(page).click();await tick(page,.4);await active(page,1)
  await page.emulateMedia({reducedMotion:'reduce'});await expect.poll(()=>page.locator('.phonics-word .is-active').evaluate(node=>getComputedStyle(node).transform)).toBe('none')
  await page.evaluate(()=>{Object.defineProperty(document,'visibilityState',{configurable:true,get:()=> 'hidden'});document.dispatchEvent(new Event('visibilitychange'))})
@@ -102,7 +103,7 @@ rgbCases.push({theme:'bento',mode:'light',highContrast:true},{theme:'oled',mode:
 for(const {theme,mode,highContrast} of rgbCases)test(`${theme} ${mode}${highContrast?' 高对比':''} 红绿蓝循环、Active色与下划线双处同步，结束及重播恢复`,async({page})=>{
  const word:Word={...sample(),id:'blends',word:'blends',ipa:'/blendz/',meaning:'混合',example:'It blends well.',phonics:['b','l','e','n','d','s'],phonemes:['/b/','/l/','/e/','/n/','/d/','/z/'],syllables:['blends']}
  word.phonicsData={...resolvePhonics(word).data,chunks:resolvePhonics(word).data.chunks.map((chunk,i)=>({...chunk,startMs:i*140,endMs:(i+1)*140}))}
- await setAppearance(page,theme,mode,{highContrast});await mockClock(page);await seed(page,word);await go(page,'learn');const before=await database(page)
+ await setAppearance(page,theme,mode,{highContrast});await mockClock(page);await seed(page,word);await go(page,'learn');await openCustomPractice(page);await openExploration(page);const before=await database(page)
  const names=['red','green','blue','red','green','blue'],rgb=(hex:string)=>'rgb('+[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)).join(', ')+')'
  const colors=async(selector:string)=>page.locator(selector+' .chunk-grapheme').evaluateAll(nodes=>nodes.map(n=>getComputedStyle(n).color))
  const base=names.map((_,i)=>rgb(phonicsColor(i,theme,mode)[highContrast?'active':'ink']))
@@ -126,17 +127,17 @@ for(const {theme,mode,highContrast} of rgbCases)test(`${theme} ${mode}${highCont
 })
 
 for(const mode of ['flash','connect','listen','spell','dictation'] as const)test(`${mode} 音块遵守题面隐藏，反馈后可重播且不改排程`,async({page})=>{
- await mockClock(page);await seed(page,sample('rain'),mode);await go(page,'learn');const before=await database(page),hidden=['listen','spell','dictation'].includes(mode)
- await expect(page.locator('.phonics-word')).toHaveCount(hidden?0:1);await expect(page.locator('.phonics-breakdown')).toHaveCount(hidden?0:1)
+ await mockClock(page);await seed(page,sample('rain'),mode,false);await go(page,'learn');await openCustomPractice(page);await openExploration(page);const before=await database(page),hidden=['listen','spell','dictation'].includes(mode)
+ await expect(page.locator('.phonics-word')).toHaveCount(hidden?0:1);await expect(page.locator('.phonics-breakdown')).toHaveCount(0)
  if(mode==='flash'){await page.locator('.answer-actions .wp-button').filter({hasText:'查看答案'}).click();await page.locator('.rating-grid .wp-button').filter({hasText:'记住了'}).click()}
  else{if(mode==='spell'||mode==='dictation')await page.locator('.spelling-input input').fill('rain');else await page.locator('.answer-choice').filter({hasText:mode==='connect'?'雨':'rain'}).click();await page.locator('.answer-actions .wp-button').filter({hasText:'确认答案'}).click()}
-  await expect(page.locator('.phonics-word .chunk-grapheme')).toHaveText(['r','ai','n']);await audioButton(page).click();await active(page,0);await tick(page,.8);await active(page,2)
+  await openExploration(page);await expect(page.locator('.phonics-word .chunk-grapheme')).toHaveText(['r','ai','n']);await audioButton(page).click();await active(page,0);await tick(page,.8);await active(page,2)
  expect(await page.locator('.answer-choice .phonics-chunk').count()).toBe(0)
  const after=await database(page);for(const field of ['cards','history','rewardIds','gems','pets'])expect(after[field]).toEqual(before[field])
 })
 
 for(const theme of ['bento','swiss','soft','oled'])for(const mode of ['light','dark'])test(`${theme} ${mode} 大字/减少动效/长词在手机与平板保持可读`,async({page})=>{
- await setAppearance(page,theme,mode,{largeText:true,reducedMotion:true});await mockClock(page);const word={...sample(),word:'uncharacteristically',phonics:[],phonemes:[],syllables:[],ipa:''};await seed(page,word);await go(page,'learn')
+ await setAppearance(page,theme,mode,{largeText:true,reducedMotion:true});await mockClock(page);const word={...sample(),word:'uncharacteristically',phonics:[],phonemes:[],syllables:[],ipa:''};await seed(page,word);await go(page,'learn');await openExploration(page)
  for(const width of [320,390,768,1280]){
   await page.setViewportSize({width,height:900});await expect.poll(()=>page.locator('.phonics-word-frame').evaluate(node=>parseFloat(getComputedStyle(node).fontSize))).toBeGreaterThanOrEqual(36)
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBeTruthy()
@@ -149,7 +150,7 @@ for(const theme of ['bento','swiss','soft','oled'])for(const mode of ['light','d
 test('手机和平板音块视觉样本',async({browser})=>{
  mkdirSync('private/verification/phonics-rgb',{recursive:true})
  for(const [theme,mode,width,height] of [['bento','light',390,844],['soft','light',1280,900],['oled','dark',1024,900]] as const){
-  const page=await browser.newPage({viewport:{width,height}});await setAppearance(page,theme,mode);await mockClock(page);await seed(page);await go(page,'learn');await audioButton(page).click();await tick(page,.4);await active(page,1)
+  const page=await browser.newPage({viewport:{width,height}});await setAppearance(page,theme,mode);await mockClock(page);await seed(page);await go(page,'learn');await openCustomPractice(page);await openExploration(page);await audioButton(page).click();await tick(page,.4);await active(page,1)
   await page.screenshot({path:`private/verification/phonics-rgb/${theme}-${width}.png`,fullPage:true});await page.close()
  }
 })

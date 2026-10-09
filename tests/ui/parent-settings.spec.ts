@@ -1,3 +1,4 @@
+import {openCustomPractice} from './helpers'
 import {test,expect,type Page} from '@playwright/test'
 import {go,database,setAppearance} from './helpers'
 import {freshDatabase,type Database} from '../../src/stores/profile'
@@ -29,7 +30,7 @@ for(const cap of [5,10,20])test(`${cap}新词上限保存后实际编排12个到
 test('当前轮次中修改后显示下次生效，输入和快照跨重启不变，完成后实际使用新能力及剩余新词额度',async({page})=>{
  test.setTimeout(60000);await seed(page);await unlock(page);await limit(page,5).click()
  // L1 only offers flash/connect, so use L3 to stage a text input for the "draft survives restart" check.
- await level(page,3).click();await go(page,'home');await page.locator('.hero-cta').click();await page.locator('.mode-button').filter({hasText:'拼写'}).click();await page.locator('.spelling-input input').fill('draft')
+ await level(page,3).click();await go(page,'home');await page.locator('.hero-cta').click();await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'拼写'}).click();await page.locator('.spelling-input input').fill('draft')
  const before=await database(page);await unlock(page);await limit(page,20).click();await level(page,5).click()
  await expect(page.locator('[data-state="pending"]')).toContainText('已保存 · 下次学习生效');await expect(page.locator('.ability-explanation')).toContainText('L5 · 进阶表达');await expect(page.locator('.ability-recommendations')).toHaveAttribute('data-entry-level','5');expect(protectedData(await database(page))).toEqual(protectedData(before))
  await page.reload();await page.getByRole('spinbutton',{name:'家长验证答案'}).fill('56');await page.getByRole('button',{name:'打开家长设置',exact:true}).click();await expect(limit(page,20)).toHaveAttribute('aria-pressed','true');await expect(page.locator('[data-state="pending"]')).toContainText('下次学习生效')

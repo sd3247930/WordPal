@@ -58,7 +58,7 @@
         "null"
       ],
       "minimum": 1,
-      "maximum": 6
+      "maximum": 9
     },
     "editionYear": {
       "type": [
@@ -601,7 +601,7 @@
           "grade": {
             "type": "integer",
             "minimum": 1,
-            "maximum": 6
+            "maximum": 9
           },
           "semester": {
             "type": "string",
@@ -654,7 +654,7 @@
               "null"
             ],
             "minimum": 3,
-            "maximum": 6
+            "maximum": 9
           }
         }
       }

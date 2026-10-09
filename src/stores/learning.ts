@@ -55,11 +55,12 @@ export const useLearningStore=defineStore('learning',()=>{
   const offset=(session.value?.index??0)%ids.length
   return [...ids.slice(offset),...ids.slice(0,offset)].map(id=>pool[id])
  })
- function start(request?:string[]){
+ function start(request?:string[],scopedDue=false){
   review.refresh()
   if(session.value && !session.value.completedAt)return true
   let ids:string[],kind:LearningSession['kind'],wordSources:LearningSession['wordSources']
-  if(review.due.length&&request?.length){ids=review.due.map(c=>c.wordId);kind='review_due'}
+  if(scopedDue){const allowed=new Set(request||[]);ids=review.due.map(c=>c.wordId).filter(id=>allowed.has(id));kind='review_due';wordSources=Object.fromEntries(ids.map(id=>[id,'review_due' as const]))}
+  else if(review.due.length&&request?.length){ids=review.due.map(c=>c.wordId);kind='review_due'}
   else if(request?.length){ids=request.filter(id=>wordById[id]);kind='practice'}
   else if(needsConsolidation.value&&!review.due.length){ids=lesson.value.wordIds.filter(id=>profile.db.cards[id]);kind='practice'}
   else{const plan=dailyPlan.value;ids=plan.wordIds;wordSources=plan.wordSources;kind=plan.dueIds.length?'review_due':plan.newIds.length?'new_word':'practice'}
@@ -122,5 +123,5 @@ export const useLearningStore=defineStore('learning',()=>{
  function previous(){if(!session.value || session.value.index===0)return false;return patch({index:session.value.index-1,input:session.value.answers[session.value.index-1]?.input??'',revealed:true})}
  const learnedCount=computed(()=>Object.keys(profile.db.cards).length)
  const remainingCount=computed(()=>course.wordIds.filter(id=>!profile.db.cards[id]).length)
- return {session,current,currentSource,choices,todayAnswers,newToday,newWords,dailyPlan,lesson,needsConsolidation,learnedCount,remainingCount,start,patch,setMode,reveal,hint,submit,next,previous}
+ return {session,current,currentSource,choices,todayAnswers,newToday,newWords,dailyPlan,lesson,needsConsolidation,learnedCount,remainingCount,start,startDue:(ids:string[])=>start(ids,true),patch,setMode,reveal,hint,submit,next,previous}
 })

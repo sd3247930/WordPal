@@ -6,7 +6,9 @@ import {useLearningStore} from './learning'
 import {useReviewStore} from './review'
 import {readStorage,writeStorage} from '../services/storage'
 import {needsRecentPractice} from '../services/study-presentation'
-import {courseRegistry,archiveStatus,courseMemberships} from '../services/content/ContentRegistry'
+import {courseRegistry,archiveStatus,courseMemberships,isCourseInstalled,retainedPositions} from '../services/content/ContentRegistry'
+import {occurrences} from '../services/content/IdentityModel'
+import {queryWordbook,type WordbookQuery} from '../services/content/WordbookQueryBuilder'
 export interface WordbookScope {courseId?:string;unitId?:string;learnedOnly?:boolean;installedOnly?:boolean}
 export type WordbookFilter='due'|'weak'|'mistakes'|'all'
 interface Preferences {favorites:string[];later:string[]}
@@ -19,6 +21,9 @@ export const useWordbookStore=defineStore('wordbook',()=>{
  const mistakes=computed(()=>words.filter(word=>needsRecentPractice(historyByWord.value[word.id])).map(word=>word.id))
  const suggestions=computed(()=>review.weak.map(card=>card.wordId).filter(id=>!!wordById[id]&&!preferences.value.favorites.includes(id)))
  const weak=computed(()=>[...new Set([...preferences.value.favorites,...suggestions.value])])
+ const positions=computed(()=>[...new Map([...Object.values(courseRegistry).flatMap(occurrences),...retainedPositions.filter(p=>!courseRegistry[p.courseId]).map(p=>({id:JSON.stringify([p.courseId,p.unitId,p.lexemeId]),courseId:p.courseId,unitId:p.unitId,unitTitle:p.unitTitle,lexemeId:p.lexemeId,order:0,lessonIds:[p.lessonId]}))].map(row=>[row.id,row])).values()])
+ const learnedIds=computed(()=>[...new Set([...Object.keys(profile.db.cards),...profile.db.history.map(a=>a.wordId)])])
+ function query(request:WordbookQuery){return queryWordbook(request,{words,positions:positions.value,cards:profile.db.cards,dueIds:review.due.map(c=>c.wordId),favorites:preferences.value.favorites,mistakes:mistakes.value,learnedIds:learnedIds.value,suggestions:suggestions.value})}
  function toggle(field:keyof Preferences,id:string){
   if(!wordById[id])return false
   const next={...preferences.value,[field]:preferences.value[field].includes(id)?preferences.value[field].filter(word=>word!==id):[...preferences.value[field],id]}
@@ -27,7 +32,7 @@ export const useWordbookStore=defineStore('wordbook',()=>{
  function list(filter:WordbookFilter,query:string,scope:WordbookScope={}){
   const ids=filter==='due'?review.due.map(card=>card.wordId):filter==='weak'?weak.value:filter==='mistakes'?mistakes.value:words.map(word=>word.id)
   const text=query.trim().toLowerCase()
-  const scoped=scope.courseId?new Set(courseRegistry[scope.courseId]?.units.filter(u=>!scope.unitId||u.id===scope.unitId).flatMap(u=>u.lessons.flatMap(l=>l.wordIds))||[]):scope.installedOnly?new Set(Object.values(courseRegistry).filter(c=>!archiveStatus[c.courseId]).flatMap(c=>c.vocabulary.map(w=>w.id))):null
+  const scoped=scope.courseId?new Set(courseRegistry[scope.courseId]?.units.filter(u=>!scope.unitId||u.id===scope.unitId).flatMap(u=>u.lessons.flatMap(l=>l.wordIds))||[]):scope.installedOnly?new Set(Object.values(courseRegistry).filter(c=>isCourseInstalled(c.courseId)).flatMap(c=>c.vocabulary.map(w=>w.id))):null
   return ids.map(id=>wordById[id]).filter(word=>word&&(!scoped||scoped.has(word.id))&&(!scope.learnedOnly||!!profile.db.cards[word.id])&&(!text||[word.word,word.meaning,word.unit,word.lesson,...courseMemberships(word.id).flatMap(m=>[m.courseTitle,m.unitTitle,m.lessonTitle])].join(' ').toLowerCase().includes(text))).sort((a,b)=>{
    const ca=profile.db.cards[a.id],cb=profile.db.cards[b.id]
    const da=ca?+new Date(ca.due):Infinity,db=cb?+new Date(cb.due):Infinity,now=Date.now()
@@ -38,5 +43,5 @@ export const useWordbookStore=defineStore('wordbook',()=>{
   })
  }
  function reset(){try{const next={favorites:[],later:[]};writeStorage(key,next);preferences.value=next;error.value='';return true}catch{error.value='界面标记清除失败，请检查设备存储。';return false}}
- return {preferences,error,historyByWord,mistakes,suggestions,weak,toggle,list,reset}
+ return {preferences,error,historyByWord,mistakes,suggestions,weak,toggle,list,query,learnedIds,reset}
 })

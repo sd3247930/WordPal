@@ -33,3 +33,9 @@
 .wp-app.large-text .wp-icon-button{min-width:56px}
 .wp-app.large-text .study-space .wp-word-card .wp-button{min-height:56px}
 @media(max-width:599px){.wp-app:not(.large-text) .study-space .answer-choice{min-height:48px;padding:0 12px}.wp-app .study-space .choice-grid{gap:8px}.wp-app .study-today{padding:6px 12px;margin-bottom:8px}}
+/* Custom controls can scroll as a single row without shrinking their touch targets. */
+.wp-app .study-space .mode-selector{display:flex;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;align-items:stretch}
+.wp-app .study-space .wp-segment{flex:1 0 48px;white-space:nowrap;min-height:48px;padding:0 10px}
+.wp-app .study-space .custom-practice{min-width:0}
+.wp-app .study-space .auto-mode-button{width:100%}
+@media(max-width:599px){.wp-app .study-space .wp-segment{flex:0 0 auto;min-width:48px}.wp-app .study-space .custom-practice{padding:8px}}

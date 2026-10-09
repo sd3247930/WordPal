@@ -6,6 +6,7 @@
     <text v-if="summary.needsReview" class="course-review-badge">待核对</text>
     <text v-if="archived" class="course-archive-badge">已归档</text>
     <text v-if="current" class="course-current-mark">✓ 当前使用</text>
+    <text class="small course-install-state">{{installationLabel(pack.courseId)}}</text>
    </view>
    <text class="small muted block">{{editionLabel}}</text>
    <view class="course-gallery-meta">
@@ -22,8 +23,9 @@ import {computed} from 'vue'
 import WPActionTile from '../button/WPActionTile.vue'
 import type {CoursePack} from '../../../packages/content_schema/course'
 import {courseEditionLabel,courseSummary} from '../../services/course/CourseSelection'
-const props=withDefaults(defineProps<{pack:CoursePack;selected?:boolean;current?:boolean;archived?:boolean}>(),{selected:false,current:false,archived:false})
+import {installationLabel,type CourseDescriptor} from '../../services/content/CourseDirectory'
+const props=withDefaults(defineProps<{pack:CoursePack|CourseDescriptor;selected?:boolean;current?:boolean;archived?:boolean}>(),{selected:false,current:false,archived:false})
 defineEmits<{select:[id:string]}>()
-const summary=computed(()=>courseSummary(props.pack)),editionLabel=computed(()=>courseEditionLabel(props.pack))
+const summary=computed(()=> 'wordCount' in props.pack?{words:props.pack.wordCount,units:props.pack.units.length,lessons:props.pack.units.reduce((n,u)=>n+u.lessons,0),levels:props.pack.abilityLevels.join(' / '),needsReview:props.pack.sources.some(s=>s.rightsStatus!=='redistribution-approved')||/待核对/.test(props.pack.title)}:courseSummary(props.pack)),editionLabel=computed(()=>courseEditionLabel(props.pack as CoursePack))
 const label=computed(()=>`${props.pack.title}，${summary.value.words} 词，${summary.value.units} 单元${summary.value.needsReview?'，待核对':''}${props.archived?'，已归档':''}${props.current?'，当前使用':''}`)
 </script>

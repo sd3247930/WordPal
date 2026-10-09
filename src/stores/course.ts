@@ -1,18 +1,20 @@
 import {defineStore} from 'pinia'
 import {computed} from 'vue'
 import {useProfileStore} from './profile'
-import {courseRegistry,archiveStatus,getCourseLessons,getCourseWordIds} from '../services/content/ContentRegistry'
-import {setArchived} from '../services/content/StorageRepository'
+import {courseRegistry,archiveStatus,isCourseInstalled,getCourseLessons,getCourseWordIds} from '../services/content/ContentRegistry'
+import {setArchived,uninstallCourseContent} from '../services/content/StorageRepository'
 import {initialProgress} from '../services/storage/MigrationV1toV2'
 import {useParentSettingsStore} from './parent-settings'
 import {recommendCourses} from '../services/learning/CourseRecommendation'
 import {COURSE_SELECTION_MESSAGE,courseSummary,type CourseSelectionResult} from '../services/course/CourseSelection'
 import type {CoursePack} from '../../packages/content_schema/course'
+import {readStorage} from '../services/storage'
+import {occurrenceProgress} from '../services/content/IdentityModel'
 function toast(message?:string){if(message)uni.showToast?.({title:message,icon:'none'})}
 export const useCourseStore=defineStore('course',()=>{
  const profile=useProfileStore()
  const currentId=computed(()=>profile.db.currentCourseId||'starter'),current=computed(()=>courseRegistry[currentId.value]||courseRegistry.starter)
- const installed=computed(()=>Object.values(courseRegistry).filter(c=>!archiveStatus[c.courseId]))
+ const installed=computed(()=>Object.values(courseRegistry).filter(c=>isCourseInstalled(c.courseId)))
  const parent=useParentSettingsStore(),recommendationConfig=computed(()=>parent.recommendationConfig)
  const recommendation=computed(()=>recommendCourses({...recommendationConfig.value,installed:installed.value,currentCourseId:currentId.value,learnedIds:new Set(Object.keys(profile.db.cards))}))
  const progress=computed(()=>profile.db.courseProgress?.[currentId.value]||{...initialProgress(currentId.value,currentId.value==='starter'?profile.db.lessonIndex:0),lastLessonAccuracy:currentId.value==='starter'?profile.db.lastLessonAccuracy:null})
@@ -27,6 +29,7 @@ export const useCourseStore=defineStore('course',()=>{
  function choose(id:string):CourseSelectionResult{
   if(!courseRegistry[id])return {ok:false,reason:'not-registered',message:COURSE_SELECTION_MESSAGE['not-registered']}
   if(archiveStatus[id])return {ok:false,reason:'archived',message:COURSE_SELECTION_MESSAGE.archived}
+  if(!isCourseInstalled(id))return {ok:false,reason:'unknown',message:'请先安装教材，再设为当前课程。'}
   if(profile.db.version!==2)return {ok:false,reason:'db-version-mismatch',message:COURSE_SELECTION_MESSAGE['db-version-mismatch']}
   if(profile.readOnly)return {ok:false,reason:'db-readonly',message:COURSE_SELECTION_MESSAGE['db-readonly']}
   const queued=!!(profile.db.session&&!profile.db.session.completedAt)
@@ -52,7 +55,21 @@ export const useCourseStore=defineStore('course',()=>{
   try{setArchived(id,false);return {ok:true}}
   catch{return {ok:false,reason:'unknown',message:'课程恢复失败，请稍后重试。'}}
  }
- function applyPending(){const id=profile.db.pendingCourseId;if(!id)return false;if(!courseRegistry[id]||archiveStatus[id])return profile.transact(d=>{d.pendingCourseId=undefined})&&false;if(!profile.db.session||profile.db.session.completedAt)return choose(id).ok;return false}
+ function applyPending(){const id=profile.db.pendingCourseId;if(!id)return false;if(!isCourseInstalled(id))return profile.transact(d=>{d.pendingCourseId=undefined})&&false;if(!profile.db.session||profile.db.session.completedAt)return choose(id).ok;return false}
+ async function uninstall(id:string,confirmed:boolean,replacement?:string){
+  if(!confirmed)throw new Error('请先确认仅移除教材包，保留学习记录。')
+  if(profile.readOnly)throw new Error('学习档案只读，暂不能移除教材。')
+  if(profile.db.session&&!profile.db.session.completedAt&&(profile.db.session.courseId===id||currentId.value===id))throw new Error('请先完成当前学习，再移除教材。')
+  const previous=currentId.value
+  if(id===previous){if(!replacement||replacement===id||!isCourseInstalled(replacement))throw new Error('请选择另一份已安装教材作为当前课程。');if(!choose(replacement).ok)throw new Error('替代教材未保存，已保留原教材。')}
+  try{
+   const prefs=readStorage<{favorites:string[];later:string[]}>('wordpal.wordbook.preferences.v1',{favorites:[],later:[]})
+   const retained=[...Object.keys(profile.db.cards),...profile.db.history.map(a=>a.wordId),...prefs.favorites,...prefs.later]
+   const result=await uninstallCourseContent(id,retained)
+   if(profile.db.pendingCourseId===id)clearPending()
+   return result
+  }catch(error){if(id===previous&&isCourseInstalled(id))choose(id);throw error}
+ }
  function chooseLesson(id:string){if(!lessons.value.some(l=>l.id===id)||profile.db.session&&!profile.db.session.completedAt)return false;return profile.transact(d=>{d.courseProgress??={};d.courseProgress[currentId.value]??=initialProgress(currentId.value);d.courseProgress[currentId.value].currentLessonId=id;if(currentId.value==='starter')d.lessonIndex=lessons.value.findIndex(l=>l.id===id)})}
- return {currentId,current,installed,textbooks,pendingCourse,selectionBlocked,progress,lessons,lesson,choose,applyCourseSelection,clearPending,restoreCourse,applyPending,chooseLesson,recommendationConfig,recommendation,wordIds:computed(()=>getCourseWordIds(currentId.value))}
+ return {currentId,current,installed,textbooks,pendingCourse,selectionBlocked,progress,occurrenceProgress:computed(()=>occurrenceProgress(current.value,progress.value.completedLessons)),lessons,lesson,choose,applyCourseSelection,clearPending,restoreCourse,applyPending,chooseLesson,uninstall,recommendationConfig,recommendation,wordIds:computed(()=>getCourseWordIds(currentId.value))}
 })

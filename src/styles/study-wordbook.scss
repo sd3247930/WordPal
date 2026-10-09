@@ -10,3 +10,28 @@
 @media(max-width:599px){.study-heading{flex-wrap:wrap;margin-bottom:12px}.study-estimate{font-size:var(--wp-font-caption)}.study-today{padding:10px 12px;gap:8px;margin-bottom:14px}.study-today>view,.wordbook-stats>view{flex-direction:column;gap:2px}.study-count{font-size:20px}.study-today .small{font-size:var(--wp-font-caption)}.study-space.learn-workspace{display:flex;flex-direction:column;gap:16px}.study-space .study-main{order:0}.study-space .study-modes{order:1;gap:8px}.study-space .study-context{order:2}.study-space .mode-selector{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px}.study-space .mode-button{padding:8px 2px;justify-content:center;font-size:var(--wp-font-small)}.study-space .auto-mode-button{width:100%;min-height:56px}.study-space .word-content{min-height:165px;gap:7px}.study-space .wp-word-card.wp-card{padding:16px}.study-space .word-illustration{font-size:32px;padding:4px 12px}.study-space .answer-feedback{padding:14px}.study-space .choice-grid{grid-template-columns:1fr 1fr;gap:8px}.study-space .answer-choice{min-height:56px;font-size:var(--wp-font-body);padding:10px}.study-space .wp-word-card .wp-button{min-height:56px;padding:10px 18px}.study-ready{padding:24px 16px}.study-ready .wp-button{width:100%;min-width:0}.wordbook-heading{flex-direction:column;align-items:stretch}.wordbook-heading>.wp-button{width:100%}.wordbook-stats{gap:8px;padding:10px 12px}.wordbook-stats .small{font-size:var(--wp-font-caption)}.wordbook-tabs .mode-button{font-size:var(--wp-font-caption);padding:8px 3px}.wordbook-workspace.review-workspace{display:block}.wordbook-workspace .review-list.wp-card{padding:14px}.wordbook-row.review-row{padding:10px 3px;min-height:86px}.wordbook-row .review-word{font-size:21px}.wordbook-row-copy>.small{font-size:var(--wp-font-caption)}.word-detail-sheet{padding-left:20px;padding-right:20px}.study-completion .button-row{flex-direction:column;width:100%}.study-completion .button-row>.wp-button{width:100%}}
 
 
+/* Layered study keeps the answer action ahead of optional tools at every width. */
+.study-space.learn-workspace{grid-template-columns:minmax(0,1.5fr) minmax(240px,1fr)}
+.study-space .study-modes{grid-column:1/-1;display:block}
+.study-space .study-modes>.wp-button{min-height:48px;padding:10px 14px}
+.study-space .custom-practice{padding:12px;border:1px solid var(--wp-border);border-radius:var(--wp-radius-sm);display:flex;flex-direction:column;gap:10px}
+.study-space .mode-selector{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.study-space .study-main:only-of-type{grid-column:1/-1}
+.study-space .study-main{min-width:0;grid-column:1/-1}
+.study-space:has(.study-context) .study-main{grid-column:1}
+.study-space .study-context{grid-column:2}
+.word-picture{width:100px;height:100px;max-width:100%}
+.wp-word-card[data-density=foundation] .word-illustration{font-size:64px;padding:12px}
+.wp-word-card[data-density=foundation] .word-picture{width:144px;height:144px}
+.wp-word-card[data-density=foundation] .eyebrow{display:none}
+.study-main:has([data-density=foundation]) .answer-choice{min-height:56px}
+.wordbook-review-action{margin:12px 0 16px}
+.wordbook-review-action .review-clear{margin:0;padding:8px 12px}
+.wordbook-heading>.wp-button{width:auto;min-height:48px;font-size:var(--wp-font-small)}
+.wordbook-suggestions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px;padding:8px 12px;background:var(--wp-surface-tonal);border-radius:var(--wp-radius-sm)}
+.course-resource-coverage{padding:12px;background:var(--wp-surface-tonal);border-radius:var(--wp-radius-sm);margin:12px 0}
+.course-install-state{color:var(--wp-muted-foreground)}
+@media(max-width:599px){.study-space .study-modes{order:1}.study-space .study-main{order:0}.study-space .study-context{order:2}.study-space .mode-selector{grid-template-columns:repeat(5,minmax(0,1fr))}.wordbook-heading>.wp-button{align-self:flex-start;width:auto}.study-space .study-context{grid-column:auto}}
+@media(min-width:600px) and (max-width:839px){.study-space.learn-workspace{grid-template-columns:1fr}.study-space .study-context{grid-column:1}.study-space:has(.study-context) .study-main{grid-column:1}}
+.choice-picture{width:76px;height:76px}.choice-illustration{font-size:38px;line-height:1.2}
+.study-space .wp-word-card[data-density=foundation] .word-content{gap:12px}

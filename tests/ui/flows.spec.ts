@@ -1,10 +1,11 @@
+import {openCustomPractice} from './helpers'
 import {test,expect} from '@playwright/test'
 import {go,app,database,seedDatabase,setAppearance} from './helpers'
 import {freshDatabase} from '../../src/stores/profile'
 import {newCard} from '../../packages/srs_fsrs'
 
 test('学习输入在旋转、五档缩放、换主题及异常退出后保留',async({page})=>{
- await go(page,'home');await page.locator('.hero-cta').click();await page.locator('.mode-button').filter({hasText:'拼写'}).click()
+ await go(page,'home');await page.locator('.hero-cta').click();await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'拼写'}).click()
  await page.locator('.spelling-input input').fill('ca')
  const original=await database(page)
  for(const width of [390,700,1000,1400,1800,768,390]){await page.setViewportSize({width,height:900});await expect(page.locator('.spelling-input input')).toHaveValue('ca');expect((await database(page)).session.id).toBe(original.session.id)}
@@ -28,7 +29,7 @@ test('首次错误进入本轮回看，灵石不能负数，低准确率巩固',
  await seedDatabase(page,{...freshDatabase(),dailyLimit:5})
  await go(page,'home');await page.locator('.hero-cta').click()
  for(let i=0;i<5;i++){
-  await page.locator('.mode-button').filter({hasText:'拼写'}).click();await page.locator('.spelling-input input').fill('wrong')
+  await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'拼写'}).click();await page.locator('.spelling-input input').fill('wrong')
   await page.locator('.answer-actions [role=button]').filter({hasText:'查看提示'}).click()
   await page.locator('.answer-actions [role=button]').filter({hasText:'确认答案'}).click();await expect(page.locator('.answer-feedback')).toContainText('一起再认识它')
   await page.locator('.answer-feedback [role=button]').click()

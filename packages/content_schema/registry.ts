@@ -9,6 +9,10 @@ export const wordById=reactive(Object.fromEntries(words.map(word=>[word.id,word]
 export const starterPack:CoursePack={schemaVersion:2,courseId:'starter',contentVersion:'1.0.0',title:'原创启蒙课程',route:'theme',abilityLevels:['L1','L2'],sources:[{id:'wordpal-original',type:'author-created',rightsStatus:'redistribution-approved',textLicense:legacy.license,attribution:'WordPal 原创教学示例',revision:'starter-1'}],vocabulary:legacy.words.map(w=>({id:w.id,language:'en',lemma:w.word,meaning:w.meaning,pos:w.pos,ipa:w.ipa,phonics:w.phonics,phonemes:w.phonemes,syllables:w.syllables,audio:w.audio,image:w.image,example:w.example,sourceId:'wordpal-original',senseId:w.id})),units:[...new Set(legacy.lessons.map(l=>l.unit))].map((title,i)=>({id:'u0'+(i+1),title,lessons:legacy.lessons.filter(l=>l.unit===title).map(l=>({id:l.id,title:l.name,wordIds:l.wordIds,activities:['flash','connect','listen','spell','dictation']}))})),assets:[]}
 export const courseRegistry=reactive<Record<string,CoursePack>>({starter:starterPack,'original-primary':original as CoursePack})
 export const archiveStatus=reactive<Record<string,boolean>>({})
+export type InstallationState='notInstalled'|'installing'|'installed'|'failed'
+export const installationStatus=reactive<Record<string,InstallationState>>({})
+export const retainedPositions=reactive<{lexemeId:string;courseId:string;courseTitle:string;unitId:string;unitTitle:string;lessonId:string;lessonTitle:string}[]>([])
+export const isCourseInstalled=(id:string)=>!!courseRegistry[id]&&!archiveStatus[id]&&(!installationStatus[id]||installationStatus[id]==='installed')
 export const sourceMappings=reactive<Record<string,string>>({})
 const assetUrls=reactive(new Map<string,string>()),versions=new Map<string,CoursePack>()
 let localCourses:CoursePack[]=[]
@@ -38,7 +42,7 @@ export function registerCourse(pack:CoursePack,resolver:(id:string)=>string=()=>
 }
 export const getCourseLessons=(courseId:string)=>courseLessons(courseRegistry[courseId]||starterPack)
 export const getCourseWordIds=(courseId:string)=>[...new Set((courseRegistry[courseId]||starterPack).vocabulary.map(w=>w.id))]
-const membershipIndex=computed(()=>{const index:Record<string,{courseId:string;courseTitle:string;unitId:string;unitTitle:string;lessonId:string;lessonTitle:string;example?:string}[]>={};for(const c of Object.values(courseRegistry)){const entries=new Map(c.vocabulary.map(e=>[e.id,e]));for(const u of c.units)for(const l of u.lessons)for(const id of l.wordIds)(index[id]??=[]).push({courseId:c.courseId,courseTitle:c.title,unitId:u.id,unitTitle:u.title,lessonId:l.id,lessonTitle:l.title,example:l.examples?.[id]||entries.get(id)?.example})}return index})
+const membershipIndex=computed(()=>{const index:Record<string,{courseId:string;courseTitle:string;unitId:string;unitTitle:string;lessonId:string;lessonTitle:string;example?:string}[]>={};for(const c of Object.values(courseRegistry)){const entries=new Map(c.vocabulary.map(e=>[e.id,e]));for(const u of c.units)for(const l of u.lessons)for(const id of l.wordIds)(index[id]??=[]).push({courseId:c.courseId,courseTitle:c.title,unitId:u.id,unitTitle:u.title,lessonId:l.id,lessonTitle:l.title,example:l.examples?.[id]||entries.get(id)?.example})}for(const row of retainedPositions as (typeof retainedPositions[number]&{lexemeId:string})[])if(!courseRegistry[row.courseId])(index[row.lexemeId]??=[]).push(row);return index})
 export const courseMemberships=(wordId:string)=>membershipIndex.value[wordId]||[]
 export const resolveCourseAsset=(courseId:string,id:string,version=courseRegistry[courseId]?.contentVersion)=>assetUrls.get(courseId+'@'+version+':'+id)||''
 export function resolveFrozenWord(word:Word|undefined,courseId?:string,version?:string):Word|undefined{
@@ -55,13 +59,18 @@ export function loadCourseRegistry(){
  for(const id of Object.keys(wordById))delete wordById[id]
  Object.assign(wordById,Object.fromEntries((JSON.parse(JSON.stringify(legacy.words)) as Word[]).map(w=>[w.id,w])))
  words.splice(0,words.length,...Object.values(wordById))
+ for(const word of readStorage<Word[]>('wordpal.content.retained-lexemes.v1',[]))if(word?.id&&!wordById[word.id]){wordById[word.id]=word;words.push(word)}
  for(const id of Object.keys(courseRegistry))delete courseRegistry[id]
  for(const id of Object.keys(archiveStatus))delete archiveStatus[id]
+ for(const id of Object.keys(installationStatus))delete installationStatus[id]
+ Object.assign(installationStatus,readStorage<Record<string,InstallationState>>('wordpal.content.installation.v1',{}))
+ const directory=readStorage<Record<string,{title:string;positions:{courseId:string;unitId:string;unitTitle:string;lexemeId:string;lessonIds:string[]}[]}>>('wordpal.content.directory.v1',{})
+ retainedPositions.splice(0,retainedPositions.length,...Object.values(directory).flatMap(c=>(c.positions||[]).map(row=>({...row,courseTitle:c.title,lessonId:row.lessonIds[0]||'',lessonTitle:row.unitTitle}))))
  for(const id of Object.keys(sourceMappings))delete sourceMappings[id]
  versions.clear();assetUrls.clear()
  registerCourse(starterPack);registerCourse(original as CoursePack)
  for(const pack of localCourses){registerCourse(pack,id=>{const asset=pack.assets.find(a=>a.id===id);return asset?(asset.sourceId==='wordpal-original-audio'?'/static/audio/':'/static/local-master-audio/')+asset.path.split('/').pop():''});archiveStatus[pack.courseId]=readStorage<boolean>('wordpal.content.archive.'+pack.courseId,false)}
  archiveStatus['original-primary']=readStorage<boolean>('wordpal.content.archive.original-primary',false)
  const catalog=readStorage<{key:string;previousKey?:string;versions?:{key:string;aliases:Record<string,string>}[];archived:boolean;aliases?:Record<string,string>;previousAliases?:Record<string,string>}[]>('wordpal.content.catalog.v2',[])
- for(const record of catalog){try{for(const version of record.versions||[]){const older=readStorage<CoursePack|null>(version.key,null);if(older)registerCourse(older,()=>'',version.aliases)}if(record.previousKey){const previous=readStorage<CoursePack|null>(record.previousKey,null);if(previous)registerCourse(previous,()=>'',record.previousAliases)}const pack=readStorage<CoursePack|null>(record.key,null);if(pack){registerCourse(pack,()=>'',record.aliases);archiveStatus[pack.courseId]=record.archived}}catch{ /* Invalid local candidates do not replace usable built-in courses. */ }}
+ for(const record of catalog){try{for(const version of record.versions||[]){const older=readStorage<CoursePack|null>(version.key,null);if(older)registerCourse(older,()=>'',version.aliases)}if(record.previousKey){const previous=readStorage<CoursePack|null>(record.previousKey,null);if(previous)registerCourse(previous,()=>'',record.previousAliases)}const pack=readStorage<CoursePack|null>(record.key,null);if(pack){registerCourse(pack,()=>'',record.aliases);archiveStatus[pack.courseId]=record.archived;installationStatus[pack.courseId]='installed'}}catch{ /* Invalid local candidates do not replace usable built-in courses. */ }}
 }

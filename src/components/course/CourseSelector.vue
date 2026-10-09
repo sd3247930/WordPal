@@ -28,7 +28,7 @@ const textbooks=computed(()=>course.installed.filter(c=>c.route==='textbook'))
 const seriesOptions=computed(()=>[{id:'all',name:'所有课程与教材'},...textbooks.value.filter((c,i,all)=>all.findIndex(other=>seriesKey(other)===seriesKey(c))===i).map(c=>({id:seriesKey(c),name:courseSeriesLabel(c)}))])
 const seriesIndex=computed(()=>Math.max(0,seriesOptions.value.findIndex(item=>item.id===selectedSeries.value)))
 watch(seriesOptions,()=>{if(!seriesOptions.value.some(item=>item.id===selectedSeries.value))selectedSeries.value='all'},{flush:'sync'})
-const gradeOptions=['所有年级','1 年级','2 年级','3 年级','4 年级','5 年级','6 年级'],termOptions=['所有册次','上册','下册']
+const gradeOptions=['所有年级',...Array.from({length:9},(_,i)=>(i+1)+' 年级')],termOptions=['所有册次','上册','下册']
 const filtered=computed(()=>course.installed.filter(c=>(selectedSeries.value==='all'||seriesKey(c)===selectedSeries.value)&&(!gradeIndex.value||c.grade===gradeIndex.value)&&(!termIndex.value||c.semester===termOptions[termIndex.value])))
 const index=computed(()=>filtered.value.findIndex(c=>c.courseId===course.currentId)),unitIndex=computed(()=>Math.max(0,course.current.units.findIndex(u=>u.id===course.lesson?.unitId)))
 const lessonChoices=computed(()=>course.current.route==='textbook'?course.lessons.filter(l=>l.unitId===course.current.units[unitIndex.value]?.id):course.lessons)

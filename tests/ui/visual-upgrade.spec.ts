@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test'
-import {go,setAppearance,seedDatabase,database} from './helpers'
+import {go,setAppearance,seedDatabase,database,openExploration} from './helpers'
 import {goldenDatabase} from './fixtures'
 test('四宠正式插画和选择卡接入真实成长，点心外观不改变排程',async({page})=>{
  const db=goldenDatabase();db.gems=10;await seedDatabase(page,db);await go(page,'pet')
@@ -14,8 +14,9 @@ test('四宠正式插画和选择卡接入真实成长，点心外观不改变�
 })
 test('学习以单词为焦点，宠物只在正确反馈出现，跟读不评分',async({page})=>{
  await go(page,'home');await page.locator('.hero-cta').click();await expect(page.locator('.learning-pet-feedback')).toHaveCount(0);await expect(page.locator('.word-illustration')).toHaveCount(0)
- await expect(page.locator('.pronunciation-practice')).toContainText('录音仅本地临时播放')
+ await expect(page.locator('.pronunciation-practice')).toHaveCount(0)
  await page.locator('.answer-actions .wp-button').filter({hasText:'查看答案'}).click();await expect(page.locator('.word-illustration')).toBeVisible()
+ await openExploration(page);await expect(page.locator('.pronunciation-practice')).toContainText('录音仅本地临时播放')
  await page.locator('.rating-grid .wp-button').filter({hasText:'记住了'}).click();await expect(page.locator('.learning-pet-feedback')).toBeVisible()
  await page.locator('.answer-feedback .wp-button').click();await expect(page.locator('.learning-pet-feedback')).toHaveCount(0)
 })

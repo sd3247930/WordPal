@@ -10,3 +10,5 @@ export async function seedDatabase(page:Page,db:object){
  await page.addInitScript(db=>{if(!localStorage.getItem('wordpal.database.v1'))localStorage.setItem('wordpal.database.v1',JSON.stringify(db))},db)
 }
 export async function database(page:Page){return page.evaluate(()=>{const pointer=JSON.parse(localStorage.getItem('wordpal.database.active.v2')||'null'),key=pointer==='v2'?'wordpal.database.v2':pointer?.version===2?pointer.key:'wordpal.database.v1';return JSON.parse(localStorage.getItem(key)!)} )}
+export async function openCustomPractice(page:Page){const button=page.getByRole('button',{name:/^自定义练习 ·/});await button.waitFor({state:'visible'});if(await button.getAttribute('aria-expanded')!=='true')await button.click()}
+export async function openExploration(page:Page){const button=page.getByRole('button',{name:'展开自然拼读与例句',exact:true});if(await button.count())await button.click()}

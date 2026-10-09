@@ -1,3 +1,4 @@
+import {openCustomPractice} from './helpers'
 import {test,expect} from '@playwright/test'
 import {go,setAppearance,seedDatabase,database} from './helpers'
 import {goldenDatabase} from './fixtures'
@@ -30,7 +31,7 @@ test('学习模式一行排列，首屏显示词卡与主动作',async({page})=>
  await seedDatabase(page,{...freshDatabase(),abilityLevel:'L5'})
  await page.setViewportSize({width:390,height:844});await go(page,'home');await page.locator('.hero-cta').click()
  // L5 starts on dictation; use flash so the primary action and word card are deterministic.
- await page.locator('.mode-button').filter({hasText:'闪现'}).click()
+ await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'闪现'}).click()
  await expect(page.locator('.mode-selector .mode-button')).toHaveCount(5)
  const boxes=await page.locator('.mode-selector .mode-button').evaluateAll(items=>items.map(i=>i.getBoundingClientRect().top))
  expect(new Set(boxes).size).toBe(1)
@@ -52,7 +53,7 @@ test('宠物主列表使用紧凑头像，点击更新当前伙伴与成长入�
 })
 
 test('零到期词本没有禁用大动作，并能浏览全部单词',async({page})=>{
- await go(page,'review');await expect(page.locator('.review-clear')).toContainText('今天没有到期复习')
+ await go(page,'review');await expect(page.locator('.review-clear')).toContainText('当前范围没有到期复习')
  await expect(page.getByRole('button',{name:/开始到期复习/})).toHaveCount(0)
  await page.getByRole('button',{name:'浏览全部单词',exact:true}).click()
  await expect(page.locator('.review-tabs .selected')).toContainText('所有单词')
