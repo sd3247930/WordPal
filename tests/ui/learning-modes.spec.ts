@@ -1,7 +1,13 @@
 import {test,expect} from '@playwright/test'
-import {go,database} from './helpers'
+import {go,database,seedDatabase} from './helpers'
+import {freshDatabase} from '../../src/stores/profile'
+// Dictation and the five-mode row are level-gated; these specs verify mode mechanics.
+const advanced=()=>({...freshDatabase(),abilityLevel:'L5'})
 test('闪现与连接答题前隐藏中文答案，听音与听写隐藏词形',async({page})=>{
- await go(page,'home');await page.locator('.hero-cta').click();await expect(page.locator('.word')).toHaveText('cat');await expect(page.locator('.meaning')).toHaveCount(0)
+ await seedDatabase(page,advanced())
+ await go(page,'home');await page.locator('.hero-cta').click()
+ // L5 starts on dictation, so switch to flash to assert the visible-word baseline first.
+ await page.locator('.mode-button').filter({hasText:'闪现'}).click();await expect(page.locator('.word')).toHaveText('cat');await expect(page.locator('.meaning')).toHaveCount(0)
  await page.locator('.mode-button').filter({hasText:'连接'}).click();await expect(page.locator('.meaning')).toHaveCount(0)
  await page.locator('.mode-button').filter({hasText:'听音'}).click();await expect(page.locator('.word')).toHaveText('···');await expect(page.locator('.meaning')).toHaveCount(0)
  await page.locator('.mode-button').filter({hasText:'听写'}).click();await expect(page.locator('.word')).toHaveText('···');await expect(page.locator('.meaning')).toHaveCount(0)

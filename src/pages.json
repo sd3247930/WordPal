@@ -48,6 +48,13 @@
         "navigationStyle": "custom",
         "navigationBarTitleText": "WordPal · Settings"
       }
+    },
+    {
+      "path": "pages/course/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "WordPal · 选择教材"
+      }
     }
   ],
   "globalStyle": {

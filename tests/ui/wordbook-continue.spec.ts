@@ -5,7 +5,7 @@ import {newCard} from '../../packages/srs_fsrs'
 import {wordById} from '../../packages/content_schema'
 import type {LearningSession} from '../../packages/core_learning'
 
-const scopes=['当前课程','已安装课程','全局已学词'] as const
+const scopes=['当前教材','全部已安装','全局已学词'] as const
 function savedStudy(kind:LearningSession['kind'],due=false):Database{
  const db=freshDatabase(),at='2026-10-01T08:00:00.000Z'
  Object.assign(db,{version:2,currentCourseId:'original-primary',pendingCourseId:'starter',courseProgress:{'original-primary':{currentLessonId:'l01',completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{}}},auxiliaryRecords:[]})
@@ -27,16 +27,17 @@ for(const scope of scopes)for(const kind of ['new_word','review_due','practice']
  await seed(page,savedStudy(kind));await go(page,'review');const before=await database(page)
  await page.getByRole('group',{name:'单词本课程范围'}).getByRole('button',{name:scope,exact:true}).click()
  await expect(page.getByRole('button',{name:'继续当前学习',exact:true})).toBeVisible();await page.getByRole('button',{name:'继续当前学习',exact:true}).click()
- await expect(page.locator('.spelling-input input')).toHaveValue('do');await expect(page.locator('.study-heading')).toContainText('原创小学主题英语')
+ // P3: the learn headline no longer repeats the textbook name; it lives on the current-course card.
+ await expect(page.locator('.spelling-input input')).toHaveValue('do');await expect(page.locator('.current-course-card')).toContainText('原创小学主题英语')
  expect(await database(page)).toEqual(before);await page.reload();await expect(page.locator('.spelling-input input')).toHaveValue('do');expect(await database(page)).toEqual(before)
 })
 test('Scope 连续20轮、分类与搜索切换后，仍恢复原课程而非待切换课程或到期队列',async({page})=>{
  await seed(page,savedStudy('new_word',true));await go(page,'review');const before=await database(page)
  await page.locator('.review-tabs').getByRole('button',{name:'所有单词',exact:true}).click();await page.locator('.wordbook-search input').fill('dog')
- for(let i=0;i<20;i++)for(const scope of [...scopes,'当前课程']){
+ for(let i=0;i<20;i++)for(const scope of [...scopes,'当前教材']){
   const button=page.getByRole('group',{name:'单词本课程范围'}).getByRole('button',{name:scope,exact:true});await button.click();await expect(button).toHaveAttribute('aria-pressed','true')
   await expect(page.locator('.review-tabs .selected')).toHaveText('所有单词');await expect(page.locator('.wordbook-search input')).toHaveValue('dog')
-  await expect(page.locator('.wordbook-course-filters .course-picker')).toHaveCount(scope==='当前课程'?1:0)
+  await expect(page.locator('.wordbook-course-filters .course-picker')).toHaveCount(scope==='当前教材'?1:0)
  }
  expect(await database(page)).toEqual(before)
  for(const scope of scopes){
@@ -59,7 +60,10 @@ test('已保存的错词回看从任意 Scope 继续，不覆盖完成的正式 
 })
 test('没有未完成 Session 时，单词本仍可新建原有到期复习',async({page})=>{
  const db=savedStudy('review_due',true);db.session=null;db.pendingCourseId=undefined;await seed(page,db);await go(page,'review');const before=await database(page)
- await page.getByRole('button',{name:'已安装课程',exact:true}).click();await page.getByRole('button',{name:'开始到期复习 · 1',exact:true}).click();await expect(page.locator('.learn-workspace')).toBeVisible()
- const after=await database(page);expect(after.session.kind).toBe('review_due');expect(after.session.courseId).toBe(before.currentCourseId);expect(after.session.wordIds).toEqual(['cat'])
+ await page.getByRole('button',{name:'全部已安装',exact:true}).click();await page.getByRole('button',{name:'开始到期复习 · 1',exact:true}).click();await expect(page.locator('.learn-workspace')).toBeVisible()
+ // 到期复习优先，之后的空余名额才排新词；当前课程的课节已扩展为多词，因此只断言顺序与来源。
+ const after=await database(page);expect(after.session.kind).toBe('review_due');expect(after.session.courseId).toBe(before.currentCourseId)
+ expect(after.session.wordIds[0]).toBe('cat');expect(after.session.wordSources?.['cat']).toBe('review_due')
+ expect((after.session.wordIds as string[]).slice(1).every((id:string)=>after.session.wordSources?.[id]==='new_word')).toBe(true)
  for(const field of ['cards','history','rewardIds','gems','pets','courseProgress'])expect(after[field]).toEqual(before[field])
 })

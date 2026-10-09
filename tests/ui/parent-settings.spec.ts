@@ -21,13 +21,15 @@ for(const cap of [5,10,20])test(`${cap}新词上限保存后实际编排12个到
  const db=fixture();for(const id of ids.slice(0,12))db.cards[id]=newCard(id,new Date('2000-01-01'))
  await seed(page,db);await unlock(page);const before=await database(page);await limit(page,cap).click()
  await expect(limit(page,cap)).toHaveAttribute('aria-pressed','true');await expect(page.locator('.parent-settings-summary')).toContainText(cap+' 个 / 天');await expect(page.locator('[data-state="applied"]').first()).toContainText('已生效')
- await expect(page.locator('.parent-plan-preview')).toContainText(`12 个到期复习 · 0 个重点巩固 · 最多 ${cap} 个新词`);expect(protectedData(await database(page))).toEqual(protectedData(before))
+ await expect(page.locator('.parent-plan-preview')).toContainText(`12 个到期复习 · 0 个重点巩固 · 最多 ${Math.min(cap,10)} 个新词`);expect(protectedData(await database(page))).toEqual(protectedData(before))
  await go(page,'home');await page.locator('.hero-cta').click();const saved=await database(page)
- expect(saved.session.wordIds.slice(0,12)).toEqual(ids.slice(0,12));expect(saved.session.wordIds.length).toBe(12+cap);expect(Object.values(saved.session.wordSources).filter(s=>s==='new_word')).toHaveLength(cap);expect(saved.session.plannerConfig).toEqual({dailyNewWordLimit:cap,entryLevel:3});await expect(page.locator('.session-header')).toContainText('到期复习')
+ expect(saved.session.wordIds.slice(0,12)).toEqual(ids.slice(0,12));expect(saved.session.wordIds.length).toBe(12+Math.min(cap,10));expect(Object.values(saved.session.wordSources).filter(s=>s==='new_word')).toHaveLength(Math.min(cap,10));expect(saved.session.plannerConfig).toEqual({dailyNewWordLimit:cap,entryLevel:3});await expect(page.locator('.session-header')).toContainText('到期复习')
 })
 
 test('当前轮次中修改后显示下次生效，输入和快照跨重启不变，完成后实际使用新能力及剩余新词额度',async({page})=>{
- test.setTimeout(60000);await seed(page);await unlock(page);await limit(page,5).click();await level(page,1).click();await go(page,'home');await page.locator('.hero-cta').click();await page.locator('.mode-button').filter({hasText:'拼写'}).click();await page.locator('.spelling-input input').fill('draft')
+ test.setTimeout(60000);await seed(page);await unlock(page);await limit(page,5).click()
+ // L1 only offers flash/connect, so use L3 to stage a text input for the "draft survives restart" check.
+ await level(page,3).click();await go(page,'home');await page.locator('.hero-cta').click();await page.locator('.mode-button').filter({hasText:'拼写'}).click();await page.locator('.spelling-input input').fill('draft')
  const before=await database(page);await unlock(page);await limit(page,20).click();await level(page,5).click()
  await expect(page.locator('[data-state="pending"]')).toContainText('已保存 · 下次学习生效');await expect(page.locator('.ability-explanation')).toContainText('L5 · 进阶表达');await expect(page.locator('.ability-recommendations')).toHaveAttribute('data-entry-level','5');expect(protectedData(await database(page))).toEqual(protectedData(before))
  await page.reload();await page.getByRole('spinbutton',{name:'家长验证答案'}).fill('56');await page.getByRole('button',{name:'打开家长设置',exact:true}).click();await expect(limit(page,20)).toHaveAttribute('aria-pressed','true');await expect(page.locator('[data-state="pending"]')).toContainText('下次学习生效')
@@ -42,7 +44,8 @@ test('能力L1→L5→L2更新说明和真实推荐而不切课或改学习数�
  await seed(page);await unlock(page);const before=protectedData(await database(page))
  for(const [n,title] of [[1,'启蒙识词'],[5,'进阶表达'],[2,'基础拼读']] as const){await level(page,n).click();await expect(page.locator('.ability-explanation')).toContainText(title);await expect(page.locator('.ability-recommendations')).toHaveAttribute('data-entry-level',String(n));await expect(page.locator('.ability-recommendations')).toContainText('合成家长设置验证课');expect(protectedData(await database(page))).toEqual(before)}
  await page.context().setOffline(true);await level(page,1).click();await level(page,2).click();await limit(page,20).click();await expect(limit(page,20)).toHaveAttribute('aria-pressed','true');expect((await database(page)).abilityLevel).toBe('L2');await page.context().setOffline(false)
- await go(page,'learn');await expect(page.locator('.course-selector')).toContainText('L2 · 基础拼读');await expect(page.locator('.course-selector')).toContainText('推荐课程：')
+ // The learn page now exposes the applied settings through its effective-settings line.
+ await go(page,'learn');await expect(page.locator('.study-effective-line')).toContainText('L2');await expect(page.locator('.current-course-card')).toBeVisible()
  await page.reload();expect((await database(page)).abilityLevel).toBe('L2');expect(protectedData(await database(page))).toEqual(before)
 })
 

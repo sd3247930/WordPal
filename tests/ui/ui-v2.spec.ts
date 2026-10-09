@@ -1,6 +1,7 @@
 import {test,expect} from '@playwright/test'
 import {go,setAppearance,seedDatabase,database} from './helpers'
 import {goldenDatabase} from './fixtures'
+import {freshDatabase} from '../../src/stores/profile'
 
 test('五页 Header、设置命名和底栏图标胶囊统一',async({page})=>{
  await page.setViewportSize({width:390,height:844})
@@ -26,7 +27,10 @@ for(const theme of ['bento','swiss','soft','oled'])test(theme+' 首页首屏能�
 })
 
 test('学习模式一行排列，首屏显示词卡与主动作',async({page})=>{
+ await seedDatabase(page,{...freshDatabase(),abilityLevel:'L5'})
  await page.setViewportSize({width:390,height:844});await go(page,'home');await page.locator('.hero-cta').click()
+ // L5 starts on dictation; use flash so the primary action and word card are deterministic.
+ await page.locator('.mode-button').filter({hasText:'闪现'}).click()
  await expect(page.locator('.mode-selector .mode-button')).toHaveCount(5)
  const boxes=await page.locator('.mode-selector .mode-button').evaluateAll(items=>items.map(i=>i.getBoundingClientRect().top))
  expect(new Set(boxes).size).toBe(1)

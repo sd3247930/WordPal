@@ -24,7 +24,9 @@ test('未完成到期任务禁止新词，指定练习仍先复习',()=>{
 })
 test('低于80%巩固当前课程，练习不发资源、不改复习日期',()=>{
  const {profile,learning}=fresh();learning.start()
- for(let i=0;i<5;i++){learning.setMode('spell');learning.patch({input:i<3?learning.current!.word:'wrong'});learning.submit();learning.next()}
+ // The daily pool spans the whole course now, so answer the full round with a 3-in-5 accuracy.
+ let answered=0
+ while(!learning.session!.completedAt){const current=learning.current!;learning.setMode('spell');learning.patch({input:answered%5<3?current.word:'wrong'});learning.submit();learning.next();answered++}
  assert.equal(profile.db.lessonIndex,0);assert.equal(profile.db.lastLessonAccuracy,.6)
  const before=JSON.stringify(profile.db.cards),gems=profile.db.gems
  // Move due dates forward to examine the explicit consolidation path.

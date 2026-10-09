@@ -1,16 +1,21 @@
 import {test,expect} from '@playwright/test'
 import {go,seedDatabase,setAppearance,database} from './helpers'
 import {goldenDatabase} from './fixtures'
+import {freshDatabase} from '../../src/stores/profile'
 test('自动混合五种题型，错词回流刷新后保留，不二次排程或发奖',async({page})=>{
+ // Daily pool is whole-course now; pin the round to 5 new words so the 5-mode rotation stays exact.
+ await seedDatabase(page,{...freshDatabase(),abilityLevel:'L5',dailyLimit:5})
  await go(page,'home');await page.locator('.hero-cta').click()
  await expect(page.locator('.auto-mode-button')).toContainText('自动编排中')
- await page.locator('.answer-actions .wp-button').filter({hasText:'查看答案'}).click();await page.locator('.rating-grid .wp-button').filter({hasText:'再学一次'}).click();await page.locator('.answer-feedback .wp-button').click()
- await expect(page.locator('.mode-button.selected')).toContainText('连接');await page.locator('.answer-choice').filter({hasText:'狗'}).click();await page.locator('.answer-actions .wp-button').filter({hasText:'确认答案'}).click();await page.locator('.answer-feedback .wp-button').click()
+ // L5 自动轮换顺序为 听写 → 拼写 → 听音 → 连接 → 闪现，目标词依次是 cat/dog/fish/bird/duck。
+ await expect(page.locator('.mode-button.selected')).toContainText('听写');await page.locator('.spelling-input input').fill('cat');await page.locator('.answer-actions .wp-button').filter({hasText:'确认答案'}).click();await page.locator('.answer-feedback .wp-button').click()
+ await expect(page.locator('.mode-button.selected')).toContainText('拼写');await page.locator('.spelling-input input').fill('dog');await page.locator('.answer-actions .wp-button').filter({hasText:'确认答案'}).click();await page.locator('.answer-feedback .wp-button').click()
  await expect(page.locator('.mode-button.selected')).toContainText('听音');await page.locator('.answer-choice').filter({hasText:'fish'}).click();await page.locator('.answer-actions .wp-button').filter({hasText:'确认答案'}).click();await page.locator('.answer-feedback .wp-button').click()
- for(const [mode,word] of [['拼写','bird'],['听写','duck']]){await expect(page.locator('.mode-button.selected')).toContainText(mode);await page.locator('.spelling-input input').fill(word);await page.locator('.answer-actions .wp-button').filter({hasText:'确认答案'}).click();await page.locator('.answer-feedback .wp-button').click()}
+ await expect(page.locator('.mode-button.selected')).toContainText('连接');await page.locator('.answer-choice').filter({hasText:'鸟'}).click();await page.locator('.answer-actions .wp-button').filter({hasText:'确认答案'}).click();await page.locator('.answer-feedback .wp-button').click()
+ await expect(page.locator('.mode-button.selected')).toContainText('闪现');await page.locator('.answer-actions .wp-button').filter({hasText:'查看答案'}).click();await page.locator('.rating-grid .wp-button').filter({hasText:'再学一次'}).click();await page.locator('.answer-feedback .wp-button').click()
  await expect(page.locator('.session-header')).toContainText('错词回看');const before=await database(page);expect(before.history).toHaveLength(5);expect(before.lessonIndex).toBe(1)
- await page.locator('.spelling-input input').fill('ca');await page.reload();await expect(page.locator('.spelling-input input')).toHaveValue('ca')
- await page.setViewportSize({width:390,height:844});await expect(page.locator('.spelling-input input')).toHaveValue('ca');await page.locator('.spelling-input input').fill('cat');await page.locator('.answer-actions .wp-button').filter({hasText:'确认答案'}).click();await page.locator('.answer-feedback .wp-button').click()
+ await page.locator('.spelling-input input').fill('du');await page.reload();await expect(page.locator('.spelling-input input')).toHaveValue('du')
+ await page.setViewportSize({width:390,height:844});await expect(page.locator('.spelling-input input')).toHaveValue('du');await page.locator('.spelling-input input').fill('duck');await page.locator('.answer-actions .wp-button').filter({hasText:'确认答案'}).click();await page.locator('.answer-feedback .wp-button').click()
  await expect(page.locator('.completion')).toContainText('+62 XP');expect(await database(page)).toEqual(before);await page.reload();await expect(page.locator('.completion')).toBeVisible();expect(await database(page)).toEqual(before)
 })
 test('英文、中文、单元搜索；重点、稍后、Sheet 焦点与跨窗口状态',async({page})=>{

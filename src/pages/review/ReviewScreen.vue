@@ -1,7 +1,14 @@
 <template>
  <view class="page-heading wordbook-heading"><view><text class="page-title">我的单词本</text><text class="page-subtitle">看看记忆长到哪一步，再和单词见一面。</text></view><WPButton v-if="canContinueStudy||review.due.length" @click="begin">{{canContinueStudy?'继续当前学习':'开始到期复习 · '+review.due.length}}</WPButton></view>
  <view v-if="!review.due.length" class="review-clear"><view><text class="strong">✓ 今天没有到期复习</text><text class="small muted block">来看看已经认识和即将学习的单词。</text></view><WPButton kind="quiet" @click="selectFilter('all')">浏览全部单词</WPButton></view>
- <view class="wordbook-course-filters"><WPSegmentedButton :model-value="scope" :options="scopes" label="单词本课程范围" @update:model-value="scope=$event"/><picker v-if="scope==='current'" :range="unitOptions" range-key="title" :value="unitIndex" @change="unitIndex=Number(($event as any).detail.value)"><view class="course-picker">单元：{{unitOptions[unitIndex]?.title}}⌄</view></picker><text class="small muted block">当前课程已学 {{course.wordIds.filter(id=>!!profile.db.cards[id]).length}} / {{course.wordIds.length}} · 全局唯一已学 {{Object.keys(profile.db.cards).length}} · 全局到期 {{review.due.length}}</text></view>
+ <view class="wordbook-course-filters">
+  <WPSegmentedButton :model-value="scope" :options="scopes" label="单词本课程范围" @update:model-value="scope=$event"/>
+  <text class="small muted block">当前教材：《{{course.current.title}}》 · {{course.current.units.length}} 单元 · {{course.wordIds.length}} 词<text v-if="currentNeedsReview">（待核对）</text></text>
+  <WPButton kind="quiet" @click="openGallery">切换教材</WPButton>
+  <picker v-if="scope==='specific'" :range="courseChoices" range-key="title" :value="specificIndex" aria-label="选择浏览教材" @change="specificIndex=Number(($event as any).detail.value)"><view class="course-picker">教材：{{courseChoices[specificIndex]?.title}}⌄</view></picker>
+  <picker v-if="scope==='current'||scope==='specific'" :range="unitOptions" range-key="title" :value="unitIndex" aria-label="选择浏览单元" @change="unitIndex=Number(($event as any).detail.value)"><view class="course-picker">单元：{{unitOptions[unitIndex]?.title}}⌄</view></picker>
+  <text class="small muted block">当前课程已学 {{course.wordIds.filter(id=>!!profile.db.cards[id]).length}} / {{course.wordIds.length}} · 全局唯一已学 {{Object.keys(profile.db.cards).length}} · 全局到期 {{review.due.length}}</text>
+ </view>
  <view class="wordbook-stats" aria-label="单词本统计"><view v-for="item in filters" :key="item.id"><text>{{item.count}}</text><text class="small muted">{{item.short}}</text></view></view>
  <view class="wordbook-search"><text aria-hidden="true">⌕</text><input :value="query" placeholder="搜索英文、中文或单元" aria-label="搜索单词本" :maxlength="80" @input="search"/><WPActionTile v-if="query" role="button" tabindex="0" aria-label="清空单词搜索" @click="query=''">×</WPActionTile></view>
  <view class="mode-list review-tabs wordbook-tabs" role="group" aria-label="单词本筛选"><WPActionTile role="button" tabindex="0" v-for="item in filters" :key="item.id" class="mode-button" :class="{selected:filter===item.id}" :aria-pressed="filter===item.id" @click="selectFilter(item.id)">{{item.name}}</WPActionTile></view>
@@ -21,7 +28,7 @@
 <script setup lang="ts">
 import WPSegmentedButton from '../../components/button/WPSegmentedButton.vue'
 import {useCourseStore} from '../../stores/course'
-import {courseMemberships,getCourseWord} from '../../services/content/ContentRegistry'
+import {courseMemberships,getCourseWord,courseRegistry} from '../../services/content/ContentRegistry'
 import WPActionTile from "../../components/button/WPActionTile.vue"
 
 import {computed,ref,watch,onUnmounted} from 'vue'
@@ -39,19 +46,25 @@ import {words,wordById} from '../../../packages/content_schema'
 import {nextReviewLabel} from '../../services/study-presentation'
 import {windowLayout as layout} from '../../services/window'
 import {stopAudio} from '../../services/audio'
-import {navigate} from '../../services/navigation'
+import {navigate,openCourseGallery} from '../../services/navigation'
+import {courseNeedsReview} from '../../services/course/CourseSelection'
 const review=useReviewStore(),learning=useLearningStore(),profile=useProfileStore(),book=useWordbookStore(),course=useCourseStore()
 const study=useStudyPresentation()
 const canContinueStudy=computed(()=>!!learning.session&&(!learning.session.completedAt||study.revisiting))
-const scope=ref('current'),unitIndex=ref(0),pageIndex=ref(0),scopes=[{id:'current',name:'当前课程'},{id:'installed',name:'已安装课程'},{id:'learned',name:'全局已学词'}]
-const unitOptions=computed(()=>[{id:'',title:'全部单元'},...course.current.units.map(u=>({id:u.id,title:u.title}))]),unitScope=computed(()=>({courseId:scope.value==='current'?course.currentId:undefined,unitId:unitOptions.value[unitIndex.value]?.id||'',installedOnly:scope.value==='installed',learnedOnly:scope.value==='learned'}))
+const scope=ref('current'),unitIndex=ref(0),pageIndex=ref(0),scopes=[{id:'current',name:'当前教材'},{id:'installed',name:'全部已安装'},{id:'specific',name:'指定册次'},{id:'learned',name:'全局已学词'}]
+const courseChoices=computed(()=>course.installed),specificIndex=ref(0)
+const currentNeedsReview=computed(()=>courseNeedsReview(course.current))
+const browseCourseId=computed(()=>scope.value==='current'?course.currentId:scope.value==='specific'?courseChoices.value[specificIndex.value]?.courseId:undefined)
+const unitOptions=computed(()=>[{id:'',title:'全部单元'},...(courseRegistry[browseCourseId.value||'']||course.current).units.map(u=>({id:u.id,title:u.title}))]),unitScope=computed(()=>({courseId:browseCourseId.value,unitId:unitOptions.value[unitIndex.value]?.id||'',installedOnly:scope.value==='installed',learnedOnly:scope.value==='learned'}))
 watch(()=>course.currentId,()=>{unitIndex.value=0})
+watch([scope,specificIndex],()=>{unitIndex.value=0})
+function openGallery(){course.applyPending();openCourseGallery()}
 const filter=ref<WordbookFilter>('due'),query=ref(''),selected=ref(''),sheetOpen=ref(false)
 const filters=computed(()=>[{id:'due' as const,name:'到期复习',short:'到期',count:book.list('due','',unitScope.value).length},{id:'weak' as const,name:'重点复习',short:'重点',count:book.list('weak','',unitScope.value).length},{id:'mistakes' as const,name:'错词本',short:'错词',count:book.list('mistakes','',unitScope.value).length},{id:'all' as const,name:'所有单词',short:'全部',count:book.list('all','',unitScope.value).length}])
 const list=computed(()=>book.list(filter.value,query.value,unitScope.value))
 const pages=computed(()=>Math.max(1,Math.ceil(list.value.length/30))),pageWords=computed(()=>list.value.slice(pageIndex.value*30,pageIndex.value*30+30))
 watch([filter,query,scope,unitIndex],()=>{pageIndex.value=0})
-const detail=computed(()=>{if(!wordById[selected.value])return undefined;const word=getCourseWord(course.currentId,selected.value);return {...word,example:courseMemberships(word.id).find(m=>m.courseId===course.currentId)?.example||word.example}})
+const detail=computed(()=>{if(!wordById[selected.value])return undefined;const detailCourseId=browseCourseId.value||course.currentId;const word=getCourseWord(detailCourseId,selected.value);return {...word,example:courseMemberships(word.id).find(m=>m.courseId===detailCourseId)?.example||word.example}})
 function selectFilter(id:WordbookFilter){filter.value=id}
 function open(id:string){selected.value=id;sheetOpen.value=true}
 function begin(){

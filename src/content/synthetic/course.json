@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 2,
+  "courseId": "synthetic-classroom",
+  "contentVersion": "1.0.0",
+  "title": "合成测试教材 · 3 词",
+  "route": "textbook",
+  "publisher": "WordPal 合成测试",
+  "edition": "合成版（待核对）",
+  "editionYear": 2026,
+  "startGrade": 1,
+  "grade": 1,
+  "semester": "上册",
+  "abilityLevels": ["L1", "L2", "L3"],
+  "sources": [
+    {
+      "id": "synthetic-author",
+      "type": "author-created",
+      "rightsStatus": "pending-review",
+      "attribution": "WordPal 合成测试内容，仅用于自动化验收，不来自任何出版社教材",
+      "revision": "synthetic-1",
+      "textLicense": "本项目自建测试内容"
+    }
+  ],
+  "vocabulary": [
+    {"id":"synthetic-quartz","language":"en","lemma":"quartz","meaning":"石英","pos":"n.","sourceId":"synthetic-author","order":1,"learningLevel":1},
+    {"id":"synthetic-grove","language":"en","lemma":"grove","meaning":"林地","pos":"n.","sourceId":"synthetic-author","order":2,"learningLevel":1},
+    {"id":"synthetic-amber","language":"en","lemma":"amber","meaning":"琥珀","pos":"n.","sourceId":"synthetic-author","order":3,"learningLevel":1}
+  ],
+  "units": [
+    {"id":"su01","title":"合成单元一","order":1,"lessons":[{"id":"sl01","title":"合成单元一 · 第 1 课","wordIds":["synthetic-quartz","synthetic-grove"],"activities":["flash","connect"]}]},
+    {"id":"su02","title":"合成单元二","order":2,"lessons":[{"id":"sl02","title":"合成单元二 · 第 1 课","wordIds":["synthetic-amber"],"activities":["flash","connect"]}]}
+  ],
+  "assets": []
+}

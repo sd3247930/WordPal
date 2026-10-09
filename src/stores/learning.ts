@@ -13,7 +13,7 @@ import {readFeedbackSettings} from './feedback'
 import {initialProgress} from '../services/storage/MigrationV1toV2'
 import {getCourseWord,resolveFrozenWord} from '../services/content/ContentRegistry'
 import {useParentSettingsStore} from './parent-settings'
-import {planDailySession} from '../services/learning/SessionPlanner'
+import {planDailySession,plannedNewWordCeiling} from '../services/learning/SessionPlanner'
 import {needsRecentPractice} from '../services/study-presentation'
 export const modes:{id:LearningMode;name:string;description:string}[]=[{id:'flash',name:'闪现',description:'看看单词，回想它的意思'},{id:'connect',name:'连接',description:'为单词找到正确的中文意思'},{id:'listen',name:'听音',description:'听发音，选出对应的单词'},{id:'spell',name:'拼写',description:'看中文，用字母拼出单词'},{id:'dictation',name:'听写',description:'听发音，写出这个单词'}]
 export const useLearningStore=defineStore('learning',()=>{
@@ -23,10 +23,23 @@ export const useLearningStore=defineStore('learning',()=>{
  const todayAnswers=computed(()=>profile.db.history.filter(a=>localDate(new Date(a.at))===localDate()))
  const newToday=computed(()=>new Set(todayAnswers.value.filter(a=>a.source==='new_word').map(a=>a.wordId)).size)
  const lesson=computed(()=>course.lesson)
- const newCandidates=computed(()=>lesson.value.wordIds.filter(id=>!profile.db.cards[id]))
+ /**
+  * Anki-style daily pool: every unlearned word of the whole course, in lesson order.
+  * Previously this only looked at the current lesson, so a 5/10/20 daily limit could
+  * never differ from the lesson size (2–9 words).
+  */
+ const courseWordPool=computed(()=>{
+  const seen=new Set<string>(),ids:string[]=[]
+  const ordered=course.current.units.flatMap(unit=>unit.lessons),start=Math.max(0,ordered.findIndex(item=>item.id===lesson.value.id))
+  const rotated=[...ordered.slice(start),...ordered.slice(0,start)]
+  for(const item of rotated)for(const id of item.wordIds)
+   if(!seen.has(id)){seen.add(id);ids.push(id)}
+  return ids
+ })
+ const newCandidates=computed(()=>courseWordPool.value.filter(id=>!profile.db.cards[id]&&!!wordById[id]))
  const newWords=computed(()=>{
   if(review.due.length || (session.value && !session.value.completedAt && session.value.kind==='review_due'))return []
-  const remaining=Math.max(0,parent.plannerConfig.dailyNewWordLimit-newToday.value)
+  const remaining=Math.max(0,plannedNewWordCeiling(parent.plannerConfig)-newToday.value)
   return newCandidates.value.slice(0,remaining)
  })
  const needsConsolidation=computed(()=>course.currentId==='starter'&&profile.db.lastLessonAccuracy!==null && profile.db.lastLessonAccuracy<.8)
@@ -56,7 +69,7 @@ export const useLearningStore=defineStore('learning',()=>{
   return profile.transact(d=>{d.session={id:`session-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,startedAt:new Date().toISOString(),date:localDate(),kind,wordIds:ids,index:0,mode:'flash',input:'',selected:'',revealed:false,answers:[],courseId:course.currentId,contentVersion:course.current.contentVersion,lessonId:lesson.value.id,wordSnapshot:snapshot,seed:Date.now(),wordSources,plannerConfig:{...parent.plannerConfig}}})
  }
  function patch(change:Partial<LearningSession>){return profile.transact(d=>{if(d.session && !d.session.completedAt)Object.assign(d.session,change)})}
- function setMode(mode:LearningMode){if(session.value?.answers[session.value.index]||!current.value||!availableModes(current.value,Object.values(session.value?.wordSnapshot||wordById),readFeedbackSettings().sound).includes(mode))return false;return patch({mode,input:'',selected:'',revealed:false})}
+ function setMode(mode:LearningMode){if(session.value?.answers[session.value.index]||!current.value||!availableModes(current.value,Object.values(session.value?.wordSnapshot||wordById),readFeedbackSettings().sound,session.value?.plannerConfig?.entryLevel).includes(mode))return false;return patch({mode,input:'',selected:'',revealed:false})}
  function reveal(){return patch({revealed:true})}
  function hint(){return profile.transact(d=>{if(d.session&&!d.session.revealed&&!d.session.answers[d.session.index]){d.gems=Math.max(0,d.gems-1);d.session.revealed=true}})}
  function submit(rating?:ReviewRating){

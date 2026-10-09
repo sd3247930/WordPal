@@ -11,6 +11,7 @@
    <text class="small block parent-setting-status" role="status" aria-live="polite" :data-state="parent.dailyState">{{dailyStatus}}</text>
    <text class="small muted block">到期复习优先，再巩固错词，最后安排新词。上限只限制新词，不限制到期复习；当前轮次不会中途重排。</text>
    <text class="small muted block parent-plan-preview">下一轮建议：{{learning.dailyPlan.dueIds.length}} 个到期复习 · {{learning.dailyPlan.weakIds.length}} 个重点巩固 · 最多 {{learning.dailyPlan.newIds.length}} 个新词</text>
+   <text v-if="newWordNote" class="small muted block">{{newWordNote}}</text>
   </view>
   <view class="parent-setting-section">
    <text class="strong">学习能力起点</text>
@@ -21,6 +22,11 @@
     <text class="strong">L{{meta.level}} · {{meta.title}}</text>
     <text class="small block">{{meta.description}}</text>
     <text class="small muted block">推荐学习：{{meta.recommendedSkills.join(' · ')}}</text>
+   </view>
+   <view class="ability-cap-note">
+    <text class="small strong block">能力起点说明</text>
+    <text class="small muted block">· L1 / L2（入门）：每轮新词不超过 5 个，帮助孩子建立稳定节奏。</text>
+    <text class="small muted block">· L3 / L4 / L5（进阶）：L3 每日新词最多 10 个，L4 最多 15 个，L5 最多 20 个；同时受「每日新词」设置限制（5 / 10 / 20）。</text>
    </view>
    <view class="ability-recommendations" :data-entry-level="course.recommendation.entryLevel">
     <text class="small strong block">课程建议已按 L{{course.recommendation.entryLevel}} 更新</text>
@@ -44,6 +50,13 @@ const meta=computed(()=>abilityMeta(parent.settings.entryLevel))
 const limits=DAILY_NEW_WORD_LIMITS.map(n=>({id:String(n),name:n+' 个'})),levels=ABILITY_LEVELS.map(m=>({id:'L'+m.level,name:'L'+m.level,description:m.title}))
 const status={saved:'已保存',pending:'待应用',applying:'正在应用…',applied:'✓ 已生效',error:'设置未保存或应用失败，请重试'}
 const dailyStatus=computed(()=>parent.dailyState==='pending'&&parent.sessionPending?'已保存 · 下次学习生效':status[parent.dailyState])
+/** Why the next round may schedule no new words at all. */
+const newWordNote=computed(()=>{
+ if(learning.dailyPlan.newIds.length)return ''
+ if(parent.settings.entryLevel<=2&&learning.newToday>=5)return '入门等级每轮新词不超过 5，今日已学 5，明日再来。'
+ if(learning.newToday>0)return '今日新词已达上限，明日再来。'
+ return ''
+})
 const levelStatus=computed(()=>parent.levelState==='applied'?'✓ 已生效 · 课程推荐已更新'+(parent.difficultyPending?'，题型建议下次学习生效':''):status[parent.levelState])
 function saved(ok:boolean){savedNotice.value=ok;if(ok)uni.showToast?.({title:'设置已更新',icon:'none'})}
 function saveLimit(value:string){saved(parent.save({dailyNewWordLimit:Number(value) as DailyNewWordLimit}))}

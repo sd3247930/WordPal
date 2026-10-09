@@ -57,7 +57,11 @@ tests             领域测试、交互测试、截图基线
 npm run course:validate
 npm run course:import -- --file private/lesson.csv --course-id my-course --title 自编词表 --local-use --output private/course.json
 npm run vocabulary:import -- --local-use
+npm run fltrp:import -- --local-use
+npm run fltrp:validate -- --local-use
 ```
+
+外研版词表导入器读取 `private/course-import/fltrp/raw.json`，验证六册来源、词义去重、课节大小与现有课程契约，再合并到被忽略的本机课程目录。原图、提取文本和生成课程不进入公开仓库；默认 CI 使用独立的原创合成教材。
 
 主词库工具使用 gh 读取固定提交，也可通过 `--file` 导入本机 CSV；非固定摘要的文件会记录为本机未核对来源。生成音频需要 Windows 离线英语系统语音。开发运行自动使用本机词库，可设置 `VITE_WORDPAL_LOCAL_CONTENT=0` 隔离；包含这些私用资源的发行构建必须显式设置 `VITE_WORDPAL_LOCAL_CONTENT=1`，该开关只表示构建本机测试包，不授予再分发许可。公开发行应从不含私用资源的干净检出构建。
 
@@ -80,3 +84,7 @@ npm run purity
 每个新克隆的工作区先安装版本化 hooks。每次 Git 存档前运行纯净扫描；提交钩子检查整个暂存区的实际内容，提交信息钩子检查秘密、隐私和本地路径，推送钩子复查本地提交历史。扫描失败或无法运行会阻止操作，不能使用 `--no-verify` 绕过。
 
 需要检查本机保留内容时运行 `powershell -ExecutionPolicy Bypass -File tools/preflight-scan.ps1 -IncludeLocalOnly`。命中报告仅显示类别和相对位置，原始值不会打印。公开候选中的真实姓名、地址、图像内容及素材许可仍需人工核对，自动模式不能替代这一步。
+
+## 自然拼读覆盖
+
+音块与发音的同步高亮只对**已审核词条**生效。拼读覆盖按每次导入的可审核资源确定，课程安装不自动生成音素或精确时间轴；没有已审核拆分的词条使用整词回退，卡片显示「拼读拆分正在审核，先听完整发音」，时序提示为「以完整单词的标准发音为准」。高亮颜色统一为信号灯三色（红 → 绿 → 蓝循环），整词回退与单音块词条固定使用蓝色。补齐计划见本机文档 `docs/content-roadmap.md`（不入公开仓库）。

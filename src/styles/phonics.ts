@@ -3,34 +3,43 @@ export type PhonicsColor='red'|'green'|'blue'
 export interface PhonicsTone {ink:string;active:string;soft:string}
 type PhonicsPalette=Record<PhonicsColor,PhonicsTone>
 const order:PhonicsColor[]=['red','green','blue']
-export const getPhonicsColor=(index:number):PhonicsColor=>order[index%3]
-// Base tones also retain readable contrast at 75% upcoming-chunk opacity.
+/**
+ * Signal-light hues. Every theme now uses this red → green → blue family; the exact shade is
+ * picked per surface so the project's accessibility gates stay green
+ * (active vs surface >= 4.5, ink at 75% opacity >= 3).
+ */
+export const SIGNAL_COLORS:Record<PhonicsColor,string>={red:'#E53935',green:'#43A047',blue:'#1E88E5'}
+/** Whole-word fallback and single-chunk words always read blue; otherwise red → green → blue. */
+export const getPhonicsColor=(index:number,total=2):PhonicsColor=>total<=1?'blue':order[index%3]
+// bento / soft light surfaces are near-white.
 const light:PhonicsPalette={
- red:{ink:'#B74444',active:'#983434',soft:'#FBECEC'},
- green:{ink:'#29784B',active:'#1F603A',soft:'#EAF6EF'},
- blue:{ink:'#3069B4',active:'#245291',soft:'#EAF2FB'}
+ red:{ink:'#B71C1C',active:'#C62828',soft:'#FDECEA'},
+ green:{ink:'#1B5E20',active:'#2E7D32',soft:'#E8F5E9'},
+ blue:{ink:'#0A3A85',active:'#0D47A1',soft:'#E3F2FD'}
 }
 const dark:PhonicsPalette={
- red:{ink:'#E27B7B',active:'#EFA0A0',soft:'#38262B'},
- green:{ink:'#70BF8E',active:'#92D0A8',soft:'#23352C'},
- blue:{ink:'#72A3E6',active:'#9ABBE9',soft:'#243248'}
+ red:{ink:'#FF8A80',active:'#FFCDD2',soft:'#3A2226'},
+ green:{ink:'#A5D6A7',active:'#C8E6C9',soft:'#1E3324'},
+ blue:{ink:'#90CAF9',active:'#BBDEFB',soft:'#16283C'}
 }
+// oled light uses a very dark page background, so it needs the bright signal shades too.
 const night:PhonicsPalette={
- red:{ink:'#D07575',active:'#DF8787',soft:'#32252C'},
- green:{ink:'#6BB885',active:'#85C69B',soft:'#233027'},
- blue:{ink:'#709ED7',active:'#86B0E7',soft:'#232D3F'}
+ red:{ink:'#FF8A80',active:'#FFCDD2',soft:'#32252C'},
+ green:{ink:'#A5D6A7',active:'#C8E6C9',soft:'#233027'},
+ blue:{ink:'#90CAF9',active:'#BBDEFB',soft:'#232D3F'}
 }
+// swiss light sits on a grey surface and swiss dark on a slate surface.
 const swissLight:PhonicsPalette={
- red:{ink:'#A34A4A',active:'#873939',soft:'#F0F2F3'},
- green:{ink:'#376F4E',active:'#28573B',soft:'#F0F2F3'},
- blue:{ink:'#466897',active:'#33507A',soft:'#F0F2F3'}
+ red:{ink:'#B71C1C',active:'#C62828',soft:'#F0F2F3'},
+ green:{ink:'#1B5E20',active:'#2E7D32',soft:'#F0F2F3'},
+ blue:{ink:'#0A3A85',active:'#0D47A1',soft:'#F0F2F3'}
 }
 const swissDark:PhonicsPalette={
- red:{ink:'#CB8C8C',active:'#D6B3B3',soft:'#2A3342'},
- green:{ink:'#87B69A',active:'#B3CFBD',soft:'#2A3342'},
- blue:{ink:'#88A9D3',active:'#B3C7E1',soft:'#2A3342'}
+ red:{ink:'#FFCDD2',active:'#FFEBEE',soft:'#2A3342'},
+ green:{ink:'#C8E6C9',active:'#E8F5E9',soft:'#2A3342'},
+ blue:{ink:'#BBDEFB',active:'#E3F2FD',soft:'#2A3342'}
 }
-export function phonicsColor(index:number,theme:ThemeId,mode:'light'|'dark'):PhonicsTone{
- const palette=theme==='oled'?night:theme==='swiss'?(mode==='light'?swissLight:swissDark):mode==='light'?light:dark
- return palette[getPhonicsColor(index)]
+export function phonicsColor(index:number,theme:ThemeId,mode:'light'|'dark',total=2):PhonicsTone{
+ const palette=theme==='oled'?(mode==='light'?night:dark):theme==='swiss'?(mode==='light'?swissLight:swissDark):(mode==='light'?light:dark)
+ return palette[getPhonicsColor(index,total)]
 }

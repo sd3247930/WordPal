@@ -1,15 +1,32 @@
 import {test,expect,type Page} from '@playwright/test'
-import {go,database} from './helpers'
+import {go,database,seedDatabase} from './helpers'
+import {freshDatabase} from '../../src/stores/profile'
 test.skip(process.env.WORDPAL_TEST_LOCAL_CONTENT!=='1','此组验证需要本机词库；公开检出使用合成领域测试。')
 async function select(page:Page,label:string,text:string){await page.locator('uni-picker[aria-label="'+label+'"] .course-picker').click();const menu=page.locator('.uni-picker-container').filter({visible:true});await menu.locator('.uni-picker-select .uni-picker-item').filter({hasText:text}).click()}
-async function primary(page:Page){await go(page,'learn');await select(page,'筛选教材系列与起始年级','社区 edition 1');await select(page,'筛选教材年级','3 年级');await select(page,'筛选教材册次','上册');await select(page,'选择学习课程','3年级上册')}
+/** The learn page no longer hosts the selector block; every switch goes through the gallery. */
+async function primary(page:Page){
+ await go(page,'learn')
+ await page.getByRole('button',{name:'选择教材',exact:true}).click()
+ await select(page,'筛选教材系列','人教版社区索引（教材系列待核对）')
+ await select(page,'筛选教材年级','3 年级')
+ await select(page,'筛选教材册次','上册')
+ await page.locator('.course-gallery-card').filter({hasText:'3年级上册'}).first().click()
+ await page.locator('.course-review-panel .course-check').first().click()
+ await page.getByRole('button',{name:'确认并应用',exact:true}).click()
+}
+async function openUnit(page:Page,unit:string){
+ await page.getByRole('button',{name:'选择教材',exact:true}).click()
+ await page.locator('.course-gallery-card').filter({hasText:'3年级上册'}).first().click()
+ await page.locator('.course-unit-row').filter({hasText:unit}).first().getByRole('button',{name:'从这一单元开始'}).click()
+}
 test('本机12册筛选、6单元和独立起点可用，手机平板不溢出',async({page})=>{
- await primary(page);await expect(page.locator('.course-selector')).toContainText('起始年级待核对');await expect(page.locator('.course-selector')).toContainText('L2');expect((await database(page)).currentCourseId).toBe('primary-community-e1-g3-s1')
- await select(page,'选择课程单元','Unit 6');await expect(page.locator('.course-selector')).toContainText('Birthdays');expect((await database(page)).courseProgress['primary-community-e1-g3-s1'].currentLessonId).toBe('u06-l01')
+ await primary(page);await expect(page.locator('.current-course-card')).toContainText('待核对');await expect(page.locator('.current-course-card')).toContainText('L2');expect((await database(page)).currentCourseId).toBe('primary-community-e1-g3-s1')
+ await openUnit(page,'Unit 6');await expect(page.locator('.study-heading')).toContainText('Birthdays');expect((await database(page)).courseProgress['primary-community-e1-g3-s1'].currentLessonId).toBe('u06-l01')
  for(const [width,height] of [[390,844],[844,390],[768,1024],[1024,768],[320,720]]){await page.setViewportSize({width,height});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)}
- await page.reload();await expect(page.locator('.course-selector')).toContainText('Birthdays');expect((await database(page)).history).toHaveLength(0)
+ await page.reload();await expect(page.locator('.study-heading')).toContainText('Birthdays');expect((await database(page)).history).toHaveLength(0)
 })
 test('本机离线音频听写、拼写、错误回看刷新恢复，正式记录仅写一次',async({page,context,baseURL})=>{
+ await seedDatabase(page,{...freshDatabase(),abilityLevel:'L5'})
  const external:string[]=[];page.on('request',r=>{if(/^https?:/.test(r.url())&&new URL(r.url()).origin!==new URL(baseURL!).origin)external.push(r.url())})
  await primary(page);await page.getByRole('button',{name:'开始今日学习',exact:true}).click();const audio=page.getByRole('button',{name:'播放当前单词的标准发音'});await expect(audio).toBeEnabled();await page.locator('.mode-button').filter({hasText:'听写'}).click();await expect(audio).toContainText('正在播放');await expect(audio).toContainText('再听一次',{timeout:5000})
  await page.locator('.mode-button').filter({hasText:'拼写'}).click();await page.getByRole('textbox',{name:'输入中文对应的英文单词'}).fill('wrong');await page.reload();await expect(page.getByRole('textbox',{name:'输入中文对应的英文单词'})).toHaveValue('wrong')

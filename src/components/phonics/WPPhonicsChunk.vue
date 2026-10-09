@@ -4,8 +4,8 @@ import {computed} from 'vue'
 import type {PhonicsChunk,PhonicsPlaybackState} from '../../../packages/phonics'
 import {getPhonicsColor,phonicsColor} from '../../styles/phonics'
 import {useThemeStore} from '../../stores/theme'
-const props=withDefaults(defineProps<{chunk:PhonicsChunk;index:number;activeChunkIndex:number|null;playbackState:PhonicsPlaybackState;variant?:'word'|'card'}>(),{variant:'word'})
+const props=withDefaults(defineProps<{chunk:PhonicsChunk;index:number;total?:number;activeChunkIndex:number|null;playbackState:PhonicsPlaybackState;variant?:'word'|'card'}>(),{variant:'word',total:2})
 const theme=useThemeStore(),active=computed(()=>props.playbackState==='playing'&&props.index===props.activeChunkIndex)
-const colorName=computed(()=>getPhonicsColor(props.index))
-const colorStyle=computed(()=>{const color=phonicsColor(props.index,theme.settings.themeId,theme.mode);return '--phonics-ink:'+color.ink+';--phonics-active:'+color.active+';--phonics-soft:'+color.soft})
+const colorName=computed(()=>getPhonicsColor(props.index,props.total))
+const colorStyle=computed(()=>{const color=phonicsColor(props.index,theme.settings.themeId,theme.mode,props.total);return '--phonics-ink:'+color.ink+';--phonics-active:'+color.active+';--phonics-soft:'+color.soft})
 </script>

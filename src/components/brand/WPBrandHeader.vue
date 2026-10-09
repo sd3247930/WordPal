@@ -7,5 +7,5 @@
 <script setup lang="ts">
 import type {PageId} from '../../services/navigation'
 withDefaults(defineProps<{page:PageId;spiritStone?:number}>(),{spiritStone:0})
-const subtitles:Record<PageId,string>={home:'Home',learn:'Study',pet:'PetHouse',review:'Wordbook',settings:'Settings',parent:'Parents',achievements:'Achievements'}
+const subtitles:Record<PageId,string>={home:'Home',learn:'Study',pet:'PetHouse',review:'Wordbook',settings:'Settings',parent:'Parents',achievements:'Achievements',course:'Textbooks'}
 </script>

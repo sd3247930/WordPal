@@ -22,7 +22,8 @@ test('自动题型混合、手动选择与重启恢复，不重建正式 Session
 })
 test('正式错词回看每词一次，刷新恢复，完全不改正式记录、排程、课程与奖励',()=>{
  const {learning,view,profile}=fresh();learning.start();view.sync();view.chooseMode('spell')
- for(let index=0;index<5;index++){view.updateInput(index===0?'wrong':learning.current!.word);view.submit();view.next()}
+ // The daily pool now spans the whole course, so answer until this round actually finishes.
+ while(!learning.session!.completedAt){const current=learning.current!;view.updateInput(current.id==='cat'?'wrong':current.word);view.submit();view.next()}
  assert.equal(view.revisiting,true);assert.deepEqual(view.state.queue,['cat'])
  const before=JSON.stringify(profile.db);view.updateInput('ca');setActivePinia(createPinia());const restored=useStudyPresentation();restored.sync()
  assert.equal(restored.input,'ca');restored.updateInput('cat');assert.ok(restored.submit());assert.equal(restored.submit(),false);restored.next();assert.equal(restored.completed,true)

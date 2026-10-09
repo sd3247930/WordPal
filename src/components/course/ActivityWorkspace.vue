@@ -1,8 +1,8 @@
 <template>
  <WPCard v-if="!activity.state" class="activity-menu">
   <text class="section-title">轻松练习</text><text class="small muted block">练习只保存活动进度，不改变复习日期或重复发奖。</text>
-  <view class="activity-grid"><WPButton v-for="item in activities" :key="item.id" kind="secondary" :disabled="item.disabled" @click="start(item.id)">{{item.name}}</WPButton></view>
-  <text v-if="activity.error" class="notice" role="status">{{activity.error}}</text>
+<view class="activity-grid"><view v-for="item in activities" :key="item.id" class="activity-cell"><WPButton kind="secondary" :disabled="item.disabled" @click="start(item.id)">{{item.name}}</WPButton><text v-if="item.disabled&&item.reason" class="small muted block activity-reason">{{item.reason}}</text></view></view>
+  <text v-if="activity.error" class="notice warning" role="status">⚠️ {{activity.error}}</text>
  </WPCard>
  <WPCard v-else class="activity-workspace">
   <view class="section-heading"><text class="section-title">{{title}}</text><WPButton kind="quiet" @click="activity.close();stopAudio()">收起练习</WPButton></view>
@@ -43,6 +43,8 @@
 import {computed,ref,watch,onMounted,onUnmounted} from 'vue'
 import {useActivitiesStore,type ActivityKind} from '../../stores/activities'
 import {useCourseStore} from '../../stores/course'
+import {useProfileStore} from '../../stores/profile'
+import {useReviewStore} from '../../stores/review'
 import {courseRegistry,getCourseWord,courseSnapshot} from '../../services/content/ContentRegistry'
 import {segments} from '../../../packages/phonics'
 import {playWord,stopAudio} from '../../services/audio'
@@ -53,8 +55,17 @@ import WPCard from '../wp-card/WPCard.vue'
 import WPProgress from '../wp-progress/WPProgress.vue'
 import WPPronunciationPractice from '../WPPronunciationPractice.vue'
 const activity=useActivitiesStore(),course=useCourseStore(),lookup=ref('')
+const profile=useProfileStore(),review=useReviewStore()
+/** Unavailable practice items stay visible, but say why (see 练习菜单原因映射). */
+const practiceReasons:Partial<Record<ActivityKind,string>>={check:'本课还有未学词，先完成新词学习',story:'本课暂无已审核故事',picture:'本课暂无已审核词图','listen-picture':'本课暂无已审核词图或音频',phonics:'本课暂无已审核拼读规则'}
 const names:Record<ActivityKind,string>={check:'整课检查',pair:'词义配对',letters:'字母拼装',sentence:'句子排序',cloze:'句子填空',story:'故事阅读',picture:'看图选词','listen-picture':'听音选图',phonics:'自然拼读与跟读',challenge:'连胜挑战',speed:'闪电判断'}
-const activities=computed(()=>Object.entries(names).map(([id,name])=>({id:id as ActivityKind,name,disabled:!course.lesson.wordIds.some(wordId=>{const w=getCourseWord(course.currentId,wordId),example=course.lesson.examples?.[wordId]||w.example;return id==='picture'?!!w.image:id==='listen-picture'?!!w.image&&!!w.audio:id==='phonics'?!!w.audio&&!!w.phonics.length:id==='cloze'?example.toLowerCase().split(/[^a-z'-]+/).includes(w.word.toLowerCase()):id==='sentence'?!!example:id==='story'?!!course.lesson.storyId:true})})))
+const activities=computed(()=>Object.entries(names).map(([id,name])=>{
+ const kind=id as ActivityKind
+ const available=kind==='check'
+  ?!review.due.length&&course.lesson.wordIds.every(wordId=>!!profile.db.cards[wordId])
+  :course.lesson.wordIds.some(wordId=>{const w=getCourseWord(course.currentId,wordId),example=course.lesson.examples?.[wordId]||w.example;return id==='picture'?!!w.image:id==='listen-picture'?!!w.image&&!!w.audio:id==='phonics'?!!w.audio&&!!w.phonics.length:id==='cloze'?example.toLowerCase().split(/[^a-z'-]+/).includes(w.word.toLowerCase()):id==='sentence'?!!example:id==='story'?!!course.lesson.storyId:true})
+ return {id:kind,name,disabled:!available,reason:available?'':(practiceReasons[kind]||'')}
+}))
 const title=computed(()=>activity.state?names[activity.state.kind]:''),answer=computed(()=>activity.state?.answers[activity.state.index]),correct=computed(()=>activity.state?.answers.filter(a=>a.correct).length||0),question=computed(()=>activity.state?.storySnapshot?.questions?.[activity.state.index])
 const rules=computed(()=>{const state=activity.state;if(!state)return [];const pack=courseSnapshot(state.courseId,state.contentVersion),lesson=pack?.units.flatMap(unit=>unit.lessons).find(item=>item.id===state.lessonId);return pack?.phonicsRules?.filter(rule=>lesson?.phonicsRuleIds?.includes(rule.id))||[]})
 const canSubmit=computed(()=>!!activity.state&&(activity.state.kind!=='speed'||activity.state.timer?.runningSince!==null)&&(activity.state.kind==='phonics'?true:activity.state.kind==='story'?!question.value||!!activity.state.selected:['check','pair','picture','listen-picture','challenge','speed'].includes(activity.state.kind)?!!activity.state.selected:!!activity.state.input.trim()))

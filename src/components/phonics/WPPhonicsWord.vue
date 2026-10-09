@@ -1,4 +1,4 @@
-<template><view class="phonics-word-frame word" role="group" :aria-label="word" :style="'font-size:'+fontSize+'px'"><view class="phonics-word"><WPPhonicsChunk v-for="(chunk,index) in phonics.chunks" :key="chunk.id" :chunk="chunk" :index="index" :active-chunk-index="activeChunkIndex" :playback-state="playbackState"/></view></view></template>
+<template><view class="phonics-word-frame word" role="group" :aria-label="word" :style="'font-size:'+fontSize+'px'"><view class="phonics-word"><WPPhonicsChunk v-for="(chunk,index) in phonics.chunks" :key="chunk.id" :chunk="chunk" :index="index" :total="phonics.chunks.length" :active-chunk-index="activeChunkIndex" :playback-state="playbackState"/></view></view></template>
 <script setup lang="ts">
 import {ref,watch,onMounted,onUnmounted,nextTick,getCurrentInstance} from 'vue'
 import type {PhonicsData,PhonicsPlaybackState} from '../../../packages/phonics'

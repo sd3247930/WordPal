@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 2,
+  "courseId": "synthetic-archived-course",
+  "contentVersion": "1.0.0",
+  "title": "合成归档教材 · 3 词",
+  "route": "textbook",
+  "publisher": "WordPal 归档测试",
+  "edition": "归档版（待核对）",
+  "editionYear": 2026,
+  "startGrade": 1,
+  "grade": 2,
+  "semester": "上册",
+  "abilityLevels": ["L1", "L2"],
+  "sources": [
+    {
+      "id": "synthetic-archive-author",
+      "type": "author-created",
+      "rightsStatus": "pending-review",
+      "attribution": "WordPal 合成归档测试内容，仅用于自动化验收，不来自任何出版社教材",
+      "revision": "synthetic-archive-1",
+      "textLicense": "本项目自建测试内容"
+    }
+  ],
+  "vocabulary": [
+    {"id":"syn-arch-echo","language":"en","lemma":"echo","meaning":"回声","pos":"n.","sourceId":"synthetic-archive-author","order":1,"learningLevel":1},
+    {"id":"syn-arch-fern","language":"en","lemma":"fern","meaning":"蕨类","pos":"n.","sourceId":"synthetic-archive-author","order":2,"learningLevel":1},
+    {"id":"syn-arch-onyx","language":"en","lemma":"onyx","meaning":"缟玛瑙","pos":"n.","sourceId":"synthetic-archive-author","order":3,"learningLevel":1}
+  ],
+  "units": [
+    {"id":"au01","title":"归档合成单元","order":1,"lessons":[{"id":"al01","title":"归档合成课节","wordIds":["syn-arch-echo","syn-arch-fern","syn-arch-onyx"],"activities":["flash","connect"]}]}
+  ],
+  "assets": []
+}

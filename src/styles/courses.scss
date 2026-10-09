@@ -5,3 +5,41 @@
 @media(max-width:599px){.activity-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.activity-grid .wp-button{padding:0 10px}.learning-backup-panel .button-row>.wp-button{width:100%}}@media(max-width:359px){.activity-grid{grid-template-columns:1fr}.wp-app .activity-workspace{padding:16px}.wordbook-course-filters .wp-segment{padding:0 8px;white-space:normal}}
 .course-filters { display:flex;flex-wrap:wrap;gap:8px; }
 .course-filters > picker { flex:1 1 100px;min-width:0; }
+
+/* Textbook gallery, current-textbook card and pending queue */
+.course-gallery-heading,.current-course-card,.pending-banner,.course-review-panel,.course-gallery-confirm{display:flex;flex-direction:column;gap:10px;min-width:0}
+.course-gallery-filters{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}
+.course-gallery-filters>picker{min-width:0}
+.course-gallery-card{display:flex;align-items:flex-start;width:100%;min-height:64px;padding:14px 16px;margin-bottom:10px;text-align:left;border:1px solid var(--wp-border);border-radius:16px;background:var(--wp-surface)}
+.course-gallery-card.selected{border-color:var(--wp-primary);background:var(--wp-surface-tonal)}
+.course-gallery-card.current{border-style:dashed}
+.course-gallery-copy{display:flex;flex-direction:column;gap:4px;min-width:0;width:100%}
+.course-gallery-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.course-gallery-meta{display:flex;gap:12px;flex-wrap:wrap}
+.course-review-badge{padding:2px 8px;border-radius:var(--wp-radius-chip);border:1px solid var(--wp-border);font-size:var(--wp-font-caption);color:var(--wp-muted-foreground)}
+.course-archive-badge{padding:2px 8px;border-radius:var(--wp-radius-chip);border:1px solid var(--wp-danger);font-size:var(--wp-font-caption);color:var(--wp-danger)}
+.course-gallery-card.archived{opacity:.72;filter:grayscale(.35)}
+.course-gallery-card.archived.selected{border-style:dashed;opacity:1;filter:none}
+.course-current-mark{font-size:var(--wp-font-caption);color:var(--wp-primary)}
+.current-course-card{padding:16px;border:1px solid var(--wp-border);border-radius:16px;background:var(--wp-surface-tonal);margin-bottom:14px}
+.current-course-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.current-course-copy{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1 1 150px}
+.current-course-head>.wp-button{flex:0 0 auto;min-height:48px}
+.course-review-panel{padding:16px;border:1px solid var(--wp-border);border-radius:16px;background:var(--wp-surface-tonal);margin-top:14px}
+.course-unit-preview{display:flex;flex-direction:column;gap:8px}
+.course-unit-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+/* Keep the primary action above the tab bar on tab pages, and clear of the home indicator on pushed pages. */
+.course-gallery{padding-bottom:calc(var(--wp-bottom-nav-space,0px) + env(safe-area-inset-bottom) + 82px + 24px)}
+.course-gallery-confirm{position:sticky;bottom:calc(var(--wp-bottom-nav-space,0px) + env(safe-area-inset-bottom) + 12px);z-index:40;padding:12px;border:1px solid var(--wp-border);border-radius:16px;background:var(--wp-surface);margin-top:16px;box-shadow:0 -6px 18px rgba(8,10,16,.06)}
+.course-gallery-confirm>.wp-button{width:100%}
+.pending-banner{padding:14px 16px;border:1px solid var(--wp-border);border-radius:16px;background:var(--wp-surface-tonal);margin-bottom:14px}
+.sheet-backdrop{position:fixed;inset:0;z-index:60;display:flex;align-items:flex-end;justify-content:center;background:rgba(8,10,16,.45)}
+.sheet-panel{display:flex;flex-direction:column;gap:12px;width:100%;max-width:560px;padding:20px;border-radius:20px 20px 0 0;background:var(--wp-surface);color:var(--wp-foreground)}
+.study-effective-line{padding:8px 12px;border-radius:var(--wp-radius-chip);background:var(--wp-surface-tonal);font-size:var(--wp-font-small)}
+@media(max-width:599px){.course-gallery-filters{grid-template-columns:1fr}.course-gallery-card{padding:12px}.course-unit-row .wp-button{width:100%}}
+@media(min-width:600px){.sheet-backdrop{align-items:center}.sheet-panel{border-radius:20px}}
+/* Practice menu: unavailable items keep their place but explain why. */
+.activity-cell{display:flex;flex-direction:column;gap:4px;min-width:0}
+.activity-cell>.wp-button{width:100%}
+.activity-reason{line-height:1.35}
+.notice.warning{border-left:3px solid var(--wp-warning,#E08A00);background:var(--wp-surface-tonal)}

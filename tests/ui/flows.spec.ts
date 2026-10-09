@@ -24,6 +24,8 @@ test('到期复习优先于请求的新词和自由练习',async({page})=>{
  const saved=await database(page);expect(saved.session.kind).toBe('review_due');expect(saved.session.wordIds[0]).toBe('cat');expect(saved.session.wordSources.cat).toBe('review_due');expect(Object.values(saved.session.wordSources).filter(s=>s==='new_word').length).toBeLessThanOrEqual(saved.dailyLimit)
 })
 test('首次错误进入本轮回看，灵石不能负数，低准确率巩固',async({page})=>{
+ // Daily pool is whole-course now; pin the round to 5 new words so five wrong answers finish it.
+ await seedDatabase(page,{...freshDatabase(),dailyLimit:5})
  await go(page,'home');await page.locator('.hero-cta').click()
  for(let i=0;i<5;i++){
   await page.locator('.mode-button').filter({hasText:'拼写'}).click();await page.locator('.spelling-input input').fill('wrong')

@@ -14,7 +14,6 @@ export const useParentSettingsStore=defineStore('parent-settings',()=>{
  const dailyState=computed<SettingApplyState>(()=>{
   if(saveState.value==='error'||!persisted.value)return 'error'
   if(saveState.value==='applying')return 'applying'
-  if(plannerConfig.value.dailyNewWordLimit!==settings.value.dailyNewWordLimit)return 'pending'
   return sessionPending.value&&profile.db.session?.plannerConfig?.dailyNewWordLimit!==settings.value.dailyNewWordLimit?'pending':'applied'
  })
  const levelState=computed<SettingApplyState>(()=>saveState.value==='error'||!persisted.value?'error':saveState.value==='applying'?'applying':recommendationConfig.value.entryLevel===settings.value.entryLevel?'applied':'pending')

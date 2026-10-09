@@ -4,6 +4,7 @@ import {sha256} from '../content/digest'
 import {writeStorage} from './index'
 import {validParentSettings,DAILY_NEW_WORD_LIMITS} from '../../../packages/parent_settings'
 export const V1_KEY='wordpal.database.v1',V2_KEY='wordpal.database.v2',POINTER_KEY='wordpal.database.active.v2'
+export const MIGRATION_BACKUP_KEY='wordpal.migration.backup.v1'
 export interface CourseProgress {currentLessonId:string;completedLessons:string[];lastLessonAccuracy:number|null;checkAccuracy:Record<string,number>;checkAttempts:Record<string,number>}
 export const initialProgress=(courseId:string,index=0):CourseProgress=>({currentLessonId:getCourseLessons(courseId)[index]?.id||getCourseLessons(courseId)[0]?.id||'',completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{}})
 export function validateDatabase(value:unknown){
@@ -35,7 +36,7 @@ export function loadDatabase(fresh:()=>Database):{database:Database;key:string;e
  try{raw=uni.getStorageSync(V1_KEY)||JSON.stringify(fresh());old=JSON.parse(raw);if(old.version!==1||!validateDatabase(old))throw new Error()}catch{return {database:fresh(),key:V1_KEY,error:'旧学习档案无法读取，已停止写入。请在家长区保存故障快照。',readOnly:true}}
  try{
   const next=convertV1(old)
-  uni.setStorageSync('wordpal.migration.backup.v1',raw);writeStorage('wordpal.migration.backup.digest',sha256(raw))
+  uni.setStorageSync(MIGRATION_BACKUP_KEY,raw);writeStorage('wordpal.migration.backup.digest',sha256(raw))
   writeStorage(V2_KEY,next)
   const restored=uni.getStorageSync(V2_KEY);if(sha256(restored)!==sha256(JSON.stringify(next))||!validateDatabase(JSON.parse(restored)))throw new Error('Readback')
   writeStorage(POINTER_KEY,'v2')

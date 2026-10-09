@@ -1,0 +1,56 @@
+import {test,expect,type Page} from '@playwright/test'
+import {go,database,seedDatabase,setAppearance} from './helpers'
+import {freshDatabase} from '../../src/stores/profile'
+const ids=['g3a','g3b','g4a','g4b','g5a','g5b']
+async function setup(page:Page){await page.addInitScript(()=>localStorage.setItem('wordpal.test.textbook-series','1'));await page.setViewportSize({width:390,height:844});await go(page,'learn')}
+async function choose(page:Page,key:string){await page.getByRole('button',{name:'选择教材',exact:true}).click();const grade=key[1],term=key.endsWith('a')?'上册':'下册';await page.locator('.course-gallery-card').filter({hasText:grade+'年级'+term}).click();await page.locator('.course-review-panel .course-check').click();await page.getByRole('button',{name:'确认并应用',exact:true}).click()}
+
+test('默认 CI 六册合成课程：全部待核对，确认与单元入口同时受确认约束，逐册切换不改学习记录',async({page})=>{
+ await setup(page);const before=await database(page)
+ for(const key of ids){
+  await page.getByRole('button',{name:'选择教材',exact:true}).click()
+  await expect(page.locator('.course-gallery-card')).toHaveCount(6)
+  await page.locator('.course-gallery-card').filter({hasText:key[1]+'年级'+(key.endsWith('a')?'上册':'下册')}).click()
+  await expect(page.locator('.course-review-panel')).toContainText('仅收录可辨文字')
+  await expect(page.getByRole('button',{name:'确认并应用',exact:true})).toBeDisabled()
+  await expect(page.getByRole('button',{name:'从这一单元开始',exact:true})).toBeDisabled()
+  await page.locator('.course-review-panel .course-check').click()
+  const confirm=page.getByRole('button',{name:'确认并应用',exact:true});await expect(confirm).toBeEnabled()
+  const box=(await confirm.boundingBox())!;expect(box.y+box.height).toBeLessThanOrEqual(844)
+  await confirm.click();const saved=await database(page)
+  expect(saved.currentCourseId).toBe('fltrp-3start-'+key)
+  expect({cards:saved.cards,history:saved.history,pets:saved.pets,gems:saved.gems}).toEqual({cards:before.cards,history:before.history,pets:before.pets,gems:before.gems})
+  await expect(page.locator('.current-course-card')).toContainText('10 词 · 1 单元')
+ }
+})
+
+test('默认 CI 五题型能实际运行，正式答题幂等、跨册排队保留冻结 Session，Scope 不改学习目标',async({page})=>{
+ const db=freshDatabase();db.abilityLevel='L5';db.dailyLimit=5;await seedDatabase(page,db);await setup(page);await choose(page,'g5b')
+ await page.getByRole('button',{name:'开始今日学习',exact:true}).click()
+ for(const name of ['闪现','连接','听音','拼写','听写']){const button=page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:new RegExp('^'+name+'，')});await expect(button).toBeEnabled();await button.click()}
+ await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^拼写，/}).click()
+ await page.locator('.spelling-input input').fill('draft')
+ const frozen=JSON.stringify((await database(page)).session)
+ await choose(page,'g4a');await expect(page.getByRole('dialog',{name:'排队切换教材'})).toBeVisible();await page.getByRole('button',{name:'继续排队',exact:true}).click()
+ const queued=await database(page);expect(queued.currentCourseId).toBe('fltrp-3start-g5b');expect(queued.pendingCourseId).toBe('fltrp-3start-g4a');expect(JSON.stringify(queued.session)).toBe(frozen)
+ await go(page,'review');await page.getByRole('group',{name:'单词本课程范围'}).getByRole('button',{name:'全部已安装',exact:true}).click();await page.getByRole('button',{name:'继续当前学习',exact:true}).click();expect(JSON.stringify((await database(page)).session)).toBe(frozen)
+ const snapshot=await database(page),word=snapshot.session.wordSnapshot[snapshot.session.wordIds[0]].word
+ await page.locator('.spelling-input input').fill(word);await page.getByRole('button',{name:'确认答案 →',exact:true}).click();await expect(page.locator('.answer-feedback')).toContainText('记住啦')
+ const saved=await database(page);expect(saved.history).toHaveLength(1);expect(saved.cards[saved.history[0].wordId].strategy).toBe('fsrs')
+ await page.reload();expect((await database(page)).history).toEqual(saved.history);expect((await database(page)).gems).toBe(saved.gems)
+})
+
+test('默认 CI 四主题课程、单词本、宠物页无水平溢出，已学和同词跨册统计不重复',async({page})=>{
+ await setAppearance(page,'bento','light');await setup(page);await choose(page,'g3a')
+ for(const theme of ['bento','swiss','soft','oled']){
+  await go(page,'settings');const label={bento:'便当任务岛',swiss:'瑞士专注',soft:'柔和宠物屋',oled:'夜读星幕'}[theme]!
+  await page.locator('.theme-choice').filter({hasText:label}).click()
+  for(const screen of ['learn','review','pet']){await go(page,screen);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBeTruthy()}
+ }
+ await go(page,'review');await page.locator('.review-tabs .mode-button').filter({hasText:'所有单词'}).click();await expect(page.locator('.review-row')).toHaveCount(10)
+ await page.getByRole('group',{name:'单词本课程范围'}).getByRole('button',{name:'全局已学词',exact:true}).click();await expect(page.locator('.review-row')).toHaveCount(0)
+})
+
+test('默认 CI 单元入口确认后直接进入所选教材的实际 Study Session',async({page})=>{
+ await setup(page);await page.getByRole('button',{name:'选择教材',exact:true}).click();await page.locator('.course-gallery-card').filter({hasText:'4年级上册'}).click();await page.locator('.course-review-panel .course-check').click();await page.getByRole('button',{name:'从这一单元开始',exact:true}).click();await expect(page.locator('.learn-workspace')).toBeVisible();const db=await database(page);expect(db.session.courseId).toBe('fltrp-3start-g4a');expect(db.courseProgress['fltrp-3start-g4a'].currentLessonId).toBe('unit-1-lesson-1');expect(db.history).toHaveLength(0)
+})

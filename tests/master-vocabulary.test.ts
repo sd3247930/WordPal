@@ -50,7 +50,7 @@ test('连胜与闪电独立记录不改变 FSRS、奖励或级别建议，限时
  activity.close();activity.start('speed');assert.equal(activity.submit(),false);activity.resumeTimer(1000);activity.pauseTimer(4000);assert.equal(activity.remainingMs(100000),12000);activity.resumeTimer(100000);activity.pauseTimer(101000);assert.equal(activity.remainingMs(),11000)
  setActivePinia(createPinia());const restored=useActivitiesStore();assert.equal(restored.state?.timer?.runningSince,null);assert.equal(restored.remainingMs(),11000);restored.resumeTimer(200000);assert.equal(restored.expireTimer(211000),true);assert.equal(restored.expireTimer(211001),false);assert.equal(restored.state?.answers.length,1);restored.next();assert.equal(restored.remainingMs(),15000);assert.equal(restored.state?.timer?.runningSince,null)
 })
-const local=JSON.parse(readFileSync('src/content/local-courses/catalog.json','utf8')) as CoursePack[]
+const local=(JSON.parse(readFileSync('src/content/local-courses/catalog.json','utf8')) as CoursePack[]).filter(pack=>pack.sources.some(source=>source.id==='community-index'))
 test('本机实际901行/12册/72单元/210课节全量资源与 ZIP 摘要验证，旧输入保持且到期优先',{skip:!local.length},()=>{
  reset(local);const audit=JSON.parse(readFileSync('private/master-vocabulary/import-audit.json','utf8'))
  assert.equal(audit.sourceRows,901);assert.equal(local.length,12);assert.equal(local.flatMap(c=>c.units).length,72);assert.equal(local.flatMap(c=>c.units.flatMap(u=>u.lessons)).length,210);assert.equal(new Set(local.flatMap(c=>c.vocabulary.map(w=>w.id))).size,795)

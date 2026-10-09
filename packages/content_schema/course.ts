@@ -1,6 +1,7 @@
 import type {Word,Lesson,LearningMode} from '../core_learning'
 import type {PhonicsData} from '../phonics/types'
 import {validPhonicsData} from '../phonics/chunks'
+import {abilityMeta,type EntryLevel} from '../parent_settings'
 export type RightsStatus='pending-review'|'private-use-declared'|'redistribution-approved'
 export interface SourceRecord {id:string;type:'author-created'|'authorized'|'user-provided';rightsStatus:RightsStatus;attribution:string;url?:string;revision?:string;textLicense?:string|null;imageLicense?:string|null;audioLicense?:string|null;declaredAt?:string;fileSha256?:string}
 export interface VocabularyEntry {id:string;language:'en';lemma:string;meaning:string;pos?:string;ipa?:string;senseId?:string;sourceId:string;sourceWordId?:string;phonics?:string[];phonemes?:string[];syllables?:string[];phonicsData?:PhonicsData;example?:string;acceptedSpellings?:string[];assetRefs?:{audio?:string;image?:string};audio?:string;image?:string;phoneticUK?:string;phoneticUS?:string;audioUK?:string;audioUS?:string;examples?:{en:string;zh:string}[];tags?:string[];learningLevel?:number;order?:number}
@@ -89,4 +90,17 @@ export function entryWord(entry:VocabularyEntry,c:CoursePack,resource:(id:string
  const lesson=firstLesson||courseLessons(c).find(l=>l.wordIds.includes(entry.id))
  return {id:entry.id,word:entry.lemma.normalize('NFC').trim(),meaning:entry.meaning.trim(),pos:entry.pos||'',ipa:entry.ipa||entry.phoneticUS||entry.phoneticUK||'',phonics:entry.phonics||[],phonemes:entry.phonemes||[],syllables:entry.syllables||[],phonicsData:entry.phonicsData,audio:entry.assetRefs?.audio?resource(entry.assetRefs.audio):entry.audio||entry.audioUS||entry.audioUK||'',image:entry.assetRefs?.image?resource(entry.assetRefs.image):entry.image||'',example:entry.example||entry.examples?.[0]?.en||'',unit:lesson?.unit||'',lesson:lesson?.id||'',difficulty:entry.learningLevel||1,distractors:[],acceptedSpellings:entry.acceptedSpellings,senseId:entry.senseId||entry.id,sourceId:entry.sourceId,phoneticUK:entry.phoneticUK,phoneticUS:entry.phoneticUS,audioUK:entry.audioUK,audioUS:entry.tags?.includes('offline-system-en-us')&&entry.assetRefs?.audio?resource(entry.assetRefs.audio):entry.audioUS,examples:entry.examples,tags:entry.tags,learningLevel:entry.learningLevel}
 }
-export function availableModes(word:Word,all:Word[],sound=true):LearningMode[]{const modes:LearningMode[]=['flash','spell'];const choices=all.filter(w=>w.id!==word.id&&w.meaning!==word.meaning&&w.word!==word.word);if(choices.length)modes.push('connect');if(sound&&word.audio){modes.push('dictation');if(choices.length)modes.push('listen')}return modes}
+/**
+ * Modes this word can actually run on this device.
+ * When an entry level is supplied the learner's allowed modes are intersected in,
+ * so a lower level never exposes dictation even if the word has audio.
+ */
+export function availableModes(word:Word,all:Word[],sound=true,entryLevel?:EntryLevel):LearningMode[]{
+ const modes:LearningMode[]=['flash','spell']
+ const choices=all.filter(w=>w.id!==word.id&&w.meaning!==word.meaning&&w.word!==word.word)
+ if(choices.length)modes.push('connect')
+ if(sound&&word.audio){modes.push('dictation');if(choices.length)modes.push('listen')}
+ if(!entryLevel)return modes
+ const allowed=new Set(abilityMeta(entryLevel).modes)
+ return modes.filter(mode=>allowed.has(mode))
+}
