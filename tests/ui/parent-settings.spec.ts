@@ -1,3 +1,4 @@
+import {answerParentGate,unlockParent as openParentSettings} from './helpers'
 import {openCustomPractice} from './helpers'
 import {test,expect,type Page} from '@playwright/test'
 import {go,database,setAppearance} from './helpers'
@@ -13,7 +14,7 @@ async function seed(page:Page,db=fixture()){
  await page.addInitScript(pack=>{if(!localStorage.getItem('wordpal.content.catalog.v2')){const key='wordpal.content.pack.parent-settings-test.c0a1b2c3d4e5f6a7';localStorage.setItem(key,JSON.stringify(pack));localStorage.setItem('wordpal.content.catalog.v2',JSON.stringify([{key,archived:false,aliases:{}}]))}},pack)
  await page.addInitScript(db=>{if(!localStorage.getItem('wordpal.database.active.v2')){localStorage.setItem('wordpal.database.v2',JSON.stringify(db));localStorage.setItem('wordpal.database.active.v2',JSON.stringify('v2'))}},db)
 }
-async function unlock(page:Page){await go(page,'parent');const gate=page.getByRole('spinbutton',{name:'家长验证答案'});if(await gate.count()){await gate.fill('56');await page.getByRole('button',{name:'打开家长设置',exact:true}).click()}await expect(page.locator('.parent-learning-settings')).toBeVisible()}
+async function unlock(page:Page){await openParentSettings(page)}
 const limit=(page:Page,n:number)=>page.getByRole('group',{name:'每日新词上限',exact:true}).getByRole('button',{name:n+' 个',exact:true})
 const level=(page:Page,n:number)=>page.getByRole('group',{name:'能力起点',exact:true}).getByRole('button').filter({hasText:'L'+n})
 function protectedData(db:Database){const {dailyLimit,abilityLevel,parentSettingsVersion,parentSettingsUpdatedAt,...protectedFields}=db;return protectedFields}
@@ -33,7 +34,7 @@ test('当前轮次中修改后显示下次生效，输入和快照跨重启不�
  await level(page,3).click();await go(page,'home');await page.locator('.hero-cta').click();await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'拼写'}).click();await page.locator('.spelling-input input').fill('draft')
  const before=await database(page);await unlock(page);await limit(page,20).click();await level(page,5).click()
  await expect(page.locator('[data-state="pending"]')).toContainText('已保存 · 下次学习生效');await expect(page.locator('.ability-explanation')).toContainText('L5 · 进阶表达');await expect(page.locator('.ability-recommendations')).toHaveAttribute('data-entry-level','5');expect(protectedData(await database(page))).toEqual(protectedData(before))
- await page.reload();await page.getByRole('spinbutton',{name:'家长验证答案'}).fill('56');await page.getByRole('button',{name:'打开家长设置',exact:true}).click();await expect(limit(page,20)).toHaveAttribute('aria-pressed','true');await expect(page.locator('[data-state="pending"]')).toContainText('下次学习生效')
+ await page.reload();await answerParentGate(page);await expect(limit(page,20)).toHaveAttribute('aria-pressed','true');await expect(page.locator('[data-state="pending"]')).toContainText('下次学习生效')
  await go(page,'learn');await expect(page.locator('.spelling-input input')).toHaveValue('draft');expect((await database(page)).session).toEqual(before.session)
  for(let i=0;i<5;i++){const db=await database(page),word=db.session.wordSnapshot[db.session.wordIds[i]].word;await page.locator('.spelling-input input').fill(word);await page.locator('.answer-actions .wp-button').filter({hasText:'确认答案'}).click();await page.locator('.answer-feedback .wp-button').click()}
  await page.locator('.completion .wp-button').filter({hasText:'继续今日学习'}).click();const next=await database(page);expect(next.session.id).not.toBe(before.session.id);expect(next.session.plannerConfig).toEqual({dailyNewWordLimit:20,entryLevel:5});expect(next.session.wordIds).toHaveLength(15)

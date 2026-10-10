@@ -24,6 +24,9 @@
  </view>
 </template>
 <script setup lang="ts">
+import {useParentGateStore} from '../../stores/parent-gate'
+const parentGate=useParentGateStore()
+
 import {computed,ref,watch,onMounted} from 'vue'
 import {strFromU8} from 'fflate'
 import WPButton from '../wp-button/WPButton.vue'
@@ -52,20 +55,20 @@ onMounted(()=>{
  document.querySelector('.mapping-textarea textarea')?.setAttribute('aria-label','CSV 字段映射')
  // #endif
 })
-function useTemplate(){format.value='csv';input.value=csvTemplate;mediaFiles=undefined;preview.value=null;fileLabel.value='CSV 模板'}
+function useTemplate(){if(!parentGate.canAccess())return;format.value='csv';input.value=csvTemplate;mediaFiles=undefined;preview.value=null;fileLabel.value='CSV 模板'}
 function updateText(value:string){if(input.value!==value){input.value=value;preview.value=null}}
-function prepare(){message.value='';preview.value=previewImport(input.value,format.value,meta.value,wordById,Object.fromEntries(mappingText.value.split(/\r?\n/).map(line=>line.split('=').map(v=>v.trim())).filter(pair=>pair.length===2&&pair[0]&&pair[1])));reuseConfirmed.value=false}
-async function receive(file:PickedCourseFile){fileLabel.value=file.name.replace(/^.*[\\/]/,'');mediaFiles=undefined;if(/\.zip$/i.test(file.name)){const parsed=readZip(file.bytes);input.value=JSON.stringify(parsed.pack,null,2);format.value='json';mediaFiles=parsed.files}else if(/\.(json|csv|md)$/i.test(file.name)){if(file.bytes.length>2*1024*1024)throw new Error('课程文本超过 2 MiB。');input.value=strFromU8(file.bytes);format.value=/\.json$/i.test(file.name)?'json':/\.md$/i.test(file.name)?'markdown':'csv'}else throw new Error('请选择 JSON、CSV 或 ZIP。');prepare()}
-async function chooseFile(){busy.value=true;try{const file=await pickCourseFile();if(file)await receive(file);else message.value='已取消选择，可以继续粘贴词表。'}catch(error){message.value=(error as Error).message}finally{busy.value=false}}
-async function drop(event:any){
+function prepare(){if(!parentGate.canAccess())return;message.value='';preview.value=previewImport(input.value,format.value,meta.value,wordById,Object.fromEntries(mappingText.value.split(/\r?\n/).map(line=>line.split('=').map(v=>v.trim())).filter(pair=>pair.length===2&&pair[0]&&pair[1])));reuseConfirmed.value=false}
+async function receive(file:PickedCourseFile){if(!parentGate.canAccess())return;fileLabel.value=file.name.replace(/^.*[\\/]/,'');mediaFiles=undefined;if(/\.zip$/i.test(file.name)){const parsed=readZip(file.bytes);input.value=JSON.stringify(parsed.pack,null,2);format.value='json';mediaFiles=parsed.files}else if(/\.(json|csv|md)$/i.test(file.name)){if(file.bytes.length>2*1024*1024)throw new Error('课程文本超过 2 MiB。');input.value=strFromU8(file.bytes);format.value=/\.json$/i.test(file.name)?'json':/\.md$/i.test(file.name)?'markdown':'csv'}else throw new Error('请选择 JSON、CSV 或 ZIP。');prepare()}
+async function chooseFile(){if(!parentGate.canAccess())return;busy.value=true;try{const file=await pickCourseFile();if(file)await receive(file);else message.value='已取消选择，可以继续粘贴词表。'}catch(error){message.value=(error as Error).message}finally{busy.value=false}}
+async function drop(event:any){if(!parentGate.canAccess())return;
  // #ifdef H5
  event.preventDefault();const file=event.dataTransfer?.files?.[0];if(file){try{await receive({name:file.name,bytes:new Uint8Array(await file.arrayBuffer())})}catch(error){message.value=(error as Error).message}}
  // #endif
 }
-async function install(){if(!canInstall.value)return;busy.value=true;try{const pack=preview.value!.pack!,aliases=preview.value!.reuse;if(pack.assets.length){if(!mediaFiles)throw new Error('媒体尚未导入，请选择带资源的 ZIP。');await installMediaCourse(pack,mediaFiles,aliases,(done,total)=>message.value='保存资源 '+done+' / '+total+'，完成读回校验后才安装。')}else await installTextCourse(pack,aliases);message.value='课程安装完成。选择课程后开始学习；已有学习记录和奖励未改变。';preview.value=null}catch(error){message.value=(error as Error).message}finally{busy.value=false}}
-function selectCourse(id:string){if(!isCourseInstalled(id)){openCourseGallery(id);return}if(courseRegistry[id]?.route==='textbook'&&courseNeedsReview(courseRegistry[id])){openCourseGallery(id);return}const result=course.applyCourseSelection(id);message.value=result.message||'';if(!result.ok&&(result.reason==='db-version-mismatch'||result.reason==='db-readonly'))migrationOpen.value=true}
-function archive(id:string){try{if(id===course.currentId&&profile.db.session&&!profile.db.session.completedAt)throw new Error('先完成当前学习，再归档当前课程。');setArchived(id,!archiveStatus[id]);if(archiveStatus[id]&&id===course.currentId)course.choose('starter');message.value='课程状态已更新，已学词继续参加到期复习。'}catch(error){message.value=(error as Error).message}}
-async function rollback(id:string){try{await rollbackCourse(id);message.value='内容已回退，最新学习记录保持。'}catch(error){message.value=(error as Error).message}}
-async function exportPack(id:string){try{const {pack,files}=await exportCourse(id);if(!await downloadLocalFile(pack.courseId+'.zip',makeZip(pack,files)))message.value='此平台暂不能保存文件。';else message.value='课程包已保存至本机应用文件区，不包含个人学习记录。'}catch(error){message.value=(error as Error).message}}
-function copyErrors(){if(preview.value)uni.setClipboardData({data:preview.value.issues.map(i=>'第 '+i.line+' 行 '+i.field+'：'+i.message+' '+i.fix).join('\n')||'校验通过，无修正项。'})}
+async function install(){if(!parentGate.canAccess())return;if(!canInstall.value)return;busy.value=true;try{const pack=preview.value!.pack!,aliases=preview.value!.reuse;if(pack.assets.length){if(!mediaFiles)throw new Error('媒体尚未导入，请选择带资源的 ZIP。');await installMediaCourse(pack,mediaFiles,aliases,(done,total)=>message.value='保存资源 '+done+' / '+total+'，完成读回校验后才安装。')}else await installTextCourse(pack,aliases);message.value='课程安装完成。选择课程后开始学习；已有学习记录和奖励未改变。';preview.value=null}catch(error){message.value=(error as Error).message}finally{busy.value=false}}
+function selectCourse(id:string){if(!parentGate.canAccess())return;if(!isCourseInstalled(id)){openCourseGallery(id);return}if(courseRegistry[id]?.route==='textbook'&&courseNeedsReview(courseRegistry[id])){openCourseGallery(id);return}const result=course.applyCourseSelection(id);message.value=result.message||'';if(!result.ok&&(result.reason==='db-version-mismatch'||result.reason==='db-readonly'))migrationOpen.value=true}
+function archive(id:string){if(!parentGate.canAccess())return;try{if(id===course.currentId&&profile.db.session&&!profile.db.session.completedAt)throw new Error('先完成当前学习，再归档当前课程。');setArchived(id,!archiveStatus[id]);if(archiveStatus[id]&&id===course.currentId)course.choose('starter');message.value='课程状态已更新，已学词继续参加到期复习。'}catch(error){message.value=(error as Error).message}}
+async function rollback(id:string){if(!parentGate.canAccess())return;try{await rollbackCourse(id);message.value='内容已回退，最新学习记录保持。'}catch(error){message.value=(error as Error).message}}
+async function exportPack(id:string){if(!parentGate.canAccess())return;try{const {pack,files}=await exportCourse(id);if(!await downloadLocalFile(pack.courseId+'.zip',makeZip(pack,files)))message.value='此平台暂不能保存文件。';else message.value='课程包已保存至本机应用文件区，不包含个人学习记录。'}catch(error){message.value=(error as Error).message}}
+function copyErrors(){if(!parentGate.canAccess())return;if(preview.value)uni.setClipboardData({data:preview.value.issues.map(i=>'第 '+i.line+' 行 '+i.field+'：'+i.message+' '+i.fix).join('\n')||'校验通过，无修正项。'})}
 </script>

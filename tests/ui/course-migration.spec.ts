@@ -1,13 +1,9 @@
+import {answerParentGate,unlockParent as openParentSettings} from './helpers'
 import {test,expect,type Page} from '@playwright/test'
 import {go} from './helpers'
 import {freshDatabase} from '../../src/stores/profile'
 
-async function unlockParent(page:Page){
- await go(page,'parent')
- const gate=page.getByRole('spinbutton',{name:'家长验证答案'})
- if(await gate.count()){await gate.fill('56');await page.getByRole('button',{name:'打开家长设置',exact:true}).click()}
- await expect(page.locator('.course-management')).toBeVisible()
-}
+async function unlockParent(page:Page){await openParentSettings(page)}
 
 test('档案写入失败时不再灰按钮，点击课程弹出可重试的升级说明',async({page})=>{
  // Force the v1 -> v2 readback to fail so the archive stays on v1 with writes allowed.

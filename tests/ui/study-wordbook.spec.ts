@@ -44,5 +44,8 @@ test('手机首屏可完整看到连接提交与闪现评分，不被导航覆�
 for(const theme of ['bento','swiss','soft','oled'])for(const size of windows)test(`${theme} ${size.name} 单词详情与搜索截图`,async({page})=>{
  await page.clock.install({time:new Date('2026-10-04T08:00:00Z')});await page.setViewportSize(size);await setAppearance(page,theme,theme==='oled'?'dark':'light',{largeText:size.name==='split-narrow'});await seedDatabase(page,goldenDatabase());await go(page,'review')
  await page.locator('.wordbook-search input').fill('cat');await page.locator('.review-row').click();await expect(page.locator('.detail-word')).toHaveText('cat');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBeTruthy()
+ // Full-page baselines start at the same document and panel scroll positions after click-to-focus.
+ await page.evaluate(()=>{window.scrollTo(0,0);document.querySelectorAll('.word-detail-panel,.sidebar').forEach(e=>e.scrollTop=0)})
+ await expect.poll(()=>page.evaluate(()=>scrollY)).toBe(0)
  await expect(page).toHaveScreenshot(`wordbook-detail-${theme}-${size.name}.png`,{fullPage:true,animations:'disabled'})
 })

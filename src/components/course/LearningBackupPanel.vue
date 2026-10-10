@@ -9,6 +9,9 @@
  </view>
 </template>
 <script setup lang="ts">
+import {useParentGateStore} from '../../stores/parent-gate'
+const parentGate=useParentGateStore()
+
 import {ref,onMounted} from 'vue'
 import {strFromU8} from 'fflate'
 import WPButton from '../wp-button/WPButton.vue'
@@ -27,10 +30,10 @@ onMounted(()=>{
  document.querySelector('.recovery-textarea textarea')?.setAttribute('aria-label','学习备份文本')
  // #endif
 })
-async function exportBackup(){try{await downloadLocalFile('wordpal-private-learning-backup.json',makeLearningBackup(profile.db));message.value='学习备份已保存到本机。'}catch{message.value='备份无法保存，请检查本机存储。'}}
-async function exportRecovery(){try{await downloadLocalFile('wordpal-private-recovery.json',exportRecoverySnapshot());message.value='故障快照已保存，最新档案未被覆盖。'}catch{message.value='故障快照无法保存。'}}
-async function choose(){try{const file=await pickCourseFile();if(file){if(file.bytes.length>16*1024*1024)throw new Error('学习备份过大。');input.value=strFromU8(file.bytes);prepare()}}catch(error){message.value=(error as Error).message}}
+async function exportBackup(){if(!parentGate.canAccess())return;try{await downloadLocalFile('wordpal-private-learning-backup.json',makeLearningBackup(profile.db));message.value='学习备份已保存到本机。'}catch{message.value='备份无法保存，请检查本机存储。'}}
+async function exportRecovery(){if(!parentGate.canAccess())return;try{await downloadLocalFile('wordpal-private-recovery.json',exportRecoverySnapshot());message.value='故障快照已保存，最新档案未被覆盖。'}catch{message.value='故障快照无法保存。'}}
+async function choose(){if(!parentGate.canAccess())return;try{const file=await pickCourseFile();if(file&&parentGate.canAccess()){if(file.bytes.length>16*1024*1024)throw new Error('学习备份过大。');input.value=strFromU8(file.bytes);prepare()}}catch(error){message.value=(error as Error).message}}
 function updateText(value:string){if(input.value!==value){input.value=value;preview.value=null}}
-function prepare(){try{preview.value=previewLearningBackup(input.value);confirmation.value='';message.value='备份校验通过，请核对替换范围。'}catch(error){preview.value=null;message.value=(error as Error).message}}
-function restore(){if(!preview.value||confirmation.value!=='恢复学习备份')return;if(profile.restore(preview.value)){stopAudio();const cleared=useActivitiesStore().reset()&&useStudyPresentation().reset()&&useWordbookStore().reset();useReviewStore().refresh();preview.value=null;input.value='';confirmation.value='';message.value=cleared?'学习档案已恢复，可以继续原正式队列。':'学习档案已恢复，部分界面状态尚未清除，请检查存储。'}else message.value=profile.storageError}
+function prepare(){if(!parentGate.canAccess())return;try{preview.value=previewLearningBackup(input.value);confirmation.value='';message.value='备份校验通过，请核对替换范围。'}catch(error){preview.value=null;message.value=(error as Error).message}}
+function restore(){if(!parentGate.canAccess())return;if(!preview.value||confirmation.value!=='恢复学习备份')return;if(profile.restore(preview.value)){stopAudio();const cleared=useActivitiesStore().reset()&&useStudyPresentation().reset()&&useWordbookStore().reset();useReviewStore().refresh();preview.value=null;input.value='';confirmation.value='';message.value=cleared?'学习档案已恢复，可以继续原正式队列。':'学习档案已恢复，部分界面状态尚未清除，请检查存储。'}else message.value=profile.storageError}
 </script>

@@ -1,3 +1,4 @@
+import {answerParentGate,unlockParent as openParentSettings} from './helpers'
 import {openCustomPractice} from './helpers'
 import {test,expect} from '@playwright/test'
 import {go,app,database,seedDatabase,setAppearance} from './helpers'
@@ -41,7 +42,7 @@ test('宠物切换和喂养不影响 SRS，数据删除需家长验证与明确�
  const db=freshDatabase();db.gems=10;db.cards.cat=newCard('cat',new Date('2040-01-01T00:00:00Z'))
  await seedDatabase(page,db);await go(page,'pet');await page.locator('.pet-choice').filter({hasText:'小焰'}).click();await page.locator('.pet-action-tab').filter({hasText:'喂食'}).click();await page.locator('.pet-growth [role=button]').filter({hasText:'预览分享小点心'}).click();await page.locator('.confirm-feed').click()
  const saved=await database(page);expect(saved.companion).toBe('fire');expect(saved.gems).toBe(5);expect(saved.pets.fire.exp).toBe(0);expect(saved.pets.fire.affection).toBe(5);expect(saved.cards).toEqual(db.cards)
- await page.evaluate(()=>{localStorage.setItem('wordpal.wordbook.preferences.v1',JSON.stringify({favorites:['cat'],later:['cat']}));localStorage.setItem('wordpal.study.presentation.v1',JSON.stringify({sessionId:'old',input:'ca'}))});await go(page,'parent');await page.locator('.parent-gate input').fill('56');await page.locator('.parent-gate [role=button]').click()
+ await page.evaluate(()=>{localStorage.setItem('wordpal.wordbook.preferences.v1',JSON.stringify({favorites:['cat'],later:['cat']}));localStorage.setItem('wordpal.study.presentation.v1',JSON.stringify({sessionId:'old',input:'ca'}))});await go(page,'parent');await answerParentGate(page)
  await expect(page.locator('.danger')).toBeDisabled();await page.locator('.parent-grid .spelling-input input').fill('删除学习数据');await page.locator('.danger').click()
  const erased=await database(page);expect(erased.cards).toEqual({});expect(erased.history).toEqual([]);expect(erased.gems).toBe(0);expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('wordpal.wordbook.preferences.v1')!))).toEqual({favorites:[],later:[]});expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('wordpal.study.presentation.v1')!).input)).toBe('')
 })

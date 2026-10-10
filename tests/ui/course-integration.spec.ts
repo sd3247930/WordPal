@@ -1,3 +1,4 @@
+import {answerParentGate,unlockParent as openParentSettings} from './helpers'
 import {openCustomPractice} from './helpers'
 import {test,expect} from '@playwright/test'
 import {readFileSync} from 'node:fs'
@@ -8,7 +9,7 @@ import {makeZip} from '../../src/services/course-import/ZipImporter'
 import {sha256} from '../../src/services/content/digest'
 import type {CoursePack} from '../../packages/content_schema/course'
 const csv='unit_id,unit_title,lesson_id,lesson_title,word,meaning,pos,example\nu01,自编单元,l01,复用检查,cat,猫,n.,The cat sits.\nu01,自编单元,l01,复用检查,dog,狗,n.,A dog runs.\nu01,自编单元,l02,下一课,cat,猫,n.,The cat sits.'
-async function unlock(page:import('@playwright/test').Page){await go(page,'parent');await page.getByRole('spinbutton',{name:'家长验证答案'}).fill('56');await page.getByRole('button',{name:'打开家长设置'}).click();await expect(page.locator('.course-management')).toBeVisible()}
+async function unlock(page:import('@playwright/test').Page){await openParentSettings(page)}
 async function importCsv(page:import('@playwright/test').Page){await page.getByRole('textbox',{name:'课程 JSON 或 CSV 文本'}).fill(csv);await page.locator('.course-management .course-check').first().click();await page.getByRole('button',{name:'清洗并预览'}).click();await expect(page.locator('.import-preview')).toContainText('可复用 2');await page.locator('.import-preview .course-check').click();await page.getByRole('button',{name:'确认安装课程'}).click();await expect(page.locator('.course-management')).toContainText('课程安装完成')}
 test('家长文件与粘贴导入、复用确认、完整检查及独立进度不会发奖或改变FSRS',async({page})=>{
  const db=freshDatabase();db.cards.cat=newCard('cat',new Date(Date.now()+86400000));db.cards.dog=newCard('dog',new Date(Date.now()+86400000));await seedDatabase(page,db);await unlock(page);const before=await database(page);await importCsv(page)
@@ -44,8 +45,13 @@ test('ZIP媒体读回持久化，刷新后冻结输入与离线音频句柄恢�
  await context.setOffline(true);const audio=page.getByRole('button',{name:'播放当前单词的标准发音'});await audio.click();await expect(audio).toContainText('正在播放');await expect(audio).toContainText('听发音',{timeout:4000});await context.setOffline(false);expect((await database(page)).history).toEqual(before.history)
  const stored=await page.evaluate(()=>new Promise<number>((resolve,reject)=>{const r=indexedDB.open('wordpal-course-content');r.onsuccess=()=>{const db=r.result,q=db.transaction('files').objectStore('files').count();q.onsuccess=()=>{resolve(q.result);db.close()};q.onerror=()=>reject(new Error('课程资源读取失败'))};r.onerror=()=>reject(new Error('课程仓库不可读'))}));expect(stored).toBe(3)
 })
-for(const theme of ['bento','swiss','soft','oled'])for(const mode of ['light','dark'])test(`品牌/按钮/新活动 ${theme}/${mode} 七窗口与320兜底`,async({page})=>{
- await setAppearance(page,theme,mode,{largeText:false,reducedMotion:true});const sizes=[[390,844],[844,390],[768,1024],[1024,768],[1280,800],[600,900],[900,900],[320,720]]
- for(const [width,height] of sizes){await page.setViewportSize({width,height});for(const screen of ['home','learn','review','pet','settings']){await go(page,screen);await expect(page.locator('.wp-brand-header .brand-name')).toHaveText('WordPal');const logo=await page.locator('.wp-brand-header .brand-logo').boundingBox();expect(Math.round(logo!.width)).toBe(width>=600?60:48);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);const targets=await page.locator('[role=button]:visible').evaluateAll(items=>items.map(e=>e.getBoundingClientRect().height));expect(Math.min(...targets)).toBeGreaterThanOrEqual(48)}}
+for(const theme of ['bento','swiss','soft','oled'])for(const mode of ['light','dark'])test(`品牌/按钮/新活动 ${theme}/${mode} 十二窗口与320兜底`,async({page})=>{
+ await setAppearance(page,theme,mode,{largeText:false,reducedMotion:true});const sizes=[[390,844],[844,390],[768,1024],[1024,768],[1280,800],[599,900],[600,900],[839,900],[840,900],[320,720],[359,844],[360,844]]
+ for(const [width,height] of sizes){await page.setViewportSize({width,height});let baseline:unknown;for(const screen of ['home','learn','review','pet','settings']){
+  await go(page,screen);await expect(page.locator('.wp-brand-header .brand-name')).toHaveText('WordPal')
+  const metrics=await page.locator('.wp-brand-header').evaluate(header=>{const q=(selector:string)=>header.querySelector(selector)!,logo=q('.brand-logo'),name=q('.brand-name'),subtitle=q('.brand-subtitle'),copy=q('.header-brand-copy'),brand=q('.compact-brand'),actions=q('.topbar-actions'),h=header.getBoundingClientRect(),b=brand.getBoundingClientRect(),a=actions.getBoundingClientRect(),s=getComputedStyle(header);return {logo:Math.round(logo.getBoundingClientRect().width),name:parseFloat(getComputedStyle(name).fontSize),subtitle:parseFloat(getComputedStyle(subtitle).fontSize),copyGap:parseFloat(getComputedStyle(copy).gap),subtitleMargin:parseFloat(getComputedStyle(subtitle).marginTop),height:Math.round(h.height),padding:parseFloat(s.paddingLeft),overlap:a.left<b.right&&a.top<b.bottom&&a.bottom>b.top,within:a.right<=h.right+1&&b.left>=h.left-1}})
+  expect(metrics.logo).toBe(width<360?52:width<600?56:64);expect(metrics.name).toBe(width<360?22:width<600?24:26);expect(metrics.subtitle).toBe(width<360?13:14);expect(metrics.copyGap).toBe(width<600?1:2);expect(metrics.subtitleMargin).toBe(0);expect(metrics.height).toBe(width<600?72:80);expect(metrics.overlap).toBe(false);expect(metrics.within).toBe(true);if(baseline)expect(metrics).toEqual(baseline);else baseline=metrics
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);const targets=await page.locator('[role=button]:visible').evaluateAll(items=>items.map(e=>e.getBoundingClientRect().height));expect(Math.min(...targets)).toBeGreaterThanOrEqual(48)
+ }}
 })
 

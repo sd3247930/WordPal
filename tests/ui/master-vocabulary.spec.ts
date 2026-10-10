@@ -1,3 +1,4 @@
+import {answerParentGate,unlockParent as openParentSettings} from './helpers'
 import {openCustomPractice} from './helpers'
 import {test,expect,type Page} from '@playwright/test'
 import {go,database,seedDatabase} from './helpers'
@@ -40,5 +41,5 @@ test('本机离线音频听写、拼写、错误回看刷新恢复，正式记�
 })
 test('限时练习显式开始、切页暂停、重启可继续，课程本机使用限制可见',async({page})=>{
  await primary(page);const before=await database(page);await page.getByRole('button',{name:'闪电判断',exact:true}).click();await expect(page.getByRole('button',{name:'准备好，开始计时',exact:true})).toBeVisible();await page.getByRole('button',{name:'准备好，开始计时',exact:true}).click();await expect(page.getByRole('button',{name:'暂停计时',exact:true})).toBeVisible();await page.reload();await expect(page.getByRole('button',{name:'准备好，开始计时',exact:true})).toBeVisible();expect((await database(page)).cards).toEqual(before.cards);expect((await database(page)).history).toEqual(before.history)
- await page.getByRole('button',{name:'收起练习',exact:true}).click();await go(page,'parent');await page.getByRole('spinbutton',{name:'家长验证答案'}).fill('56');await page.getByRole('button',{name:'打开家长设置'}).click();const item=page.locator('.course-item').filter({hasText:'小学英语 · 3年级上册（社区索引）'});await item.getByRole('button',{name:'导出课程包',exact:true}).click();await expect(page.locator('.course-management')).toContainText('仅允许本机使用')
+ await page.getByRole('button',{name:'收起练习',exact:true}).click();await go(page,'parent');await answerParentGate(page);const item=page.locator('.course-item').filter({hasText:'小学英语 · 3年级上册（社区索引）'});await item.getByRole('button',{name:'导出课程包',exact:true}).click();await expect(page.locator('.course-management')).toContainText('仅允许本机使用')
 })
