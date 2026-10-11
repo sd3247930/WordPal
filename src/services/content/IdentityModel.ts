@@ -5,7 +5,8 @@ export interface CourseOccurrence {id:string;courseId:string;unitId:string;unitT
 /** Existing canonical IDs already distinguish meanings; never deduplicate by spelling. */
 export function occurrences(pack:CoursePack):CourseOccurrence[]{
  const result:CourseOccurrence[]=[]
- for(const unit of pack.units){const seen=new Map<string,CourseOccurrence>();for(const lesson of unit.lessons)for(const id of lesson.wordIds){
+ const ordered=pack.units.map((unit,index)=>({unit,index})).sort((a,b)=>(a.unit.order??a.index+1)-(b.unit.order??b.index+1))
+ for(const {unit} of ordered){const seen=new Map<string,CourseOccurrence>();for(const lesson of unit.lessons)for(const id of lesson.wordIds){
   let row=seen.get(id)
   if(!row){row={id:JSON.stringify([pack.courseId,unit.id,id]),courseId:pack.courseId,unitId:unit.id,unitTitle:unit.title,lexemeId:id,order:result.length,lessonIds:[]};seen.set(id,row);result.push(row)}
   if(!row.lessonIds.includes(lesson.id))row.lessonIds.push(lesson.id)

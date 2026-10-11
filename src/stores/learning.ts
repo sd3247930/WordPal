@@ -55,7 +55,7 @@ export const useLearningStore=defineStore('learning',()=>{
   const offset=(session.value?.index??0)%ids.length
   return [...ids.slice(offset),...ids.slice(0,offset)].map(id=>pool[id])
  })
- function start(request?:string[],scopedDue=false){
+ function start(request?:string[],scopedDue=false,selection?:{unitId?:string;wordId?:string}){
   review.refresh()
   if(session.value && !session.value.completedAt)return true
   let ids:string[],kind:LearningSession['kind'],wordSources:LearningSession['wordSources']
@@ -63,7 +63,7 @@ export const useLearningStore=defineStore('learning',()=>{
   else if(review.due.length&&request?.length){ids=review.due.map(c=>c.wordId);kind='review_due'}
   else if(request?.length){ids=request.filter(id=>wordById[id]);kind='practice'}
   else if(needsConsolidation.value&&!review.due.length){ids=lesson.value.wordIds.filter(id=>profile.db.cards[id]);kind='practice'}
-  else{const plan=dailyPlan.value;ids=plan.wordIds;wordSources=plan.wordSources;kind=plan.dueIds.length?'review_due':plan.newIds.length?'new_word':'practice'}
+  else{let plan=dailyPlan.value;if(selection){const allowed=selection.unitId?new Set(course.current.units.find(unit=>unit.id===selection.unitId)?.lessons.flatMap(lesson=>lesson.wordIds)||[]):null;let newIds=newCandidates.value.filter(id=>!allowed||allowed.has(id));if(selection.wordId&&newIds.includes(selection.wordId))newIds=[selection.wordId,...newIds.filter(id=>id!==selection.wordId)];plan=planDailySession({config:parent.plannerConfig,dueIds:review.due.map(card=>card.wordId),weakIds:dailyPlan.value.weakIds.filter(id=>!allowed||allowed.has(id)),newIds,newToday:newToday.value})}ids=plan.wordIds;wordSources=plan.wordSources;kind=plan.dueIds.length?'review_due':plan.newIds.length?'new_word':'practice'}
   if(!ids.length)return false
   const snapshot:Record<string,typeof wordById[string]>={}
   for(const id of ids){const source=getCourseWord(course.currentId,id);if(!source)continue;const word=JSON.parse(JSON.stringify({...source,example:lesson.value.examples?.[id]||source.example}));if(!word.distractors.length){const candidates=course.wordIds.map(id=>wordById[id]).filter(w=>w&&w.id!==word.id&&w.word!==word.word&&w.meaning!==word.meaning);word.distractors=candidates.filter((w,i)=>candidates.findIndex(other=>other.meaning===w.meaning)===i).slice(0,3).map(w=>w.id)}snapshot[id]=word;for(const distractor of word.distractors)if(wordById[distractor])snapshot[distractor]=JSON.parse(JSON.stringify(wordById[distractor]))}
@@ -81,10 +81,12 @@ export const useLearningStore=defineStore('learning',()=>{
   const correct=s.mode==='flash' ? rating!==1 : (s.mode==='spell'||s.mode==='dictation') ? isCorrectSpelling(s.input,w) : s.selected===w.id
   const actualRating:ReviewRating=correct?(s.revealed&&s.mode!=='flash'?2:rating??3):1
   const now=new Date()
-  const answer:Answer={id:`${s.id}:${s.index}`,wordId:w.id,correct,rating:actualRating,at:now.toISOString(),source:source==='review_due'?'review_due':'new_word',mode:s.mode,input:s.input||s.selected}
+  const answer:Answer={id:`${s.id}:${s.index}`,wordId:w.id,correct,rating:actualRating,at:now.toISOString(),source,mode:s.mode,input:s.input||s.selected,hinted:s.mode!=='flash'&&s.revealed,...(source==='review_due'&&profile.db.cards[w.id]?{dueAtSubmit:profile.db.cards[w.id].due}:{})}
   const ok=profile.transact(d=>{
    if(!d.session || d.session.answers[d.session.index])return
    d.session.answers.push(answer)
+   // Real free-practice evidence is retained without scheduling or rewards.
+   if(source==='practice'){d.practiceAnswers??=[];d.practiceAnswers.push(answer)}
    if(source!=='practice'){
     d.cards[w.id]=new FSRSScheduler().schedule(d.cards[w.id]??newCard(w.id,now),actualRating,now).card
     d.history.push(answer)
@@ -123,5 +125,5 @@ export const useLearningStore=defineStore('learning',()=>{
  function previous(){if(!session.value || session.value.index===0)return false;return patch({index:session.value.index-1,input:session.value.answers[session.value.index-1]?.input??'',revealed:true})}
  const learnedCount=computed(()=>Object.keys(profile.db.cards).length)
  const remainingCount=computed(()=>course.wordIds.filter(id=>!profile.db.cards[id]).length)
- return {session,current,currentSource,choices,todayAnswers,newToday,newWords,dailyPlan,lesson,needsConsolidation,learnedCount,remainingCount,start,startDue:(ids:string[])=>start(ids,true),patch,setMode,reveal,hint,submit,next,previous}
+ return {session,current,currentSource,choices,todayAnswers,newToday,newWords,dailyPlan,lesson,needsConsolidation,learnedCount,remainingCount,start,startSelected:(unitId?:string,wordId?:string)=>start(undefined,false,{unitId,wordId}),startDue:(ids:string[])=>start(ids,true),patch,setMode,reveal,hint,submit,next,previous}
 })

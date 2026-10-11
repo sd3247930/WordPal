@@ -26,7 +26,8 @@ export interface ReviewScheduler {
 }
 export interface Answer {
   id: string; wordId: string; rating: ReviewRating; correct: boolean; at: string
-  source: 'review_due' | 'new_word'; mode: LearningMode; input: string
+  source: 'review_due' | 'new_word' | 'practice'; mode: LearningMode; input: string
+  hinted?:boolean; dueAtSubmit?:string
 }
 export interface LearningSession {
   id: string; startedAt: string; date: string; kind: 'review_due' | 'new_word' | 'practice'

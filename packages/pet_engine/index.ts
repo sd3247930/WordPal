@@ -17,7 +17,7 @@ export function growPet(pet:PetState,event:PetRewardEvent,now:number):PetState {
 }
 interface RewardDatabase {pets:Record<string,PetState>;companion:string;rewardIds:string[];gems:number;history:Answer[]}
 export function applyLearningReward(db:RewardDatabase,answer:Answer){
- if(db.rewardIds.includes(answer.id))return
+ if(answer.source==='practice'||db.rewardIds.includes(answer.id))return
  const element=(db.companion||'water') as Element
  const current=db.pets[element]??createPet(element)
  const source=answer.mode==='dictation'?'dictation':answer.mode==='spell'?'spelling':answer.source

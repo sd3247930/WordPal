@@ -23,7 +23,7 @@ test('直达、伪造存储解锁、重载、历史返回及缓存导航均重�
  await page.addInitScript(()=>localStorage.setItem('wordpal.parent-gate.unlocked','true'));await go(page,'parent');await expect(page.locator('.parent-gate')).toBeVisible();await answerParentGate(page)
  await page.reload();await expect(page.locator('.parent-gate')).toBeVisible();await answerParentGate(page)
  await page.evaluate(()=>{(window as any).uni.$emit('onAppHide');(window as any).uni.$emit('onAppShow')});await expect(page.locator('.parent-learning-settings')).toBeVisible()
- await page.evaluate(()=>{(window as any).uni.navigateTo({url:'/pages/settings/index'})});await expect(page.locator('.parent-gate')).toHaveCount(0)
+ await page.evaluate(()=>{(window as any).uni.navigateTo({url:'/pages/settings/index'})});await expect(page.getByRole('button',{name:'家长设置',exact:true})).toBeVisible();await expect(page.locator('.parent-gate')).toHaveCount(0)
  await page.evaluate(()=>{(window as any).uni.navigateBack({delta:1})});await expect(page.locator('.parent-gate')).toBeVisible();await expect(page.locator('.parent-learning-settings')).toHaveCount(0)
 })
 test('锁定和离开页面后直接调用设置Store均拒绝写入；没有持久化解锁/答案/次数',async({page})=>{

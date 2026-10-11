@@ -13,7 +13,7 @@ import {migrateParentSettings,type DailyNewWordLimit,type AbilityLevelId} from '
 export interface AuxiliaryRecord {id:string;courseId:string;lessonId:string;kind:string;at:string;correct:number;total:number;objective?:boolean;hinted?:boolean;wordIds?:string[]}
 export interface Database {
   version: 1|2; cards: Record<string,MemoryCard>; session: LearningSession | null
-  history: Answer[]; rewardIds: string[]; gems: number; pets: Record<string,PetState>; companion: string
+  history: Answer[]; practiceAnswers?:Answer[]; rewardIds: string[]; gems: number; pets: Record<string,PetState>; companion: string
   dailyLimit: DailyNewWordLimit; lastLessonAccuracy: number | null; lessonIndex: number; streakDates: string[]
   currentCourseId?:string;pendingCourseId?:string;courseProgress?:Record<string,CourseProgress>;auxiliaryRecords?:AuxiliaryRecord[];abilityLevel?:AbilityLevelId
   parentSettingsVersion?:2;parentSettingsUpdatedAt?:number

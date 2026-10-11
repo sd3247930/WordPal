@@ -31,7 +31,7 @@ test('运行中的教材不可卸载；原 Session、SRS 与输入逐字保留',
 })
 test('查询统计跟随关键词，三 Scope 清理 Unit，手动重点不混入风险建议',async({page})=>{
  await seedDatabase(page,goldenDatabase());await go(page,'review');const before=await database(page);await expect(page.getByRole('group',{name:'单词本课程范围'}).getByRole('button')).toHaveCount(3)
- await page.locator('.wordbook-search input').fill('cat');await expect(page.locator('.wordbook-stats')).toContainText('全部教材词条');await expect(page.locator('.wordbook-stats > uni-view').last()).toContainText('1');await expect(page.locator('.review-row')).toHaveCount(1)
+ await page.locator('.wordbook-search input').fill('cat');await expect(page.locator('.wordbook-stats')).toContainText('全部独立词');await expect(page.locator('.wordbook-stats > uni-view').last()).toContainText('1');await expect(page.locator('.review-row')).toHaveCount(1)
  await page.getByRole('button',{name:'全局已学词',exact:true}).click();await expect(page.locator('uni-picker[aria-label="选择浏览单元"]')).toHaveCount(0);await expect(page.locator('.review-row')).toHaveCount(1);await page.locator('.review-row').click();await page.getByRole('button',{name:'标记为我的重点',exact:true}).click();await page.keyboard.press('Escape');await page.locator('.review-tabs .mode-button').filter({hasText:'重点复习'}).click();await expect(page.locator('.wordbook-focus-legend')).toContainText('我的重点 1');await expect(page.locator('.review-row')).toHaveCount(1);expect(await database(page)).toEqual(before)
 })
 test('核心学习默认折叠，自定义题型和答案探索按状态展开，图片不提前泄题',async({page})=>{
