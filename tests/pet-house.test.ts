@@ -11,7 +11,7 @@ test('场景偏好允许四种 ID，损坏或旧数据回退不写学习数据',
  for(const id of elements)assert.equal(validPetScene(id),id)
  for(const value of [null,undefined,{},'unknown',1])assert.equal(validPetScene(value,'earth'),'earth')
 })
-test('相册只按真实等级解锁前三阶段，未知阶段保持锁定',()=>{
+test('相册按真实等级解锁前三阶段，未知阶段需要全教材完成证据',()=>{
  for(const [level,expected]of [[1,[true,false,false,false]],[3,[true,false,false,false]],[4,[true,true,false,false]],[7,[true,true,false,false]],[8,[true,true,true,false]],[100,[true,true,true,false]]] as const)assert.deepEqual([0,1,2,3].map(i=>stageUnlocked({level},i)),expected)
  assert.equal(stageUnlocked({level:8},99),false)
 })

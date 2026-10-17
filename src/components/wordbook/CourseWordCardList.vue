@@ -33,7 +33,7 @@
        <view class="course-word-tools"><WPAudioButton :url="row.word.audio" :label="'播放 '+row.word.word+' 的教材发音'" text="听音" @click="play(row)"/><WPIconButton :label="(row.starred?'取消重点 ':'标记重点 ')+row.word.word" :aria-pressed="row.starred" @click="book.toggle('favorites',row.word.id)">{{row.starred?'★':'☆'}}</WPIconButton></view>
       </view>
      </template>
-     <view class="wordbook-pagination"><WPButton kind="quiet" :disabled="result.pageIndex===0" @click="pageIndex=result.pageIndex-1">上一页</WPButton><text class="small muted">{{result.pageIndex+1}} / {{result.pages}}</text><WPButton kind="quiet" :disabled="result.pageIndex+1>=result.pages" @click="pageIndex=result.pageIndex+1">下一页</WPButton></view>
+     <view class="wordbook-pagination"><WPButton kind="quiet" :disabled="result.pageIndex===0" @click="changePage(result.pageIndex-1)">上一页</WPButton><text class="small muted">{{result.pageIndex+1}} / {{result.pages}}</text><WPButton kind="quiet" :disabled="result.pageIndex+1>=result.pages" @click="changePage(result.pageIndex+1)">下一页</WPButton></view>
     </view>
     <WPWordDetail v-if="detail&&(dual||detailOpen)" :word="detail.word" :card="profile.db.cards[detail.word.id]" :history="book.historyByWord[detail.word.id]||[]" :favorite="detail.starred" :later="book.preferences.later.includes(detail.word.id)" :modal="!dual" :occurrence="detail.occurrence" practice-label="学习这个词" @close="closeDetail" @favorite="book.toggle('favorites',detail.word.id)" @later="book.toggle('later',detail.word.id)" @practice="beginWord"/>
     <view v-else-if="dual" class="wordbook-detail-placeholder"><text class="section-title">预览教材词卡</text><text>选一个单词，看看发音、自然拼读和熟知度依据。</text><text class="small muted">浏览不会消耗新词名额。</text></view>
@@ -43,7 +43,7 @@
  </view>
 </template>
 <script setup lang="ts">
-import {computed,ref,watch,onUnmounted} from 'vue'
+import {computed,ref,watch,onUnmounted,nextTick} from 'vue'
 import WPButton from '../wp-button/WPButton.vue'
 import WPActionTile from '../button/WPActionTile.vue'
 import WPSegmentedButton from '../button/WPSegmentedButton.vue'
@@ -81,6 +81,20 @@ watch([()=>props.courseId,()=>pack.value?.contentVersion],()=>{clearFilters();se
 watch(detail,value=>{if(!value)detailOpen.value=false})
 function setQuick(id:string){filterIndex.value=filterOptions.findIndex(option=>option.id===id)}
 function clearFilters(){unitIndex.value=0;keyword.value='';filterIndex.value=0;sortIndex.value=0;merge.value=false;pageIndex.value=0}
+async function changePage(index:number){
+ if(index<0||index>=result.value.pages||index===result.value.pageIndex)return
+ pageIndex.value=index
+ await nextTick()
+ if(!result.value.pageRows.length)return
+ const query=uni.createSelectorQuery()
+ query.select('.course-card-browser .course-word-row').boundingClientRect()
+ query.selectViewport().scrollOffset(()=>{})
+ query.exec(positions=>{
+  const row=positions[0] as {top:number}|null,viewport=positions[1] as {scrollTop:number}|null
+  if(!row||!viewport||pageIndex.value!==index)return
+  uni.pageScrollTo({scrollTop:Math.max(0,viewport.scrollTop+row.top-layout.safeTop-8),duration:0})
+ })
+}
 function open(row:CourseCardRow){selectedId.value=row.occurrence.id;detailOpen.value=true}
 function closeDetail(){detailOpen.value=false;stopAudio()}
 const controller=new PhonicsPlaybackController()

@@ -63,8 +63,8 @@ test('旧3迁移成5并保留L2、已有轮次和档案，刷新不重复迁移'
  await seed(page,db);await unlock(page);const saved=await database(page);expect(saved.dailyLimit).toBe(5);expect(saved.abilityLevel).toBe('L2');expect(saved.parentSettingsVersion).toBe(2);expect(protectedData(saved)).toEqual(protectedData(db));await page.reload();expect(await database(page)).toEqual(saved)
 })
 
-for(const theme of ['bento','swiss','soft','oled'])test(`${theme}家长设置手机平板、大字、高对比和减少动效可读`,async({page})=>{
+for(const theme of ['swiss'])test(`${theme}家长设置手机平板、大字、高对比和减少动效可读`,async({page})=>{
  await setAppearance(page,theme,theme==='oled'?'dark':'light',{largeText:true,highContrast:true,reducedMotion:true});await seed(page);await unlock(page)
- for(const width of [320,390,768,1280]){await page.setViewportSize({width,height:900});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBeTruthy();await expect(page.getByRole('group',{name:'每日新词上限'}).getByRole('button')).toHaveCount(3);await expect(page.getByRole('group',{name:'能力起点'}).getByRole('button')).toHaveCount(5);const widths=await page.getByRole('group',{name:'能力起点'}).getByRole('button').evaluateAll(nodes=>nodes.map(n=>n.getBoundingClientRect().width));expect(Math.max(...widths)-Math.min(...widths)).toBeLessThanOrEqual(1)}
+ for(const width of [320,390,768,1280]){await page.setViewportSize({width,height:900});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBeTruthy();await expect(page.getByRole('group',{name:'每日新词上限'}).getByRole('button')).toHaveCount(4);await expect(page.getByRole('group',{name:'能力起点'}).getByRole('button')).toHaveCount(5);const widths=await page.getByRole('group',{name:'能力起点'}).getByRole('button').evaluateAll(nodes=>nodes.map(n=>n.getBoundingClientRect().width));expect(Math.max(...widths)-Math.min(...widths)).toBeLessThanOrEqual(1)}
  mkdirSync('private/verification/parent-settings',{recursive:true});await page.screenshot({path:`private/verification/parent-settings/${theme}-1280.png`,fullPage:true})
 })

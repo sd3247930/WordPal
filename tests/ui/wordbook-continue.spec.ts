@@ -4,18 +4,31 @@ import {freshDatabase,type Database} from '../../src/stores/profile'
 import {newCard} from '../../packages/srs_fsrs'
 import {wordById} from '../../packages/content_schema'
 import type {LearningSession} from '../../packages/core_learning'
+import synthetic from '../../src/content/synthetic/course.json'
+/** 原内置教材已裁剪：另置一枚已安装导入课程，用于「待切换课程」与主课程区分。 */
+async function seedPendingCourse(page:Page){
+ const pack={...JSON.parse(JSON.stringify(synthetic)),courseId:'wordbook-pending',title:'待切换验证课',route:'theme',sources:synthetic.sources.map(source=>({...source,rightsStatus:'redistribution-approved'}))}
+ const key='wordpal.content.pack.wordbook-pending.0123456789abcdef'
+ await page.addInitScript(({pack,key})=>{
+  if(!localStorage.getItem('wordpal.content.catalog.v2')){
+   localStorage.setItem(key,JSON.stringify(pack))
+   localStorage.setItem('wordpal.content.catalog.v2',JSON.stringify([{courseId:pack.courseId,key,archived:false,aliases:{}}]))
+  }
+ },{pack,key})
+}
 
 const scopes=['当前教材','全部已安装','全局已学词'] as const
 function savedStudy(kind:LearningSession['kind'],due=false):Database{
  const db=freshDatabase(),at='2026-10-01T08:00:00.000Z'
- Object.assign(db,{version:2,currentCourseId:'original-primary',pendingCourseId:'starter',courseProgress:{'original-primary':{currentLessonId:'l01',completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{}}},auxiliaryRecords:[]})
+ Object.assign(db,{version:2,currentCourseId:'starter',courseProgress:{'starter':{currentLessonId:'l01',completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{}}},auxiliaryRecords:[]})
  const answer={id:'scope-session:0',wordId:'cat',rating:3 as const,correct:true,at,source:'new_word' as const,mode:'spell' as const,input:'cat'}
  db.cards.cat={...newCard('cat',new Date(due?'2000-01-01T00:00:00Z':'2100-01-01T00:00:00Z')),reps:2,stability:4,difficulty:5,state:2,last_review:at}
  db.history=[answer];db.rewardIds=[answer.id];db.gems=7
- db.session={id:'scope-session',date:'2026-10-01',startedAt:at,kind,wordIds:['cat','dog'],index:1,mode:'spell',input:'do',selected:'',revealed:false,answers:[answer],courseId:'original-primary',contentVersion:'1.0.0',lessonId:'l01',seed:12,wordSnapshot:Object.fromEntries(['cat','dog'].map(id=>[id,JSON.parse(JSON.stringify(wordById[id]))]))}
+ db.session={id:'scope-session',date:'2026-10-01',startedAt:at,kind,wordIds:['cat','dog'],index:1,mode:'spell',input:'do',selected:'',revealed:false,answers:[answer],courseId:'starter',contentVersion:'1.0.0',lessonId:'l01',seed:12,wordSnapshot:Object.fromEntries(['cat','dog'].map(id=>[id,JSON.parse(JSON.stringify(wordById[id]))]))}
  return db
 }
 async function seed(page:Page,db:Database,presentation?:object){
+ await seedPendingCourse(page)
  await page.addInitScript(({db,presentation})=>{
   if(!localStorage.getItem('wordpal.database.active.v2')){
    localStorage.setItem('wordpal.database.v2',JSON.stringify(db));localStorage.setItem('wordpal.database.active.v2',JSON.stringify('v2'))
@@ -28,7 +41,7 @@ for(const scope of scopes)for(const kind of ['new_word','review_due','practice']
  await page.getByRole('group',{name:'单词本课程范围'}).getByRole('button',{name:scope,exact:true}).click()
  await expect(page.getByRole('button',{name:'继续当前学习',exact:true})).toBeVisible();await page.getByRole('button',{name:'继续当前学习',exact:true}).click()
  // P3: the learn headline no longer repeats the textbook name; it lives on the current-course card.
- await expect(page.locator('.spelling-input input')).toHaveValue('do');await expect(page.locator('.current-course-card')).toContainText('原创小学主题英语')
+ await expect(page.locator('.spelling-input input')).toHaveValue('do');await expect(page.locator('.current-course-card')).toContainText('原创启蒙课程')
  expect(await database(page)).toEqual(before);await page.reload();await expect(page.locator('.spelling-input input')).toHaveValue('do');expect(await database(page)).toEqual(before)
 })
 test('Scope 连续20轮、分类与搜索切换后，仍恢复原课程而非待切换课程或到期队列',async({page})=>{

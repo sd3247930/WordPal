@@ -1,6 +1,7 @@
 page {font-family:'Segoe UI','Roboto','PingFang SC','Noto Sans SC',sans-serif;}
 .wp-app {
  --wp-space-xs:6px;--wp-space-sm:12px;--wp-space-md:20px;--wp-space-lg:24px;--wp-space-xl:40px;
+ --wp-card-pad-block:var(--wp-space-lg);--wp-card-pad-inline:var(--wp-space-lg);--wp-card-compact-block:12px;--wp-card-compact-inline:16px;--wp-card-gap:var(--wp-space-sm);--wp-card-safe-gap:8px;
  --wp-radius-chip:10px;--wp-radius-sm:14px;--wp-radius-lg:24px;--wp-radius-dialog:26px;
  --wp-motion-fast:180ms;--wp-motion-normal:240ms;--wp-motion-slow:320ms;
  --wp-font-caption:12px;--wp-font-small:14px;--wp-font-body:16px;--wp-font-body-large:17px;--wp-font-card:17px;--wp-font-title:30px;--wp-font-section:22px;--wp-font-headline:18px;--wp-font-word:48px;

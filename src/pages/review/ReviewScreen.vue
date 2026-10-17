@@ -6,7 +6,7 @@
  <WPButton class="wordbook-continue-link" kind="quiet" @click="begin">{{canContinueStudy?'继续当前学习':'继续当前课程'}}</WPButton>
  <view class="wordbook-course-filters">
   <WPSegmentedButton :model-value="scope" :options="scopes" label="单词本课程范围" @update:model-value="scope=$event"/>
-  <text class="small muted block">当前教材：《{{course.current.title}}》 · {{course.current.units.length}} 单元 · {{course.wordIds.length}} 词<text v-if="currentNeedsReview">（待核对）</text></text>
+  <text class="small muted block">当前教材：《{{course.current.title}}》 · {{course.current.units.length}} 单元 · {{course.wordIds.length}} 词</text>
   <WPButton kind="quiet" @click="openGallery">切换教材</WPButton>
   <picker v-if="scope==='current'" :range="unitOptions" range-key="title" :value="unitIndex" aria-label="选择浏览单元" @change="unitIndex=Number(($event as any).detail.value)"><view class="course-picker">单元：{{unitOptions[unitIndex]?.title}}⌄</view></picker>
   <text class="small muted block">{{scope==='learned'?'全局已学独立单词 '+result.stats.totalUniqueLexemes:'教材词条位置 '+result.stats.totalCourseOccurrences+' · 独立单词 '+result.stats.totalUniqueLexemes}} · 到期按独立单词计数</text>

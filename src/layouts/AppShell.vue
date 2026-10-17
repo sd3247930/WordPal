@@ -12,7 +12,7 @@
    </view>
   </view>
   <!-- Pushed pages (e.g. the textbook gallery) own their bottom action bar and hide the tab bar. -->
-  <view v-if="page!=='course'" class="bottom-nav" role="navigation" aria-label="底部导航"><WPActionTile role="button" tabindex="0" v-for="item in ['home','learn','pet','review','settings'].map(id=>navigation.find(n=>n.id===id)!)" :key="item.id" class="bottom-item" :class="{active:page===item.id}" :aria-label="item.name" :aria-current="page===item.id?'page':undefined" @click="navigate(item.id)"><view class="nav-icon-container"><WPNavIcon :name="item.id as NavIconName" :active="page===item.id"/></view><text>{{item.name}}</text></WPActionTile></view>
+  <view v-if="page!=='course'" class="bottom-nav" role="navigation" aria-label="底部导航"><WPActionTile role="button" tabindex="0" v-for="item in ['home','learn','pet','review','settings'].map(id=>navigation.find(n=>n.id===id)!)" :key="item.id" class="bottom-item" :class="{active:page===item.id}" :style="friendlyNavStyle(item.id as NavIconName,{dark:theme.mode==='dark',highContrast:theme.settings.highContrast})" :aria-label="item.name" :aria-current="page===item.id?'page':undefined" @click="navigate(item.id)"><view class="nav-icon-container"><WPNavIcon :name="item.id as NavIconName" :active="page===item.id" variant="friendly" :size="40"/></view><text class="bottom-label">{{item.name}}</text></WPActionTile></view>
   <KeyboardBridge />
  </view>
 </template>
@@ -31,10 +31,10 @@ import WPBrandHeader from '../components/brand/WPBrandHeader.vue'
 import WPSidebar from '../components/wp-sidebar/WPSidebar.vue'
 import WPNavIcon from '../components/wp-nav-icon/WPNavIcon.vue'
 import type {NavIconName} from '../services/nav-icons'
+import {friendlyNavStyle} from '../services/friendly-nav-icons'
 const props=defineProps<{page:PageId}>();const theme=useThemeStore(),profile=useProfileStore();const pageSubtitle=computed(()=>navigation.find(n=>n.id===props.page)?.subtitle)
-// --wp-bottom-nav-space follows the existing 96px convention used by .app-footer, and drops to 0 on
-// pushed pages where the tab bar is hidden so their own fixed action bar needs no extra offset.
-const appearanceStyle=computed(()=>{const scale=Math.max(layout.fontScale,theme.settings.largeText?1.25:1);return `${theme.style};--wp-native-top:${layout.safeTop}px;--wp-brand-font-scale:${scale};--wp-bottom-nav-space:${props.page==='course'?'0px':'96px'};--wp-font-body:${16*scale}px;--wp-font-small:${14*scale}px;--wp-font-caption:${12*scale}px;--wp-font-card:${17*scale}px;--wp-font-section:${22*scale}px;--wp-font-title:${30*scale}px;--wp-font-word:${Math.min(64,48*scale)}px`})
+// Reserve space for the floating bar and its breathing room only where it is visible.
+const appearanceStyle=computed(()=>{const scale=Math.max(layout.fontScale,theme.settings.largeText?1.25:1);return `${theme.style};--wp-native-top:${layout.safeTop}px;--wp-brand-font-scale:${scale};--wp-bottom-nav-space:${props.page!=='course'&&layout.sizeClass==='compact'?'108px':'0px'};--wp-font-body:${16*scale}px;--wp-font-small:${14*scale}px;--wp-font-caption:${12*scale}px;--wp-font-card:${17*scale}px;--wp-font-section:${22*scale}px;--wp-font-title:${30*scale}px;--wp-font-word:${Math.min(64,48*scale)}px`})
 onShow(()=>{useReviewStore().refresh();theme.applyNativeAppearance()})
 onReady(()=>theme.applyNativeAppearance())
 const shortcut=(event:{key:string;metaKey?:boolean;ctrlKey?:boolean})=>{if(event.metaKey||event.ctrlKey){const destination=({'1':'home','2':'learn','3':'pet'} as Record<string,PageId>)[event.key];if(destination)navigate(destination)}}

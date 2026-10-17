@@ -9,7 +9,7 @@ test('推入的教材选择页隐藏底部导航，返回学习页后恢复',asy
  await expect(nav).toHaveCount(1)
  await expect(nav).toBeVisible()
 
- await page.getByRole('button',{name:'选择教材',exact:true}).click()
+ await page.getByRole('button',{name:'选择教材',exact:true}).first().click()
  await expect(page.locator('.course-gallery-heading')).toBeVisible()
  await expect(nav).toHaveCount(0)
 

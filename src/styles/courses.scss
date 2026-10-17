@@ -8,9 +8,28 @@
 
 /* Textbook gallery, current-textbook card and pending queue */
 .course-gallery-heading,.current-course-card,.pending-banner,.course-review-panel,.course-gallery-confirm{display:flex;flex-direction:column;gap:10px;min-width:0}
+.gallery-tools{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0}
+.wp-app .gallery-tool.wp-action-tile{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:6px;width:100%;min-width:0;min-height:156px;padding:14px;margin:0;text-align:left;white-space:normal;color:var(--wp-foreground);background:var(--wp-surface);border:1px solid var(--wp-border);border-radius:var(--wp-radius);box-shadow:var(--wp-shadow);transition:border-color var(--wp-motion-fast),background var(--wp-motion-fast)}
+.wp-app .gallery-tool.active{border-color:var(--wp-primary);background:var(--wp-surface-tonal)}
+.gallery-tool-top{display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0;margin-bottom:4px}
+.gallery-tool-icon{display:flex;align-items:center;justify-content:center;width:64px;height:64px;flex-shrink:0;aspect-ratio:1}
+.gallery-tool-badge{padding:3px 6px;border-radius:var(--wp-radius-chip);background:var(--wp-surface-tonal);font-size:clamp(13px,var(--wp-font-caption),16px);color:var(--wp-muted-foreground);line-height:1.4;text-align:center;overflow-wrap:anywhere;min-width:0}
+.gallery-tool.active .gallery-tool-badge{color:var(--wp-primary);background:var(--wp-secondary)}
+.gallery-tool-title{font-size:clamp(18px,var(--wp-font-card),22px);font-weight:var(--wp-weight-bold);line-height:1.4;overflow-wrap:anywhere}
+.gallery-tool-note{font-size:clamp(13px,var(--wp-font-caption),16px);line-height:1.5;color:var(--wp-muted-foreground);overflow-wrap:anywhere}
+.gallery-search{display:flex;align-items:center;gap:12px;min-width:0;padding:8px 12px 8px 18px;min-height:56px;border:1px solid var(--wp-border);border-radius:var(--wp-radius-sm);background:var(--wp-surface);color:var(--wp-muted-foreground);margin:18px 0}
+.gallery-search:focus-within{border-color:var(--wp-primary)}
+.gallery-search-input{flex:1;min-width:0;width:0;height:40px;font-size:var(--wp-font-small);color:var(--wp-foreground);background:transparent;border:0;padding:0}
+.gallery-search-symbol{position:relative;width:17px;height:17px;border:2px solid currentColor;border-radius:50%;margin:0 5px 4px 0;flex-shrink:0}
+.gallery-search-symbol::after{position:absolute;content:'';height:2px;width:8px;background:currentColor;right:-6px;bottom:-4px;transform:rotate(45deg);border-radius:2px}
+.gallery-results-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:18px 0 10px}
+@media(min-width:1000px){.gallery-tools{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.wp-app .gallery-tool.wp-action-tile{padding:18px;min-height:164px}}
+@media(max-width:359px){.gallery-tools{gap:10px}.wp-app .gallery-tool.wp-action-tile{padding:12px}.gallery-search{gap:10px;padding-left:14px}}
+@media(hover:hover) and (pointer:fine){.wp-app .gallery-tool:not([disabled]):hover{border-color:var(--wp-primary);background:var(--wp-surface-tonal)}}
+.wp-app.reduce-motion .gallery-tool{transition:none}
 .course-gallery-filters{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}
 .course-gallery-filters>picker{min-width:0}
-.course-gallery-card{display:flex;align-items:flex-start;width:100%;min-height:64px;padding:14px 16px;margin-bottom:10px;text-align:left;border:1px solid var(--wp-border);border-radius:16px;background:var(--wp-surface)}
+.course-gallery-card{display:flex;align-items:flex-start;width:100%;min-height:64px;padding:14px 16px;margin-bottom:10px;text-align:left;border:1px solid var(--wp-border);border-radius:16px;background:var(--wp-surface);color:var(--wp-foreground)}
 .course-gallery-card.selected{border-color:var(--wp-primary);background:var(--wp-surface-tonal)}
 .course-gallery-card.current{border-style:dashed}
 .course-gallery-copy{display:flex;flex-direction:column;gap:4px;min-width:0;width:100%}
@@ -43,3 +62,7 @@
 .activity-cell>.wp-button{width:100%}
 .activity-reason{line-height:1.35}
 .notice.warning{border-left:3px solid var(--wp-warning,#E08A00);background:var(--wp-surface-tonal)}
+/* Image choices keep a full label beneath the illustration at narrow widths. */
+.activity-image-choices .answer-choice{flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;min-width:0;padding:12px;text-align:center}
+.activity-image-choices .small-picture{width:100%;height:88px;flex-shrink:0}
+.activity-image-choices .answer-choice>uni-text,.activity-image-choices .answer-choice>text{width:100%;white-space:normal;overflow-wrap:anywhere;line-height:1.45}

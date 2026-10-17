@@ -10,7 +10,7 @@ const pool=Array.from({length:40},(_,index)=>'w'+index)
 const expected=(limit:number,level:number)=>Math.min(limit,[5,5,10,15,20][level-1])
 
 test('15 组配置矩阵：同时遵守每日设置与能力上限，池不足取全部',()=>{
- for(const limit of [5,10,20] as DailyNewWordLimit[])for(const level of [1,2,3,4,5] as EntryLevel[]){
+ for(const limit of [5,10,15,20] as DailyNewWordLimit[])for(const level of [1,2,3,4,5] as EntryLevel[]){
   const plan=planDailySession({config:{dailyNewWordLimit:limit,entryLevel:level},dueIds:[],weakIds:[],newIds:pool,newToday:0})
   assert.equal(plan.newIds.length,expected(limit,level),'L'+level+' limit '+limit)
   assert.deepEqual(plan.newIds,pool.slice(0,expected(limit,level)))

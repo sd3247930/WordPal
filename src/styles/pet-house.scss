@@ -13,25 +13,53 @@
 .pet-theme-copy{display:flex;flex-direction:column;padding:9px 10px;gap:2px}
 .theme-check{color:var(--pet-accent)}
 .pet-action-workspace{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;min-width:0;scroll-margin-top:18px}
-.pet-action-menu{display:flex;flex-wrap:wrap;gap:8px;align-content:start}
-.pet-action-tab{display:flex;align-items:center;justify-content:center;flex:1 0 80px;gap:6px;margin:0;padding:10px 8px;min-height:56px;min-width:0;border:2px solid var(--pet-border);border-radius:var(--pet-button-radius);background:var(--pet-surface);color:var(--pet-text);line-height:1.5;font-size:var(--wp-font-small)}
-.pet-action-tab.selected{background:var(--pet-tonal);border-color:var(--pet-accent);color:var(--pet-accent)}
+.pet-action-menu{--pet-action-art-size:clamp(36px,calc((100vw - 150px)/5),48px);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;align-content:start;padding:6px 4px;border:1px solid var(--pet-border);border-radius:20px;background:var(--pet-surface);min-width:0}
+.pet-house .pet-action-tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;margin:0;padding:8px 0;min-height:88px;min-width:0;border:2px solid transparent;border-radius:14px;background:var(--pet-surface);color:var(--pet-text);line-height:1.4;font-size:clamp(16px,var(--wp-font-body),20px)}
+.pet-house .pet-action-tab.selected{background:var(--pet-tonal);border-color:var(--pet-accent);color:var(--pet-accent)}
+.pet-action-icon{position:relative;display:flex;align-items:center;justify-content:center;width:var(--pet-action-art-size);height:var(--pet-action-art-size);flex-shrink:0;border-radius:12px;background:transparent}
+.pet-action-label{display:block;white-space:nowrap;font-weight:600}
+.pet-action-tab.selected .pet-action-label{font-weight:700}
+.pet-action-check{position:absolute;right:-2px;bottom:-2px;display:flex;align-items:center;justify-content:center;width:13px;height:13px;border-radius:50%;background:var(--pet-accent);color:var(--pet-surface);font-size:10px;line-height:1;font-weight:700}
+.pet-house .pet-action-tab:focus-visible{outline:2px solid var(--pet-accent);outline-offset:2px}
+.high-contrast .pet-action-icon{box-shadow:none}
+@media(min-width:840px){.pet-action-menu{--pet-action-art-size:40px}}
 .pet-action-panel{min-width:0}.pet-action-panel>.wp-card{display:flex;flex-direction:column;gap:14px;width:100%}
-.pet-house .pet-growth{display:flex;gap:14px}.pet-house .pet-growth .wp-button{margin:0}.pet-house .food-choice{color:var(--pet-text);background:var(--pet-surface);border-color:var(--pet-border);min-height:116px}
+.growth-section-title{font-size:clamp(22px,var(--wp-font-title),26px);font-weight:700}
+.pet-home-learning-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;min-width:0}
+.pet-house .pet-home-learning-card{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0;min-height:232px;padding:14px 8px;margin:0;border:1px solid var(--pet-border);border-radius:var(--pet-button-radius);background:var(--pet-surface);color:var(--pet-text);text-align:center;white-space:normal;line-height:1.4}
+.pet-home-learning-title{font-size:clamp(16px,var(--wp-font-body),20px);font-weight:600;overflow-wrap:anywhere}
+.pet-home-learning-line{display:block}
+.pet-home-learning-note,.pet-home-learning-status{font-size:clamp(13px,var(--wp-font-caption),16px);color:var(--pet-muted);overflow-wrap:anywhere}
+.pet-home-learning-count{font-size:clamp(14px,var(--wp-font-small),18px);font-weight:600;margin-top:auto}
+.pet-home-learning-card .progress{width:100%;flex-shrink:0}
+.pet-home-learning-status.done{color:var(--pet-accent);font-weight:600}
+.pet-house .pet-home-learning-link{background:var(--pet-tonal);border-color:var(--pet-accent);cursor:pointer}
+.pet-home-learning-link-label{margin-top:auto;padding-top:4px;color:var(--pet-accent);font-size:clamp(14px,var(--wp-font-small),18px);font-weight:600;overflow-wrap:anywhere}
+.pet-house .pet-home-learning-link:focus-visible{outline:2px solid var(--pet-accent);outline-offset:2px}
+@media(min-width:1200px){.pet-home-learning-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}}
+.pet-house .pet-growth{display:flex;gap:14px}.pet-house .pet-growth .wp-button{margin:0}
+.pet-house .food-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;min-width:0}
+.pet-house .food-choice{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:5px;min-width:0;min-height:168px;padding:12px 8px;margin:0;color:var(--pet-text);background:var(--pet-surface);border:2px solid var(--pet-border);border-radius:var(--pet-button-radius);text-align:center;line-height:1.4}
 .pet-house .food-choice.selected{color:var(--pet-accent);background:var(--pet-tonal);border-color:var(--pet-accent)}
+.food-choice-name{font-size:clamp(16px,var(--wp-font-body),20px);font-weight:600;overflow-wrap:anywhere}
+.food-choice-price{font-size:clamp(13px,var(--wp-font-caption),16px);color:var(--pet-muted);overflow-wrap:anywhere}
+.food-choice-state{padding:2px 8px;border-radius:var(--pet-button-radius);font-size:clamp(13px,var(--wp-font-caption),16px);color:var(--pet-muted);overflow-wrap:anywhere}
+.food-choice-state.chosen{font-weight:600;color:var(--pet-accent);background:var(--pet-soft)}
+.pet-house .food-choice:focus-visible{outline:2px solid var(--pet-accent);outline-offset:2px}
 .feed-preview{background:var(--pet-tonal);border:1px solid var(--pet-border);padding:16px;border-radius:var(--pet-button-radius);display:flex;flex-direction:column;gap:12px}
 .feed-confirm-actions{display:flex;flex-wrap:wrap;gap:10px}.feed-confirm-actions .confirm-feed{flex:1;min-width:160px}.feed-confirm-actions .quiet{min-width:72px}
 .pet-growth-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.pet-growth-facts>view{display:flex;flex-direction:column;gap:6px;padding:14px 8px;background:var(--pet-soft);border-radius:14px;text-align:center;min-width:0}
-.dress-preview{height:180px;max-width:220px;width:100%;align-self:center;background:var(--pet-tonal);border-radius:var(--pet-radius);padding:10px}
 .pet-house .cosmetic-button{margin:0;background:var(--pet-surface);color:var(--pet-text)}
 .pet-house .wp-button[disabled],.pet-house .cosmetic-button[disabled]{opacity:1;background:var(--pet-soft);color:var(--pet-muted);border-color:var(--pet-border)}
 .pet-album-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.pet-album-entry{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:14px;background:var(--pet-tonal);border:1px solid var(--pet-border);border-radius:var(--pet-button-radius);min-width:0}.album-art{height:145px;width:100%}.album-lock{display:block;line-height:145px;font-size:40px;color:var(--pet-muted)}.pet-album-entry.locked{background:var(--pet-soft)}
 .pet-house-notice{position:sticky;bottom:96px;background:var(--pet-surface);color:var(--pet-text);border:1px solid var(--pet-border);box-shadow:var(--pet-shadow);z-index:3}
 .pet-house .growth-step.locked{opacity:1}.pet-house .progress{background:var(--pet-soft)}.pet-house .progress .bar{background:var(--pet-accent)}
+.pet-curriculum-progress{display:flex;flex-direction:column;gap:10px;padding:16px;border:1px solid var(--pet-border);border-radius:var(--pet-button-radius);background:var(--pet-tonal)}
 .pet-house-dark .pet-theme-thumbnail{filter:brightness(.65) saturate(.7)}
 .pet-house-reduced *{animation-iteration-count:1}.pet-house-reduced .scene-ambient{animation:none}
 @media(min-width:600px){.pet-house .pet-house-hero{grid-template-columns:minmax(0,1fr) minmax(220px,.9fr);align-items:start}.pet-theme-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.pet-theme-copy{padding:8px 6px}.pet-house .pet-current-hero{position:sticky;top:18px}.pet-house-notice{bottom:20px}}
-@media(min-width:840px){.pet-house .pet-house-hero{grid-template-columns:minmax(0,1.6fr) minmax(240px,1fr)}.pet-house .pet-selection{grid-template-columns:repeat(4,minmax(0,1fr))}.pet-house .wp-pet-card{flex-wrap:wrap;align-content:start}.pet-action-workspace{grid-template-columns:110px minmax(0,1fr)}.pet-action-menu{flex-direction:column;position:sticky;top:18px}.pet-action-tab{flex:0 0 auto;width:100%}.pet-album-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:840px){.pet-house .pet-house-hero{grid-template-columns:minmax(0,1.6fr) minmax(240px,1fr)}.pet-house .pet-selection{grid-template-columns:repeat(4,minmax(0,1fr))}.pet-house .wp-pet-card{flex-wrap:wrap;align-content:start}.pet-action-workspace{grid-template-columns:110px minmax(0,1fr)}.pet-action-menu{grid-template-columns:minmax(0,1fr);position:sticky;top:18px;align-self:start}.pet-house .pet-action-tab{flex-direction:row;width:100%;min-height:70px;gap:6px;padding:8px 4px}.pet-album-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(min-width:1200px){.pet-house .pet-house-hero{grid-template-columns:minmax(0,1.8fr) minmax(260px,1fr)}.pet-house .wp-pet-card{flex-wrap:nowrap}.pet-action-workspace{grid-template-columns:130px minmax(0,1fr)}}
+@media(min-width:1000px){.pet-house .food-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}}
 @media(max-width:599px){.pet-house.pet-workspace{padding:12px;gap:14px}.pet-theme-switch.wp-card{padding:14px}.pet-theme-switch .section-heading{flex-wrap:wrap;gap:4px}.pet-house .pet-current-hero{position:static}.pet-house .pet-growth-facts{grid-template-columns:1fr}.pet-house .growth-track{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.large-text .pet-house .pet-house-hero{grid-template-columns:minmax(0,1fr)}.large-text .pet-house .pet-current-hero{position:static}.large-text .pet-house .pet-selection{grid-template-columns:repeat(2,minmax(0,1fr))}.large-text .pet-house .current-pet-heading{flex-wrap:wrap}.large-text .pet-house .current-pet-actions{grid-template-columns:1fr}.large-text .pet-house .pet-action-tab{flex-basis:96px}.large-text .pet-house .pet-album-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.large-text .pet-house .pet-house-hero{grid-template-columns:minmax(0,1fr)}.large-text .pet-house .pet-current-hero{position:static}.large-text .pet-house .pet-selection{grid-template-columns:repeat(2,minmax(0,1fr))}.large-text .pet-house .current-pet-heading{flex-wrap:wrap}.large-text .pet-house .current-pet-actions{grid-template-columns:1fr}.large-text .pet-house .pet-album-grid{grid-template-columns:repeat(2,minmax(0,1fr))}

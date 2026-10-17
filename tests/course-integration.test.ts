@@ -65,13 +65,13 @@ test('全部复用与部分复用课节检查使用完整分母，80%独立推�
  for(let i=0;i<5;i++){activities.select(i<4?activities.current!.id:'wrong');assert.equal(activities.submit(),true);assert.equal(activities.submit(),false);activities.next()}
  assert.equal(course.progress.checkAccuracy.l01,.8);assert.ok(course.progress.completedLessons.includes('l01'));assert.equal(course.lesson.id,'l02');assert.equal(profile.db.auxiliaryRecords?.length,1);assert.equal(activities.record(),false)
  assert.equal(JSON.stringify({cards:profile.db.cards,history:profile.db.history,gems:profile.db.gems,pets:profile.db.pets,rewardIds:profile.db.rewardIds}),before)
- activities.close();course.chooseLesson('l01');profile.transact(d=>{delete d.cards.sun});assert.equal(activities.start('check'),false);assert.deepEqual(useLearningStore().newWords,['sun'])
+ activities.close();course.chooseLesson('l01');profile.transact(d=>{delete d.cards.sun});assert.equal(activities.start('check'),false);assert.equal(useLearningStore().newWords.includes('sun'),false,'已完成教材章节的首轮进度不依赖全局卡片是否存在')
 })
-test('课程切换排队、相同局部课ID独立；活动跨重启恢复且更新/归档保留已学词',async()=>{
+test('课程立即切换、相同局部课ID独立；活动跨重启恢复且更新/归档保留已学词',async()=>{
  reset();const profile=useProfileStore(),course=useCourseStore(),learning=useLearningStore();await installTextCourse(pack('one-course'));await installTextCourse(pack('two-course'));course.choose('one-course');learning.start();learning.setMode('spell');learning.patch({input:'ca'});const snapshot=JSON.stringify(learning.session)
- course.choose('two-course');assert.equal(course.currentId,'one-course');assert.equal(profile.db.pendingCourseId,'two-course');assert.equal(JSON.stringify(learning.session),snapshot)
+ course.choose('two-course');assert.equal(course.currentId,'two-course');assert.equal(profile.db.pendingCourseId,undefined);assert.equal(JSON.stringify(profile.db.courseSessions?.['one-course']),snapshot)
  course.choose('one-course');assert.equal(profile.db.pendingCourseId,undefined);assert.equal(JSON.stringify(learning.session),snapshot);course.choose('two-course');setArchived('two-course',true);course.applyPending();assert.equal(profile.db.pendingCourseId,undefined);setArchived('two-course',false);course.choose('two-course')
- profile.transact(d=>{d.session!.completedAt=new Date().toISOString()});course.applyPending();assert.equal(course.currentId,'two-course');assert.equal(course.progress.currentLessonId,'l01')
+ assert.equal(course.currentId,'two-course');assert.equal(course.progress.currentLessonId,'l01')
  const activities=useActivitiesStore();activities.start('letters');activities.input('ca');setActivePinia(createPinia());assert.equal(useActivitiesStore().state?.input,'ca')
  const update=pack('two-course');update.contentVersion='2.0.0';update.vocabulary=update.vocabulary.filter(w=>w.id!=='sun');update.units[0].lessons[0].wordIds=['cat','dog'];await installTextCourse(update);setArchived('two-course',true);loadCourseRegistry();assert.ok(wordById.sun);await rollbackCourse('two-course');assert.equal(courseRegistry['two-course'].contentVersion,'1.0.0')
 })

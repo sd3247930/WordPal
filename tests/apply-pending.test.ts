@@ -37,17 +37,18 @@ test('队列为空时不触发，也不改动当前课程',()=>{
  assert.equal(course.currentId,'starter')
 })
 
-test('本轮未完成时不应用排队课程，pending 保持可见',async()=>{
+test('旧版本排队目标在恢复后立即生效，旧会话保存供切回',async()=>{
  const {profile,course}=await ready()
- course.choose('queue-two')
- assert.equal(course.applyPending(),false)
- assert.equal(course.currentId,'queue-one');assert.equal(profile.db.pendingCourseId,'queue-two')
+ profile.transact(d=>{d.pendingCourseId='queue-two'})
+ assert.equal(course.applyPending(),true)
+ assert.equal(course.currentId,'queue-two');assert.equal(profile.db.pendingCourseId,undefined)
+ assert.ok(profile.db.courseSessions?.['queue-one'])
 })
 
 test('本轮完成后应用排队课程，并写入独立的课程进度',async()=>{
  const {profile,course}=await ready()
- course.choose('queue-two')
  profile.transact(d=>{d.session!.completedAt=new Date().toISOString()})
+ profile.transact(d=>{d.pendingCourseId='queue-two'})
  assert.equal(course.applyPending(),true)
  assert.equal(course.currentId,'queue-two');assert.equal(profile.db.pendingCourseId,undefined)
  assert.equal(course.progress.currentLessonId,'l01')
@@ -56,7 +57,7 @@ test('本轮完成后应用排队课程，并写入独立的课程进度',async(
 test('取消排队清空 pending 但不影响当前课程与正在进行的输入',async()=>{
  const {profile,course,learning}=await ready()
  learning.patch({input:'draft'})
- course.choose('queue-two')
+ profile.transact(d=>{d.pendingCourseId='queue-two'})
  assert.equal(course.clearPending(),true)
  assert.equal(profile.db.pendingCourseId,undefined);assert.equal(course.currentId,'queue-one')
  assert.equal(learning.session?.input,'draft')
@@ -65,7 +66,7 @@ test('取消排队清空 pending 但不影响当前课程与正在进行的输�
 
 test('排队目标被归档时清空队列，不会切换到失效课程',async()=>{
  const {profile,course}=await ready()
- course.choose('queue-two')
+ profile.transact(d=>{d.pendingCourseId='queue-two'})
  setArchived('queue-two',true)
  assert.equal(course.applyPending(),false)
  assert.equal(profile.db.pendingCourseId,undefined);assert.equal(course.currentId,'queue-one')

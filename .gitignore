@@ -3,6 +3,8 @@
 /private/
 /src/content/local-courses/
 /src/static/local-master-audio/
+/src/static/local-course-media/
+/src/static/local-starter-media/
 
 # ===== 依赖与包管理 =====
 node_modules/

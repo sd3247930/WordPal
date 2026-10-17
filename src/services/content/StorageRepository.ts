@@ -1,4 +1,4 @@
-import {courseRegistry,archiveStatus,registerCourse,wordById,resourceStatus,isBundledCourse,installationStatus,retainedPositions} from './ContentRegistry'
+import {courseRegistry,archiveStatus,registerCourse,wordById,resourceStatus,isBundledCourse,installationStatus,retainedPositions,wordIdentityMatches} from './ContentRegistry'
 import {retainDescriptor} from './CourseDirectory'
 import {validateCourse,type CoursePack} from '../../../packages/content_schema/course'
 import {readStorage,writeStorage} from '../storage'
@@ -7,7 +7,7 @@ import {saveMedia,readMedia,mediaUrl,saveManifest,readManifest,removeContentVers
 import {assertPublicMedia} from '../course-import/PublicMediaAudit'
 interface CatalogEntry {courseId:string;key:string;previousKey?:string;previousAliases?:Record<string,string>;versions?:{key:string;aliases:Record<string,string>}[];archived:boolean;aliases:Record<string,string>}
 export const CATALOG_KEY='wordpal.content.catalog.v2'
-function validateConflicts(pack:CoursePack,aliases:Record<string,string>){for(const e of pack.vocabulary){const old=wordById[aliases[e.id]||e.id];if(aliases[e.id]&&!old)throw new Error('复用词条不存在。');if(old&&(old.word.toLowerCase()!==e.lemma.toLowerCase()||old.meaning!==e.meaning||old.pos!==(e.pos||'')))throw new Error('词条 ID 冲突，不能覆盖已有词义或词性。')}}
+function validateConflicts(pack:CoursePack,aliases:Record<string,string>){for(const e of pack.vocabulary){const old=wordById[aliases[e.id]||e.id];if(aliases[e.id]&&!old)throw new Error('复用词条不存在。');if(old&&!wordIdentityMatches(old,{word:e.lemma,meaning:e.meaning,pos:e.pos||''}))throw new Error('词条 ID 冲突，不能覆盖已有词义或词性。')}}
 async function commitCourse(pack:CoursePack,aliases:Record<string,string>,mediaReady:boolean){
  if(validateCourse(pack).some(i=>i.severity==='error'))throw new Error('课程校验未通过，请重新预览。')
  if(pack.sources.some(s=>s.rightsStatus==='pending-review'))throw new Error('请先完成本机用途与来源声明。')
@@ -63,6 +63,7 @@ export function enableBundledCourse(id:string){if(!isBundledCourse(id)||!courseR
 interface Cleanup {key:string;pack:CoursePack}
 const cleanupKey='wordpal.content.cleanup.v1'
 /** A durable removal journal allows a failed file deletion to be retried after restart. */
+export function pendingCleanupCount(){return readStorage<Cleanup[]>(cleanupKey,[]).length}
 export async function retryCourseCleanup(){
  const pending=readStorage<Cleanup[]>(cleanupKey,[]),remaining:Cleanup[]=[],catalog=readStorage<CatalogEntry[]>(CATALOG_KEY,[])
  if(!pending.length)return 0
@@ -72,12 +73,14 @@ export async function retryCourseCleanup(){
 export async function uninstallCourseContent(id:string,retainedIds:string[]=[]){
  const pack=courseRegistry[id];if(!pack||id==='starter')throw new Error('默认启蒙课程需保留。')
  retainDescriptor(pack)
- if(isBundledCourse(id)){setInstallationState(id,'notInstalled');return {bundled:true,pendingCleanup:0}}
- const catalog=readStorage<CatalogEntry[]>(CATALOG_KEY,[]),entry=catalog.find(e=>e.courseId===id)
- if(!entry)throw new Error('教材安装记录不存在，请重新导入。')
+ // 本机课程同样要写保留词条：内容源裁剪后这些词不再随包提供，已学词不能丢词义。
  const retained=readStorage<typeof wordById[string][]>('wordpal.content.retained-lexemes.v1',[]),ids=new Set(retainedIds)
  for(const word of pack.vocabulary){const canonical=wordById[word.id];if(canonical&&ids.has(word.id)){const index=retained.findIndex(w=>w.id===word.id),clean={...canonical,audio:canonical.audio.startsWith('/static/')?canonical.audio:'',audioUS:'',audioUK:'',image:''};if(index<0)retained.push(clean);else retained[index]=clean}}
  writeStorage('wordpal.content.retained-lexemes.v1',retained)
+ const retainedWordCount=pack.vocabulary.filter(word=>ids.has(word.id)).length
+ if(isBundledCourse(id)){setInstallationState(id,'notInstalled');return {bundled:true,pendingCleanup:0,retainedWordCount}}
+ const catalog=readStorage<CatalogEntry[]>(CATALOG_KEY,[]),entry=catalog.find(e=>e.courseId===id)
+ if(!entry)throw new Error('教材安装记录不存在，请重新导入。')
  const versions=[{key:entry.key},...(entry.versions||[]),...(entry.previousKey?[{key:entry.previousKey}]:[])].filter((v,i,all)=>all.findIndex(other=>other.key===v.key)===i)
  const pending=readStorage<Cleanup[]>(cleanupKey,[])
  for(const v of versions){const old=readStorage<CoursePack|null>(v.key,null);if(old)pending.push({key:v.key,pack:{...old,vocabulary:[],units:[],stories:[],phonicsRules:[]}})}
@@ -87,5 +90,22 @@ export async function uninstallCourseContent(id:string,retainedIds:string[]=[]){
  delete courseRegistry[id];delete archiveStatus[id];installationStatus[id]='notInstalled'
  for(const word of retained)if(ids.has(word.id)&&wordById[word.id])Object.assign(wordById[word.id],word)
  for(const unit of pack.units)for(const lesson of unit.lessons)for(const lexemeId of lesson.wordIds)retainedPositions.push({courseId:id,courseTitle:pack.title,unitId:unit.id,unitTitle:unit.title,lessonId:lesson.id,lessonTitle:lesson.title,lexemeId} as typeof retainedPositions[number])
- return {bundled:false,pendingCleanup:await retryCourseCleanup()}
+ return {bundled:false,pendingCleanup:await retryCourseCleanup(),retainedWordCount}
+}
+/**
+ * 内容源裁剪前的一次性安全网：把已学词条从仍然可用的课程里复制到保留词条。
+ * 本机课程在卸载时也会写保留词条，这里覆盖"此前已卸载但当时未保留"的历史状态。
+ */
+export function retainLearnedLexemes(retainedIds:string[]){
+ const retained=readStorage<typeof wordById[string][]>('wordpal.content.retained-lexemes.v1',[]),ids=new Set(retainedIds),seen=new Set(retained.map(word=>word.id))
+ let added=0
+ for(const pack of Object.values(courseRegistry))for(const word of pack.vocabulary){
+  if(!ids.has(word.id)||seen.has(word.id))continue
+  const canonical=wordById[word.id]
+  if(!canonical)continue
+  retained.push({...canonical,audio:canonical.audio.startsWith('/static/')?canonical.audio:'',audioUS:'',audioUK:'',image:''})
+  seen.add(word.id);added++
+ }
+ if(added)writeStorage('wordpal.content.retained-lexemes.v1',retained)
+ return added
 }

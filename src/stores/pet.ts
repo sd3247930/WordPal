@@ -2,7 +2,7 @@ import {defineStore} from 'pinia'
 import {computed} from 'vue'
 import {createPet,elements,feedPet,petInfo,type Element} from '../../packages/pet_engine'
 import {useProfileStore} from './profile'
-export const cosmetics=[{id:'ribbon',name:'探索丝带',level:2},{id:'scarf',name:'暖暖围巾',level:4},{id:'star',name:'星星徽章',level:8}]
+export const cosmetics=[{id:'ribbon',name:'探索丝带',level:2},{id:'scarf',name:'暖暖围巾',level:4},{id:'star',name:'星星徽章',level:8}] as const
 export const usePetStore=defineStore('pet',()=>{
  const profile=useProfileStore()
  if(elements.some(e=>!profile.db.pets[e]))profile.transact(d=>{elements.forEach(e=>{d.pets[e]??=createPet(e)})})

@@ -25,7 +25,7 @@ test('学习页瘦身：无 CourseSelector，首屏可见学习动作，标题�
 
  const heading=(await page.locator('.study-heading').innerText()).replace(/\s+/g,' ')
  expect(heading.match(/合成单元一/g)?.length).toBe(1)
- expect(heading).toContain('合成单元一 · 第 1 课')
+ expect(heading).toContain('当前单元：合成单元一')
 
  const action=page.getByRole('button',{name:'开始今日学习',exact:true})
  await expect(action).toBeVisible()

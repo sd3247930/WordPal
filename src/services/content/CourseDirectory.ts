@@ -3,6 +3,7 @@ import type {CoursePack} from '../../../packages/content_schema/course'
 import {readStorage,writeStorage} from '../storage'
 import {courseRegistry,archiveStatus,installationStatus,isCourseInstalled,isBundledCourse,resolveCourseAsset,wordById} from './ContentRegistry'
 import {occurrences,type CourseOccurrence} from './IdentityModel'
+import {cleanCourseLabel} from '../course/CourseSelection'
 
 export interface CourseDescriptor {
  courseId:string;title:string;route:CoursePack['route'];publisher?:string|null;edition?:string;editionYear?:number|null;startGrade?:1|3|null;grade?:number|null;semester?:string|null;contentVersion:string;abilityLevels:string[]
@@ -19,6 +20,16 @@ export function describeCourse(pack:CoursePack):CourseDescriptor{
 }
 export function loadDirectory(){for(const id of Object.keys(directoryCache))delete directoryCache[id];Object.assign(directoryCache,readStorage<Record<string,CourseDescriptor>>(DIRECTORY_KEY,{}))}
 export function retainDescriptor(pack:CoursePack){const descriptor=describeCourse(pack),next={...readStorage<Record<string,CourseDescriptor>>(DIRECTORY_KEY,{}),...directoryCache,[pack.courseId]:descriptor};writeStorage(DIRECTORY_KEY,next);Object.assign(directoryCache,next)}
-export const courseDirectory=computed(()=>Object.values({...directoryCache,...Object.fromEntries(Object.values(courseRegistry).map(pack=>[pack.courseId,describeCourse(pack)]))}))
-export function installationLabel(id:string){return installationStatus[id]==='installing'?'正在安装':installationStatus[id]==='failed'?'安装失败，可重试':isCourseInstalled(id)?'已安装':archiveStatus[id]?'已归档':'未安装'}
+export function textbookIdentity(pack:Pick<CourseDescriptor,'courseId'|'route'|'publisher'|'edition'|'editionYear'|'startGrade'|'grade'|'semester'>){
+ if(pack.route!=='textbook'||!pack.grade||!pack.semester)return ''
+ const series=pack.courseId.startsWith('fltrp-3start-')?'fltrp-3start':[pack.publisher,pack.edition,pack.startGrade].join('|')
+ return [series,pack.grade,pack.semester,pack.editionYear||'unspecified'].join('|')
+}
+export const courseDirectory=computed(()=>{
+ const all=Object.values({...directoryCache,...Object.fromEntries(Object.values(courseRegistry).map(pack=>[pack.courseId,describeCourse(pack)]))})
+ const installedBooks=new Set(all.filter(pack=>isCourseInstalled(pack.courseId)).map(textbookIdentity).filter(Boolean))
+ return all.filter(pack=>isCourseInstalled(pack.courseId)||!textbookIdentity(pack)||!installedBooks.has(textbookIdentity(pack))).map(pack=>({...pack,title:cleanCourseLabel(pack.title),publisher:pack.publisher?cleanCourseLabel(pack.publisher):pack.publisher,edition:pack.edition?cleanCourseLabel(pack.edition):pack.edition}))
+})
+// 安装态唯一真源；archiveStatus 不再出现在用户可见文案里。
+export function installationLabel(id:string){return installationStatus[id]==='installing'?'安装中…':installationStatus[id]==='failed'?'安装失败':isCourseInstalled(id)?'已安装':'未安装'}
 export function canReinstall(id:string){return isBundledCourse(id)&&!!courseRegistry[id]}

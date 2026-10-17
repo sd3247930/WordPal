@@ -1,13 +1,14 @@
 import {reactive,computed} from 'vue'
 import legacy from '../../src/content/starter.json'
-import original from '../../src/content/courses/original-primary.json'
 import type {Word} from '../core_learning'
 import {entryWord,courseLessons,validateCourse,type CoursePack} from './course'
 import {readStorage} from '../local_storage'
-export const words=reactive([...(legacy.words as Word[])])
+import {withOfflineWordAudio} from './offline-audio'
+import {starterPack,starterAssetUrl,localStarterEntry,originalStarterWord,wordIdentityMatches} from './starter-content'
+export {starterPack,configureStarterCourse,wordIdentityMatches} from './starter-content'
+export const words=reactive(JSON.parse(JSON.stringify(legacy.words)) as Word[])
 export const wordById=reactive(Object.fromEntries(words.map(word=>[word.id,word])) as Record<string,Word>)
-export const starterPack:CoursePack={schemaVersion:2,courseId:'starter',contentVersion:'1.0.0',title:'原创启蒙课程',route:'theme',abilityLevels:['L1','L2'],sources:[{id:'wordpal-original',type:'author-created',rightsStatus:'redistribution-approved',textLicense:legacy.license,attribution:'WordPal 原创教学示例',revision:'starter-1'}],vocabulary:legacy.words.map(w=>({id:w.id,language:'en',lemma:w.word,meaning:w.meaning,pos:w.pos,ipa:w.ipa,phonics:w.phonics,phonemes:w.phonemes,syllables:w.syllables,audio:w.audio,image:w.image,example:w.example,sourceId:'wordpal-original',senseId:w.id})),units:[...new Set(legacy.lessons.map(l=>l.unit))].map((title,i)=>({id:'u0'+(i+1),title,lessons:legacy.lessons.filter(l=>l.unit===title).map(l=>({id:l.id,title:l.name,wordIds:l.wordIds,activities:['flash','connect','listen','spell','dictation']}))})),assets:[]}
-export const courseRegistry=reactive<Record<string,CoursePack>>({starter:starterPack,'original-primary':original as CoursePack})
+export const courseRegistry=reactive<Record<string,CoursePack>>({starter:starterPack})
 export const archiveStatus=reactive<Record<string,boolean>>({})
 export type InstallationState='notInstalled'|'installing'|'installed'|'failed'
 export const installationStatus=reactive<Record<string,InstallationState>>({})
@@ -16,10 +17,10 @@ export const isCourseInstalled=(id:string)=>!!courseRegistry[id]&&!archiveStatus
 export const sourceMappings=reactive<Record<string,string>>({})
 const assetUrls=reactive(new Map<string,string>()),versions=new Map<string,CoursePack>()
 let localCourses:CoursePack[]=[]
-export const isBundledCourse=(id:string)=>['starter','original-primary'].includes(id)||localCourses.some(c=>c.courseId===id)
+export const isBundledCourse=(id:string)=>id==='starter'||localCourses.some(c=>c.courseId===id)
 export function configureLocalCourses(packs:CoursePack[]){
  if(!Array.isArray(packs)||new Set(packs.map(p=>p?.courseId)).size!==packs.length)throw new Error('本机课程目录重复或无效。')
- for(const pack of packs)if(validateCourse(pack).some(i=>i.severity==='error')||['starter','original-primary'].includes(pack.courseId))throw new Error('本机课程目录无效。')
+ for(const pack of packs)if(validateCourse(pack).some(i=>i.severity==='error')||pack.courseId==='starter')throw new Error('本机课程目录无效。')
  localCourses=JSON.parse(JSON.stringify(packs))
 }
 export const resourceStatus=reactive<Record<string,string>>({})
@@ -34,9 +35,9 @@ export function registerCourse(pack:CoursePack,resolver:(id:string)=>string=()=>
  for(const rule of copy.phonicsRules||[])rule.exampleWordIds=rule.exampleWordIds.map(id=>aliases[id]||id)
  const firstLessons=new Map<string,ReturnType<typeof courseLessons>[number]>();for(const lesson of courseLessons(copy))for(const id of lesson.wordIds)if(!firstLessons.has(id))firstLessons.set(id,lesson)
  const prepared=copy.vocabulary.map(entry=>entryWord(entry,copy,resolver,firstLessons.get(entry.id)))
- for(const word of prepared){const old=wordById[word.id];if(old&&(old.word.toLowerCase()!==word.word.toLowerCase()||old.meaning!==word.meaning||old.pos!==word.pos))throw new Error('已有词条 ID 对应其他词义或词性，请保留旧词并使用新 ID。')}
+ for(const word of prepared){const old=wordById[word.id];if(old&&!wordIdentityMatches(old,word))throw new Error('已有词条 ID 对应其他词义或词性，请保留旧词并使用新 ID。')}
  Object.assign(sourceMappings,mappings)
- for(const word of prepared){const old=wordById[word.id];if(!old){wordById[word.id]=word;words.push(word)}else if(copy.courseId!=='starter'){if(!old.audio&&word.audio)old.audio=word.audio;if(!old.ipa&&word.ipa)old.ipa=word.ipa;if(!old.phonics.length&&word.phonics.length){old.phonics=word.phonics;old.phonemes=word.phonemes}if(word.acceptedSpellings)old.acceptedSpellings=[...new Set([...(old.acceptedSpellings||[]),...word.acceptedSpellings])]}}
+ for(const word of prepared){const old=wordById[word.id];if(!old){wordById[word.id]=word;words.push(word)}else if(copy.courseId==='starter'&&localStarterEntry(word.id)){const {distractors,difficulty}=old;Object.assign(old,word,{distractors,difficulty,audioUK:word.audio,phoneticUK:word.ipa})}else if(copy.courseId!=='starter'){if(!old.audio&&word.audio)old.audio=word.audio;if(!old.ipa&&word.ipa)old.ipa=word.ipa;if(!old.phonics.length&&word.phonics.length){old.phonics=word.phonics;old.phonemes=word.phonemes}if(word.acceptedSpellings)old.acceptedSpellings=[...new Set([...(old.acceptedSpellings||[]),...word.acceptedSpellings])]}}
  versions.set(copy.courseId+'@'+copy.contentVersion,copy);courseRegistry[copy.courseId]=copy
  for(const a of copy.assets)assetUrls.set(copy.courseId+'@'+copy.contentVersion+':'+a.id,resolver(a.id))
 }
@@ -46,11 +47,16 @@ const membershipIndex=computed(()=>{const index:Record<string,{courseId:string;c
 export const courseMemberships=(wordId:string)=>membershipIndex.value[wordId]||[]
 export const resolveCourseAsset=(courseId:string,id:string,version=courseRegistry[courseId]?.contentVersion)=>assetUrls.get(courseId+'@'+version+':'+id)||''
 export function resolveFrozenWord(word:Word|undefined,courseId?:string,version?:string):Word|undefined{
- if(!word||!courseId||!version)return word
+ const local=word?localStarterEntry(word.id):undefined,original=word?originalStarterWord(word.id):undefined
+ if(word&&local&&original&&wordIdentityMatches(original,word)&&(courseId==='starter'||word.audio===original.audio)){
+  // Rebind the view, including old starter snapshots, without rewriting frozen sessions or SRS records.
+  word={...word,audio:local.assetRefs?.audio?resolveCourseAsset('starter',local.assetRefs.audio):local.audio||word.audio,image:local.assetRefs?.image?resolveCourseAsset('starter',local.assetRefs.image):local.image||word.image,...(courseId==='starter'?{ipa:local.ipa||word.ipa,meaning:local.meaning}:{}),audioUK:local.assetRefs?.audio?resolveCourseAsset('starter',local.assetRefs.audio):local.audioUK}
+ }
+ if(!word||!courseId||!version)return withOfflineWordAudio(word)
  const entry=versions.get(courseId+'@'+version)?.vocabulary.find(e=>e.id===word.id)
- if(!entry)return word
+ if(!entry)return withOfflineWordAudio(word)
  // Resource handles expire across reloads; the frozen text and answers stay intact.
- return {...word,audio:entry.assetRefs?.audio?resolveCourseAsset(courseId,entry.assetRefs?.audio,version):word.audio,audioUS:entry.tags?.includes('offline-system-en-us')&&entry.assetRefs?.audio?resolveCourseAsset(courseId,entry.assetRefs.audio,version):word.audioUS,image:entry.assetRefs?.image?resolveCourseAsset(courseId,entry.assetRefs?.image,version):word.image}
+ return withOfflineWordAudio({...word,audio:entry.assetRefs?.audio?resolveCourseAsset(courseId,entry.assetRefs?.audio,version):word.audio,audioUS:entry.tags?.includes('offline-system-en-us')&&entry.assetRefs?.audio?resolveCourseAsset(courseId,entry.assetRefs.audio,version):word.audioUS,image:entry.assetRefs?.image?resolveCourseAsset(courseId,entry.assetRefs?.image,version):word.image})
 }
 export function getCourseWord(courseId:string,id:string){const c=courseRegistry[courseId],entry=c?.vocabulary.find(w=>w.id===id),canonical=wordById[id];if(!entry)return canonical;const word=entryWord(entry,c,assetId=>resolveCourseAsset(courseId,assetId));return {...canonical,...word,audio:word.audio||canonical?.audio||'',ipa:word.ipa||canonical?.ipa||'',phonics:word.phonics.length?word.phonics:canonical?.phonics||[],phonemes:word.phonemes.length?word.phonemes:canonical?.phonemes||[],syllables:word.syllables.length?word.syllables:canonical?.syllables||[],distractors:canonical?.distractors||[],acceptedSpellings:[...new Set([...(canonical?.acceptedSpellings||[]),...(word.acceptedSpellings||[])])]}}
 export const courseSnapshot=(id:string,version:string)=>versions.get(id+'@'+version)||courseRegistry[id]
@@ -68,9 +74,8 @@ export function loadCourseRegistry(){
  retainedPositions.splice(0,retainedPositions.length,...Object.values(directory).flatMap(c=>(c.positions||[]).map(row=>({...row,courseTitle:c.title,lessonId:row.lessonIds[0]||'',lessonTitle:row.unitTitle}))))
  for(const id of Object.keys(sourceMappings))delete sourceMappings[id]
  versions.clear();assetUrls.clear()
- registerCourse(starterPack);registerCourse(original as CoursePack)
- for(const pack of localCourses){registerCourse(pack,id=>{const asset=pack.assets.find(a=>a.id===id);return asset?(asset.sourceId==='wordpal-original-audio'?'/static/audio/':'/static/local-master-audio/')+asset.path.split('/').pop():''});archiveStatus[pack.courseId]=readStorage<boolean>('wordpal.content.archive.'+pack.courseId,false)}
- archiveStatus['original-primary']=readStorage<boolean>('wordpal.content.archive.original-primary',false)
+ registerCourse(starterPack,starterAssetUrl)
+ for(const pack of localCourses){registerCourse(pack,id=>{const asset=pack.assets.find(a=>a.id===id);if(!asset)return '';if(asset.sourceId==='fltrp-audio-local'||asset.sourceId==='fltrp-image-local')return '/static/local-course-media/'+asset.path;return (asset.sourceId==='wordpal-original-audio'?'/static/audio/':'/static/local-master-audio/')+asset.path.split('/').pop()});archiveStatus[pack.courseId]=readStorage<boolean>('wordpal.content.archive.'+pack.courseId,false)}
  const catalog=readStorage<{key:string;previousKey?:string;versions?:{key:string;aliases:Record<string,string>}[];archived:boolean;aliases?:Record<string,string>;previousAliases?:Record<string,string>}[]>('wordpal.content.catalog.v2',[])
  for(const record of catalog){try{for(const version of record.versions||[]){const older=readStorage<CoursePack|null>(version.key,null);if(older)registerCourse(older,()=>'',version.aliases)}if(record.previousKey){const previous=readStorage<CoursePack|null>(record.previousKey,null);if(previous)registerCourse(previous,()=>'',record.previousAliases)}const pack=readStorage<CoursePack|null>(record.key,null);if(pack){registerCourse(pack,()=>'',record.aliases);archiveStatus[pack.courseId]=record.archived;installationStatus[pack.courseId]='installed'}}catch{ /* Invalid local candidates do not replace usable built-in courses. */ }}
 }

@@ -27,7 +27,7 @@
     <text v-if="activity.state.kind==='letters'" class="instruction">{{activity.current.meaning}} · 把字母拼起来</text>
     <template v-if="activity.state.kind==='sentence'"><text class="instruction">把词块排成一句话</text><text class="small muted block">{{activity.current.meaning}}</text></template>
     <text v-if="activity.state.kind==='cloze'" class="instruction">{{cloze}}</text>
-    <view v-if="['check','pair','picture','listen-picture','challenge','speed'].includes(activity.state.kind)" class="choice-grid"><WPActionTile v-for="choice in activity.choices" :key="choice.id" class="answer-choice" :selected="activity.state.selected===choice.id" :disabled="!!answer||activity.state.kind==='speed'&&activity.state.timer?.runningSince===null" @click="activity.select(choice.id)"><image v-if="activity.state.kind==='listen-picture'&&choice.image" class="activity-picture small-picture" :src="choice.image" mode="aspectFit"/><text>{{activity.state.kind==='picture'?choice.word:choice.meaning}}</text></WPActionTile></view>
+    <view v-if="['check','pair','picture','listen-picture','challenge','speed'].includes(activity.state.kind)" class="choice-grid" :class="{'activity-image-choices':activity.state.kind==='listen-picture'}"><WPActionTile v-for="choice in activity.choices" :key="choice.id" class="answer-choice" :selected="activity.state.selected===choice.id" :disabled="!!answer||activity.state.kind==='speed'&&activity.state.timer?.runningSince===null" @click="activity.select(choice.id)"><image v-if="activity.state.kind==='listen-picture'&&choice.image" class="activity-picture small-picture" :src="choice.image" mode="aspectFit"/><text>{{activity.state.kind==='picture'?choice.word:choice.meaning}}</text></WPActionTile></view>
     <template v-if="['letters','sentence'].includes(activity.state.kind)"><view class="token-answer">{{activity.state.input||'点击词块，在这里拼装'}}</view><view class="token-bank"><WPButton v-for="token in tokens" :key="token.id" kind="secondary" :disabled="!!answer||usedToken(token.id)" @click="addToken(token.id)">{{token.text===' '?'空格':token.text}}</WPButton></view><WPButton kind="quiet" :disabled="!!answer||!activity.state.input" @click="undo">退回一步</WPButton></template>
     <input v-if="activity.state.kind==='cloze'" class="spelling-input" :value="activity.state.input" :disabled="!!answer" :maxlength="100" aria-label="输入句子缺少的单词" @input="activity.input(($event as any).detail.value)"/>
     <template v-if="activity.state.kind==='phonics'"><view v-for="rule in rules" :key="rule.id" class="notice"><text class="strong">{{rule.graphemes.join(' / ')}} · {{rule.phonemes.join(' / ')}}</text><text class="small block">{{rule.explanation}}</text><text v-if="rule.prerequisites?.length" class="small muted block">建议先认识：{{rule.prerequisites.join('、')}}</text></view><view class="phonics-row"><view v-for="segment in segments(activity.current)" :key="segment.letters+segment.sound" class="phonics-segment"><text>{{segment.letters}}</text><text class="small muted">{{segment.sound}}</text></view></view><text class="small muted block">拼读为人工审核片段；跟读仅作自我对照，不自动评分。</text><WPPronunciationPractice :word="activity.current"/></template>
@@ -58,13 +58,17 @@ const activity=useActivitiesStore(),course=useCourseStore(),lookup=ref('')
 const profile=useProfileStore(),review=useReviewStore()
 /** Unavailable practice items stay visible, but say why (see 练习菜单原因映射). */
 const practiceReasons:Partial<Record<ActivityKind,string>>={check:'本课还有未学词，先完成新词学习',story:'本课暂无已审核故事',picture:'本课暂无已审核词图','listen-picture':'本课暂无已审核词图或音频',phonics:'本课暂无已审核拼读规则'}
+/** A whole course without any image asset is still being prepared, not simply missing this lesson's art. */
+const courseHasImages=computed(()=>course.current.vocabulary.some(entry=>!!entry.assetRefs?.image||!!entry.image))
 const names:Record<ActivityKind,string>={check:'整课检查',pair:'词义配对',letters:'字母拼装',sentence:'句子排序',cloze:'句子填空',story:'故事阅读',picture:'看图选词','listen-picture':'听音选图',phonics:'自然拼读与跟读',challenge:'连胜挑战',speed:'闪电判断'}
 const activities=computed(()=>Object.entries(names).map(([id,name])=>{
  const kind=id as ActivityKind
  const available=kind==='check'
-  ?!review.due.length&&course.lesson.wordIds.every(wordId=>!!profile.db.cards[wordId])
+  ?!review.due.some(card=>course.wordIds.includes(card.wordId))&&course.lesson.wordIds.every(wordId=>!!profile.db.cards[wordId])
   :course.lesson.wordIds.some(wordId=>{const w=getCourseWord(course.currentId,wordId),example=course.lesson.examples?.[wordId]||w.example;return id==='picture'?!!w.image:id==='listen-picture'?!!w.image&&!!w.audio:id==='phonics'?!!w.audio&&!!w.phonics.length:id==='cloze'?example.toLowerCase().split(/[^a-z'-]+/).includes(w.word.toLowerCase()):id==='sentence'?!!example:id==='story'?!!course.lesson.storyId:true})
- return {id:kind,name,disabled:!available,reason:available?'':(practiceReasons[kind]||'')}
+ const base=practiceReasons[kind]||''
+ const reason=!courseHasImages.value&&(kind==='picture'||kind==='listen-picture')?'本册资源正在准备中':base
+ return {id:kind,name,disabled:!available,reason:available?'':reason}
 }))
 const title=computed(()=>activity.state?names[activity.state.kind]:''),answer=computed(()=>activity.state?.answers[activity.state.index]),correct=computed(()=>activity.state?.answers.filter(a=>a.correct).length||0),question=computed(()=>activity.state?.storySnapshot?.questions?.[activity.state.index])
 const rules=computed(()=>{const state=activity.state;if(!state)return [];const pack=courseSnapshot(state.courseId,state.contentVersion),lesson=pack?.units.flatMap(unit=>unit.lessons).find(item=>item.id===state.lessonId);return pack?.phonicsRules?.filter(rule=>lesson?.phonicsRuleIds?.includes(rule.id))||[]})

@@ -5,7 +5,7 @@ import {writeStorage} from './index'
 import {validParentSettings,DAILY_NEW_WORD_LIMITS} from '../../../packages/parent_settings'
 export const V1_KEY='wordpal.database.v1',V2_KEY='wordpal.database.v2',POINTER_KEY='wordpal.database.active.v2'
 export const MIGRATION_BACKUP_KEY='wordpal.migration.backup.v1'
-export interface CourseProgress {currentLessonId:string;completedLessons:string[];lastLessonAccuracy:number|null;checkAccuracy:Record<string,number>;checkAttempts:Record<string,number>}
+export interface CourseProgress {currentLessonId:string;completedLessons:string[];lastLessonAccuracy:number|null;checkAccuracy:Record<string,number>;checkAttempts:Record<string,number>;introducedWords?:Record<string,string>}
 export const initialProgress=(courseId:string,index=0):CourseProgress=>({currentLessonId:getCourseLessons(courseId)[index]?.id||getCourseLessons(courseId)[0]?.id||'',completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{}})
 export function validateDatabase(value:unknown){
  const d=value as Database
@@ -13,11 +13,17 @@ export function validateDatabase(value:unknown){
  if(Object.entries(d.cards).some(([id,c])=>!c||c.wordId!==id||!Number.isFinite(Date.parse(c.due))||['stability','difficulty','elapsed_days','scheduled_days','reps','lapses','learning_steps','state'].some(field=>!Number.isFinite(c[field as keyof typeof c]))))return false
  if(d.history.some(a=>!a||typeof a.wordId!=='string'||typeof a.id!=='string'||!Number.isFinite(Date.parse(a.at))||![1,2,3,4].includes(a.rating)||typeof a.correct!=='boolean'))return false
  if(d.practiceAnswers!==undefined&&(!Array.isArray(d.practiceAnswers)||d.practiceAnswers.some(a=>!a||a.source!=='practice'||typeof a.wordId!=='string'||typeof a.id!=='string'||!Number.isFinite(Date.parse(a.at))||![1,2,3,4].includes(a.rating)||typeof a.correct!=='boolean')))return false
- const s=d.session
+ if(d.courseSessions!==undefined&&(!d.courseSessions||typeof d.courseSessions!=='object'||Array.isArray(d.courseSessions)))return false
+ if(Object.entries(d.courseSessions||{}).some(([id,s])=>!s||s.courseId&&s.courseId!==id))return false
+ for(const s of [d.session,...Object.values(d.courseSessions||{})]){
  if(s&&(!Array.isArray(s.wordIds)||!s.wordIds.length||s.wordIds.some(id=>typeof id!=='string')||new Set(s.wordIds).size!==s.wordIds.length||!Number.isInteger(s.index)||s.index<0||s.index>=s.wordIds.length||!Array.isArray(s.answers)||s.answers.length>s.wordIds.length||typeof s.input!=='string'||typeof s.selected!=='string'||!['flash','connect','listen','spell','dictation'].includes(s.mode)))return false
  if(s?.wordSources&&(typeof s.wordSources!=='object'||s.wordIds.some(id=>!['review_due','new_word','practice'].includes(s.wordSources![id]))||Object.keys(s.wordSources).some(id=>!s.wordIds.includes(id))))return false
  if(s?.plannerConfig&&(!DAILY_NEW_WORD_LIMITS.includes(s.plannerConfig.dailyNewWordLimit)||![1,2,3,4,5].includes(s.plannerConfig.entryLevel)))return false
+ if(s?.sequenceWordIds&&(!Array.isArray(s.sequenceWordIds)||s.sequenceWordIds.some(id=>!s.wordIds.includes(id))||new Set(s.sequenceWordIds).size!==s.sequenceWordIds.length))return false
+ if(s?.intent&&!['course','review','practice'].includes(s.intent))return false
+ }
  if(d.version===2&&(!d.courseProgress||typeof d.courseProgress!=='object'||Object.values(d.courseProgress).some(p=>!p||typeof p.currentLessonId!=='string'||!Array.isArray(p.completedLessons)||!p.checkAccuracy||!p.checkAttempts)||!Array.isArray(d.auxiliaryRecords)))return false
+ if(Object.values(d.courseProgress||{}).some(p=>p.introducedWords!==undefined&&(!p.introducedWords||typeof p.introducedWords!=='object'||Array.isArray(p.introducedWords)||Object.values(p.introducedWords).some(at=>typeof at!=='string'||at!==''&&!Number.isFinite(Date.parse(at))))))return false
  return true
 }
 export function convertV1(old:Database):Database{

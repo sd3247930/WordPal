@@ -3,7 +3,7 @@ import {go,setAppearance,seedDatabase,database} from './helpers'
 import {goldenDatabase} from './fixtures'
 
 for(const scale of [1.25,1.6])test(`顶部品牌字体按 ${scale} 比例放大，窄屏灵石换行保留完整信息`,async({page})=>{
- await setAppearance(page,'bento','light',{largeText:scale===1.25});await seedDatabase(page,{...goldenDatabase(),gems:999999})
+ await setAppearance(page,'swiss','light',{largeText:scale===1.25});await seedDatabase(page,{...goldenDatabase(),gems:999999})
  for(const width of [320,390,600,840]){
   await page.setViewportSize({width,height:900});await go(page,'home')
   if(scale===1.6){await page.evaluate(async()=>{const {windowLayout}=await import('/src/services/window/index.ts' as string);windowLayout.fontScale=1.6})}

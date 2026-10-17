@@ -1,30 +1,42 @@
 import {defineStore} from 'pinia'
-import {ref,computed} from 'vue'
+import {ref,computed,watch} from 'vue'
 import {useProfileStore} from './profile'
 import {useCourseStore} from './course'
 import {useReviewStore} from './review'
-import {getCourseLessons,getCourseWord,resolveFrozenWord} from '../services/content/ContentRegistry'
+import {getCourseLessons,getCourseWord,getCourseWordIds,resolveFrozenWord} from '../services/content/ContentRegistry'
 import {readStorage,writeStorage} from '../services/storage'
 import {initialProgress} from '../services/storage/MigrationV1toV2'
 import {isCorrectSpelling,normalizeSpelling} from '../../packages/phonics'
 import type {Word} from '../../packages/core_learning'
 export type ActivityKind='check'|'pair'|'letters'|'sentence'|'cloze'|'story'|'picture'|'listen-picture'|'phonics'|'challenge'|'speed'
 export interface ActivityState {id:string;courseId:string;contentVersion:string;lessonId:string;kind:ActivityKind;wordIds:string[];words:Record<string,Word>;index:number;input:string;selected:string;answers:{wordId:string;correct:boolean}[];completed:boolean;recorded:boolean;storyId?:string;storySnapshot?:{title:string;sentences:string[];questions?:{question:string;options:string[];answer:number}[]};revealed:boolean;hinted:boolean;timer?:{remainingMs:number;runningSince:number|null}}
-const key='wordpal.activities.session.v2'
+import {ACTIVITY_KEY as key,hasCourseMemory} from '../services/learning/CourseProgressMemory'
 export const useActivitiesStore=defineStore('activities',()=>{
  const profile=useProfileStore(),course=useCourseStore(),review=useReviewStore(),error=ref('')
- const raw=readStorage<ActivityState|null>(key,null)
- // A restored speed round always waits for the child to resume. Background time is free.
- if(raw?.timer)raw.timer={remainingMs:Math.max(0,Math.min(15000,Number(raw.timer.remainingMs)||0)),runningSince:null}
- const state=ref<ActivityState|null>(raw&&Array.isArray(raw.wordIds)&&raw.wordIds.every(id=>raw.words?.[id])&&Number.isInteger(raw.index)&&raw.index>=0&&Array.isArray(raw.answers)?raw:null)
- function patch(next:ActivityState|null){try{writeStorage(key,next);state.value=next;error.value='';return true}catch{error.value='练习进度无法保存，请释放设备空间后重试。';return false}}
+ const valid=(raw:any):raw is ActivityState=>{if(!raw||!hasCourseMemory(raw.courseId))return false;const allowed=new Set(getCourseWordIds(raw.courseId));return Array.isArray(raw.wordIds)&&raw.wordIds.every((id:string)=>allowed.has(id)&&raw.words?.[id])&&Object.keys(raw.words||{}).every(id=>allowed.has(id))&&Number.isInteger(raw.index)&&raw.index>=0&&Array.isArray(raw.answers)}
+ function remembered(pause=false){
+  const raw=readStorage<(Partial<ActivityState>&{courseStates?:Record<string,ActivityState>})|null>(key,null)
+  const states=Object.fromEntries(Object.entries(raw?.courseStates||{}).filter(([id,value])=>hasCourseMemory(id)&&valid(value)&&value.courseId===id))
+  if(valid(raw)&&hasCourseMemory(raw.courseId)){const {courseStates,...active}=raw as ActivityState&{courseStates?:Record<string,ActivityState>};states[raw.courseId]=active}
+  // Background time is free: a restored timed round waits for an explicit resume.
+  if(pause)for(const state of Object.values(states))if(state.timer)state.timer={remainingMs:Math.max(0,Math.min(15000,Number(state.timer.remainingMs)||0)),runningSince:null}
+  return states
+ }
+ const savedStates=ref<Record<string,ActivityState>>(remembered(true))
+ const state=computed(()=>savedStates.value[course.currentId]||null)
+ function patch(next:ActivityState|null){
+  const courseStates={...savedStates.value};for(const id of Object.keys(courseStates))if(!hasCourseMemory(id))delete courseStates[id]
+  if(next)courseStates[next.courseId]=next;else delete courseStates[course.currentId]
+  try{writeStorage(key,next?{...next,courseStates}:Object.keys(courseStates).length?{courseStates}:null);savedStates.value=courseStates;error.value='';return true}catch{error.value='练习进度无法保存，请释放设备空间后重试。';return false}
+ }
+ watch(()=>profile.courseMemoryRevision,()=>{savedStates.value=remembered(true)})
  const current=computed(()=>resolveFrozenWord(state.value?.words[state.value.wordIds[state.value.kind==='story'?0:state.value.index]],state.value?.courseId,state.value?.contentVersion))
  const total=computed(()=>state.value?.kind==='story'?Math.max(1,state.value.storySnapshot?.questions?.length||0):state.value?.wordIds.length||0)
  const choices=computed(()=>{if(!current.value||!state.value)return [];const used=new Set<string>(),pool=[current.value,...Object.values(state.value.words).map(w=>resolveFrozenWord(w,state.value!.courseId,state.value!.contentVersion)!).filter(w=>w.id!==current.value!.id&&w.meaning!==current.value!.meaning)];return pool.filter(w=>{if(used.has(w.meaning))return false;used.add(w.meaning);return true}).slice(0,4).sort((a,b)=>a.id.localeCompare(b.id))})
  function start(kind:ActivityKind){
   const lesson=course.lesson,pack=course.current
   if(!lesson)return false
-  if(kind==='check'){review.refresh();if(review.due.length||lesson.wordIds.some(id=>!profile.db.cards[id])){error.value='先完成到期复习与本课未学词，再进行整课检查。';return false}}
+  if(kind==='check'){review.refresh();const allowed=new Set(course.wordIds);if(review.due.some(card=>allowed.has(card.wordId))||lesson.wordIds.some(id=>!profile.db.cards[id])){error.value='先完成到期复习与本课未学词，再进行整课检查。';return false}}
   const pool=course.wordIds.map(id=>getCourseWord(course.currentId,id)).filter(Boolean)
   if(kind==='listen-picture'&&pool.filter(w=>!!w.image).length<2){error.value='本课没有足够的不同词图，可选择文字练习。';return false}
   if(['check','pair','challenge','speed'].includes(kind)&&pool.filter((w,i)=>pool.findIndex(other=>other.meaning===w.meaning)===i).length<2){error.value='词表不足以形成客观选择题，可先浏览或拼装单词。';return false}
@@ -64,7 +76,7 @@ export const useActivitiesStore=defineStore('activities',()=>{
   });if(!ok){error.value=profile.storageError;return false}return patch({...s,recorded:true})
  }
  function close(){return patch(null)}
- function reset(){return close()}
+ function reset(){try{writeStorage(key,null);savedStates.value={};error.value='';return true}catch{error.value='练习进度无法保存，请释放设备空间后重试。';return false}}
  const recommendation=computed(()=>{const records=(profile.db.auxiliaryRecords||[]).filter(r=>r.objective&&!r.hinted&&new Date(r.at).getTime()>Date.now()-14*86400000);const total=records.reduce((n,r)=>n+r.total,0),correct=records.reduce((n,r)=>n+r.correct,0),unique=new Set(records.flatMap(r=>r.wordIds||[]));return records.length>=3&&unique.size>=20&&correct/total>=.85?'最近练习越来越熟悉，可请家长考虑下一能力级别。':''})
  return {state,current,total,choices,error,start,input,select,hint,submit,next,record,close,reset,recommendation,remainingMs,pauseTimer,resumeTimer,expireTimer}
 })

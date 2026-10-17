@@ -1,12 +1,12 @@
 import type {LearningMode} from '../core_learning'
-export type DailyNewWordLimit=5|10|20
+export type DailyNewWordLimit=5|10|15|20
 export type EntryLevel=1|2|3|4|5
 export type AbilityLevelId=`L${EntryLevel}`
 export type SettingApplyState='saved'|'pending'|'applying'|'applied'|'error'
 export interface ParentSettings {dailyNewWordLimit:DailyNewWordLimit;entryLevel:EntryLevel;version:2;updatedAt:number}
 export interface ParentSettingsSource {dailyLimit:number;abilityLevel?:string;parentSettingsVersion?:number;parentSettingsUpdatedAt?:number}
 export interface AbilityLevelMeta {level:EntryLevel;title:string;description:string;recommendedSkills:readonly string[];modes:readonly LearningMode[]}
-export const DAILY_NEW_WORD_LIMITS=[5,10,20] as const
+export const DAILY_NEW_WORD_LIMITS=[5,10,15,20] as const
 export const ABILITY_LEVELS:readonly AbilityLevelMeta[]=[
  {level:1,title:'启蒙识词',description:'刚开始接触英语，以图片、声音和基础识词为主。',recommendedSkills:['看图','听音','识词'],modes:['flash','connect']},
  {level:2,title:'基础拼读',description:'认识一些常见词，开始建立自然拼读意识，并尝试基础拼写。',recommendedSkills:['自然拼读','配对','基础拼写'],modes:['flash','connect','listen']},
@@ -18,7 +18,7 @@ export const abilityMeta=(level:EntryLevel)=>ABILITY_LEVELS[level-1]
 /** Modes a learner at this level may use, in recommended rotation order. */
 export const levelModes=(level:EntryLevel):readonly LearningMode[]=>abilityMeta(level).modes
 export const abilityId=(level:EntryLevel):AbilityLevelId=>`L${level}`
-export function normalizeDailyLimit(value:number):DailyNewWordLimit {return !Number.isFinite(value)?10:value<=5?5:value<=15?10:20}
+export function normalizeDailyLimit(value:number):DailyNewWordLimit {return !Number.isFinite(value)?10:value<=5?5:value<=10?10:value<=15?15:20}
 export function entryLevel(value?:string):EntryLevel {return /^L[1-5]$/.test(value||'')?Number(value!.slice(1)) as EntryLevel:1}
 export function readParentSettings(source:ParentSettingsSource):ParentSettings {return {dailyNewWordLimit:normalizeDailyLimit(source.dailyLimit),entryLevel:entryLevel(source.abilityLevel),version:2,updatedAt:source.parentSettingsUpdatedAt||0}}
 export function assignParentSettings(source:ParentSettingsSource,settings:ParentSettings){source.dailyLimit=settings.dailyNewWordLimit;source.abilityLevel=abilityId(settings.entryLevel);source.parentSettingsVersion=2;source.parentSettingsUpdatedAt=settings.updatedAt}

@@ -1,4 +1,5 @@
-import type {Element,PetState} from '../../packages/pet_engine'
+import type {Element} from '../../packages/pet_engine'
+export {petStages,stageUnlocked} from '../services/pet-growth'
 
 export interface PetHouseTheme {
  id:Element;title:string;subtitle:string;primary:string;secondary:string;surface:string;deep:string;sceneAsset:string
@@ -11,8 +12,6 @@ export const petHouseThemes:Record<Element,PetHouseTheme>={
  wind:{id:'wind',title:'风之主题',subtitle:'经验 · 想象',primary:'#9278D8',secondary:'#B9A5EE',surface:'#F2EEFC',deep:'#6953B4',sceneAsset:'/static/pet-house/wind-scene.jpg',radius:{card:22,button:18},motion:{type:'breeze',intensity:1},icon:'✧'}
 }
 export const petMoods={calm:'平静',happy:'开心',excited:'兴奋',curious:'好奇'}
-export const petStages=[{title:'幼年期',level:1},{title:'成长期',level:4},{title:'进化期',level:8},{title:'未知形态',level:null}]
-export function stageUnlocked(pet:Pick<PetState,'level'>,index:number){const level=petStages[index]?.level;return typeof level==='number'&&pet.level>=level}
 export function petHouseStyle(id:Element,dark:boolean,highContrast=false){
  const t=petHouseThemes[id],fg=dark?'#F1EDE7':'#353B46',muted=highContrast?fg:dark?'#CCC5BB':'#626975',surface=dark?'#24272D':'#FFFDF9',bg=dark?'#191D24':'#FBF5EC',soft=dark?'#303640':'#F8EFE4',accent=dark?t.secondary:t.deep,border=highContrast?fg:dark?'#68717E':'#CCC1B3'
  const tokens:Record<string,string>={'pet-bg':bg,'pet-surface':surface,'pet-soft':soft,'pet-text':fg,'pet-muted':muted,'pet-border':border,'pet-accent':accent,'pet-bright':t.primary,'pet-tonal':dark?'#303640':t.surface,'pet-radius':t.radius.card+'px','pet-button-radius':t.radius.button+'px','pet-shadow':dark?'none':id==='fire'?'0 8px 26px rgba(94,67,39,.08)':id==='earth'?'0 8px 26px rgba(94,67,39,.06)':'0 6px 22px rgba(94,67,39,.04)',

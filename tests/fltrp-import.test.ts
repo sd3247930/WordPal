@@ -38,7 +38,7 @@ test('精确同义复用旧 ID 与词性，避免迁移既有 SRS；资源缺失
  assert.deepEqual(availableModes(word,[word,other],true,5).sort(),['connect','flash','spell'])
  assert.ok(!word.phonics.length&&!word.example&&!word.audio)
 })
-test('实际 Store 跨册保留 Card/历史/奖励，进行中切册只排队；正式评分仍由原 FSRS 计算',()=>{
+test('实际 Store 跨册保留 Card/历史/奖励，立即切册并恢复原会话；正式评分仍由原 FSRS 计算',()=>{
  const storage=new Map<string,string>();(globalThis as any).uni={getStorageSync:(k:string)=>storage.get(k)||'',setStorageSync:(k:string,v:string)=>storage.set(k,v),removeStorageSync:(k:string)=>storage.delete(k),showToast:()=>{}}
  configureLocalCourses(courses);loadCourseRegistry();setActivePinia(createPinia())
  const profile=useProfileStore(),course=useCourseStore(),learning=useLearningStore(),id=courses[0].vocabulary[0].id
@@ -46,7 +46,7 @@ test('实际 Store 跨册保留 Card/历史/奖励，进行中切册只排队；
  const before=JSON.stringify({cards:profile.db.cards,history:profile.db.history,pets:profile.db.pets,gems:profile.db.gems})
  for(const pack of courses){assert.ok(course.choose(pack.courseId).ok);assert.equal(JSON.stringify({cards:profile.db.cards,history:profile.db.history,pets:profile.db.pets,gems:profile.db.gems}),before);assert.equal(courseRegistry[pack.courseId].vocabulary[0].id,id)}
  course.choose(courses[0].courseId);assert.ok(learning.start());assert.equal(learning.current!.id,id)
- const frozen=JSON.stringify(learning.session);assert.ok(course.choose(courses[1].courseId).queued);assert.equal(JSON.stringify(learning.session),frozen);assert.equal(course.currentId,courses[0].courseId)
+ const frozen=JSON.stringify(learning.session);assert.ok(course.choose(courses[1].courseId).ok);assert.equal(JSON.stringify(profile.db.courseSessions?.[courses[0].courseId]),frozen);assert.equal(course.currentId,courses[1].courseId);course.choose(courses[0].courseId);assert.equal(JSON.stringify(learning.session),frozen)
  learning.setMode('flash');learning.reveal();const old=JSON.parse(JSON.stringify(profile.db.cards[id]));assert.ok(learning.submit(3));const answer=profile.db.history.at(-1)!;assert.deepEqual(profile.db.cards[id],new FSRSScheduler().schedule(old,3,new Date(answer.at)).card)
  assert.equal(profile.db.history.filter(a=>a.wordId===id).length,1);assert.equal(Object.keys(profile.db.cards).filter(k=>k===id).length,1)
  assert.ok(getCourseWord(courses[1].courseId,id).word)
@@ -60,13 +60,13 @@ test('能力上限 5/5/10/15/20 与每日设置取小值，复习/错词优先�
  }
 })
 
-test('从指定课节开始会优先该课未学词，并跨课补足每日额度；不改已有学习档案',()=>{
+test('旧章节选择不改变未开始教材的首词，按课节原序跨课补足额度',()=>{
  const storage=new Map<string,string>();(globalThis as any).uni={getStorageSync:(k:string)=>storage.get(k)||'',setStorageSync:(k:string,v:string)=>storage.set(k,v),removeStorageSync:(k:string)=>storage.delete(k)}
  configureLocalCourses(courses);loadCourseRegistry();setActivePinia(createPinia())
  const profile=useProfileStore(),course=useCourseStore(),learning=useLearningStore()
  course.choose(courses[0].courseId);const lesson=courses[0].units[0].lessons[1];assert.ok(course.chooseLesson(lesson.id))
  const before=JSON.stringify({cards:profile.db.cards,history:profile.db.history})
- assert.ok(learning.start());assert.deepEqual(learning.session!.wordIds.slice(0,8),lesson.wordIds)
+ assert.ok(learning.start());assert.deepEqual(learning.session!.wordIds.slice(0,8),courses[0].units[0].lessons[0].wordIds)
  assert.equal(learning.session!.wordIds.length,10);assert.equal(JSON.stringify({cards:profile.db.cards,history:profile.db.history}),before)
  configureLocalCourses([]);loadCourseRegistry()
 })

@@ -43,3 +43,14 @@
 .wordbook-continue-link{margin-bottom:12px}
 @media(max-width:599px){.familiarity-summary.wp-card{padding:14px;gap:8px}.course-word-row{flex-wrap:wrap}.course-word-tools{width:100%;flex-direction:row;justify-content:flex-end}.course-word-open{width:100%;flex-basis:100%}.course-card-grid{grid-template-columns:1fr}.course-card-options>uni-picker{min-width:100%;width:100%}.course-card-workspace .word-detail-sheet{left:8px;right:8px;width:auto}.familiarity-distribution>view{flex-wrap:wrap;gap:4px}.familiarity-distribution>view>.strong{margin-left:auto}.familiarity-summary .section-title{font-size:var(--wp-font-headline)}.wordbook-overview .coverage-track{display:none}}
 .large-text .course-word-row{flex-wrap:wrap}.large-text .course-word-tools{flex-direction:row;flex-wrap:wrap}.large-text .course-card-grid{grid-template-columns:1fr}
+
+/* Keep familiar words and their actions together; only long/large text wraps. */
+.familiarity-summary .block{margin-top:0}
+.familiarity-summary.wp-card{gap:var(--wp-card-safe-gap,8px)}
+@media(max-width:599px){
+ .course-card-list .course-word-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--wp-card-safe-gap,8px);align-items:center}
+ .course-card-list .course-word-open{width:auto;flex-basis:auto;min-width:0;padding:0}
+ .course-card-list .course-word-tools{width:auto;flex-direction:column;justify-content:center}
+ .large-text .course-card-list .course-word-row{grid-template-columns:minmax(0,1fr)}
+ .large-text .course-card-list .course-word-tools{flex-direction:row;justify-content:flex-end}
+}

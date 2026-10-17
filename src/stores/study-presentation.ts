@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {ref,computed} from 'vue'
+import {ref,computed,watch} from 'vue'
 import {readStorage,writeStorage} from '../services/storage'
 import {useLearningStore} from './learning'
 import {useProfileStore} from './profile'
@@ -10,22 +10,39 @@ import {isCorrectSpelling} from '../../packages/phonics'
 import type {LearningMode,ReviewRating} from '../../packages/core_learning'
 import {availableModes} from '../../packages/content_schema/course'
 import {readFeedbackSettings} from './feedback'
+import {resolveFrozenWord} from '../services/content/ContentRegistry'
 interface RevisitAnswer {wordId:string;correct:boolean}
 interface Presentation {sessionId:string;manual:boolean;revisitStarted:boolean;queue:string[];index:number;input:string;selected:string;revealed:boolean;answer:RevisitAnswer|null;answers:RevisitAnswer[];finished:boolean;petId:string;startExp:number;rewardTracked:boolean}
-const key='wordpal.study.presentation.v1'
+import {PRESENTATION_KEY as key,hasCourseMemory} from '../services/learning/CourseProgressMemory'
 const blank=():Presentation=>({sessionId:'',manual:false,revisitStarted:false,queue:[],index:0,input:'',selected:'',revealed:false,answer:null,answers:[],finished:false,petId:'water',startExp:0,rewardTracked:false})
 export const useStudyPresentation=defineStore('study-presentation',()=>{
  const learning=useLearningStore(),profile=useProfileStore(),pet=usePetStore(),error=ref('')
- const raw=readStorage<Partial<Presentation>|null>(key,null)
- const valid=raw&&typeof raw==='object'&&['manual','revisitStarted','revealed','finished','rewardTracked'].every(field=>typeof raw[field as keyof Presentation]==='boolean')&&Number.isFinite(raw.startExp)&&Array.isArray(raw.queue)&&raw.queue.every(id=>typeof id==='string'&&wordById[id])&&Array.isArray(raw.answers)&&raw.answers.every(a=>a&&typeof a.correct==='boolean'&&!!wordById[a.wordId])&&typeof raw.sessionId==='string'&&Number.isInteger(raw.index)&&raw.index!>=0&&raw.index!<=raw.queue.length&&typeof raw.input==='string'&&typeof raw.selected==='string'&&(!raw.answer||typeof raw.answer.correct==='boolean'&&!!wordById[raw.answer.wordId])&&(!raw.revisitStarted||raw.finished||raw.index!<raw.queue.length)
- const state=ref<Presentation>(valid?{...blank(),...raw} as Presentation:blank())
- function patch(values:Partial<Presentation>){const next={...state.value,...values};try{writeStorage(key,next);state.value=next;error.value='';return true}catch{error.value='界面进度暂时无法保存，请释放设备空间后重试。';return false}}
+ const valid=(raw:any):raw is Presentation=>!!raw&&typeof raw==='object'&&['manual','revisitStarted','revealed','finished','rewardTracked'].every(field=>typeof raw[field as keyof Presentation]==='boolean')&&Number.isFinite(raw.startExp)&&Array.isArray(raw.queue)&&raw.queue.every((id:string)=>typeof id==='string'&&wordById[id])&&Array.isArray(raw.answers)&&raw.answers.every((a:RevisitAnswer)=>a&&typeof a.correct==='boolean'&&!!wordById[a.wordId])&&typeof raw.sessionId==='string'&&Number.isInteger(raw.index)&&raw.index!>=0&&raw.index!<=raw.queue.length&&typeof raw.input==='string'&&typeof raw.selected==='string'&&(!raw.answer||typeof raw.answer.correct==='boolean'&&!!wordById[raw.answer.wordId])&&(!raw.revisitStarted||raw.finished||raw.index!<raw.queue.length)
+ function remembered(){
+  const stored=readStorage<(Partial<Presentation>&{courseStates?:Record<string,Presentation>})|null>(key,null)
+  const owners=new Map(Object.entries(profile.db.courseSessions||{}).map(([id,session])=>[session.id,id]))
+  if(learning.session)owners.set(learning.session.id,learning.session.courseId||profile.db.currentCourseId||'starter')
+  const states=Object.fromEntries(Object.entries(stored?.courseStates||{}).filter(([id,value])=>hasCourseMemory(id)&&valid(value)&&owners.get(value.sessionId)===id))
+  if(valid(stored)){const id=owners.get(stored.sessionId);if(id&&hasCourseMemory(id)){const {courseStates,...active}=stored as Presentation&{courseStates?:Record<string,Presentation>};states[id]=active}}
+  return states
+ }
+ const initial=readStorage<Partial<Presentation>|null>(key,null)
+ const state=ref<Presentation>(valid(initial)?Object.fromEntries(Object.entries(initial).filter(([field])=>field!=='courseStates')) as unknown as Presentation:blank())
+ function patch(values:Partial<Presentation>){
+  const next={...state.value,...values},courseStates=remembered(),id=learning.session?.courseId||profile.db.currentCourseId||'starter'
+  if(next.sessionId&&hasCourseMemory(id))courseStates[id]=next
+  try{writeStorage(key,{...next,courseStates});state.value=next;error.value='';return true}catch{error.value='界面进度暂时无法保存，请释放设备空间后重试。';return false}
+ }
  function sync(){
   const session=learning.session
-  if(!session)return
+  if(!session){state.value=blank();return}
   if(state.value.sessionId!==session.id){
+   const saved=remembered()[session.courseId||profile.db.currentCourseId||'starter']
+   if(saved?.sessionId===session.id)state.value={...saved}
+   else{
    const untouched=session.index===0&&!session.answers.length&&!session.input&&!session.selected&&session.mode==='flash'
    if(!patch({...blank(),sessionId:session.id,manual:!untouched,petId:pet.current.element,startExp:pet.all.reduce((sum,item)=>sum+item.exp,0),rewardTracked:untouched}))return
+   }
   }
   if(session.completedAt){
    if(!state.value.revisitStarted)patch({revisitStarted:true,queue:revisitWords(session.answers),finished:revisitWords(session.answers).length===0})
@@ -36,7 +53,7 @@ export const useStudyPresentation=defineStore('study-presentation',()=>{
   }
  }
  const revisiting=computed(()=>!!learning.session?.completedAt&&state.value.sessionId===learning.session.id&&state.value.revisitStarted&&!state.value.finished)
- const current=computed(()=>revisiting.value?wordById[state.value.queue[state.value.index]]:learning.current)
+ const current=computed(()=>revisiting.value?resolveFrozenWord(wordById[state.value.queue[state.value.index]],learning.session?.courseId,learning.session?.contentVersion):learning.current)
  const mode=computed<LearningMode>(()=>revisiting.value?'spell':learning.session?.mode||'flash')
  const input=computed(()=>revisiting.value?state.value.input:learning.session?.input||'')
  const selected=computed(()=>revisiting.value?state.value.selected:learning.session?.selected||'')
@@ -64,6 +81,7 @@ export const useStudyPresentation=defineStore('study-presentation',()=>{
   if(revisiting.value){if(index.value+1>=total.value)patch({finished:true});else patch({index:index.value+1,input:'',revealed:false,answer:null})}
   else {learning.next();sync()}
  }
- function reset(){return patch(blank())}
+ function reset(){try{writeStorage(key,blank());state.value=blank();error.value='';return true}catch{error.value='界面进度暂时无法保存，请释放设备空间后重试。';return false}}
+ watch(()=>profile.courseMemoryRevision,()=>{state.value=blank();sync()})
  return {state,error,sync,revisiting,current,mode,input,selected,revealed,answer,index,total,completed,earnedExp,chooseMode,automatic,updateInput,select,reveal,hint,submit,next,reset}
 })

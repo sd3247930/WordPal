@@ -5,10 +5,10 @@ export interface PetState {petId:string;element:Element;level:number;exp:number;
 export interface PetRewardEvent {source:'review_due'|'new_word'|'pronunciation'|'spelling'|'dictation'|'streak';exp:number;affection:number}
 export const elements:Element[]=['water','fire','earth','wind']
 export const petInfo:Record<Element,{name:string;elementName:string;personality:string;message:string}>={
- water:{name:'小澜',elementName:'水象',personality:'温柔 · 冷静 · 智慧',message:'慢一点没关系，我们再听一次。'},
- fire:{name:'小焰',elementName:'火象',personality:'勇气 · 行动 · 成长',message:'每一次尝试，都是新的勇气。'},
- earth:{name:'小芽',elementName:'土象',personality:'稳定 · 坚持 · 守护',message:'小小的坚持，也会长成大树。'},
- wind:{name:'小岚',elementName:'风象',personality:'探索 · 想象 · 自由',message:'还有好多新世界，我们一起发现。'}
+ water:{name:'玄冥',elementName:'水象',personality:'温柔 · 冷静 · 智慧',message:'慢一点没关系，我们再听一次。'},
+ fire:{name:'祝融',elementName:'火象',personality:'勇气 · 行动 · 成长',message:'每一次尝试，都是新的勇气。'},
+ earth:{name:'后土',elementName:'土象',personality:'稳定 · 坚持 · 守护',message:'小小的坚持，也会长成大树。'},
+ wind:{name:'飞廉',elementName:'风象',personality:'探索 · 想象 · 自由',message:'还有好多新世界，我们一起发现。'}
 }
 export function createPet(element:Element):PetState{return {petId:`pet-${element}`,element,level:1,exp:0,affection:0,mood:'calm',evolutionStage:1,equippedCosmetics:[],lastInteractionAt:0}}
 export function growPet(pet:PetState,event:PetRewardEvent,now:number):PetState {

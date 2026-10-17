@@ -29,11 +29,11 @@ test('英文、中文、单元搜索；重点、稍后、Sheet 焦点与跨窗�
  await page.getByRole('button',{name:'清空单词搜索'}).click();await page.locator('.review-tabs .mode-button').filter({hasText:'重点复习'}).click();await expect(page.locator('.wordbook-focus-legend')).toContainText('我的重点 1');await page.reload();await page.locator('.review-tabs .mode-button').filter({hasText:'重点复习'}).click();await expect(page.locator('.review-row').filter({hasText:'cat'})).toContainText('我的重点')
  expect(await database(page)).toEqual(before)
 })
-test('导航 SVG 五个语义与主题色、选中和触控目标一致',async({page})=>{
+test('导航高清图标五种语义独立、主题切换稳定且资源完整',async({page})=>{
  await page.setViewportSize({width:390,height:844});await go(page,'home');const images=page.locator('.bottom-nav .wp-nav-icon img');await expect(images).toHaveCount(5)
  const sources=await images.evaluateAll(nodes=>nodes.map(node=>(node as HTMLImageElement).src));expect(new Set(sources).size).toBe(5)
- for(const src of sources){const svg=decodeURIComponent(src.split(',')[1]);expect(svg).toContain('viewBox="0 0 24 24"');expect(svg).toContain('stroke-linecap="round"');expect(svg).not.toContain('gradient')}
- const before=sources[0];await go(page,'settings');await page.locator('.theme-choice').filter({hasText:'夜读星幕'}).click();await go(page,'home');expect(await page.locator('.bottom-nav .wp-nav-icon img').first().getAttribute('src')).not.toBe(before)
+ for(const image of await images.all()){await expect(image).toHaveAttribute('src',/\/static\/icons\/nav\/hd-/);await expect(image).toHaveJSProperty('naturalWidth',1024);await expect(image).toHaveJSProperty('naturalHeight',1024)}
+ await go(page,'settings');await page.getByRole('group',{name:'明暗模式',exact:true}).getByRole('button',{name:'深色',exact:true}).click();await go(page,'home');await expect(page.locator('.wp-app')).toHaveAttribute('data-mode','dark');expect(await images.evaluateAll(nodes=>nodes.map(node=>(node as HTMLImageElement).src))).toEqual(sources)
 })
 const windows=[{name:'phone-portrait',width:390,height:844},{name:'phone-landscape',width:844,height:390},{name:'tablet-portrait',width:768,height:1024},{name:'tablet-landscape',width:1024,height:768},{name:'tablet-wide',width:1280,height:800},{name:'split-narrow',width:600,height:900},{name:'split-wide',width:900,height:900}]
 test('手机首屏可完整看到连接提交与闪现评分，不被导航覆盖',async({page})=>{
@@ -41,7 +41,7 @@ test('手机首屏可完整看到连接提交与闪现评分，不被导航覆�
  await page.locator('.answer-actions .wp-button').filter({hasText:'查看答案'}).click();const nav=await page.locator('.bottom-nav').boundingBox();const ratings=await page.locator('.rating-grid').boundingBox();expect(ratings!.y+ratings!.height).toBeLessThanOrEqual(nav!.y)
  await page.locator('.rating-grid .wp-button').filter({hasText:'记住了'}).click();await page.locator('.answer-feedback .wp-button').click();await page.locator('.answer-choice').filter({hasText:'狗'}).click();const action=await page.locator('.answer-actions .wp-button').filter({hasText:'确认答案'}).boundingBox();expect(action!.y+action!.height).toBeLessThanOrEqual(nav!.y)
 })
-for(const theme of ['bento','swiss','soft','oled'])for(const size of windows)test(`${theme} ${size.name} 单词详情与搜索截图`,async({page})=>{
+for(const theme of ['swiss'])for(const size of windows)test(`${theme} ${size.name} 单词详情与搜索截图`,async({page})=>{
  await page.clock.install({time:new Date('2026-10-04T08:00:00Z')});await page.setViewportSize(size);await setAppearance(page,theme,theme==='oled'?'dark':'light',{largeText:size.name==='split-narrow'});await seedDatabase(page,goldenDatabase());await go(page,'review')
  await page.locator('.wordbook-search input').fill('cat');await page.locator('.review-row').click();await expect(page.locator('.detail-word')).toHaveText('cat');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBeTruthy()
  // Full-page baselines start at the same document and panel scroll positions after click-to-focus.

@@ -2,7 +2,7 @@ import {test,expect} from '@playwright/test'
 import {setAppearance,seedDatabase,go,app} from './helpers'
 import {goldenDatabase} from './fixtures'
 const sizes=[{name:'compact',width:390,height:844},{name:'medium',width:768,height:1024},{name:'expanded',width:1100,height:900}]
-for(const theme of ['bento','swiss','soft','oled'])for(const mode of ['light','dark'])for(const size of sizes){
+for(const theme of ['swiss'])for(const mode of ['light','dark'])for(const size of sizes){
  test(`${theme} ${mode} ${size.name} 全局主题截图`,async({page})=>{
   await page.clock.install({time:new Date('2026-10-03T08:00:00Z')})
   await page.setViewportSize(size);await setAppearance(page,theme,mode);await seedDatabase(page,goldenDatabase())

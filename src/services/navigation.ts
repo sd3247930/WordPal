@@ -6,3 +6,7 @@ let requestedCourseId=''
 export function openCourseGallery(courseId=''){requestedCourseId=courseId;uni.navigateTo({url:'/pages/course/index'})}
 export function consumeGalleryCourseId(){const id=requestedCourseId;requestedCourseId='';return id}
 export function closeCourseGallery(){uni.navigateBack({delta:1})}
+/** Open the existing practice controls without replacing a session or its draft. */
+let requestedStudyPractice=false
+export function openStudyPractice(){requestedStudyPractice=true;navigate('learn')}
+export function consumeStudyPractice(){const requested=requestedStudyPractice;requestedStudyPractice=false;return requested}

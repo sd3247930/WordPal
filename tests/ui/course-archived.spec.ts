@@ -17,11 +17,10 @@ test('归档教材：显示「已归档」角标，主按钮变为「恢复并�
  await card.click()
  await expect(page.locator('.course-review-panel')).toContainText('合成归档教材')
 
- // 待核对 + 已归档：仍必须先勾选确认
+ // 归档保留恢复入口，不再要求重复声明本机使用权限。
  const restore=page.getByRole('button',{name:'恢复并使用',exact:true})
- await expect(restore).toBeDisabled()
+ await expect(restore).toBeEnabled()
  await expect(page.getByRole('button',{name:'确认并应用',exact:true})).toHaveCount(0)
- await page.locator('.course-review-panel .course-check').first().click()
  await expect(restore).toBeEnabled()
 
  // Record the toast payload directly: uni's H5 toast auto-dismisses and its DOM node is timing dependent.

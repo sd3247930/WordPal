@@ -1,14 +1,12 @@
 import {defineStore} from 'pinia'
 import {computed,ref,watch} from 'vue'
-import {themePacks,tokenStyle,contrast, type ColorMode,type ThemeId} from '../styles/themes'
+import {themePacks,tokenStyle,contrast} from '../styles/themes'
 import {readStorage,writeStorage} from '../services/storage'
 import {accessibleAccent,getAndroidWallpaperAccent} from '../services/appearance'
-export interface AccessibilityPreferences {reducedMotion:boolean;largeText:boolean;highContrast:boolean;screenReaderLabels:boolean}
-export interface AppearanceSettings extends AccessibilityPreferences {themeId:ThemeId;colorMode:ColorMode;dynamicColor:boolean}
-const defaults:AppearanceSettings={themeId:'bento',colorMode:'system',reducedMotion:false,largeText:false,highContrast:false,screenReaderLabels:true,dynamicColor:false}
+import {APPEARANCE_KEY,normalizeAppearance} from '../services/appearance-settings'
+export type {AccessibilityPreferences,AppearanceSettings} from '../services/appearance-settings'
 export const useThemeStore=defineStore('theme',()=>{
- const saved=readStorage<AppearanceSettings>('wordpal.appearance.v1',defaults)
- const settings=ref({...defaults,...saved,themeId:themePacks[saved.themeId]?saved.themeId:'bento',colorMode:['system','light','dark'].includes(saved.colorMode)?saved.colorMode:'system'} as AppearanceSettings)
+ const settings=ref(normalizeAppearance(readStorage<unknown>(APPEARANCE_KEY,null)))
  const systemDark=ref(uni.getSystemInfoSync().theme==='dark');const systemReduced=ref(false);const systemAccent=ref(getAndroidWallpaperAccent())
  const mode=computed(()=>(settings.value.colorMode==='system'?(systemDark.value?'dark':'light'):settings.value.colorMode) as 'light'|'dark')
  const style=computed(()=>{
@@ -18,7 +16,8 @@ export const useThemeStore=defineStore('theme',()=>{
    return tokenStyle(tokens)
  })
  const reduced=computed(()=>settings.value.reducedMotion || systemReduced.value)
- watch(settings,s=>writeStorage('wordpal.appearance.v1',s),{deep:true})
+ // Persist the migration immediately. A full disk must not prevent the app from opening.
+ watch(settings,s=>{try{writeStorage(APPEARANCE_KEY,s)}catch{}},{deep:true,immediate:true})
  if(uni.onThemeChange)uni.onThemeChange(e=>systemDark.value=e.theme==='dark')
  // #ifdef H5
  const darkMedia=window.matchMedia('(prefers-color-scheme: dark)'),motionMedia=window.matchMedia('(prefers-reduced-motion: reduce)')

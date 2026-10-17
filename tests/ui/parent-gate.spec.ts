@@ -33,7 +33,7 @@ test('锁定和离开页面后直接调用设置Store均拒绝写入；没有持
  await answerParentGate(page);await page.evaluate(()=>{(window as any).uni.navigateTo({url:'/pages/settings/index'})});expect(await save()).toBe(false);expect(await database(page)).toEqual(before)
  expect(await page.evaluate(()=>Object.keys(localStorage).filter(k=>k.startsWith('wordpal.parent-gate.')))).toEqual(['wordpal.parent-gate.last-question.v1'])
 })
-for(const theme of ['bento','swiss','soft','oled'])test(`${theme}验证页窄屏、大字、深浅主题、高对比无溢出且触控不缩小`,async({page})=>{
+for(const theme of ['swiss'])test(`${theme}验证页窄屏、大字、深浅主题、高对比无溢出且触控不缩小`,async({page})=>{
  await setAppearance(page,theme,theme==='oled'?'dark':'light',{largeText:true,highContrast:true});await page.setViewportSize({width:320,height:720});await go(page,'parent')
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);await expect(page.locator('.parent-math-question')).toHaveAttribute('aria-label',/请回答：\d 乘以 \d 等于多少/)
  const height=await page.locator('.parent-answer').evaluate(e=>e.getBoundingClientRect().height);expect(height).toBeGreaterThanOrEqual(56)

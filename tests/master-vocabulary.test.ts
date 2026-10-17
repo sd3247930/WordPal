@@ -39,8 +39,8 @@ test('教材系列与资源扩展通过双重契约；缺起点可标记，冲�
 })
 test('本机目录冷启动、归档、清空导入保持词库，跨册同义词只保留一张 FSRS 卡',async()=>{
  const packs=fixture();reset(packs);const profile=useProfileStore(),course=useCourseStore(),learning=useLearningStore(),id=packs[0].vocabulary[0].id
- course.choose(packs[0].courseId);learning.start();learning.reveal();learning.submit(3);assert.equal(profile.db.cards[id].reps,1);const saved=JSON.stringify(profile.db.cards[id]);course.choose(packs[1].courseId);assert.equal(profile.db.pendingCourseId,packs[1].courseId)
- profile.transact(d=>{d.session!.completedAt=new Date().toISOString()});course.applyPending();assert.equal(learning.newWords.includes(id),false);assert.equal(JSON.stringify(profile.db.cards[id]),saved)
+ course.choose(packs[0].courseId);learning.start();learning.reveal();learning.submit(3);assert.equal(profile.db.cards[id].reps,1);const saved=JSON.stringify(profile.db.cards[id]);course.choose(packs[1].courseId);assert.equal(profile.db.currentCourseId,packs[1].courseId)
+ assert.equal(learning.newWords.includes(id),false);assert.equal(JSON.stringify(profile.db.cards[id]),saved)
  setArchived(packs[0].courseId,true);loadCourseRegistry();assert.ok(wordById[id]);assert.equal(useReviewStore().due.filter(w=>w.wordId===id).length,0);await clearInstalledCourses();loadCourseRegistry();assert.ok(courseRegistry[packs[0].courseId]);assert.equal(!!archiveStatus[packs[0].courseId],false);await assert.rejects(exportCourse(packs[0].courseId),/本机/);await assert.rejects(installTextCourse(packs[0]),/内置/)
 })
 test('连胜与闪电独立记录不改变 FSRS、奖励或级别建议，限时恢复暂停且超时只记一次',()=>{

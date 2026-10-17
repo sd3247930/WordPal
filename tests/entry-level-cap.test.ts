@@ -5,7 +5,7 @@ import {levelModes} from '../packages/parent_settings'
 
 test('能力起点新词上限为 5/5/10/15/20',()=>{
  assert.equal(BEGINNER_DAILY_NEW_WORD_CAP,5)
- for(const limit of [5,10,20] as const){
+ for(const limit of [5,10,15,20] as const){
   assert.equal(plannedNewWordCeiling({dailyNewWordLimit:limit,entryLevel:1}),Math.min(limit,5))
   assert.equal(plannedNewWordCeiling({dailyNewWordLimit:limit,entryLevel:2}),Math.min(limit,5))
   for(const [level,cap] of [[3,10],[4,15],[5,20]] as const)assert.equal(plannedNewWordCeiling({dailyNewWordLimit:limit,entryLevel:level}),Math.min(limit,cap))

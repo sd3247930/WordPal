@@ -10,12 +10,14 @@ import {downloadLocalFile} from '../services/course-import/FilePicker'
 import {restoreLearningBackup} from '../services/storage/LearningBackup'
 import {ensureIdentitySnapshot,IDENTITY_BACKUP_KEY} from '../services/storage/IdentityUpgrade'
 import {migrateParentSettings,type DailyNewWordLimit,type AbilityLevelId} from '../../packages/parent_settings'
+import {pruneCourseProgress,pruneCourseUiMemory} from '../services/learning/CourseProgressMemory'
 export interface AuxiliaryRecord {id:string;courseId:string;lessonId:string;kind:string;at:string;correct:number;total:number;objective?:boolean;hinted?:boolean;wordIds?:string[]}
 export interface Database {
   version: 1|2; cards: Record<string,MemoryCard>; session: LearningSession | null
   history: Answer[]; practiceAnswers?:Answer[]; rewardIds: string[]; gems: number; pets: Record<string,PetState>; companion: string
   dailyLimit: DailyNewWordLimit; lastLessonAccuracy: number | null; lessonIndex: number; streakDates: string[]
   currentCourseId?:string;pendingCourseId?:string;courseProgress?:Record<string,CourseProgress>;auxiliaryRecords?:AuxiliaryRecord[];abilityLevel?:AbilityLevelId
+  courseSessions?:Record<string,LearningSession>
   parentSettingsVersion?:2;parentSettingsUpdatedAt?:number
 }
 export const DATABASE_KEY = 'wordpal.database.v1'
@@ -24,11 +26,13 @@ export const useProfileStore = defineStore('profile',()=>{
   loadCourseRegistry()
   const loaded=loadDatabase(freshDatabase),db=ref<Database>(loaded.database),storageError=ref(loaded.error),bootError=ref(loaded.readOnly?loaded.error:'')
   const readOnly=ref(loaded.readOnly)
+  const courseMemoryRevision=ref(0)
   if(!readOnly.value)try{ensureIdentitySnapshot(db.value)}catch{storageError.value='升级备份暂未保存，请释放存储空间后重启；原学习档案保留。'}
   function adopt(next:{database:Database;key:string;error:string;readOnly:boolean}){
     loaded.key=next.key;loaded.error=next.error;loaded.readOnly=next.readOnly
     db.value=next.database;readOnly.value=next.readOnly
     storageError.value=next.error;bootError.value=next.readOnly?next.error:''
+    if(next.database.version===2&&!next.readOnly)reconcileCourseMemory()
     return next.database.version===2&&!next.readOnly
   }
   /**
@@ -73,8 +77,16 @@ export const useProfileStore = defineStore('profile',()=>{
     try {writeStorage(loaded.key,draft); db.value=draft;storageError.value='';return true}
     catch {storageError.value='保存失败，请释放设备存储后重试。当前答案尚未记入。';return false}
   }
+  function reconcileCourseMemory(removedId?:string){
+    if(loaded.readOnly||db.value.version!==2)return false
+    const candidate=JSON.parse(JSON.stringify(db.value)) as Database,changed=pruneCourseProgress(candidate,removedId)
+    if(changed&&!transact(draft=>{pruneCourseProgress(draft,removedId)}))return false
+    try{const uiChanged=pruneCourseUiMemory(db.value,removedId);if(changed||uiChanged)courseMemoryRevision.value++;return true}
+    catch{storageError.value='教材进度清理尚未完成，请释放设备存储后重新打开应用。';return false}
+  }
   function erase() { if(loaded.readOnly)throw new Error('需要先恢复档案。');const clean={...freshDatabase(),version:loaded.database.version,currentCourseId:'starter',courseProgress:{starter:initialProgress('starter')},auxiliaryRecords:[]};writeStorage(loaded.key,clean);db.value=clean as Database;for(const key of [V1_KEY,V2_KEY,MIGRATION_BACKUP_KEY,IDENTITY_BACKUP_KEY,'wordpal.migration.backup.digest'])if(key!==loaded.key)uni.removeStorageSync?.(key);storageError.value='' }
   if(!loaded.readOnly&&db.value.parentSettingsVersion!==2)transact(d=>Object.assign(d,migrateParentSettings(d)))
-  function restore(database:Database){try{const migrated=migrateParentSettings(database),key=restoreLearningBackup(migrated,uni.getStorageSync(loaded.key));loaded.key=key;loaded.readOnly=false;readOnly.value=false;db.value=JSON.parse(JSON.stringify(migrated));storageError.value='';bootError.value='';return true}catch(error){storageError.value=(error as Error).message;return false}}
-  return {db,readOnly,transact,erase,restore,retryMigration,faultSnapshot,storageError,bootError}
+  reconcileCourseMemory()
+  function restore(database:Database){try{const migrated=migrateParentSettings(database),key=restoreLearningBackup(migrated,uni.getStorageSync(loaded.key));loaded.key=key;loaded.readOnly=false;readOnly.value=false;db.value=JSON.parse(JSON.stringify(migrated));storageError.value='';bootError.value='';return reconcileCourseMemory()}catch(error){storageError.value=(error as Error).message;return false}}
+  return {db,readOnly,transact,erase,restore,retryMigration,faultSnapshot,storageError,bootError,reconcileCourseMemory,courseMemoryRevision}
 })

@@ -11,12 +11,10 @@ test('四象正式资源与头像离线可用，不携带源凭证或隐私元�
   assert.ok(data.length<400000,element+' stays within the offline image budget')
  }
 })
-test('四象标签可读且夜读两种明暗都保留低眩光背景',()=>{
+test('瑞士主题明暗的四象标签可读，深色保留低眩光背景',()=>{
  for(const pack of Object.values(themePacks))for(const build of [pack.buildLight,pack.buildDark]){
   const t=build().tokens
   for(const element of ['water','fire','earth','wind'])assert.ok(contrast(t['element-'+element],t[element+'-soft'])>=4.5,pack.id+': '+element)
  }
- for(const build of [themePacks.oled.buildLight,themePacks.oled.buildDark]){
-  const t=build().tokens;assert.ok(contrast(t.background,'#ffffff')>10);assert.ok(contrast(t.surface,'#ffffff')>10)
- }
+ const t=themePacks.swiss.buildDark().tokens;assert.ok(contrast(t.background,'#ffffff')>10);assert.ok(contrast(t.surface,'#ffffff')>10)
 })

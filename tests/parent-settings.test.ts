@@ -23,12 +23,15 @@ async function authorize(){const gate=useParentGateStore();gate.beginVisit({});g
 function legacy(limit=3){const db={...freshDatabase(),version:2,courseProgress:{},auxiliaryRecords:[]} as Database;delete db.parentSettingsVersion;delete db.parentSettingsUpdatedAt;db.dailyLimit=limit as DailyNewWordLimit;db.abilityLevel='L2';db.cards.cat=newCard('cat',new Date('2040-01-01'));db.gems=12;db.session={id:'existing',date:'2026-10-06',startedAt:'2026-10-06T08:00:00Z',kind:'practice',wordIds:['cat'],index:0,mode:'spell',input:'ca',selected:'',revealed:false,answers:[]};return db}
 function protectedFields(db:Database){const {dailyLimit,abilityLevel,parentSettingsVersion,parentSettingsUpdatedAt,...rest}=db;return JSON.stringify(rest)}
 async function largeCourse(course:ReturnType<typeof useCourseStore>){
- const starter=courseRegistry['original-primary'],ids=starter.vocabulary.slice(0,40).map(w=>w.id)
- const pack:CoursePack={...JSON.parse(JSON.stringify(starter)),courseId:'parent-settings-course',title:'合成家长设置验证课',abilityLevels:['L1','L2','L3','L4','L5'],units:[{id:'u01',title:'合成单元',lessons:[{id:'l01',title:'合成长课',wordIds:ids}]}]}
+ const ids=Array.from({length:48},(_,index)=>'parent-pool-'+String(index+1).padStart(2,'0'))
+ const pack:CoursePack={schemaVersion:2,courseId:'parent-settings-course',contentVersion:'1.0.0',title:'合成家长设置验证课',route:'theme',abilityLevels:['L1','L2','L3','L4','L5'],
+  sources:[{id:'parent-test-source',type:'author-created',rightsStatus:'private-use-declared',attribution:'测试夹具',revision:'parent-test-1'}],
+  vocabulary:ids.map((id,index)=>({id,language:'en',lemma:'pool'+String(index+1).padStart(2,'0'),meaning:'测试词'+(index+1),pos:'n.',sourceId:'parent-test-source',order:index+1,learningLevel:1})),
+  units:[{id:'u01',title:'合成单元',lessons:[{id:'l01',title:'合成长课',wordIds:ids,activities:['flash','connect','listen','spell']}]}],assets:[]}
  await installTextCourse(pack);assert.equal(course.choose(pack.courseId).ok,true);return ids
 }
 test('家长设置一次迁移旧3/5/10及异常有限值，保留等级、完整Session和学习数据',async()=>{
- for(const [before,after] of [[3,5],[5,5],[10,10],[-1,5],[0,5],[6,10],[15,10],[16,20],[99,20]]){
+ for(const [before,after] of [[3,5],[5,5],[10,10],[-1,5],[0,5],[6,10],[15,15],[16,20],[99,20]]){
   const old=legacy(before);assert.ok(validateDatabase(old));const snapshot=JSON.stringify(old),migrated=migrateParentSettings(old,123)
   assert.equal(migrated.dailyLimit,after);assert.equal(migrated.abilityLevel,'L2');assert.equal(migrated.parentSettingsVersion,2);assert.equal(migrated.parentSettingsUpdatedAt,123);assert.equal(protectedFields(migrated),protectedFields(old));assert.equal(JSON.stringify(old),snapshot);assert.equal(migrateParentSettings(migrated,999),migrated);assert.ok(validateDatabase(migrated))
  }
@@ -41,16 +44,19 @@ test('迁移或保存失败保留最后成功值，恢复后离线持久化，�
  fail=false;assert.equal(parent.save({dailyNewWordLimit:20}),true);setActivePinia(createPinia());assert.equal(useParentSettingsStore().settings.dailyNewWordLimit,20)
 })
 test('L1–L5元数据、推荐引擎和默认题型实际读取能力起点；不强制切课或改变档案',async()=>{
- const {profile,parent,course}=await fresh();assert.equal(parent.settings.dailyNewWordLimit,10);assert.equal(parent.settings.entryLevel,3);assert.deepEqual(DAILY_NEW_WORD_LIMITS,[5,10,20]);const before=protectedFields(profile.db)
+ const {profile,parent,course}=await fresh();assert.equal(parent.settings.dailyNewWordLimit,10);assert.equal(parent.settings.entryLevel,3);assert.deepEqual(DAILY_NEW_WORD_LIMITS,[5,10,15,20]);const before=protectedFields(profile.db)
  for(const level of [1,5,2,3,4] as EntryLevel[]){assert.equal(parent.save({entryLevel:level}),true);const meta=ABILITY_LEVELS[level-1];assert.ok(meta.title&&meta.description&&meta.recommendedSkills.length);assert.equal(course.recommendation.entryLevel,level);assert.equal(course.recommendationConfig.entryLevel,level);assert.ok(course.recommendation.courses.every(c=>c.abilityLevels.includes('L'+level)));assert.equal(parent.levelState,'applied');assert.equal(protectedFields(profile.db),before);assert.equal(automaticMode(0,'new_word',level),meta.modes[0])}
  assert.ok(!ABILITY_LEVELS[0].modes.includes('dictation'));assert.ok(ABILITY_LEVELS[4].modes.includes('dictation'))
 })
 test('Planner去重并按due→weak→new排序；12个到期不被5/10/20新词上限截断，计入今日已学',async()=>{
  for(const limit of DAILY_NEW_WORD_LIMITS){const due=Array.from({length:12},(_,i)=>'due-'+i),news=Array.from({length:30},(_,i)=>'new-'+i),plan=planDailySession({config:{dailyNewWordLimit:limit,entryLevel:5},dueIds:[...due,due[0]],weakIds:[due[0],'weak'],newIds:['weak',...news],newToday:2});assert.deepEqual(plan.dueIds,due);assert.deepEqual(plan.weakIds,['weak']);assert.equal(plan.newIds.length,limit-2);assert.deepEqual(plan.wordIds.slice(0,13),[...due,'weak'])}
 })
-test('真实Store在下一Session应用5/10/20，保留12个到期，正确记录复习/新词且继续使用原FSRS',async()=>{
- for(const limit of DAILY_NEW_WORD_LIMITS){const {profile,parent,learning,course}=await fresh(),ids=await largeCourse(course);parent.save({dailyNewWordLimit:limit,entryLevel:5});profile.transact(d=>{for(const id of ids.slice(0,12))d.cards[id]=newCard(id,new Date('2000-01-01'))});const cards=JSON.parse(JSON.stringify(profile.db.cards));assert.equal(learning.start(),true);assert.deepEqual(learning.session!.wordIds.slice(0,12),ids.slice(0,12));assert.equal(learning.session!.wordIds.length,12+limit);assert.deepEqual(profile.db.cards,cards);assert.equal(learning.session!.plannerConfig!.dailyNewWordLimit,limit)
-  while(!learning.session!.completedAt){const id=learning.current!.id,before=profile.db.cards[id];learning.setMode('spell');learning.patch({input:learning.current!.word});assert.equal(learning.submit(),true);const answer=profile.db.history.at(-1)!;assert.equal(answer.source,ids.slice(0,12).includes(id)?'review_due':'new_word');const now=new Date(answer.at);assert.deepEqual(profile.db.cards[id],new FSRSScheduler().schedule(before||newCard(id,now),answer.rating,now).card);learning.next()}
+test('教材首轮遵守5/10/20，显式12词复习不被上限截断，原FSRS保持',async()=>{
+ for(const limit of DAILY_NEW_WORD_LIMITS){
+  const {profile,parent,learning,course}=await fresh(),ids=await largeCourse(course);parent.save({dailyNewWordLimit:limit,entryLevel:5});profile.transact(d=>{for(const id of ids.slice(0,12))d.cards[id]=newCard(id,new Date('2000-01-01'));d.courseProgress![course.currentId].introducedWords=Object.fromEntries(ids.slice(0,12).map(id=>[id,'2000-01-01T00:00:00Z']))});const cards=JSON.parse(JSON.stringify(profile.db.cards));assert(learning.startDue(ids.slice(0,12)));assert.deepEqual(learning.session!.wordIds,ids.slice(0,12));assert.deepEqual(profile.db.cards,cards)
+  while(!learning.session!.completedAt){const id=learning.current!.id,before=profile.db.cards[id];learning.setMode('spell');learning.patch({input:learning.current!.word});assert(learning.submit());const answer=profile.db.history.at(-1)!;assert.equal(answer.source,'review_due');assert.deepEqual(profile.db.cards[id],new FSRSScheduler().schedule(before,answer.rating,new Date(answer.at)).card);learning.next()}
+  assert(learning.start());assert.deepEqual(learning.session!.wordIds,ids.slice(12,12+limit));assert.equal(learning.session!.plannerConfig!.dailyNewWordLimit,limit)
+  while(!learning.session!.completedAt){const id=learning.current!.id;learning.setMode('spell');learning.patch({input:learning.current!.word});assert(learning.submit());const answer=profile.db.history.at(-1)!;assert.equal(answer.source,'new_word');const now=new Date(answer.at);assert.deepEqual(profile.db.cards[id],new FSRSScheduler().schedule(newCard(id,now),answer.rating,now).card);learning.next()}
   assert.equal(learning.newToday,limit);assert.equal(learning.dailyPlan.newIds.length,0);assert.equal(profile.db.history.length,12+limit)
  }
 })

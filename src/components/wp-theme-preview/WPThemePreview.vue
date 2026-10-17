@@ -24,6 +24,4 @@ defineProps<{name:string;themeStyle:string;themeId?:ThemeId}>()
 [data-preview=swiss] .mini-layout{grid-template-columns:1fr 1fr}
 [data-preview=swiss] .mini-feature{background:var(--wp-surface);border-bottom:1px solid var(--wp-divider)}
 [data-preview=swiss] .mini-action{background:var(--wp-surface);color:var(--wp-primary);padding-left:0;text-align:left}
-[data-preview=soft] .mini-action{width:80%}
-[data-preview=oled] .mini-dot{background:var(--wp-primary)}
 </style>

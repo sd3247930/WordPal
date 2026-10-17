@@ -3,7 +3,7 @@ import {go,database} from './helpers'
 
 // The synthetic course is public test content and is only registered when the page
 // opts in, so it never changes the product course list outside this spec.
-test('合成教材：选择 → 待核对确认 → 应用 → 学习页与单词本同步',async({page})=>{
+test('合成教材：点击立即应用，无待核对标记，学习页与单词本同步',async({page})=>{
  await page.addInitScript(()=>localStorage.setItem('wordpal.test.synthetic-course','1'))
  await go(page,'learn')
  await expect(page.locator('.current-course-card')).toContainText('原创启蒙课程')
@@ -11,19 +11,11 @@ test('合成教材：选择 → 待核对确认 → 应用 → 学习页与单�
  await expect(page.locator('.course-gallery-heading')).toContainText('选择教材')
 
  const card=page.locator('.course-gallery-card').filter({hasText:'合成测试教材'})
- await expect(card).toContainText('待核对')
+ await expect(card).not.toContainText('待核对')
  await card.click()
- await expect(page.locator('.course-review-panel')).toContainText('社区索引')
- await expect(page.locator('.course-review-panel')).toContainText('3 词')
-
- const confirm=page.getByRole('button',{name:'确认并应用',exact:true})
- await expect(confirm).toBeDisabled()
- await page.locator('.course-review-panel .course-check').click()
- await expect(confirm).toBeEnabled()
- await confirm.click()
 
  await expect(page.locator('.current-course-card')).toContainText('合成测试教材')
- await expect(page.locator('.current-course-card')).toContainText('待核对')
+ await expect(page.locator('.current-course-card')).not.toContainText('待核对')
  expect((await database(page)).currentCourseId).toBe('synthetic-classroom')
 
  await go(page,'review')

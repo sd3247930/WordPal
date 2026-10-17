@@ -2,19 +2,21 @@ import {defineStore} from 'pinia'
 import {computed} from 'vue'
 import {useProfileStore} from './profile'
 import {courseRegistry,archiveStatus,isCourseInstalled,getCourseLessons,getCourseWordIds} from '../services/content/ContentRegistry'
-import {setArchived,uninstallCourseContent} from '../services/content/StorageRepository'
+import {retainLearnedLexemes,setArchived,uninstallCourseContent} from '../services/content/StorageRepository'
 import {initialProgress} from '../services/storage/MigrationV1toV2'
 import {useParentSettingsStore} from './parent-settings'
 import {recommendCourses} from '../services/learning/CourseRecommendation'
-import {COURSE_SELECTION_MESSAGE,courseSummary,type CourseSelectionResult} from '../services/course/CourseSelection'
+import {COURSE_SELECTION_MESSAGE,courseSummary,cleanCourseLabel,type CourseSelectionResult} from '../services/course/CourseSelection'
 import type {CoursePack} from '../../packages/content_schema/course'
-import {readStorage} from '../services/storage'
+import {readStorage,writeStorage} from '../services/storage'
 import {occurrenceProgress} from '../services/content/IdentityModel'
+import {pruneCourseProgress,hasCourseMemory,PRESENTATION_KEY,ACTIVITY_KEY} from '../services/learning/CourseProgressMemory'
 function toast(message?:string){if(message)uni.showToast?.({title:message,icon:'none'})}
 export const useCourseStore=defineStore('course',()=>{
  const profile=useProfileStore()
- const currentId=computed(()=>profile.db.currentCourseId||'starter'),current=computed(()=>courseRegistry[currentId.value]||courseRegistry.starter)
- const installed=computed(()=>Object.values(courseRegistry).filter(c=>isCourseInstalled(c.courseId)))
+ const displayPack=(pack:CoursePack)=>({...pack,title:cleanCourseLabel(pack.title),edition:pack.edition?cleanCourseLabel(pack.edition):pack.edition})
+ const currentId=computed(()=>profile.db.currentCourseId||'starter'),current=computed(()=>displayPack(courseRegistry[currentId.value]||courseRegistry.starter))
+ const installed=computed(()=>Object.values(courseRegistry).filter(c=>isCourseInstalled(c.courseId)).map(displayPack))
  const parent=useParentSettingsStore(),recommendationConfig=computed(()=>parent.recommendationConfig)
  const recommendation=computed(()=>recommendCourses({...recommendationConfig.value,installed:installed.value,currentCourseId:currentId.value,learnedIds:new Set(Object.keys(profile.db.cards))}))
  const progress=computed(()=>profile.db.courseProgress?.[currentId.value]||{...initialProgress(currentId.value,currentId.value==='starter'?profile.db.lessonIndex:0),lastLessonAccuracy:currentId.value==='starter'?profile.db.lastLessonAccuracy:null})
@@ -32,10 +34,18 @@ export const useCourseStore=defineStore('course',()=>{
   if(!isCourseInstalled(id))return {ok:false,reason:'unknown',message:'请先安装教材，再设为当前课程。'}
   if(profile.db.version!==2)return {ok:false,reason:'db-version-mismatch',message:COURSE_SELECTION_MESSAGE['db-version-mismatch']}
   if(profile.readOnly)return {ok:false,reason:'db-readonly',message:COURSE_SELECTION_MESSAGE['db-readonly']}
-  const queued=!!(profile.db.session&&!profile.db.session.completedAt)
-  const saved=profile.transact(d=>{if(d.session&&!d.session.completedAt){d.pendingCourseId=id===currentId.value?undefined:id;return}d.currentCourseId=id;d.pendingCourseId=undefined;d.courseProgress??={};d.courseProgress[id]??=initialProgress(id)})
+  const saved=profile.transact(d=>{
+   pruneCourseProgress(d)
+   if(id!==(d.currentCourseId||'starter')||d.session?.courseId&&d.session.courseId!==id){
+    d.courseSessions??={}
+    if(d.session)d.courseSessions[d.session.courseId||d.currentCourseId||'starter']=d.session
+    d.session=d.courseSessions[id]||null
+    delete d.courseSessions[id]
+   }
+   d.currentCourseId=id;d.pendingCourseId=undefined;d.courseProgress??={};d.courseProgress[id]??=initialProgress(id)
+  })
   if(!saved)return {ok:false,reason:'db-readonly',message:'课程切换未保存，请释放设备存储后重试。'}
-  return {ok:true,queued:queued&&id!==currentId.value}
+  return {ok:true,queued:false}
  }
  /** Single entry point used by the gallery, the quick picker and the parent screen. */
  function applyCourseSelection(id:string):CourseSelectionResult{
@@ -43,7 +53,7 @@ export const useCourseStore=defineStore('course',()=>{
   const pack=courseRegistry[id]
   if(result.ok&&pack){
    const summary=courseSummary(pack)
-   toast(result.queued?`本轮结束后将切换到《${pack.title}》`:`已切换到《${pack.title}》，共 ${summary.words} 词`)
+   toast(`已切换到《${cleanCourseLabel(pack.title)}》，共 ${summary.words} 词`)
   }else toast(result.message)
   return result
  }
@@ -55,21 +65,33 @@ export const useCourseStore=defineStore('course',()=>{
   try{setArchived(id,false);return {ok:true}}
   catch{return {ok:false,reason:'unknown',message:'课程恢复失败，请稍后重试。'}}
  }
- function applyPending(){const id=profile.db.pendingCourseId;if(!id)return false;if(!isCourseInstalled(id))return profile.transact(d=>{d.pendingCourseId=undefined})&&false;if(!profile.db.session||profile.db.session.completedAt)return choose(id).ok;return false}
+ function applyPending(){const id=profile.db.pendingCourseId;if(!id)return false;if(!isCourseInstalled(id))return profile.transact(d=>{d.pendingCourseId=undefined})&&false;return choose(id).ok}
  async function uninstall(id:string,confirmed:boolean,replacement?:string){
   if(!confirmed)throw new Error('请先确认仅移除教材包，保留学习记录。')
   if(profile.readOnly)throw new Error('学习档案只读，暂不能移除教材。')
   if(profile.db.session&&!profile.db.session.completedAt&&(profile.db.session.courseId===id||currentId.value===id))throw new Error('请先完成当前学习，再移除教材。')
-  const previous=currentId.value
+  const previous=currentId.value,original=JSON.parse(JSON.stringify(profile.db)) as typeof profile.db
+  const uiMemory=[PRESENTATION_KEY,ACTIVITY_KEY].map(key=>({key,value:readStorage<unknown>(key,null)}))
   if(id===previous){if(!replacement||replacement===id||!isCourseInstalled(replacement))throw new Error('请选择另一份已安装教材作为当前课程。');if(!choose(replacement).ok)throw new Error('替代教材未保存，已保留原教材。')}
   try{
+   // Persist progress removal before removing content; a full device must not leave revivable cursors.
+   if(!profile.reconcileCourseMemory(id))throw new Error('教材进度暂时无法清理，教材已保留，请释放设备存储后重试。')
    const prefs=readStorage<{favorites:string[];later:string[]}>('wordpal.wordbook.preferences.v1',{favorites:[],later:[]})
    const retained=[...Object.keys(profile.db.cards),...profile.db.history.map(a=>a.wordId),...prefs.favorites,...prefs.later]
    const result=await uninstallCourseContent(id,retained)
-   if(profile.db.pendingCourseId===id)clearPending()
    return result
-  }catch(error){if(id===previous&&isCourseInstalled(id))choose(id);throw error}
+  }catch(error){
+   if(hasCourseMemory(id)){
+    const restored=profile.transact(draft=>{for(const field of ['currentCourseId','pendingCourseId','session','courseSessions','courseProgress'] as const){if(original[field]===undefined)delete draft[field];else (draft as any)[field]=original[field]}})
+    try{for(const item of uiMemory)writeStorage(item.key,item.value)}catch{profile.storageError='教材仍保留，但进度恢复未完成，请释放设备存储后重新打开应用。'}
+    profile.courseMemoryRevision++
+    if(!restored)throw new Error('教材未删除，原进度恢复未完成，请释放设备存储后重试。')
+   }
+   throw error
+  }
  }
+ function learnedIds(){const prefs=readStorage<{favorites:string[];later:string[]}>('wordpal.wordbook.preferences.v1',{favorites:[],later:[]});return [...Object.keys(profile.db.cards),...profile.db.history.map(answer=>answer.wordId),...prefs.favorites,...prefs.later]}
+ function retainLearnedWords(){return retainLearnedLexemes(learnedIds())}
  function chooseLesson(id:string){if(!lessons.value.some(l=>l.id===id)||profile.db.session&&!profile.db.session.completedAt)return false;return profile.transact(d=>{d.courseProgress??={};d.courseProgress[currentId.value]??=initialProgress(currentId.value);d.courseProgress[currentId.value].currentLessonId=id;if(currentId.value==='starter')d.lessonIndex=lessons.value.findIndex(l=>l.id===id)})}
- return {currentId,current,installed,textbooks,pendingCourse,selectionBlocked,progress,occurrenceProgress:computed(()=>occurrenceProgress(current.value,progress.value.completedLessons)),lessons,lesson,choose,applyCourseSelection,clearPending,restoreCourse,applyPending,chooseLesson,uninstall,recommendationConfig,recommendation,wordIds:computed(()=>getCourseWordIds(currentId.value))}
+ return {currentId,current,installed,textbooks,pendingCourse,selectionBlocked,progress,occurrenceProgress:computed(()=>occurrenceProgress(current.value,progress.value.completedLessons)),lessons,lesson,choose,applyCourseSelection,clearPending,restoreCourse,applyPending,chooseLesson,uninstall,retainLearnedWords,recommendationConfig,recommendation,wordIds:computed(()=>getCourseWordIds(currentId.value))}
 })

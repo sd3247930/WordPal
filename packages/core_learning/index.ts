@@ -27,7 +27,7 @@ export interface ReviewScheduler {
 export interface Answer {
   id: string; wordId: string; rating: ReviewRating; correct: boolean; at: string
   source: 'review_due' | 'new_word' | 'practice'; mode: LearningMode; input: string
-  hinted?:boolean; dueAtSubmit?:string
+  hinted?:boolean; dueAtSubmit?:string;courseId?:string
 }
 export interface LearningSession {
   id: string; startedAt: string; date: string; kind: 'review_due' | 'new_word' | 'practice'
@@ -36,6 +36,9 @@ export interface LearningSession {
   courseId?:string;contentVersion?:string;lessonId?:string;wordSnapshot?:Record<string,Word>;seed?:number
   wordSources?:Record<string,'review_due'|'new_word'|'practice'>
   plannerConfig?:{dailyNewWordLimit:DailyNewWordLimit;entryLevel:EntryLevel}
+  /** First-pass targets follow textbook order; practice/review can still be requested explicitly. */
+  sequenceWordIds?:string[]
+  intent?:'course'|'review'|'practice'
 }
 export const localDate = (date = new Date()) => `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`
 export function mastery(card?: MemoryCard): MasteryState {

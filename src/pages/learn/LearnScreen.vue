@@ -1,25 +1,26 @@
 <template>
- <view class="page-heading study-heading"><view><text class="page-title">今日学习</text><text class="page-subtitle">今天，记住一点点。</text><text class="small muted block">{{displayLessonTitle}}</text></view><text class="study-estimate small muted">{{view.revisiting?'本轮错词回看':'预计 '+estimate+' 分钟'}}</text></view>
+ <view class="page-heading study-heading"><view><text class="page-title">今日学习</text><text class="page-subtitle">今天，记住一点点。</text><text class="small muted block">{{headingSourceLabel}}</text></view><text class="study-estimate small muted">{{view.revisiting?'本轮错词回看':'预计 '+estimate+' 分钟'}}</text></view>
+ <StudyPetCompanion :pet="pet.current"><template v-if="!learning.session&&!extraActive" #default><view class="study-ready"><text class="section-title">{{learning.studyWords.length||learning.due.length?'和单词，见一面':'今天的任务已经完成'}}</text><text class="small muted">{{learning.studyWords.length?'按教材顺序逐词学习，题型会自动安排。':'只复习当前教材中的单词。'}}</text><WPButton v-if="learning.studyWords.length||learning.due.length||learning.needsConsolidation" @click="beginStudy">开始今日学习</WPButton><WPButton v-else kind="secondary" @click="activities.start('check')">整课检查</WPButton></view></template></StudyPetCompanion>
  <PendingBanner :pending="courseStore.pendingCourse" @cancel="cancelPending" @progress="showProgress"/>
  <view class="current-course-card">
   <view class="current-course-head">
    <view class="current-course-copy">
-    <view class="course-gallery-title"><text class="strong">当前教材</text><text v-if="courseSummaryData.needsReview" class="course-review-badge">待核对</text></view>
+    <view class="course-gallery-title"><text class="strong">当前教材</text></view>
     <text class="small muted block">{{courseStore.current.title}} · {{courseSummaryData.words}} 词 · {{courseSummaryData.units}} 单元 · {{courseSummaryData.levels||'未标注等级'}}</text>
    </view>
    <WPButton @click="openGallery">选择教材</WPButton>
   </view>
   <text class="study-effective-line">当前生效：L{{parent.settings.entryLevel}} · 每日新词 {{parent.settings.dailyNewWordLimit}}</text>
  </view>
+ <text v-if="practiceEntry" class="notice study-practice-entry" role="status">{{practiceEntryHint}}</text>
  <view v-if="!extraActive" class="study-formal">
- <view class="study-today"><view><text class="study-count">{{learning.newToday}}</text><text class="small muted">今日已学新词</text></view><view><text class="study-count">{{review.due.length}}</text><text class="small muted">待复习</text></view><view><text class="study-count">{{progress}}</text><text class="small muted">本轮进度</text></view></view>
- <view v-if="!learning.session" class="empty-card study-ready"><WPNavIcon name="learn" :active="true" :size="40"/><text class="section-title">{{learning.newWords.length||review.due.length?'和单词，见一面':'今天的任务已经完成'}}</text><text class="muted">{{review.due.length?'先和老朋友打个招呼，再认识新朋友。':'听一听、连一连、拼一拼，题型会自动安排。'}}</text><WPButton v-if="learning.newWords.length||review.due.length||learning.needsConsolidation" @click="beginStudy">开始今日学习</WPButton><WPButton v-else kind="secondary" @click="activities.start('check')">整课检查</WPButton></view>
- <view v-else-if="view.completed" class="empty-card completion study-completion"><WPPetAvatar :element="pet.current.element" :size="64"/><text class="eyebrow">每一点努力，都留下来了</text><text class="page-title">这一轮，完成啦！</text><view class="completion-counts"><view><text>{{learning.session.answers.filter(a=>a.correct).length}} / {{learning.session.answers.length}}</text><text class="small muted">正式回答正确</text></view><view><text>{{view.state.queue.length}}</text><text class="small muted">额外回看错词</text></view><view v-if="learning.session.kind!=='practice'&&view.earnedExp!==null"><text>+{{view.earnedExp}} XP</text><text class="small muted">伙伴经验增长</text></view></view><text class="muted">学习进度已保存。{{view.state.answers.length?'回看 '+view.state.answers.filter(a=>a.correct).length+' / '+view.state.answers.length+' 个回答正确，不重复发奖。':''}}</text><text v-if="learning.needsConsolidation" class="notice">这一课再熟悉一下，下次会更有把握。</text><view class="button-row"><WPButton @click="another">{{review.due.length?'继续到期复习':learning.needsConsolidation?'巩固这一课':learning.newWords.length?'继续今日学习':'再轻松练一轮'}}</WPButton><WPButton kind="secondary" @click="navigate('home')">回到今日任务</WPButton></view></view>
- <view v-else-if="view.current" class="learn-workspace study-space">
-  <view class="learn-modes study-modes"><WPButton kind="quiet" :aria-expanded="customOpen" @click="customOpen=!customOpen">自定义练习 · {{modeTitles[view.mode]}} {{customOpen?'⌃':'⌄'}}</WPButton><view v-show="customOpen" class="custom-practice"><WPSegmentedButton class="mode-selector" :model-value="view.mode" :options="modeOptions" label="选择学习方式" :disabled="!!view.answer||view.revisiting" :scrollable="true" @update:model-value="view.chooseMode($event as LearningMode)"/><WPActionTile v-if="!view.revisiting" role="button" tabindex="0" class="auto-mode-button" :class="{selected:!view.state.manual}" :disabled="!!view.answer" :aria-pressed="!view.state.manual" @click="view.automatic()">{{view.state.manual?'恢复自动编排':'✓ 自动编排中'}}</WPActionTile><text class="small muted">{{view.revisiting?'每词回看一次，不改变复习日期。':!view.current?.audio?'这个单词暂无离线音频，文字题型可继续学习。':!feedback.settings.sound?'声音已关闭，开启后可使用听音和听写。':'五种方式共用当前学习，重播不计分。'}}</text></view></view>
-  <view class="learn-main study-main"><view class="session-header"><text class="element-chip">{{view.revisiting?'错词回看':learning.currentSource==='review_due'?'到期复习':learning.currentSource==='practice'?'轻松练习':'今日新词'}}</text><text class="small muted">{{view.index+1}} / {{view.total}}</text></view><WPProgress :value="view.index+(view.answer?1:0)" :total="view.total" label="本轮学习进度"/>
-   <WPWordCard :word="view.current" :entry-level="sessionLevel" :prompt-picture="picturePrompt" :data-phase="view.answer?'rated':view.revealed?'revealed':'prompting'" :conceal="conceal||picturePrompt" :show-meaning="view.revealed" :reveal-meaning="view.mode==='spell'" :phonics="resolvedPhonics?.data" :active-chunk-index="activeChunkIndex" :playback-state="playbackState"><WPAudioButton :url="view.current.audio" :text="['listen','dictation'].includes(view.mode)?'再听一次':'听发音'" label="播放当前单词的标准发音" @click="play"/><text v-if="view.revealed && sessionLevel>=4" class="small muted">{{view.current.example}}</text></WPWordCard>
-   <view class="answer-panel"><text class="instruction">{{picturePrompt?'看看图片，选择对应的英文单词':pictureChoices?'听发音，选择对应的图片':modeInfo.description}}</text>
+ <view class="study-today"><view><text class="study-count">{{learning.newToday}}</text><text class="small muted">今日已学新词</text></view><view><text class="study-count">{{learning.due.length}}</text><text class="small muted">待复习</text></view><view><text class="study-count">{{progress}}</text><text class="small muted">本轮进度</text></view></view>
+ <view v-if="learning.session&&view.completed" class="empty-card completion study-completion"><WPPetAvatar :element="pet.current.element" :size="64"/><text class="eyebrow">每一点努力，都留下来了</text><text class="page-title">这一轮，完成啦！</text><view class="completion-counts"><view><text>{{learning.session.answers.filter(a=>a.correct).length}} / {{learning.session.answers.length}}</text><text class="small muted">正式回答正确</text></view><view><text>{{view.state.queue.length}}</text><text class="small muted">额外回看错词</text></view><view v-if="learning.session.kind!=='practice'&&view.earnedExp!==null"><text>+{{view.earnedExp}} XP</text><text class="small muted">伙伴经验增长</text></view></view><text class="muted">学习进度已保存。{{view.state.answers.length?'回看 '+view.state.answers.filter(a=>a.correct).length+' / '+view.state.answers.length+' 个回答正确，不重复发奖。':''}}</text><text v-if="learning.needsConsolidation" class="notice">这一课再熟悉一下，下次会更有把握。</text><view class="button-row"><WPButton @click="another">{{learning.studyWords.length?'继续今日学习':learning.due.length?'继续到期复习':learning.needsConsolidation?'巩固这一课':'再轻松练一轮'}}</WPButton><WPButton kind="secondary" @click="navigate('home')">回到今日任务</WPButton></view></view>
+ <view v-else-if="learning.session&&view.current" class="learn-workspace study-space">
+  <view class="learn-modes study-modes"><WPButton kind="quiet" :aria-expanded="customOpen" @click="customOpen=!customOpen">自定义练习 · {{modeTitles[view.mode]}} {{customOpen?'⌃':'⌄'}}</WPButton><view v-show="customOpen" class="custom-practice"><WPSegmentedButton class="mode-selector" :model-value="view.mode" :options="modeOptions" label="选择学习方式" :disabled="!!view.answer||view.revisiting" :scrollable="true" @update:model-value="view.chooseMode($event as LearningMode)"/><WPActionTile v-if="!view.revisiting" role="button" tabindex="0" class="auto-mode-button" :class="{selected:!view.state.manual}" :disabled="!!view.answer" :aria-pressed="!view.state.manual" @click="view.automatic()">{{view.state.manual?'恢复自动编排':'✓ 自动编排中'}}</WPActionTile><text class="small muted">{{view.revisiting?'每词回看一次，不改变复习日期。':!view.current?.audio?'这个单词暂无离线音频，文字题型可继续学习。':!feedback.settings.sound?'声音已关闭，开启后可使用听音和听写。':systemVoice?'此词使用离线系统朗读，已有录音优先。':'五种方式共用当前学习，重播不计分。'}}</text></view></view>
+  <view class="learn-main study-main"><view class="session-header"><text class="element-chip">{{view.revisiting?'错词回看':learning.session?.sequenceWordIds?.includes(view.current.id)?'本册学习':learning.currentSource==='review_due'?'到期复习':learning.currentSource==='practice'?'轻松练习':'今日新词'}}</text><text class="small muted">本轮 {{view.index+1}} / {{view.total}}</text></view><text v-if="currentPosition" class="study-word-position small muted block" role="status" aria-live="polite">教材词序：第 {{currentPosition.index}} / {{currentPosition.total}} 词</text><WPProgress :value="view.index+(view.answer?1:0)" :total="view.total" label="本轮学习进度"/>
+   <WPWordCard :word="view.current" :variant="view.mode==='flash'?'flash':'default'" :entry-level="sessionLevel" :prompt-picture="picturePrompt" :data-phase="view.answer?'rated':view.revealed?'revealed':'prompting'" :conceal="conceal||picturePrompt" :show-meaning="view.revealed" :reveal-meaning="view.mode==='spell'" :phonics="resolvedPhonics?.data" :active-chunk-index="activeChunkIndex" :playback-state="playbackState"><WPAudioButton :url="view.current.audio" :text="['listen','dictation'].includes(view.mode)?'再听一次':systemVoice?'系统朗读':'听发音'" :label="systemVoice?'播放当前单词的离线系统朗读':'播放当前单词的标准发音'" @click="play"/><text v-if="systemVoice" class="muted audio-source-note">离线系统朗读 · 美式英语</text><text v-if="view.revealed && sessionLevel>=4" class="small muted">{{view.current.example}}</text></WPWordCard>
+   <view class="answer-panel"><text v-if="view.mode!=='flash'" class="instruction">{{picturePrompt?'看看图片，选择对应的英文单词':pictureChoices?'听发音，选择对应的图片':modeInfo.description}}</text>
     <view v-if="view.mode==='connect'||view.mode==='listen'" class="choice-grid"><WPActionTile role="button" tabindex="0" v-for="(choice,i) in learning.choices" :key="choice.id" class="answer-choice" :class="{selected:view.selected===choice.id}" :aria-pressed="view.selected===choice.id" :disabled="!!view.answer" @click="view.select(choice.id)"><text class="choice-index">{{i+1}}</text><image v-if="pictureChoices&&choice.image" class="choice-picture" :src="choice.image" mode="aspectFit" :alt="choice.meaning"/><text v-else-if="pictureChoices" class="choice-illustration" :aria-label="choice.meaning">{{wordIllustrations[choice.id]}}</text><text v-else>{{view.mode==='connect'&&!picturePrompt?choice.meaning:choice.word}}</text><text v-if="view.selected===choice.id">✓</text></WPActionTile></view>
     <view v-else-if="view.mode==='spell'||view.mode==='dictation'"><input class="spelling-input" :value="view.input" :disabled="!!view.answer" :aria-label="view.mode==='spell'?'输入中文对应的英文单词':'输入听到的英文单词'" placeholder="在这里输入英文单词" :maxlength="40" :adjust-position="true" :cursor-spacing="24" @input="updateInput" @confirm="submit"/><text class="small muted">不用担心出错，记忆就是从练习开始的。</text></view>
     <view v-if="!view.answer" class="answer-actions"><template v-if="view.mode==='flash'"><view v-if="!view.revealed" class="recall-action"><text class="small muted block">回想好了？</text><WPButton @click="view.reveal()">查看答案</WPButton></view><view v-else class="rating-grid"><WPButton v-for="(label,i) in childRatings" :key="label" :kind="i===2?'primary':'secondary'" @click="view.submit((i+1) as ReviewRating)">{{label}}</WPButton></view></template><template v-else><WPButton :disabled="!canSubmit" @click="submit">确认答案 →</WPButton><WPButton kind="quiet" :disabled="view.revealed" @click="view.hint()">{{view.revealed?'提示已显示':view.revisiting?'查看提示':'查看提示 · 1 灵石'}}</WPButton></template></view>
@@ -35,6 +36,7 @@
 </template>
 <script setup lang="ts">
 import PendingBanner from '../../components/course/PendingBanner.vue'
+import StudyPetCompanion from '../../components/pet-house/StudyPetCompanion.vue'
 import ActivityWorkspace from '../../components/course/ActivityWorkspace.vue'
 import {useCourseStore} from '../../stores/course'
 import {useActivitiesStore} from '../../stores/activities'
@@ -51,7 +53,6 @@ import WPCard from '../../components/wp-card/WPCard.vue'
 import WPProgress from '../../components/wp-progress/WPProgress.vue'
 import {wordIllustrations} from '../../components/wp-word-card/illustrations'
 import WPWordCard from '../../components/wp-word-card/WPWordCard.vue'
-import WPNavIcon from '../../components/wp-nav-icon/WPNavIcon.vue'
 import WPPetAvatar from '../../components/wp-pet-avatar/WPPetAvatar.vue'
 import WPPronunciationPractice from '../../components/WPPronunciationPractice.vue'
 import {successHaptic} from '../../services/feedback'
@@ -70,11 +71,13 @@ import type {ReviewRating,LearningMode} from '../../../packages/core_learning'
 import {stopAudio} from '../../services/audio'
 import {warmUpcomingAudio} from '../../services/audio/AudioPreload'
 import {resolveFrozenWord} from '../../services/content/ContentRegistry'
-import {navigate,openCourseGallery} from '../../services/navigation'
+import {navigate,openCourseGallery,consumeStudyPractice} from '../../services/navigation'
 import {courseSummary as summarizeCourse} from '../../services/course/CourseSelection'
 const learning=useLearningStore(),review=useReviewStore(),profile=useProfileStore(),pet=usePetStore(),theme=useThemeStore(),view=useStudyPresentation(),audioError=ref(''),courseStore=useCourseStore(),activities=useActivitiesStore(),feedback=useFeedbackStore(),parent=useParentSettingsStore()
 const phonicsController=new PhonicsPlaybackController()
-const customOpen=ref(false),exploreOpen=ref(false)
+const systemVoice=computed(()=>!!view.current?.tags?.includes('offline-system-fallback-en-us'))
+const practiceEntry=consumeStudyPractice(),customOpen=ref(practiceEntry),exploreOpen=ref(false)
+const currentPosition=computed(()=>learning.positionFor(view.current?.id))
 const sessionLevel=computed(()=>learning.session?.plannerConfig?.entryLevel||parent.settings.entryLevel)
 const picturePrompt=computed(()=>sessionLevel.value<=2&&view.mode==='connect'&&!view.revealed&&!!view.current&&(!!view.current.image||!!wordIllustrations[view.current.id]))
 const pictureChoices=computed(()=>sessionLevel.value<=2&&view.mode==='listen'&&!view.revealed&&learning.choices.every(w=>!!w.image||!!wordIllustrations[w.id]))
@@ -82,6 +85,16 @@ const {phonics:resolvedPhonics,activeChunkIndex,playbackState,timing}=phonicsCon
 const timingNote=computed(()=>resolvedPhonics.value?.source==='whole'?'以完整单词的标准发音为准。':timing.value==='exact'?'音块跟随已标注的发音时间亮起。':timing.value==='weighted'?'按整词时长估算音块位置，仅作跟读提示。':'音块依次亮起，仅作跟读提示，以实际发音为准。')
 const extraActive=computed(()=>!!activities.state&&(!learning.session||!!learning.session.completedAt))
 const modeOptions=computed(()=>{const allowed=view.current?availableModes(view.current,Object.values(learning.session?.wordSnapshot||{}),feedback.settings.sound,learning.session?.plannerConfig?.entryLevel):[];return modes.map(mode=>({...mode,disabled:!allowed.includes(mode.id)}))})
+const practiceEntryHint=computed(()=>{
+ if(extraActive.value)return '正在进行轻松练习，收起练习后可选择拼写或听写。'
+ if(!learning.session)return '开始今日学习后，可在自定义练习里选择拼写或听写。'
+ if(view.revisiting)return '正在回看本轮错词，完成后可继续选择练习。'
+ if(view.completed)return '本轮已经完成，继续学习后可选择拼写或听写。'
+ if(view.answer)return '本词已经作答，进入下一词后可选择拼写或听写。'
+ if(!modeOptions.value.some(mode=>!mode.disabled&&['spell','dictation'].includes(mode.id)))return '当前能力起点尚未开放拼写或听写，可先完成现有练习。'
+ if(modeOptions.value.some(mode=>mode.id==='dictation'&&!mode.disabled))return '已打开自定义练习，可选择拼写或听写。'
+ return sessionLevel.value<4?'已打开自定义练习，可选择拼写；听写会随能力起点开放。':'已打开自定义练习，可选择拼写；听写需要可用发音并开启声音。'
+})
 const modeTitles={flash:'闪现',connect:'连接',listen:'听音',spell:'拼写',dictation:'听写'}
 /** lesson.name already embeds the unit for imported courses; never repeat it twice in the heading. */
 const displayLessonTitle=computed(()=>{
@@ -90,13 +103,16 @@ const displayLessonTitle=computed(()=>{
  const name=String(lesson.name||''),unit=String(lesson.unit||'')
  return unit&&name&&!name.includes(unit)?`${unit} · ${name}`:(name||unit)
 })
+/** Courses that carry one lesson per unit show the unit itself, not a lesson number. */
+const unitOnlyCourse=computed(()=>{const units=courseStore.current.units;return units.length>0&&units.every(unit=>unit.lessons.length===1)})
+const headingSourceLabel=computed(()=>unitOnlyCourse.value?`当前单元：${course.value?.unit||displayLessonTitle.value}`:displayLessonTitle.value)
 const courseSummaryData=computed(()=>summarizeCourse(courseStore.current))
 function cancelPending(){if(courseStore.clearPending())uni.showToast?.({title:'已取消排队',icon:'none'})}
 function showProgress(){uni.pageScrollTo?.({selector:'.study-formal',duration:200})}
 function openGallery(){courseStore.applyPending();openCourseGallery()}
 function beginStudy(){courseStore.applyPending();learning.start()}
 const course=computed(()=>learning.lesson)
-const estimate=computed(()=>Math.max(1,Math.ceil((view.total||review.due.length||learning.newWords.length||5)*.7)))
+const estimate=computed(()=>Math.max(1,Math.ceil((view.total||learning.due.length||learning.studyWords.length||5)*.7)))
 const progress=computed(()=>learning.session?learning.session.answers.length+'/'+learning.session.wordIds.length:'待开始')
 const correctRun=computed(()=>{let count=0;const answers=view.revisiting?view.state.answers:learning.session?.answers||[];for(const answer of [...answers].reverse()){if(!answer.correct)break;count++}return count})
 const modeInfo=computed(()=>modes.find(mode=>mode.id===view.mode)??modes[0])
@@ -112,7 +128,7 @@ watch(()=>view.answer,answer=>{if(answer?.correct)successHaptic(theme.reduced)})
 function play(){if(view.current){audioError.value='';void phonicsController.play(view.current).catch(error=>audioError.value=(error as Error).message)}}
 function updateInput(event:any){view.updateInput(event.detail?.value??event.target?.value??'')}
 function submit(){if(view.answer)view.next();else view.submit(view.mode==='flash'?3:undefined)}
-function another(){stopAudio();courseStore.applyPending();if(learning.newWords.length||review.due.length||learning.needsConsolidation)learning.start();else activities.start('check')}
+function another(){stopAudio();courseStore.applyPending();if(learning.studyWords.length||learning.due.length||learning.needsConsolidation)learning.start();else activities.start('check')}
 function shortcut(event:{key:string;metaKey?:boolean;ctrlKey?:boolean}){
  if(event.metaKey||event.ctrlKey)return
  if(event.key===' ')play()
@@ -124,5 +140,9 @@ function shortcut(event:{key:string;metaKey?:boolean;ctrlKey?:boolean}){
 onMounted(()=>uni.$on('wp-shortcut',shortcut))
 onUnmounted(()=>{uni.$off('wp-shortcut',shortcut);phonicsController.dispose();stopAudio()})
 </script>
+
+
+
+<style scoped>.audio-source-note{font-size:var(--wp-font-caption);line-height:1.5}</style>
 
 

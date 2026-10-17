@@ -2,7 +2,7 @@ import {openCustomPractice} from './helpers'
 import {test,expect} from '@playwright/test'
 import {app,go,setAppearance,seedDatabase} from './helpers'
 import {goldenDatabase} from './fixtures'
-for(const theme of ['bento','swiss','soft','oled'])for(const mode of ['light','dark'])for(const reducedMotion of [false,true])for(const largeText of [false,true]){
+for(const theme of ['swiss'])for(const mode of ['light','dark'])for(const reducedMotion of [false,true])for(const largeText of [false,true]){
  test(`${theme}/${mode} 减少动效=${reducedMotion} 大字体=${largeText}`,async({page})=>{
   await setAppearance(page,theme,mode,{reducedMotion,largeText});await seedDatabase(page,goldenDatabase())
   for(const width of [390,768,1280]){

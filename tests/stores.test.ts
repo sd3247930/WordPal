@@ -18,20 +18,20 @@ test('恢复事务快照，反复提交不会重复增长',()=>{
  assert.equal(learning.submit(),false);const id=profile.db.session!.id
  setActivePinia(createPinia());const restored=useLearningStore();const loaded=useProfileStore();assert.equal(restored.session?.id,id);assert.equal(loaded.db.history.length,1);assert.equal(restored.submit(),false)
 })
-test('未完成到期任务禁止新词，指定练习仍先复习',()=>{
+test('教材首轮不因到期任务跳词，显式练习仍可先处理本册到期词',()=>{
  const {profile,learning}=fresh();profile.transact(d=>{d.cards.cat=newCard('cat',new Date('2000-01-01T00:00:00Z'))})
- assert.equal(learning.newWords.length,0);learning.start(['dog']);assert.equal(learning.session?.kind,'review_due');assert.deepEqual(learning.session?.wordIds,['cat'])
+ assert.equal(learning.studyWords[0],'cat');assert(learning.newWords.includes('dog'));learning.start(['dog']);assert.equal(learning.session?.kind,'review_due');assert.deepEqual(learning.session?.wordIds,['cat'])
 })
-test('低于80%巩固当前课程，练习不发资源、不改复习日期',()=>{
+test('首轮低正确率不阻断教材词序，显式巩固不发资源或改复习日期',()=>{
  const {profile,learning}=fresh();learning.start()
  // The daily pool spans the whole course now, so answer the full round with a 3-in-5 accuracy.
  let answered=0
  while(!learning.session!.completedAt){const current=learning.current!;learning.setMode('spell');learning.patch({input:answered%5<3?current.word:'wrong'});learning.submit();learning.next();answered++}
- assert.equal(profile.db.lessonIndex,0);assert.equal(profile.db.lastLessonAccuracy,.6)
+ assert.equal(profile.db.lessonIndex,2);assert.equal(profile.db.lastLessonAccuracy,.6)
  const before=JSON.stringify(profile.db.cards),gems=profile.db.gems
  // Move due dates forward to examine the explicit consolidation path.
  profile.transact(d=>{Object.values(d.cards).forEach(c=>c.due=new Date(Date.now()+86400000).toISOString())})
- const unchanged=JSON.stringify(profile.db.cards);learning.start();assert.equal(learning.session?.kind,'practice')
+ const unchanged=JSON.stringify(profile.db.cards);learning.start(['cat','dog']);assert.equal(learning.session?.kind,'practice')
  learning.setMode('spell');learning.patch({input:learning.current!.word});learning.submit();assert.equal(profile.db.gems,gems);assert.equal(JSON.stringify(profile.db.cards),unchanged);assert.notEqual(before,unchanged)
 })
 test('删除后四宠从初始状态继续可选，喂养仍有边界',()=>{

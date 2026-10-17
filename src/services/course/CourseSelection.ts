@@ -7,7 +7,7 @@ export interface CourseSelectionResult {
   ok: boolean
   reason?: CourseSelectionFailure
   message?: string
-  /** True when the switch was stored and will apply after the running round finishes. */
+  /** Kept for older callers; successful selections now always apply immediately. */
   queued?: boolean
 }
 
@@ -20,10 +20,12 @@ export const COURSE_SELECTION_MESSAGE: Record<CourseSelectionFailure,string> = {
 }
 
 export const COURSE_REVIEW_NOTE='此册词表来自社区索引，版次尚未与正式教材核对，仅供自编学习使用。'
+/** Display wording is independent of the source's redistribution permission. */
+export function cleanCourseLabel(value:string){return value.replace(/[（(][^()（）]*待核对[^()（）]*[）)]/g,'').replace(/待核对/g,'').replace(/\s+/g,' ').trim()}
 
 /**
- * A course needs a "待核对" badge unless every source is cleared for
- * redistribution and its edition metadata is real (not an unverified placeholder).
+ * Internal source/edition status for metadata consumers; this does not control
+ * course selection or add a warning badge to locally installed textbooks.
  */
 export function courseNeedsReview(pack?:CoursePack|null):boolean {
   if(!pack)return false
@@ -43,18 +45,18 @@ export function courseSummary(pack?:CoursePack|null):CourseSummary {
   }
 }
 
-/** One-line textbook label, e.g. "人教版社区索引（教材系列待核对）· 社区 edition 1（年份待核对）". */
+/** One-line textbook label with legacy placeholder wording removed. */
 export function courseEditionLabel(pack?:CoursePack|null):string {
   if(!pack)return ''
   if(pack.route!=='textbook'){
     const levels=pack.abilityLevels.join('/')
-    return levels?pack.title+' · '+levels:pack.title
+    return levels?cleanCourseLabel(pack.title)+' · '+levels:cleanCourseLabel(pack.title)
   }
   const parts=[pack.publisher,pack.edition||(pack.editionYear?String(pack.editionYear)+' 年版':'')].filter(Boolean)
-  return parts.join(' · ')
+  return cleanCourseLabel(parts.join(' · '))
 }
 
 /** Shared gallery grouping includes the entry grade, not just the publisher. */
-export const courseSeriesKey=(pack:CoursePack)=>[pack.publisher,pack.edition||pack.editionYear,pack.startGrade||'unknown'].join('|')
-export const courseSeriesLabel=(pack:CoursePack)=>pack.courseId.startsWith('fltrp-3start-')?'外研版三起点':(pack.edition||pack.publisher||pack.title)+(pack.startGrade?' · '+pack.startGrade+' 年级起点':'')
+export const courseSeriesKey=(pack:CoursePack)=>pack.courseId.startsWith('fltrp-3start-')?'fltrp-3start': [pack.publisher,pack.edition||pack.editionYear,pack.startGrade||'unknown'].join('|')
+export const courseSeriesLabel=(pack:CoursePack)=>pack.courseId.startsWith('fltrp-3start-')?'外研版三起点':cleanCourseLabel(pack.edition||pack.publisher||pack.title)+(pack.startGrade?' · '+pack.startGrade+' 年级起点':'')
 export function courseReviewNote(pack?:CoursePack|null):string {return pack?.sources.some(source=>source.type==='user-provided'&&source.rightsStatus==='pending-review')?'此册来自用户提供的词表照片，仅收录可辨文字。册次、版次及完整性尚未与正式教材核对，仅供本机学习，请家长确认使用。':COURSE_REVIEW_NOTE}

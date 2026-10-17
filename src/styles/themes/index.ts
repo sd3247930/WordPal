@@ -1,4 +1,4 @@
-export type ThemeId='bento'|'swiss'|'soft'|'oled'
+export type ThemeId='swiss'
 export type ColorMode='system'|'light'|'dark'
 export type WordPalTokens=Record<string,string>
 export interface WordPalTheme {id:ThemeId;mode:'light'|'dark';tokens:WordPalTokens}
@@ -32,17 +32,9 @@ const dark:WordPalTokens={...light,
  earth:'#a4be81','earth-soft':'#30392c','element-earth':'#c5d6ae',wind:'#b39cd9','wind-soft':'#343045','element-wind':'#d3c2ec',
  reward:'#38312a','on-reward':'#e0caa5',elevation:'none','shadow-raised':'none'
 }
-const night:WordPalTokens={...dark,
- background:'#111522',surface:'#191f31','surface-soft':'#20273b','surface-raised':'#252d41',muted:'#20273b',
- foreground:'#eceef5','surface-foreground':'#eceef5','muted-foreground':'#aeb6c9',
- primary:'#9c8de5','on-primary':'#191528',secondary:'#302b43','focus-ring':'#9c8de5',
- border:'#343c50',divider:'#2b3347',radius:'16px','radius-sm':'14px','radius-lg':'18px',
- 'pet-size':'80px','motion-fast':'150ms','motion-normal':'200ms','motion-slow':'280ms'
-}
 interface Variant {name:string;description:string;light:WordPalTokens;dark:WordPalTokens;petRenderer:WordPalThemePack['petRenderer'];rewardMotion:'fade'|'pop'}
 const variants:Record<ThemeId,Variant>={
- bento:{name:'便当任务岛',description:'活泼 · 模块化',light:{},dark:{},petRenderer:'illustration',rewardMotion:'pop'},
- swiss:{name:'瑞士专注',description:'清晰 · 克制',
+ swiss:{name:'瑞士专注主题',description:'清晰 · 克制',
   light:{background:'#f7f8f8',foreground:'#242a31','surface-foreground':'#242a31',primary:'#a34c2c','focus-ring':'#a34c2c',secondary:'#f3e9e3',
    border:'#d9dde0',divider:'#e5e7e9',muted:'#f0f2f3','surface-soft':'#f0f2f3',radius:'10px','radius-sm':'8px','radius-chip':'8px','radius-lg':'12px',
    'element-water':'#a34c2c','element-fire':'#a34c2c','element-earth':'#a34c2c','element-wind':'#a34c2c',
@@ -51,16 +43,7 @@ const variants:Record<ThemeId,Variant>={
   dark:{radius:'10px','radius-sm':'8px','radius-chip':'8px','radius-lg':'12px',elevation:'none','shadow-raised':'none','pet-size':'44px','motion-fast':'150ms',
    'element-water':'#eab18c','element-fire':'#eab18c','element-earth':'#eab18c','element-wind':'#eab18c',
    'water-soft':'#2a3342','fire-soft':'#2a3342','earth-soft':'#2a3342','wind-soft':'#2a3342'},
-  petRenderer:'avatar',rewardMotion:'fade'},
- soft:{name:'柔和宠物屋',description:'温暖 · 陪伴',
-  light:{background:'#fbf5ec',surface:'#fffdfc','surface-raised':'#fffdfc',muted:'#f4eae0','surface-soft':'#f4eae0',primary:'#99566c',brand:'#bb7c8f',secondary:'#f4e4e9','focus-ring':'#99566c',
-   'card-border':'0px',radius:'28px','radius-sm':'18px','radius-chip':'12px','radius-lg':'30px',
-   elevation:'0 6px 22px rgba(100,75,58,0.045)','shadow-raised':'0 8px 26px rgba(100,75,58,0.06)','pet-size':'132px',
-   'water-soft':'#eaf4f7','fire-soft':'#f9ebe3','earth-soft':'#edf3e6','wind-soft':'#f0eaf6','motion-normal':'260ms','motion-slow':'360ms'},
-  dark:{background:'#211d27',surface:'#2b2734',muted:'#342d3d','surface-soft':'#342d3d','card-border':'0px',primary:'#dcb1c1',secondary:'#42303d','focus-ring':'#dcb1c1',
-   radius:'28px','radius-sm':'18px','radius-chip':'12px','radius-lg':'30px','pet-size':'132px','motion-normal':'260ms','motion-slow':'360ms'},
-  petRenderer:'illustration',rewardMotion:'pop'},
- oled:{name:'夜读星幕',description:'低眩光 · 夜间',light:{...night,background:'#151a28',surface:'#1d2435','surface-soft':'#242c3f',muted:'#242c3f'},dark:night,petRenderer:'illustration',rewardMotion:'fade'}
+  petRenderer:'avatar',rewardMotion:'fade'}
 }
 function complete(tokens:WordPalTokens):WordPalTokens {
  return {...tokens,'surface-tonal':tokens['surface-soft'],'primary-foreground':tokens['on-primary']}

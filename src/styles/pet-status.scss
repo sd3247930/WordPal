@@ -1,0 +1,14 @@
+// SET 1 palette stays local to the status module; element and surface tokens inherit.
+.pet-status-metrics{--status-progress-track:#EEEAF0;--status-progress-border:#FFFDF9;min-width:0;width:100%}
+.pastel-excitement{--status-wash:linear-gradient(135deg,rgba(156,232,220,.19),rgba(197,172,237,.16));--status-fill:linear-gradient(90deg,#F3A4CC 0%,#FFD998 29%,#8CE7D7 65%,#A78DE6 100%)}
+.pastel-happiness{--status-wash:linear-gradient(135deg,rgba(251,225,164,.22),rgba(232,186,221,.16));--status-fill:linear-gradient(90deg,#F6D589 0%,#F6B6A1 52%,#E5A9DD 100%)}
+.pastel-experience{--status-wash:linear-gradient(135deg,rgba(147,225,215,.19),rgba(178,159,230,.17));--status-fill:linear-gradient(90deg,#8DE5D4 0%,#8DC6F3 50%,#BA9DF0 100%)}
+.pastel-affection{--status-wash:linear-gradient(135deg,rgba(249,192,197,.21),rgba(206,180,239,.16));--status-fill:linear-gradient(90deg,#F6B5BE 0%,#EF94B5 52%,#C6A4ED 100%)}
+.pet-status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,7.25rem),1fr));gap:10px;min-width:0}
+.pet-status-metrics .pet-status-card{display:flex;flex-direction:column;align-items:stretch;gap:8px;margin:0;padding:12px;min-width:0;border:1px solid var(--pet-border);border-radius:18px;background-image:var(--status-wash);background-color:var(--pet-surface);color:var(--pet-text);text-align:left;line-height:1.5;white-space:normal;box-shadow:0 3px 9px rgba(73,54,89,.04)}
+.pet-status-label{font-size:clamp(17px,var(--wp-font-body),21px);font-weight:600;overflow-wrap:anywhere}
+.pet-status-note{display:block;font-size:clamp(13px,var(--wp-font-caption),17px);color:var(--pet-muted);line-height:1.6;overflow-wrap:anywhere}
+.pet-status-card:focus-visible{outline:2px solid var(--pet-accent);outline-offset:2px}.pet-status-explanation{display:flex;flex-direction:column;gap:10px;margin-top:12px;padding:14px;border:1px solid var(--pet-border);border-radius:18px;background:var(--pet-tonal)}.pet-status-explanation .wp-button{align-self:flex-start;margin:0;white-space:normal}
+.pet-status-metrics.dark{--status-progress-track:#3A3C48;--status-progress-border:#777381}.dark .pastel-excitement{--status-fill:linear-gradient(90deg,#B6819F,#B6A57D,#77ADAA,#9181B7)}.dark .pastel-happiness{--status-fill:linear-gradient(90deg,#B9A479,#BC9085,#A388A9)}.dark .pastel-experience{--status-fill:linear-gradient(90deg,#75AFA5,#799EBB,#9A86B8)}.dark .pastel-affection{--status-fill:linear-gradient(90deg,#BB929E,#B27E99,#9F8BB6)}
+.dark .pet-status-card{background-image:linear-gradient(135deg,rgba(166,161,181,.05),rgba(166,161,181,.02));box-shadow:none}.contrast .pet-status-card{background-image:none;box-shadow:none}.contrast.pet-status-metrics{--status-progress-track:var(--pet-surface);--status-progress-border:var(--pet-text)}
+.large-text .pet-status-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,11rem),1fr))}

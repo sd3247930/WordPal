@@ -8,7 +8,7 @@
   </view>
   <picker :range="filtered" range-key="title" :value="Math.max(0,index)" aria-label="选择学习课程" @change="choose"><view class="course-picker"><text>{{index>=0?course.current.title:'选择筛选结果中的课程（'+filtered.length+'）'}}</text><text aria-hidden="true">⌄</text></view></picker>
   <text v-if="!filtered.length" class="small muted block">没有匹配课程，请调整筛选条件。</text>
-  <text v-if="course.current.route==='textbook'" class="small muted block">{{course.current.edition||course.current.editionYear}} · {{course.current.startGrade?course.current.startGrade+' 年级起点':'起始年级待核对'}} · {{course.current.grade}} 年级{{course.current.semester}} · 单元归属请与正在使用的课本核对</text>
+  <text v-if="course.current.route==='textbook'" class="small muted block">{{course.current.edition||course.current.editionYear}} · {{course.current.startGrade?course.current.startGrade+' 年级起点':'未填写起始年级'}} · {{course.current.grade}} 年级{{course.current.semester}} · 单元归属请与正在使用的课本核对</text>
   <picker v-if="course.current.route==='textbook'" :range="course.current.units" range-key="title" :value="unitIndex" aria-label="选择课程单元" @change="chooseUnit"><view class="course-picker small">{{course.current.units[unitIndex]?.title}} ⌄</view></picker>
   <picker :range="lessonChoices" range-key="name" :value="lessonIndex" aria-label="选择课节起点" @change="course.chooseLesson(lessonChoices[+($event as any).detail.value].id)"><view class="course-picker small"><text>{{course.lesson?.unit}} · {{course.lesson?.name}}</text><text aria-hidden="true">⌄</text></view></picker>
   <text class="small muted">能力起点 L{{course.recommendation.entryLevel}} · {{course.recommendation.meta.title}} · {{course.recommendation.currentMatches?'当前课程适合此起点':'可请家长选择匹配此起点的课程'}}</text>
@@ -33,6 +33,6 @@ const filtered=computed(()=>course.installed.filter(c=>(selectedSeries.value==='
 const index=computed(()=>filtered.value.findIndex(c=>c.courseId===course.currentId)),unitIndex=computed(()=>Math.max(0,course.current.units.findIndex(u=>u.id===course.lesson?.unitId)))
 const lessonChoices=computed(()=>course.current.route==='textbook'?course.lessons.filter(l=>l.unitId===course.current.units[unitIndex.value]?.id):course.lessons)
 const lessonIndex=computed(()=>Math.max(0,lessonChoices.value.findIndex(l=>l.id===course.lesson?.id)))
-function choose(event:any){const id=filtered.value[+event.detail.value]?.courseId;if(!id)return;if(filtered.value[+event.detail.value]?.route==='textbook'&&courseNeedsReview(filtered.value[+event.detail.value])){openCourseGallery(id);return}const result=course.applyCourseSelection(id);error.value=result.ok?'':result.message||''}
+function choose(event:any){const id=filtered.value[+event.detail.value]?.courseId;if(!id)return;const result=course.applyCourseSelection(id);error.value=result.ok?'':result.message||''}
 function chooseUnit(event:any){const id=course.current.units[+event.detail.value]?.lessons[0]?.id;if(id)course.chooseLesson(id)}
 </script>

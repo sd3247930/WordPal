@@ -89,7 +89,7 @@ test('无时间能力使用明确教育提示，apple/ship/rain 的拼写与音�
 })
 
 test('前后台事件清理声音与高亮，系统减少动效切换立即关闭缩放',async({page})=>{
- await setAppearance(page,'bento','light',{reducedMotion:false});await mockClock(page);await seed(page);await go(page,'learn');await openCustomPractice(page);await openExploration(page);const before=await database(page)
+ await setAppearance(page,'swiss','light',{reducedMotion:false});await mockClock(page);await seed(page);await go(page,'learn');await openCustomPractice(page);await openExploration(page);const before=await database(page)
  await audioButton(page).click();await tick(page,.4);await active(page,1)
  await page.emulateMedia({reducedMotion:'reduce'});await expect.poll(()=>page.locator('.phonics-word .is-active').evaluate(node=>getComputedStyle(node).transform)).toBe('none')
  await page.evaluate(()=>{Object.defineProperty(document,'visibilityState',{configurable:true,get:()=> 'hidden'});document.dispatchEvent(new Event('visibilitychange'))})
@@ -98,8 +98,8 @@ test('前后台事件清理声音与高亮，系统减少动效切换立即关�
  await active(page,null);await expect(audioButton(page)).not.toHaveClass(/playing/);await audioButton(page).click();await active(page,0);expect(await database(page)).toEqual(before)
 })
 
-const rgbCases=(['bento','swiss','soft','oled'] as const).flatMap(theme=>(['light','dark'] as const).map(mode=>({theme,mode,highContrast:false})))
-rgbCases.push({theme:'bento',mode:'light',highContrast:true},{theme:'oled',mode:'dark',highContrast:true})
+const rgbCases=(['swiss'] as const).flatMap(theme=>(['light','dark'] as const).map(mode=>({theme,mode,highContrast:false})))
+rgbCases.push({theme:'swiss',mode:'light',highContrast:true},{theme:'swiss',mode:'dark',highContrast:true})
 for(const {theme,mode,highContrast} of rgbCases)test(`${theme} ${mode}${highContrast?' 高对比':''} 红绿蓝循环、Active色与下划线双处同步，结束及重播恢复`,async({page})=>{
  const word:Word={...sample(),id:'blends',word:'blends',ipa:'/blendz/',meaning:'混合',example:'It blends well.',phonics:['b','l','e','n','d','s'],phonemes:['/b/','/l/','/e/','/n/','/d/','/z/'],syllables:['blends']}
  word.phonicsData={...resolvePhonics(word).data,chunks:resolvePhonics(word).data.chunks.map((chunk,i)=>({...chunk,startMs:i*140,endMs:(i+1)*140}))}
@@ -136,7 +136,7 @@ for(const mode of ['flash','connect','listen','spell','dictation'] as const)test
  const after=await database(page);for(const field of ['cards','history','rewardIds','gems','pets'])expect(after[field]).toEqual(before[field])
 })
 
-for(const theme of ['bento','swiss','soft','oled'])for(const mode of ['light','dark'])test(`${theme} ${mode} 大字/减少动效/长词在手机与平板保持可读`,async({page})=>{
+for(const theme of ['swiss'])for(const mode of ['light','dark'])test(`${theme} ${mode} 大字/减少动效/长词在手机与平板保持可读`,async({page})=>{
  await setAppearance(page,theme,mode,{largeText:true,reducedMotion:true});await mockClock(page);const word={...sample(),word:'uncharacteristically',phonics:[],phonemes:[],syllables:[],ipa:''};await seed(page,word);await go(page,'learn');await openExploration(page)
  for(const width of [320,390,768,1280]){
   await page.setViewportSize({width,height:900});await expect.poll(()=>page.locator('.phonics-word-frame').evaluate(node=>parseFloat(getComputedStyle(node).fontSize))).toBeGreaterThanOrEqual(36)
@@ -149,7 +149,7 @@ for(const theme of ['bento','swiss','soft','oled'])for(const mode of ['light','d
 
 test('手机和平板音块视觉样本',async({browser})=>{
  mkdirSync('private/verification/phonics-rgb',{recursive:true})
- for(const [theme,mode,width,height] of [['bento','light',390,844],['soft','light',1280,900],['oled','dark',1024,900]] as const){
+ for(const [theme,mode,width,height] of [['swiss','light',390,844],['swiss','light',1280,900],['swiss','dark',1024,900]] as const){
   const page=await browser.newPage({viewport:{width,height}});await setAppearance(page,theme,mode);await mockClock(page);await seed(page);await go(page,'learn');await openCustomPractice(page);await openExploration(page);await audioButton(page).click();await tick(page,.4);await active(page,1)
   await page.screenshot({path:`private/verification/phonics-rgb/${theme}-${width}.png`,fullPage:true});await page.close()
  }

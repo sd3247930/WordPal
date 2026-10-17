@@ -71,7 +71,7 @@ test('无时钟教育提示、等待暂停、切词、停止后的迟到事件�
 })
 test('固定红绿蓝循环在所有主题不变，不将颜色写入音块内容',()=>{
  assert.deepEqual(Array.from({length:9},(_,i)=>getPhonicsColor(i)),['red','green','blue','red','green','blue','red','green','blue'])
- for(const id of ['bento','swiss','soft','oled'] as const)for(const mode of ['light','dark'] as const)for(let i=0;i<9;i++){
+ for(const id of ['swiss'] as const)for(const mode of ['light','dark'] as const)for(let i=0;i<9;i++){
   assert.deepEqual(phonicsColor(i,id,mode),phonicsColor(i%3,id,mode))
   for(const hex of [phonicsColor(i,id,mode).ink,phonicsColor(i,id,mode).active]){
    const rgb=[1,3,5].map(offset=>parseInt(hex.slice(offset,offset+2),16));assert.equal(rgb.indexOf(Math.max(...rgb)),i%3);assert.ok(!['#FF0000','#00FF00','#0000FF'].includes(hex))
@@ -79,9 +79,9 @@ test('固定红绿蓝循环在所有主题不变，不将颜色写入音块内�
  }
  const resolved=resolvePhonics(wordById.apple);assert.ok(resolved.data.chunks.every(c=>!('color' in c)))
 })
-test('四主题明暗的RGB基础色、Active、高对比与75%待播放色均可读，音素沿用正文色',()=>{
+test('瑞士主题明暗的RGB基础色、Active、高对比与75%待播放色均可读，音素沿用正文色',()=>{
  const composite=(fg:string,bg:string)=>'#'+[1,3,5].map(i=>Math.round(parseInt(fg.slice(i,i+2),16)*.75+parseInt(bg.slice(i,i+2),16)*.25).toString(16).padStart(2,'0')).join('')
- for(const id of ['bento','swiss','soft','oled'] as const)for(const mode of ['light','dark'] as const){const theme=themePacks[id][mode==='light'?'buildLight':'buildDark']().tokens
+ for(const id of ['swiss'] as const)for(const mode of ['light','dark'] as const){const theme=themePacks[id][mode==='light'?'buildLight':'buildDark']().tokens
   for(let i=0;i<3;i++){const color=phonicsColor(i,id,mode);assert.notEqual(color.ink,color.active);assert.ok(contrast(color.active,theme.surface)>=4.5,id+' '+mode+' high contrast')
    for(const background of [theme.surface,color.soft]){assert.ok(contrast(color.ink,background)>=3,id+' '+mode);assert.ok(contrast(color.active,background)>=3);assert.ok(contrast(composite(color.ink,background),background)>=3,id+' '+mode+' upcoming')}
    assert.ok(contrast(theme.foreground,color.soft)>=4.5)

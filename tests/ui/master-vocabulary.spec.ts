@@ -10,21 +10,18 @@ async function primary(page:Page){
  await go(page,'learn')
  await page.getByRole('button',{name:'选择教材',exact:true}).click()
  await page.getByRole('button',{name:/^出版社 \/ 版本 \/ 起点筛选/}).click()
- await select(page,'筛选教材出版社','人教版社区索引（教材系列待核对）')
+ await select(page,'筛选教材出版社','人教版社区索引')
  await select(page,'筛选教材年级','3 年级')
  await select(page,'筛选教材册次','上册')
  await page.locator('.course-gallery-card').filter({hasText:'小学英语 · 3年级上册（社区索引）'}).click()
- await page.locator('.course-review-panel .course-check').first().click()
- await page.getByRole('button',{name:'确认并应用',exact:true}).click()
+ await expect(page.locator('.current-course-card')).toContainText('小学英语 · 3年级上册（社区索引）')
 }
 async function openUnit(page:Page,unit:string){
  await page.getByRole('button',{name:'选择教材',exact:true}).click()
- await page.locator('.course-gallery-card').filter({hasText:'小学英语 · 3年级上册（社区索引）'}).click()
- await page.locator('.course-review-panel .course-check').first().click()
  await page.locator('.course-unit-row').filter({hasText:unit}).first().getByRole('button',{name:'从这一单元开始'}).click()
 }
 test('本机12册筛选、6单元和独立起点可用，手机平板不溢出',async({page})=>{
- await primary(page);await expect(page.locator('.current-course-card')).toContainText('待核对');await expect(page.locator('.current-course-card')).toContainText('L2');expect((await database(page)).currentCourseId).toBe('primary-community-e1-g3-s1')
+ await primary(page);await expect(page.locator('.current-course-card')).not.toContainText('待核对');await expect(page.locator('.current-course-card')).toContainText('L2');expect((await database(page)).currentCourseId).toBe('primary-community-e1-g3-s1')
  await openUnit(page,'Unit 6');await expect(page.locator('.study-heading')).toContainText('Birthdays');expect((await database(page)).courseProgress['primary-community-e1-g3-s1'].currentLessonId).toBe('u06-l01')
  for(const [width,height] of [[390,844],[844,390],[768,1024],[1024,768],[320,720]]){await page.setViewportSize({width,height});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)}
  await page.reload();await expect(page.locator('.study-heading')).toContainText('Birthdays');expect((await database(page)).history).toHaveLength(0)

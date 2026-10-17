@@ -3,7 +3,6 @@
   <view class="course-gallery-copy">
    <view class="course-gallery-title">
     <text class="strong">{{pack.title}}</text>
-    <text v-if="summary.needsReview" class="course-review-badge">待核对</text>
     <text v-if="archived" class="course-archive-badge">已归档</text>
     <text v-if="current" class="course-current-mark">✓ 当前使用</text>
     <text class="small course-install-state">{{installationLabel(pack.courseId)}}</text>
@@ -27,5 +26,5 @@ import {installationLabel,type CourseDescriptor} from '../../services/content/Co
 const props=withDefaults(defineProps<{pack:CoursePack|CourseDescriptor;selected?:boolean;current?:boolean;archived?:boolean}>(),{selected:false,current:false,archived:false})
 defineEmits<{select:[id:string]}>()
 const summary=computed(()=> 'wordCount' in props.pack?{words:props.pack.wordCount,units:props.pack.units.length,lessons:props.pack.units.reduce((n,u)=>n+u.lessons,0),levels:props.pack.abilityLevels.join(' / '),needsReview:props.pack.sources.some(s=>s.rightsStatus!=='redistribution-approved')||/待核对/.test(props.pack.title)}:courseSummary(props.pack)),editionLabel=computed(()=>courseEditionLabel(props.pack as CoursePack))
-const label=computed(()=>`${props.pack.title}，${summary.value.words} 词，${summary.value.units} 单元${summary.value.needsReview?'，待核对':''}${props.archived?'，已归档':''}${props.current?'，当前使用':''}`)
+const label=computed(()=>`${props.pack.title}，${summary.value.words} 词，${summary.value.units} 单元${props.archived?'，已归档':''}${props.current?'，当前使用':''}`)
 </script>

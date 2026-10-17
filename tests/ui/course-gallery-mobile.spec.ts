@@ -12,8 +12,6 @@ async function openGallery(page:import('@playwright/test').Page){
 
 test('手机视口：确认按钮整块可点，未被底部导航遮挡',async({page})=>{
  await openGallery(page)
- await page.locator('.course-gallery-card').filter({hasText:'合成测试教材'}).first().click()
- await page.locator('.course-review-panel .course-check').first().click()
  const confirm=page.getByRole('button',{name:'确认并应用',exact:true})
  await expect(confirm).toBeEnabled()
  // Pushed pages hide the tab bar, so nothing can overlap the primary action.

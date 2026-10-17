@@ -2,6 +2,8 @@ import {strToU8} from 'fflate'
 import {validateCourse,type CoursePack,type SourceRecord,type Issue,type VocabularyEntry} from '../../../packages/content_schema/course'
 import type {Word} from '../../../packages/core_learning'
 import {sha256} from '../content/digest'
+import {cleanCourseLabel} from '../course/CourseSelection'
+import {wordIdentityMatches} from '../content/ContentRegistry'
 export interface ImportMetadata {courseId:string;title:string;contentVersion?:string;route:CoursePack['route'];level:string;publisher?:string;editionYear?:number;edition?:string;startGrade?:1|3|null;grade?:number;semester?:string;sourceType:SourceRecord['type'];sourceNote:string;declared:boolean}
 export interface ImportPreview {pack:CoursePack|null;issues:Issue[];duplicates:number;reuse:Record<string,string>;newCount:number;missingAudio:number;missingPhonics:number;missingImages:number;digest:string}
 export const defaultImportMetadata=():ImportMetadata=>({courseId:'my-course',title:'我的自编课程',contentVersion:'1.0.0',route:'theme',level:'L1',sourceType:'user-provided',sourceNote:'家长提供的本机私用词表',declared:false})
@@ -52,14 +54,16 @@ export function previewImport(text:string,format:'json'|'csv'|'markdown',meta:Im
   if(format==='json')preview.pack=JSON.parse(text.replace(/^\uFEFF/,'')) as CoursePack
   else{const parsed=csvToCourse(format==='markdown'?markdownToCsv(text):text,meta,mapping);preview.pack=parsed.pack;preview.duplicates=parsed.duplicates;const markdownLines=format==='markdown'?markdownRowLines(text):[];rowLines=parsed.lines.map(line=>markdownLines[line-1]||line)}
   const pack=preview.pack
+  if(typeof pack.title==='string')pack.title=cleanCourseLabel(pack.title)
+  if(typeof pack.edition==='string')pack.edition=cleanCourseLabel(pack.edition)
   if(!pack||typeof pack!=='object')throw new Error('课程 JSON 必须为对象。')
   // The parent declaration authorizes local use; it never grants publication permission.
   if(meta.declared&&Array.isArray(pack.sources))pack.sources=pack.sources.map(source=>({...source,rightsStatus:source.rightsStatus==='redistribution-approved'?source.rightsStatus:'private-use-declared',declaredAt:new Date().toISOString(),fileSha256:preview.digest}))
   preview.issues=validateCourse(pack).map(issue=>({...issue,line:rowLines[issue.line-2]||issue.line}))
   if(!preview.issues.some(i=>i.severity==='error'))for(const [i,entry]of pack.vocabulary.entries()){
    const collision=existing[entry.id]
-   if(collision&&(collision.word.toLowerCase()!==entry.lemma.toLowerCase()||collision.meaning!==entry.meaning||collision.pos!==(entry.pos||'')))preview.issues.push({severity:'error',line:rowLines[i]||i+2,field:'id',message:'已有 ID 对应另一个词义或词性。',fix:'给新词义换一个稳定 ID。'})
-   const candidate=Object.values(existing).find(w=>w.word.toLowerCase()===entry.lemma.toLowerCase()&&w.meaning===entry.meaning&&w.pos===(entry.pos||''))
+   if(collision&&!wordIdentityMatches(collision,{word:entry.lemma,meaning:entry.meaning,pos:entry.pos||''}))preview.issues.push({severity:'error',line:rowLines[i]||i+2,field:'id',message:'已有 ID 对应另一个词义或词性。',fix:'给新词义换一个稳定 ID。'})
+   const candidate=Object.values(existing).find(w=>wordIdentityMatches(w,{word:entry.lemma,meaning:entry.meaning,pos:entry.pos||''}))
    if(candidate)preview.reuse[entry.id]=candidate.id;else preview.newCount++
    if(!entry.audio&&!entry.assetRefs?.audio&&!candidate?.audio)preview.missingAudio++
    if(!entry.image&&!entry.assetRefs?.image)preview.missingImages++

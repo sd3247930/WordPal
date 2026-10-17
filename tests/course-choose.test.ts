@@ -61,18 +61,20 @@ test('档案仍为 v1 时报升级中，只读档案报只读，两者都不改�
  assert.equal(readonly.ok,false);assert.equal(readonly.reason,'db-readonly');assert.match(readonly.message||'',/只读/)
 })
 
-test('学习进行中切换会排队，本轮结束后才真正生效',async()=>{
+test('学习中切换立即生效，切回恢复冻结会话、输入和学习记录',async()=>{
  reset()
  const profile=useProfileStore(),course=useCourseStore(),learning=useLearningStore()
  await installTextCourse(pack('switch-one'));await installTextCourse(pack('switch-two'))
  assert.equal(course.choose('switch-one').ok,true)
  assert.equal(learning.start(),true)
- const queued=course.choose('switch-two')
- assert.equal(queued.ok,true);assert.equal(queued.queued,true)
- assert.equal(course.currentId,'switch-one');assert.equal(profile.db.pendingCourseId,'switch-two');assert.equal(course.pendingCourse?.title,'合成切换课 switch-two')
- profile.transact(d=>{d.session!.completedAt=new Date().toISOString()})
- assert.equal(course.applyPending(),true)
+ learning.patch({input:'draft',mode:'spell'})
+ const frozen=JSON.stringify(learning.session),records=JSON.stringify({cards:profile.db.cards,history:profile.db.history,pets:profile.db.pets,gems:profile.db.gems})
+ const switched=course.choose('switch-two')
+ assert.equal(switched.ok,true);assert.equal(switched.queued,false)
  assert.equal(course.currentId,'switch-two');assert.equal(profile.db.pendingCourseId,undefined)
+ assert.equal(learning.session,null);assert.equal(JSON.stringify(profile.db.courseSessions?.['switch-one']),frozen)
+ assert.ok(course.choose('switch-one').ok);assert.equal(JSON.stringify(learning.session),frozen)
+ assert.equal(JSON.stringify({cards:profile.db.cards,history:profile.db.history,pets:profile.db.pets,gems:profile.db.gems}),records)
 })
 
 test('applyCourseSelection 反馈成功文案与词数',async()=>{
