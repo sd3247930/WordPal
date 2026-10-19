@@ -1,3 +1,4 @@
+import {startLegacyRound} from './helpers/daily-flow'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {createPinia,setActivePinia} from 'pinia'
@@ -77,6 +78,6 @@ test('实际练习证据只提交一次、可备份恢复，正式答题仍使�
  assert.deepEqual(previewLearningBackup(makeLearningBackup(profile.db)).practiceAnswers,profile.db.practiceAnswers)
  profile.transact(d=>{d.history.push(event('cat',10,{id:'fixture-later-formal',at:new Date(Date.parse(d.practiceAnswers![0].at)+1).toISOString()}))})
  const mixedBefore=JSON.stringify(profile.db);assert.equal(book.historyByWord.cat.at(-1)!.id,'fixture-later-formal');assert.equal(JSON.stringify(profile.db),mixedBefore)
- learning.next();profile.transact(d=>{d.session=null});assert.ok(learning.startSelected(undefined,'dog'));assert.equal(learning.current?.id,'cat','自由练习不跳过教材首轮的第一个单词');learning.setMode('spell');learning.patch({input:'cat'});const card=newCard('cat',new Date());assert.ok(learning.submit());const answer=profile.db.history.at(-1)!;assert.deepEqual(profile.db.cards.cat,new FSRSScheduler().schedule(card,3,new Date(answer.at)).card)
+ learning.next();profile.transact(d=>{d.session=null});assert.ok(learning.startSelected(undefined,'dog'));assert(startLegacyRound(learning));assert.equal(learning.current?.id,'cat','自由练习不跳过教材首轮的第一个单词');learning.setMode('spell');learning.patch({input:'cat'});const card=newCard('cat',new Date());assert.ok(learning.submit());const answer=profile.db.history.at(-1)!;assert.deepEqual(profile.db.cards.cat,new FSRSScheduler().schedule(card,3,new Date(answer.at)).card)
  assert.equal(course.currentId,'starter')
 })

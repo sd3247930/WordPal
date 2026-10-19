@@ -3,7 +3,7 @@
  <view class="hero-counts home-stats" aria-label="今日学习概览">
   <view><text class="small muted">连续学习</text><text class="metric">{{streak}} <text class="small">天</text></text></view>
   <view><text class="small muted">今日复习</text><text class="metric">{{learning.due.length}} <text class="small">个</text></text></view>
-  <view><text class="small muted">今日新词</text><text class="metric">{{learning.studyWords.length}} <text class="small">个</text></text></view>
+  <view><text class="small muted">今日新词</text><text class="metric">{{learning.todayPlan?.wordIds.length||0}} <text class="small">个</text></text></view>
  </view>
  <view class="home-grid">
   <WPCard class="home-companion" level="feature" :class="{'companion-dark':dark}" :style="houseStyle" :data-scene="house.sceneId">
@@ -24,9 +24,9 @@
   <WPCard class="home-today task-list-card"><view class="section-heading"><text>今日任务</text><WPChip>{{completedTasks}} / 4</WPChip></view>
    <WPButton class="hero-cta" :spread="true" @click="begin">{{learning.session&&!learning.session.completedAt?'继续今日学习':'开始今日学习'}} <text aria-hidden="true">→</text></WPButton>
    <WPTaskCard v-for="task in tasks" :key="task.title" :icon="task.icon" :title="task.title" :detail="task.detail" :value="task.value" :element="task.element" :completed="task.done" action="去学习" @click="beginMode(task.mode)"/>
-   <text class="small muted block">按教材顺序学习，每一步都算数。</text>
+   <text class="small muted block">{{learning.todayPlan?.completedAt?'今天的六环节已完成，下一学习日继续下一批。':learning.todayPlan&&learning.todayPlan.date!==localDate()?'待续学：先完成上次的固定词表。':'按教材顺序完成六环节，每一步都算数。'}}</text>
   </WPCard>
-  <WPCard class="home-word-list"><view class="section-heading"><text>今天认识的单词</text><WPChip :element="pet.current.element">{{learning.lesson.name}}</WPChip></view><view class="today-words"><WPActionTile role="button" tabindex="0" v-for="word in todayWords" :key="word.id" class="today-word" :aria-label="word.audio?'听'+word.word+'的发音':word.word+'暂无音频'" :disabled="!word.audio" @click="listen(word)"><text class="word-mini">{{word.word}}</text><text class="small muted">{{word.meaning}}</text><WPControlIcon v-if="word.audio"/><text v-else class="small muted">暂无音频</text></WPActionTile></view><text class="small muted block">{{learning.needsConsolidation?'这课再熟悉一下，下次会更有把握。':'点一点，听听标准发音。'}}</text></WPCard>
+  <WPCard class="home-word-list"><view class="section-heading"><text>今天认识的单词</text><WPChip :element="pet.current.element">{{learning.lesson.name}}</WPChip></view><view class="today-words"><WPActionTile role="button" tabindex="0" v-for="word in todayWords" :key="word.id" toggle-highlight class="today-word" :aria-label="word.audio?'听'+word.word+'的发音':word.word+'暂无音频'" :disabled="!word.audio" @click="listen(word)" @cancel="stopAudio()"><text class="word-mini">{{word.word}}</text><text class="small muted">{{word.meaning}}</text><WPControlIcon v-if="word.audio"/><text v-else class="small muted">暂无音频</text></WPActionTile></view><text class="small muted block">{{learning.needsConsolidation?'这课再熟悉一下，下次会更有把握。':'点一点，听听标准发音。'}}</text></WPCard>
   <view class="home-insights">
    <WPCard class="home-data"><view class="section-heading"><text>学习数据</text><text class="small muted">真实记录</text></view><view class="data-ring" role="progressbar" aria-label="今日正确率" :aria-valuenow="accuracy" aria-valuemin="0" aria-valuemax="100" :style="{background:'conic-gradient(var(--wp-primary) '+accuracy*3.6+'deg,var(--wp-secondary) 0)'}"><view class="data-ring-inner"><text class="progress-number">{{accuracy}}<text class="small">%</text></text><text class="small muted">今日正确率</text></view></view><view class="mini-stats"><view><text class="metric">{{learning.newToday}}</text><text class="small muted">新学单词</text></view><view><text class="metric">{{reviewsToday}}</text><text class="small muted">复习次数</text></view><view><text class="metric">{{learning.todayAnswers.length}}</text><text class="small muted">有效学习</text></view></view></WPCard>
    <WPCard class="home-priority"><view class="section-heading"><text>复习优先级</text><text class="muted" aria-hidden="true">▥</text></view><WPActionTile role="button" tabindex="0" class="priority-row" @click="navigate('review')"><text class="status-dot due"/><text>到期复习</text><text class="strong">{{learning.due.length}} 个 →</text></WPActionTile><WPActionTile role="button" tabindex="0" class="priority-row" @click="navigate('review')"><text class="status-dot weak"/><text>重点巩固</text><text class="strong">{{review.weak.length}} 个 →</text></WPActionTile><WPActionTile role="button" tabindex="0" class="priority-row" @click="navigate('review')"><text class="status-dot known"/><text>已经认识</text><text class="strong">{{learning.learnedCount}} 个 →</text></WPActionTile></WPCard>
@@ -42,6 +42,7 @@ import {useCourseStore} from '../../stores/course'
 import {useActivitiesStore} from '../../stores/activities'
 import {getCourseWord} from '../../services/content/ContentRegistry'
 
+import {onShow} from '@dcloudio/uni-app'
 import {computed,ref,onUnmounted} from 'vue'
 import WPCard from '../../components/wp-card/WPCard.vue'
 import WPChip from '../../components/wp-chip/WPChip.vue'
@@ -64,26 +65,24 @@ import type {Element} from '../../../packages/pet_engine'
 const learning=useLearningStore(),review=useReviewStore(),profile=useProfileStore(),pet=usePetStore(),audioError=ref(''),course=useCourseStore(),activities=useActivitiesStore()
 const house=usePetHouseStore(),theme=useThemeStore()
 const scene=computed(()=>petHouseThemes[house.sceneId]),dark=computed(()=>theme.mode==='dark')
-const houseStyle=computed(()=>petHouseStyle(house.sceneId,dark.value,theme.settings.highContrast))
+const houseStyle=computed(()=>petHouseStyle(house.sceneId,dark.value,theme.settings.highContrast,theme.settings.themeId,theme.tokens))
 const dateLabel=formatHomeDate(),hour=new Date().getHours(),greeting=hour<11?'早上好':hour<18?'下午好':'晚上好'
 const moods={calm:'平静',happy:'开心',excited:'兴奋',curious:'好奇'}
 const companionGreeting={water:'我们一起，慢慢记住新单词。',fire:'一起试一试，收获新的勇气。',earth:'每天一点点，小进步会长大。',wind:'一起发现更多有趣的小世界。'}
 const streak=computed(()=>{let count=0;const day=new Date();if(!profile.db.streakDates.includes(localDate(day)))day.setDate(day.getDate()-1);while(profile.db.streakDates.includes(localDate(day))){count++;day.setDate(day.getDate()-1)}return count})
-const todayWords=computed(()=>learning.lesson.wordIds.map(id=>getCourseWord(course.currentId,id)).filter(Boolean))
+onShow(()=>{learning.prepareDaily()})
+const todayWords=computed(()=>(learning.todayPlan?.wordIds||learning.lesson.wordIds).flatMap(id=>{const word=getCourseWord(course.currentId,id);return word?[word]:[]}))
 const reviewsToday=computed(()=>learning.todayAnswers.filter(a=>a.source==='review_due').length)
 const accuracy=computed(()=>learning.todayAnswers.length?Math.round(learning.todayAnswers.filter(a=>a.correct).length/learning.todayAnswers.length*100):0)
-const tasks=computed(()=>{
- const audible=todayWords.value.some(w=>w.audio),listen=learning.todayAnswers.filter(a=>a.mode===(audible?'listen':'connect')).length,spell=learning.todayAnswers.filter(a=>a.mode==='spell'||a.mode==='dictation').length
- const goal=Math.min(3,profile.db.dailyLimit),reviewGoal=reviewsToday.value+learning.due.length
- return [
-  {title:'新学单词',detail:'每天一点新发现',icon:'new' as TaskIconName,value:learning.newToday+' / '+profile.db.dailyLimit,done:learning.newToday>=profile.db.dailyLimit,element:'earth' as Element,mode:'flash' as LearningMode},
-  {title:audible?'听音辨义':'词义配对',detail:audible?'听一听，找到它':'连一连，认识词义',icon:'listen' as TaskIconName,value:Math.min(goal,listen)+' / '+goal,done:listen>=goal,element:'fire' as Element,mode:(audible?'listen':'connect') as LearningMode},
-  {title:'拼写练习',detail:'让字母排好队',icon:'spell' as TaskIconName,value:Math.min(goal,spell)+' / '+goal,done:spell>=goal,element:'wind' as Element,mode:'spell' as LearningMode},
-  {title:'复习巩固',detail:reviewGoal?'和老朋友再见一面':'今天暂无到期单词',icon:'review' as TaskIconName,value:reviewsToday.value+' / '+reviewGoal,done:learning.due.length===0,element:'water' as Element,mode:'flash' as LearningMode}
- ]})
+const tasks=computed(()=>[
+ {title:'新学单词',detail:'闪现 · 认识今天的单词',icon:'new',element:'earth',mode:'flash'},
+ {title:'听音辨义',detail:'连接 → 听音',icon:'listen',element:'fire',mode:'connect'},
+ {title:'拼写练习',detail:'拼写 → 听写',icon:'spell',element:'wind',mode:'spell'},
+ {title:'复习巩固',detail:'完成今天全部单词的巩固',icon:'review',element:'water',mode:'flash'}
+].map((task,index)=>({...task,icon:task.icon as TaskIconName,element:task.element as Element,mode:task.mode as LearningMode,value:learning.tasks[index].done+' / '+learning.tasks[index].total,done:learning.tasks[index].complete})))
 const completedTasks=computed(()=>tasks.value.filter(t=>t.done).length)
-function begin(){course.applyPending();if(!learning.start()&&learning.lesson.wordIds.every(id=>profile.db.cards[id]))activities.start('check');navigate('learn')}
-function beginMode(mode:LearningMode){const active=learning.session&&!learning.session.completedAt;learning.start(learning.studyWords.length||learning.due.length?undefined:learning.lesson.wordIds);if(!active)learning.setMode(mode);navigate('learn')}
+function begin(){course.applyPending();if(learning.start())navigate('learn');else if(learning.planProblem)uni.showToast?.({title:learning.planProblem,icon:'none'});else navigate('learn')}
+function beginMode(_mode:LearningMode){begin()}
 function listen(word:Word){audioError.value='';playWord(word,m=>audioError.value=m)}
 onUnmounted(stopAudio)
 </script>
@@ -107,5 +106,7 @@ onUnmounted(stopAudio)
 @media(min-width:1400px){.home-companion .companion-scene{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:14px}.home-companion .companion-art{max-width:180px}}
 @media(max-width:359px){.home-companion .companion-scene{gap:12px}.home-companion .companion-bubble{gap:6px}.home-companion .companion-name{font-size:22px}.home-companion .companion-open{padding:8px 10px}}
 .large-text .home-companion .companion-name{font-size:var(--wp-font-section)}
+.home-companion .companion-open{min-height:48px}
+.large-text .home-companion .companion-open{min-height:56px}
 @media(max-width:599px){.large-text .home-companion .companion-scene{grid-template-columns:minmax(0,1fr)}.large-text .home-companion .companion-art{max-width:150px}}
 </style>

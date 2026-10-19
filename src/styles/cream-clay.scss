@@ -1,0 +1,68 @@
+/* Toy clay surfaces use the existing artwork; original icon files are shared unchanged. */
+.wp-app.theme-clay{
+ --wp-card-pad-block:20px;--wp-card-pad-inline:20px;
+ .page-title{font-weight:700;letter-spacing:.01em}
+ .page-subtitle{line-height:1.55}
+ .wp-card{border-color:var(--wp-border);border-radius:var(--wp-radius)}
+ .wp-card.pet-companion-card{border-radius:24px;background:var(--wp-surface);box-shadow:var(--wp-elevation)}
+ .wp-button{border-radius:var(--wp-radius-sm);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 3px 0 rgba(100,60,28,.16);transition:background 140ms,box-shadow 140ms,transform 140ms}
+ .wp-button.kind-quiet,.wp-button.quiet{box-shadow:none}
+ .wp-button:active:not([disabled]){transform:translateY(1px);box-shadow:var(--wp-clay-pressed)}
+ .wp-button[disabled]{box-shadow:none}
+ .bottom-nav{border-radius:28px;background:var(--wp-surface);box-shadow:var(--wp-shadow-raised)}
+ .nav-icon-container{border-radius:18px}
+ .bottom-item.icon-highlighted .nav-icon-container{box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 3px 0 rgba(110,74,38,.12)}
+ .nav-item{border-radius:18px}
+ .home-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.35fr) minmax(0,.9fr);grid-template-areas:"pet tasks insights" "words tasks insights"}
+ .home-today{background:var(--wp-clay-task);border-color:var(--wp-border)}
+ .home-today .hero-cta{min-height:56px;border-radius:20px;font-weight:700}
+ .home-stats{background:var(--wp-surface);border:1px solid var(--wp-border);border-radius:20px;padding:12px 16px;box-shadow:var(--wp-elevation)}
+ .home-companion{overflow:hidden;border-radius:24px;background:var(--wp-surface)}
+ .companion-art{border-radius:22px;overflow:hidden}
+ .companion-bubble{padding:12px;border-radius:18px;background:var(--wp-surface);border:1px solid var(--wp-border)}
+ .home-word-list{background:var(--wp-clay-mint)}
+ .today-word{padding:10px;border-radius:14px;background:var(--wp-surface);border:1px solid var(--wp-border)}
+ .task-icon{border-radius:16px;background:var(--wp-surface);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 3px 0 rgba(100,60,28,.09)}
+ .current-course-card{padding:18px;border:1px solid var(--wp-border);border-radius:24px;background:var(--wp-clay-sky);box-shadow:var(--wp-elevation)}
+ .study-stat-card{border-radius:18px;background:var(--wp-surface-raised);box-shadow:var(--wp-elevation)}
+ .study-space .study-main>.wp-card,.study-space .wp-word-card{border-radius:24px;background:var(--wp-surface);box-shadow:var(--wp-shadow-raised)}
+ .word-picture-stage{background:var(--wp-surface-soft)}
+ .word-picture-fallback{color:var(--wp-muted-foreground)}
+ .wordbook-category-title-part,.pet-action-label{white-space:normal;overflow-wrap:anywhere;max-width:100%}
+ .study-mode-title{font-size:var(--wp-font-body);white-space:normal;overflow-wrap:anywhere;max-width:100%}
+ .study-mode-tile,.answer-choice,.food-choice,.pet-action-tab{border-radius:18px;box-shadow:var(--wp-elevation)}
+ .spelling-input,.spelling-input input,.wordbook-search{border-color:var(--wp-clay-control-border);border-radius:18px}
+ .wordbook-scope-tile,.wordbook-category-tile,.familiarity-state{box-shadow:var(--wp-elevation);background:var(--wp-surface-raised)}
+ .wp-action-tile.icon-highlighted:not(.bottom-item):not(.task-icon){box-shadow:inset 0 0 0 2px var(--wp-primary),var(--wp-elevation)}
+ .wordbook-course-filters{padding:14px;border-radius:24px;background:var(--wp-clay-sky);border:1px solid var(--wp-border)}
+ .wordbook-stats{border-radius:18px;background:var(--wp-clay-mint);border:1px solid var(--wp-border)}
+ .wordbook-workspace .review-list{border-radius:24px}
+ .wordbook-row{margin-block:6px;padding:12px;border:1px solid var(--wp-border);border-radius:18px;background:var(--wp-surface)}
+ .word-detail-panel{border-radius:24px;background:var(--wp-surface);box-shadow:var(--wp-elevation)}
+ .word-detail-sheet{border-radius:28px 28px 0 0}
+ .pet-house{border:1px solid var(--pet-border);box-shadow:var(--wp-elevation)}
+ .pet-house .pet-current-hero,.pet-house .pet-status-hud,.pet-house .pet-feed-panel,.pet-house .pet-growth-panel,.pet-house .pet-dress-panel,.pet-house .pet-album-panel{border-radius:24px;background:var(--pet-surface);box-shadow:var(--pet-shadow)}
+ .pet-action-tab,.food-choice{background:var(--pet-surface)}
+ .pet-status-hud{border-radius:20px}
+ .pet-theme-choice{box-shadow:var(--pet-shadow)}
+ .settings-appearance{background:var(--wp-surface-raised)}
+ .theme-choice{box-shadow:var(--wp-elevation)}
+ .segmented{gap:8px}
+ .segmented>.wp-action-tile{border-radius:18px}
+ .preference-row{border-bottom-color:var(--wp-divider)}
+ .wp-progress{border-radius:999px}
+ &.high-contrast{--wp-clay-control-border:var(--wp-foreground)}
+ &.high-contrast .wp-card,&.high-contrast .wp-action-tile,&.high-contrast .bottom-nav{box-shadow:none}
+ &.high-contrast .wp-action-tile.icon-highlighted{outline:2px solid var(--wp-primary);outline-offset:-3px}
+ &.reduce-motion .wp-button{transition:none;transform:none}
+}
+@media(max-width:599px){
+ .wp-app.theme-clay{--wp-card-pad-block:16px;--wp-card-pad-inline:16px}
+ .wp-app.theme-clay .home-grid{grid-template-columns:minmax(0,1fr);grid-template-areas:"tasks" "pet" "words" "insights";gap:16px}
+ .wp-app.theme-clay .home-heading{margin-bottom:10px}
+ .wp-app.theme-clay .home-stats{padding:8px 12px;margin-bottom:12px}
+ .wp-app.theme-clay .home-today{padding:16px}
+ .wp-app.theme-clay .wordbook-row{padding:10px 8px}
+}
+@media(min-width:600px) and (max-width:1199px){.wp-app.theme-clay .home-grid{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-areas:"tasks pet" "tasks words" "insights insights"}}
+@media(prefers-reduced-motion:reduce){.wp-app.theme-clay .wp-button{transition:none;transform:none}}

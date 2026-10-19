@@ -2,9 +2,9 @@
  <view class="page-heading"><view><text class="page-title">我的精灵小伙伴</text><text class="page-subtitle">四种精灵主题随心切换，打造专属陪伴。</text></view></view>
  <view class="pet-house pet-workspace" :class="{'pet-house-dark':dark,'pet-house-reduced':theme.reduced}" :style="houseStyle">
   <view class="pet-house-hero"><PetScene :scene="scene" :current="pet.current" :pets="pet.all" :panorama="windowLayout.width>=840" :reduced="theme.reduced" :dark="dark" :high-contrast="theme.settings.highContrast" @choose="choose"/><CurrentPetHero class="pet-current-hero" :pet="pet.current" :unavailable="profile.readOnly" @action="openAction"/></view>
-  <WPCard class="pet-theme-switch"><view class="section-heading"><text>主题切换</text><text class="small muted">只改变陪伴空间</text></view><view class="pet-theme-grid"><WPActionTile v-for="id in elements" :key="id" role="button" tabindex="0" class="pet-theme-choice" :class="{selected:house.sceneId===id}" :aria-label="petHouseThemes[id].title" :aria-pressed="house.sceneId===id" @click="house.setScene(id)"><image class="pet-theme-thumbnail" :src="petHouseThemes[id].sceneAsset" mode="aspectFill" aria-hidden="true"/><view class="pet-theme-copy"><text class="strong">{{petHouseThemes[id].title}} <text v-if="house.sceneId===id" class="theme-check" aria-hidden="true">✓</text></text><text class="small muted">{{petHouseThemes[id].subtitle}}</text></view></WPActionTile></view><text v-if="house.error" class="notice" role="status">{{house.error}}</text></WPCard>
+  <WPCard class="pet-theme-switch"><view class="section-heading"><text>主题切换</text><text class="small muted">只改变陪伴空间</text></view><view class="pet-theme-grid"><WPActionTile v-for="id in elements" :key="id" role="button" tabindex="0" toggle-highlight :selected="house.sceneId===id" class="pet-theme-choice" :class="{selected:house.sceneId===id}" :aria-label="petHouseThemes[id].title" :aria-pressed="house.sceneId===id" @click="house.setScene(id)"><image class="pet-theme-thumbnail" :src="petHouseThemes[id].sceneAsset" mode="aspectFill" aria-hidden="true"/><view class="pet-theme-copy"><text class="strong">{{petHouseThemes[id].title}} </text><text class="small muted">{{petHouseThemes[id].subtitle}}</text></view></WPActionTile></view><text v-if="house.error" class="notice" role="status">{{house.error}}</text></WPCard>
   <view class="pet-selection"><WPPetCard v-for="p in pet.all" :key="p.element" :pet="p" :selected="pet.current.element===p.element" @choose="choose"/></view>
-  <view id="pet-details" class="pet-action-workspace"><view class="pet-action-menu" role="group" aria-label="宠物屋功能"><WPActionTile v-for="item in actions" :key="item.id" role="button" tabindex="0" class="pet-action-tab" :class="{selected:action===item.id}" :aria-label="item.label" :aria-pressed="action===item.id" @click="openAction(item.id)"><view class="pet-action-icon" aria-hidden="true"><PetActionIcon :name="item.id"/><text v-if="action===item.id" class="pet-action-check">✓</text></view><text class="pet-action-label">{{item.label}}</text></WPActionTile></view>
+  <view id="pet-details" class="pet-action-workspace"><view class="pet-action-menu" role="group" aria-label="宠物屋功能"><WPActionTile v-for="item in actions" :key="item.id" role="button" tabindex="0" toggle-highlight :selected="action===item.id" class="pet-action-tab" :class="{selected:action===item.id}" :aria-label="item.label" :aria-pressed="action===item.id" @click="openAction(item.id)" @cancel="action=null"><view class="pet-action-icon" aria-hidden="true"><PetActionIcon :name="item.id"/></view><text class="pet-action-label">{{item.label}}</text></WPActionTile></view>
   <view class="pet-action-panel">
    <WPCard v-if="action==='home'" class="pet-home-panel">
     <text class="section-title">精灵家园</text><text class="muted block">四个伙伴都在这里，选一位陪你探索单词。</text>
@@ -32,16 +32,16 @@
     <view class="section-heading"><text>喂养{{pet.info.name}}</text><text class="small">◇ {{profile.db.gems}} 灵石</text></view>
     <text class="small muted block">{{petMoods[pet.current.mood]}} · 亲密度 {{pet.current.affection}} / 100</text>
     <view class="food-grid" role="group" aria-label="选择分享小点心">
-     <WPActionTile v-for="food in foods" :key="food.id" role="button" tabindex="0" class="food-choice" :class="{selected:foodId===food.id}" :aria-label="food.name" :aria-describedby="'pet-food-price-'+food.id" :aria-pressed="foodId===food.id" @click="selectFood(food.id)">
+     <WPActionTile v-for="food in foods" :key="food.id" role="button" tabindex="0" toggle-highlight :selected="foodId===food.id" class="food-choice" :class="{selected:foodId===food.id}" :aria-label="food.name" :aria-describedby="'pet-food-price-'+food.id" :aria-pressed="foodId===food.id" @click="selectFood(food.id)" @cancel="foodId=null;preview=null">
       <PetFoodIcon :name="food.id"/>
       <text class="food-choice-name">{{food.name}}</text>
       <text :id="'pet-food-price-'+food.id" class="food-choice-price">5 灵石 / 份</text>
-      <text class="food-choice-state" :class="{chosen:foodId===food.id}" aria-hidden="true">{{foodId===food.id?'✓ 已选':'点击预览'}}</text>
+      <text class="food-choice-state" :class="{chosen:foodId===food.id}" aria-hidden="true">{{foodId===food.id?'已选':'点击预览'}}</text>
      </WPActionTile>
     </view>
     <text class="small muted block">可分享 {{Math.floor(profile.db.gems/5)}} 份小点心 · 每个伙伴每天一份</text>
-    <view v-if="preview" class="feed-preview" role="region" aria-label="分享预览"><text class="strong block">把{{selectedFood.name}}分享给{{pet.info.name}}</text><text class="small block">消耗 5 灵石 · 亲密度最多 +5 · 经验不变</text><view class="feed-confirm-actions"><WPButton class="confirm-feed" :disabled="!canFeed" @click="confirmFeed">确认分享 · 5 灵石</WPButton><WPButton kind="quiet" @click="preview=null">取消</WPButton></view></view>
-    <WPButton v-else :disabled="!canFeed" @click="preview={element:pet.current.element,foodId}">{{pet.current.lastFedDate===today?'✓ 今天已分享':profile.db.gems<5?'学习后收获灵石':'预览分享小点心'}}</WPButton><text class="small muted block">成长经验来自学习，点心只增加亲密度。</text>
+    <view v-if="preview&&selectedFood" class="feed-preview" role="region" aria-label="分享预览"><text class="strong block">把{{selectedFood.name}}分享给{{pet.info.name}}</text><text class="small block">消耗 5 灵石 · 亲密度最多 +5 · 经验不变</text><view class="feed-confirm-actions"><WPButton class="confirm-feed" :disabled="!canFeed" @click="confirmFeed">确认分享 · 5 灵石</WPButton><WPButton kind="quiet" @click="preview=null">取消</WPButton></view></view>
+    <WPButton v-else :disabled="!canFeed" @click="foodId&&(preview={element:pet.current.element,foodId})">{{pet.current.lastFedDate===today?'✓ 今天已分享':profile.db.gems<5?'学习后收获灵石':!foodId?'请选择小点心':'预览分享小点心'}}</WPButton><text class="small muted block">成长经验来自学习，点心只增加亲密度。</text>
    </WPCard>
    <WPCard v-if="action==='growth'" class="pet-growth-panel"><view class="section-heading"><text class="growth-section-title">成长记录</text><text class="strong">{{pet.info.name}}</text></view><PetGrowthDashboard :pet="pet.current" :history="profile.db.history" :curriculum="curriculum" :unavailable="profile.readOnly"/><text class="small muted block">学习会渐渐点亮精灵，解锁后全彩展示。已解锁形态可自由切换，默认幼年期。</text><PetGrowthStages :pet="pet.current" :curriculum="curriculum"/></WPCard>
    <WPCard v-if="action==='dress'" class="pet-dress-panel"><text class="section-title">小小装扮</text><PetDressPreview :pet="pet.current" :scene="scene" :dark="dark"/><text class="small muted block">点一下穿戴，再点一下取下，每次可穿戴一件。装扮不影响学习奖励或成长速度。</text><PetDressCards :pet="pet.current" @equip="equip"/></WPCard>
@@ -52,7 +52,7 @@
 <script setup lang="ts">
 import WPActionTile from "../../components/button/WPActionTile.vue"
 
-import {computed,ref,watch,nextTick,onMounted,onUnmounted} from 'vue'
+import {computed,ref,watch,onMounted,onUnmounted} from 'vue'
 import {onShow,onHide} from '@dcloudio/uni-app'
 import WPButton from '../../components/wp-button/WPButton.vue'
 import WPCard from '../../components/wp-card/WPCard.vue'
@@ -83,13 +83,13 @@ import {useThemeStore} from '../../stores/theme'
 import {petHouseThemes,petHouseStyle,petMoods} from '../../styles/pet-house'
 type Action=PetActionIconName
 const pet=usePetStore(),profile=useProfileStore(),learning=useLearningStore(),house=usePetHouseStore(),theme=useThemeStore()
-const message=ref(''),foodId=ref<PetFoodIconName>('water'),action=ref<Action>('home'),preview=ref<{element:Element;foodId:PetFoodIconName}|null>(null)
+const message=ref(''),foodId=ref<PetFoodIconName|null>('water'),action=ref<Action|null>('home'),preview=ref<{element:Element;foodId:PetFoodIconName}|null>(null)
 const foods:{id:PetFoodIconName;name:string}[]=[{id:'water',name:'水滴果'},{id:'pearl',name:'星光珍珠'},{id:'leaf',name:'月光树叶'},{id:'feather',name:'风之羽'}]
 const actions:{id:Action;label:string}[]=[{id:'home',label:'家园'},{id:'feed',label:'喂食'},{id:'growth',label:'成长'},{id:'dress',label:'装扮'},{id:'album',label:'相册'}]
-const scene=computed(()=>petHouseThemes[house.sceneId]),dark=computed(()=>theme.mode==='dark'),houseStyle=computed(()=>petHouseStyle(house.sceneId,dark.value,theme.settings.highContrast))
-const today=ref(localDate()),canFeed=computed(()=>profile.db.gems>=5&&pet.current.lastFedDate!==today.value),selectedFood=computed(()=>foods.find(f=>f.id===foodId.value)!)
+const scene=computed(()=>petHouseThemes[house.sceneId]),dark=computed(()=>theme.mode==='dark'),houseStyle=computed(()=>petHouseStyle(house.sceneId,dark.value,theme.settings.highContrast,theme.settings.themeId,theme.tokens))
+const today=ref(localDate()),canFeed=computed(()=>!!foodId.value&&profile.db.gems>=5&&pet.current.lastFedDate!==today.value),selectedFood=computed(()=>foods.find(f=>f.id===foodId.value))
 const curriculum=computed(()=>allCourseLearningProgress(profile.db))
-const homeProgress=computed(()=>petHomeLearningProgress(profile.db.history,profile.db.rewardIds,today.value))
+const homeProgress=computed(()=>petHomeLearningProgress(profile.db.history,profile.db.rewardIds,today.value,profile.db.practiceAnswers||[]))
 let dayTimer:ReturnType<typeof setInterval>|undefined
 function stopDayTimer(){if(dayTimer){clearInterval(dayTimer);dayTimer=undefined}}
 function refreshDay(){today.value=localDate()}
@@ -97,9 +97,9 @@ function startDayTimer(){refreshDay();if(!dayTimer)dayTimer=setInterval(refreshD
 onMounted(startDayTimer);onShow(startDayTimer);onHide(stopDayTimer);onUnmounted(stopDayTimer)
 watch(()=>pet.current.element,()=>{preview.value=null;message.value=''})
 function choose(element:Element){pet.choose(element)}
-function openAction(id:Action){action.value=id;message.value='';if(windowLayout.width<600)nextTick(()=>uni.pageScrollTo({selector:'#pet-details',duration:theme.reduced?0:180}))}
+function openAction(id:Action){action.value=id;message.value=''}
 function selectFood(id:PetFoodIconName){foodId.value=id;preview.value={element:pet.current.element,foodId:id};message.value=''}
-function confirmFeed(){if(!preview.value||preview.value.element!==pet.current.element||preview.value.foodId!==foodId.value)return;const name=selectedFood.value.name;message.value=pet.feed()?'✓ '+name+'已分享，亲密度最多 +5。':'今天已经分享过，或灵石还不够。';preview.value=null}
+function confirmFeed(){if(!selectedFood.value||!preview.value||preview.value.element!==pet.current.element||preview.value.foodId!==foodId.value)return;const name=selectedFood.value.name;message.value=pet.feed()?'✓ '+name+'已分享，亲密度最多 +5。':'今天已经分享过，或灵石还不够。';preview.value=null}
 function equip(id:string){if(!pet.equip(id)){message.value='装扮未保存，请稍后重试。';return}message.value=pet.current.equippedCosmetics.includes(id)?'✓ 装扮已穿戴。':'装扮已取下。'}
 </script>
 <style src="../../styles/pet-house.scss" lang="scss"></style>

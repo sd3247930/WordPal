@@ -43,9 +43,9 @@ export function applyBatchError(progress:BatchUninstallProgress,id:string,reason
  return {...progress,errors,currentId:null}
 }
 
-/** 「已卸载 N 册 · 已学 M 词保留」——面板与审计共用一句话摘要。 */
+/** 面板与审计共用摘要，保留数仅指仍被其他教材使用的共享词。 */
 export function batchSummary(progress:BatchUninstallProgress):string{
- return `已卸载 ${progress.done.length} 册 · 已学 ${progress.retainedWordCount} 词保留`
+ return `已卸载 ${progress.done.length} 册 · 共享 ${progress.retainedWordCount} 词保留`
 }
 
 /** 与当前已安装列表对齐，剔除已消失的册次（续跑时不重算已完成项）。 */

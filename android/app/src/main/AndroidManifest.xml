@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+ <uses-permission android:name="android.permission.INTERNET"/>
+ <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+ <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+ <uses-permission android:name="android.permission.VIBRATE"/>
+ <uses-permission android:name="android.permission.READ_PHONE_STATE" tools:node="remove"/>
+ <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove"/>
+ <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove"/>
+ <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" tools:node="remove"/>
+ <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" tools:node="remove"/>
+ <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" tools:node="remove"/>
+ <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" tools:node="remove"/>
+ <uses-permission android:name="com.vivo.notification.permission.BADGE_ICON" tools:node="remove"/>
+ <uses-permission android:name="com.asus.msa.SupplementaryDID.ACCESS" tools:node="remove"/>
+ <uses-permission android:name="freemme.permission.msa" tools:node="remove"/>
+ <uses-feature android:name="android.hardware.microphone" android:required="false"/>
+ <queries><intent><action android:name="android.intent.action.TTS_SERVICE"/></intent></queries>
+ <application android:allowBackup="false" android:icon="@mipmap/icon" android:label="@string/app_name" android:largeHeap="true" android:supportsRtl="true">
+  <activity android:name="io.dcloud.PandoraEntry" android:configChanges="orientation|keyboardHidden|keyboard|navigation" android:launchMode="singleTask" android:hardwareAccelerated="true" android:theme="@style/TranslucentTheme" android:screenOrientation="user" android:exported="true" android:windowSoftInputMode="adjustResize">
+   <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
+  </activity>
+  <activity android:name="io.dcloud.PandoraEntryActivity" android:launchMode="singleTask" android:configChanges="orientation|keyboardHidden|screenSize|mcc|mnc|fontScale|keyboard|smallestScreenSize|screenLayout|uiMode" android:hardwareAccelerated="true" android:screenOrientation="user" android:theme="@style/DCloudTheme" android:exported="false" android:windowSoftInputMode="adjustResize"/>
+  <meta-data android:name="dcloud_appkey" android:value="${wordpalAppKey}"/>
+ </application>
+</manifest>

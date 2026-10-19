@@ -5,8 +5,14 @@
 .familiarity-facts .strong{font-size:var(--wp-font-section);line-height:1.2}
 .coverage-track{height:6px;background:var(--wp-surface-tonal);border-radius:var(--wp-radius-sm);overflow:hidden}
 .coverage-track>view{height:100%;background:var(--wp-primary)}
-.familiarity-distribution{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;font-size:var(--wp-font-caption)}
-.familiarity-distribution>view{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:7px 8px;background:var(--wp-surface-tonal);border-radius:var(--wp-radius-sm);min-width:0}
+.familiarity-distribution{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;min-width:0}
+.familiarity-distribution>.familiarity-state{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;padding:10px 4px;background:var(--wp-surface-tonal);border:1px solid var(--wp-border);border-radius:var(--wp-radius-sm);text-align:center}
+.familiarity-state-art{display:flex;align-items:center;justify-content:center;flex-shrink:0;width:40px;height:40px}
+.familiarity-state-image{display:block;width:100%;height:100%;object-fit:contain}
+.familiarity-state-label{font-size:var(--wp-font-small);font-weight:600;line-height:1.4;white-space:nowrap}
+.familiarity-state-count{font-size:calc(var(--wp-font-body) + 4px);line-height:1.2;font-variant-numeric:tabular-nums;max-width:100%;overflow-wrap:anywhere}
+.familiarity-state-fallback{color:var(--wp-primary);font-size:24px;font-weight:600;line-height:1}
+.high-contrast .familiarity-distribution>.familiarity-state{border-width:2px}
 .course-card-entry.wp-button{width:100%;min-height:56px;margin-bottom:18px}
 .course-card-counts{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:var(--wp-font-small);padding:12px 14px;background:var(--wp-surface-tonal);border-radius:var(--wp-radius-sm);margin-bottom:8px}
 .course-overview-due{margin-bottom:12px}
@@ -41,7 +47,7 @@
 .course-card-workspace:not(.course-card-dual) .word-detail-sheet{top:calc(var(--wp-native-top,0px) + 8px);bottom:calc(var(--wp-bottom-nav-space,96px) + env(safe-area-inset-bottom));max-height:none;border-radius:var(--wp-radius-dialog);padding-top:20px}
 .course-card-workspace:not(.course-card-dual) .word-detail-sheet .word-detail-heading{top:-20px}
 .wordbook-continue-link{margin-bottom:12px}
-@media(max-width:599px){.familiarity-summary.wp-card{padding:14px;gap:8px}.course-word-row{flex-wrap:wrap}.course-word-tools{width:100%;flex-direction:row;justify-content:flex-end}.course-word-open{width:100%;flex-basis:100%}.course-card-grid{grid-template-columns:1fr}.course-card-options>uni-picker{min-width:100%;width:100%}.course-card-workspace .word-detail-sheet{left:8px;right:8px;width:auto}.familiarity-distribution>view{flex-wrap:wrap;gap:4px}.familiarity-distribution>view>.strong{margin-left:auto}.familiarity-summary .section-title{font-size:var(--wp-font-headline)}.wordbook-overview .coverage-track{display:none}}
+@media(max-width:599px){.familiarity-summary.wp-card{padding:14px;gap:8px}.course-word-row{flex-wrap:wrap}.course-word-tools{width:100%;flex-direction:row;justify-content:flex-end}.course-word-open{width:100%;flex-basis:100%}.course-card-grid{grid-template-columns:1fr}.course-card-options>uni-picker{min-width:100%;width:100%}.course-card-workspace .word-detail-sheet{left:8px;right:8px;width:auto}.familiarity-summary .section-title{font-size:var(--wp-font-headline)}.wordbook-overview .coverage-track{display:none}}
 .large-text .course-word-row{flex-wrap:wrap}.large-text .course-word-tools{flex-direction:row;flex-wrap:wrap}.large-text .course-card-grid{grid-template-columns:1fr}
 
 /* Keep familiar words and their actions together; only long/large text wraps. */

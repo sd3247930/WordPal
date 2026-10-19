@@ -1,3 +1,4 @@
+import {startLegacyRound} from './helpers/daily-flow'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {createHash} from 'node:crypto'
@@ -68,7 +69,7 @@ test('全部复用与部分复用课节检查使用完整分母，80%独立推�
  activities.close();course.chooseLesson('l01');profile.transact(d=>{delete d.cards.sun});assert.equal(activities.start('check'),false);assert.equal(useLearningStore().newWords.includes('sun'),false,'已完成教材章节的首轮进度不依赖全局卡片是否存在')
 })
 test('课程立即切换、相同局部课ID独立；活动跨重启恢复且更新/归档保留已学词',async()=>{
- reset();const profile=useProfileStore(),course=useCourseStore(),learning=useLearningStore();await installTextCourse(pack('one-course'));await installTextCourse(pack('two-course'));course.choose('one-course');learning.start();learning.setMode('spell');learning.patch({input:'ca'});const snapshot=JSON.stringify(learning.session)
+ reset();const profile=useProfileStore(),course=useCourseStore(),learning=useLearningStore();await installTextCourse(pack('one-course'));await installTextCourse(pack('two-course'));course.choose('one-course');startLegacyRound(learning);learning.setMode('spell');learning.patch({input:'ca'});const snapshot=JSON.stringify(learning.session)
  course.choose('two-course');assert.equal(course.currentId,'two-course');assert.equal(profile.db.pendingCourseId,undefined);assert.equal(JSON.stringify(profile.db.courseSessions?.['one-course']),snapshot)
  course.choose('one-course');assert.equal(profile.db.pendingCourseId,undefined);assert.equal(JSON.stringify(learning.session),snapshot);course.choose('two-course');setArchived('two-course',true);course.applyPending();assert.equal(profile.db.pendingCourseId,undefined);setArchived('two-course',false);course.choose('two-course')
  assert.equal(course.currentId,'two-course');assert.equal(course.progress.currentLessonId,'l01')
@@ -82,7 +83,7 @@ test('ZIP路径/大小/摘要/文件签名与未知文件受控，媒体写入�
  const wrong=audio.slice();wrong[30]^=1;assert.throws(()=>readZip(makeZip(p,{'audio/cat.wav':wrong})));await assert.rejects(installTextCourse(p));await assert.rejects(installMediaCourse(p,files));assert.equal(courseRegistry[p.courseId],undefined)
 })
 test('备份摘要与引用校验，恢复切指针失败仍保留最新档案，成功恢复可继续正式队列',()=>{
- reset();const profile=useProfileStore(),learning=useLearningStore();learning.start();learning.setMode('spell');learning.patch({input:'ca'});const text=makeLearningBackup(profile.db),candidate=previewLearningBackup(text),before=JSON.stringify(profile.db)
+ reset();const profile=useProfileStore(),learning=useLearningStore();startLegacyRound(learning);learning.setMode('spell');learning.patch({input:'ca'});const text=makeLearningBackup(profile.db),candidate=previewLearningBackup(text),before=JSON.stringify(profile.db)
  const altered=JSON.parse(text);altered.database.gems=123;assert.throws(()=>previewLearningBackup(JSON.stringify(altered)));failKey=POINTER_KEY;assert.equal(profile.restore(candidate),false);assert.equal(JSON.stringify(profile.db),before)
  failKey='';assert.equal(profile.restore(candidate),true);setActivePinia(createPinia());assert.equal(useLearningStore().session?.input,'ca');assert.equal(useProfileStore().db.version,2)
 })

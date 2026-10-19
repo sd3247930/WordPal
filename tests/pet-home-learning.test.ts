@@ -1,3 +1,4 @@
+import {startLegacyRound} from './helpers/daily-flow'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {createPinia,setActivePinia} from 'pinia'
@@ -20,8 +21,14 @@ test('家园统计按本地日读取正式记录，3次与5次目标、拼写尝
  const dictation=[{...history[0],mode:'dictation' as const}];assert.equal(petHomeLearningProgress(dictation,[],localDate(at)).spellingDone,true)
 })
 
+test('六环节与独立练习的拼写证据点亮尝试状态，但不增加正式计数或奖励',()=>{
+ const day=localDate(),attempt:Answer={id:'spelling-attempt',wordId:'cat',rating:1,correct:false,at:new Date().toISOString(),source:'practice',mode:'spell',input:'wrong'},before=JSON.stringify(attempt)
+ const progress=petHomeLearningProgress([],[],day,[attempt]);assert.equal(progress.spellingDone,true);assert.equal(progress.count,0);assert.equal(progress.learningCount,0);assert.equal(progress.practiceCount,0);assert.equal(progress.rewarded,false);assert.equal(JSON.stringify(attempt),before)
+ assert.equal(petHomeLearningProgress([],[],day,[{...attempt,at:'2000-01-01T00:00:00Z'}]).spellingDone,false)
+})
+
 test('真实提交逐次更新两个统计，第5次仅发一次每日奖励；重读统计不写学习档案',()=>{
- storage.clear();setActivePinia(createPinia());const profile=useProfileStore(),learning=useLearningStore();assert.ok(learning.start())
+ storage.clear();setActivePinia(createPinia());const profile=useProfileStore(),learning=useLearningStore();assert.ok(startLegacyRound(learning))
  for(let i=1;i<=6;i++){
   assert.ok(learning.setMode('spell'));assert.ok(learning.patch({input:learning.current!.word}));assert.ok(learning.submit());const result=petHomeLearningProgress(profile.db.history,profile.db.rewardIds)
   assert.equal(result.count,i);assert.equal(result.count,learning.todayAnswers.length);assert.equal(result.practiceCount,Math.min(i,3));assert.equal(result.learningCount,Math.min(i,5));assert.equal(result.rewarded,i>=5)

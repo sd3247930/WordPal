@@ -22,5 +22,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-其余依赖的许可随对应 npm 包提供。新增素材使用项目自有 SVG 或原有已清理素材；
-原始设计图与内部文档不随公共源码发行。
+Android 发行采用 DCloud 官方 5.26 离线运行时。CI 依赖归档仅包含 `tools/android/runtime-libraries.json` 中锁定的六个原始 AAR 和官方 `license.md`，发布在 [SDK 构建依赖](https://github.com/sd3247930/WordPal/releases/tag/android-sdk-5.26)。官方许可允许免费使用和复制，DCloud 与其他原作者保留各自知识产权；该归档不属于 WordPal 原创源码许可。SDK 的隐私条款、使用限制和免责声明以归档中保留的官方许可为准。正式 APK 不包含证书私钥或密码。
+
+其余依赖的许可随对应 npm / Maven 包提供。此文件不是全部依赖的完整许可清单；新增或升级依赖时需依据锁文件和实际捆绑内容继续核对版权声明、许可全文及 NOTICE。开发工具依赖与最终 App 内的运行库应分别核对。
+
+图标、词表、录音与宠物素材的来源及再分发权限见 `ASSET_RIGHTS.md`，当前待权利人核验；清除图片元数据不等于获得授权。原始设计图、私有教材与内部文档不随公共源码发行。项目源码许可证仍待决定，不由本文件代为授权。

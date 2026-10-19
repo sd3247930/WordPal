@@ -1,0 +1,31 @@
+name: 问题反馈
+description: 提供可复现、已脱敏的问题
+body:
+  - type: markdown
+    attributes:
+      value: 安全漏洞请先阅读 SECURITY.md。不要上传儿童资料、真实档案、私有教材、凭据或本机绝对路径。
+  - type: input
+    id: environment
+    attributes:
+      label: 版本与平台
+      placeholder: 应用版本、H5 / Android / iOS / 小程序、设备或窗口尺寸
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 复现步骤
+      description: 优先使用默认课程或合成数据，描述最少操作。
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: 预期与实际行为
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 脱敏证据
+      description: 可选；提交前检查截图、错误信息及日志不含私人内容。

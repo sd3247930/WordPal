@@ -20,4 +20,4 @@
 .high-contrast .phonics-chunk.is-upcoming .chunk-grapheme{opacity:1}
 .reduce-motion .phonics-chunk,.reduce-motion .chunk-grapheme,.reduce-motion .chunk-grapheme::after{transition-duration:60ms;transform:none}
 @media(prefers-reduced-motion:reduce){.phonics-chunk,.chunk-grapheme,.chunk-grapheme::after{transition-duration:60ms;transform:none!important}}
-@media(max-width:599px){.study-space .wp-word-card .word-content.word-wide .word-core{flex-basis:100%;width:100%}.study-space .word-wide .word-definition{flex-direction:row;flex-basis:auto;gap:8px}.phonics-card{padding:8px 10px}}
+@media(max-width:599px){.phonics-card{padding:8px 10px}}

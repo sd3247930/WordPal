@@ -1,4 +1,5 @@
 import type {Element} from '../../packages/pet_engine'
+import {themePacks,type ThemeId,type WordPalTokens} from './themes'
 export {petStages,stageUnlocked} from '../services/pet-growth'
 
 export interface PetHouseTheme {
@@ -12,9 +13,15 @@ export const petHouseThemes:Record<Element,PetHouseTheme>={
  wind:{id:'wind',title:'风之主题',subtitle:'经验 · 想象',primary:'#9278D8',secondary:'#B9A5EE',surface:'#F2EEFC',deep:'#6953B4',sceneAsset:'/static/pet-house/wind-scene.jpg',radius:{card:22,button:18},motion:{type:'breeze',intensity:1},icon:'✧'}
 }
 export const petMoods={calm:'平静',happy:'开心',excited:'兴奋',curious:'好奇'}
-export function petHouseStyle(id:Element,dark:boolean,highContrast=false){
+export function petHouseStyle(id:Element,dark:boolean,highContrast=false,appearanceTheme:ThemeId='swiss',appearanceTokens?:WordPalTokens){
  const t=petHouseThemes[id],fg=dark?'#F1EDE7':'#353B46',muted=highContrast?fg:dark?'#CCC5BB':'#626975',surface=dark?'#24272D':'#FFFDF9',bg=dark?'#191D24':'#FBF5EC',soft=dark?'#303640':'#F8EFE4',accent=dark?t.secondary:t.deep,border=highContrast?fg:dark?'#68717E':'#CCC1B3'
  const tokens:Record<string,string>={'pet-bg':bg,'pet-surface':surface,'pet-soft':soft,'pet-text':fg,'pet-muted':muted,'pet-border':border,'pet-accent':accent,'pet-bright':t.primary,'pet-tonal':dark?'#303640':t.surface,'pet-radius':t.radius.card+'px','pet-button-radius':t.radius.button+'px','pet-shadow':dark?'none':id==='fire'?'0 8px 26px rgba(94,67,39,.08)':id==='earth'?'0 8px 26px rgba(94,67,39,.06)':'0 6px 22px rgba(94,67,39,.04)',
  'wp-primary':dark?t.secondary:t.deep,'wp-on-primary':dark?'#191D24':'#FFFFFF','wp-foreground':fg,'wp-surface-foreground':fg,'wp-muted-foreground':muted,'wp-surface':surface,'wp-surface-tonal':soft,'wp-secondary':soft,'wp-border':border,'wp-divider':border,'wp-radius':t.radius.card+'px','wp-radius-sm':t.radius.button+'px','wp-focus-ring':accent,'wp-success':dark?'#B4D997':'#486A31'}
+ if(appearanceTheme==='clay'){
+  const clay=appearanceTokens||themePacks.clay[dark?'buildDark':'buildLight']().tokens
+  Object.assign(tokens,{'pet-bg':clay.background,'pet-surface':clay.surface,'pet-soft':clay['surface-soft'],'pet-text':clay.foreground,'pet-muted':highContrast?clay.foreground:clay['muted-foreground'],'pet-border':highContrast?clay.foreground:clay.border,'pet-tonal':clay[id+'-soft'],'pet-radius':clay.radius,'pet-button-radius':clay['radius-sm'],'pet-shadow':highContrast?'none':clay.elevation})
+  for(const key of ['primary','on-primary','foreground','surface-foreground','muted-foreground','surface','surface-tonal','secondary','border','divider','radius','radius-sm','focus-ring','success'])tokens['wp-'+key]=clay[key]
+  if(highContrast){tokens['wp-border']=clay.foreground;tokens['wp-muted-foreground']=clay.foreground}
+ }
  return Object.fromEntries(Object.entries(tokens).map(([key,value])=>['--'+key,value]))
 }

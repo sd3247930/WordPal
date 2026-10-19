@@ -1,3 +1,4 @@
+import {startLegacyRound} from './helpers/daily-flow'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {createPinia,setActivePinia} from 'pinia'
@@ -66,7 +67,7 @@ test('学习中切换立即生效，切回恢复冻结会话、输入和学习�
  const profile=useProfileStore(),course=useCourseStore(),learning=useLearningStore()
  await installTextCourse(pack('switch-one'));await installTextCourse(pack('switch-two'))
  assert.equal(course.choose('switch-one').ok,true)
- assert.equal(learning.start(),true)
+ assert.equal(startLegacyRound(learning),true)
  learning.patch({input:'draft',mode:'spell'})
  const frozen=JSON.stringify(learning.session),records=JSON.stringify({cards:profile.db.cards,history:profile.db.history,pets:profile.db.pets,gems:profile.db.gems})
  const switched=course.choose('switch-two')

@@ -1,0 +1,16 @@
+name: 改进建议
+description: 说明学习场景与期望结果
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: 遇到的困难
+      description: 描述具体学习或家长管理场景，不填真实儿童身份与档案。
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 建议行为与验收方式
+    validations:
+      required: true

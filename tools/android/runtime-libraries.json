@@ -1,0 +1,8 @@
+[
+ {"name":"android-gif-drawable-1.2.29.aar","sha256":"611e2699782ee0d56168b6546962f75a54bdff03136d9db94019a65c0924eddd"},
+ {"name":"audio-mp3aac-release.aar","sha256":"13b5b831593ff2b8b70480c9ad4f0512267b77ea561c6fea3e8ee80ab2e5c822"},
+ {"name":"breakpad-build-release.aar","sha256":"bb359434b3aafe9e3d47c249a73a1d8ccff50315c47d3afd4d81846405d5b537"},
+ {"name":"lib.5plus.base-release.aar","sha256":"12f78a607b8eba0a79acb856cb13ecd5830ec5873d5339fedc758fa28f43212c"},
+ {"name":"oaid_sdk_1.0.25.aar","sha256":"917f6381f84d213abdd4d6541afda15ffd320d6ca16a934ad1f63a927f972077"},
+ {"name":"uniapp-v8-release.aar","sha256":"58982bc01e4d293a33749b8f1831915172243e35c0102b1fada8b5c3e98e78f6"}
+]

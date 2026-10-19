@@ -22,7 +22,8 @@ const swissDark:PhonicsPalette={
  green:{ink:'#C8E6C9',active:'#E8F5E9',soft:'#2A3342'},
  blue:{ink:'#BBDEFB',active:'#E3F2FD',soft:'#2A3342'}
 }
-export function phonicsColor(index:number,_theme:ThemeId,mode:'light'|'dark',total=2):PhonicsTone{
+export function phonicsColor(index:number,theme:ThemeId,mode:'light'|'dark',total=2):PhonicsTone{
  const palette=mode==='light'?swissLight:swissDark
- return palette[getPhonicsColor(index,total)]
+ const tone=palette[getPhonicsColor(index,total)]
+ return theme==='clay'?{...tone,active:mode==='light'&&getPhonicsColor(index,total)==='green'?'#276F2C':tone.active,soft:mode==='light'?'#F6EDDF':'#44372E'}:tone
 }

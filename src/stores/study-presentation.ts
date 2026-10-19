@@ -12,7 +12,7 @@ import {availableModes} from '../../packages/content_schema/course'
 import {readFeedbackSettings} from './feedback'
 import {resolveFrozenWord} from '../services/content/ContentRegistry'
 interface RevisitAnswer {wordId:string;correct:boolean}
-interface Presentation {sessionId:string;manual:boolean;revisitStarted:boolean;queue:string[];index:number;input:string;selected:string;revealed:boolean;answer:RevisitAnswer|null;answers:RevisitAnswer[];finished:boolean;petId:string;startExp:number;rewardTracked:boolean}
+interface Presentation {sessionId:string;manual:boolean;revisitStarted:boolean;queue:string[];index:number;input:string;selected:string;revealed:boolean;hinted?:boolean;answer:RevisitAnswer|null;answers:RevisitAnswer[];finished:boolean;petId:string;startExp:number;rewardTracked:boolean}
 import {PRESENTATION_KEY as key,hasCourseMemory} from '../services/learning/CourseProgressMemory'
 const blank=():Presentation=>({sessionId:'',manual:false,revisitStarted:false,queue:[],index:0,input:'',selected:'',revealed:false,answer:null,answers:[],finished:false,petId:'water',startExp:0,rewardTracked:false})
 export const useStudyPresentation=defineStore('study-presentation',()=>{
@@ -36,6 +36,7 @@ export const useStudyPresentation=defineStore('study-presentation',()=>{
  function sync(){
   const session=learning.session
   if(!session){state.value=blank();return}
+  if(session.flow){state.value={...blank(),sessionId:session.id,manual:true,finished:!!session.completedAt};return}
   if(state.value.sessionId!==session.id){
    const saved=remembered()[session.courseId||profile.db.currentCourseId||'starter']
    if(saved?.sessionId===session.id)state.value={...saved}
@@ -57,18 +58,19 @@ export const useStudyPresentation=defineStore('study-presentation',()=>{
  const mode=computed<LearningMode>(()=>revisiting.value?'spell':learning.session?.mode||'flash')
  const input=computed(()=>revisiting.value?state.value.input:learning.session?.input||'')
  const selected=computed(()=>revisiting.value?state.value.selected:learning.session?.selected||'')
- const revealed=computed(()=>revisiting.value?state.value.revealed:learning.session?.revealed||false)
+ const revealed=computed(()=>revisiting.value?!!state.value.answer:learning.session?.mode==='flash'?learning.session.revealed:!!learning.session?.answers[learning.session.index])
+ const hinted=computed(()=>revisiting.value?!!(state.value.hinted||state.value.revealed):!!(learning.session?.hinted||mode.value!=='flash'&&!answer.value&&learning.session?.revealed))
  const answer=computed(()=>revisiting.value?state.value.answer:learning.session?.answers[learning.session.index])
  const index=computed(()=>revisiting.value?state.value.index:learning.session?.index||0)
  const total=computed(()=>revisiting.value?state.value.queue.length:learning.session?.wordIds.length||0)
  const completed=computed(()=>!!learning.session?.completedAt&&!revisiting.value&&state.value.finished)
  const earnedExp=computed(()=>state.value.rewardTracked?Math.max(0,pet.all.reduce((sum,item)=>sum+item.exp,0)-state.value.startExp):null)
- function chooseMode(value:LearningMode){if(!revisiting.value&&!answer.value&&learning.current&&availableModes(learning.current,Object.values(learning.session?.wordSnapshot||wordById),readFeedbackSettings().sound,learning.session?.plannerConfig?.entryLevel).includes(value)&&patch({manual:true}))learning.setMode(value)}
+ function chooseMode(value:LearningMode){if(learning.isDaily)return;if(!revisiting.value&&!answer.value&&learning.current&&availableModes(learning.current,Object.values(learning.session?.wordSnapshot||wordById),readFeedbackSettings().sound,learning.session?.plannerConfig?.entryLevel).includes(value)&&patch({manual:true}))learning.setMode(value)}
  function automatic(){if(!revisiting.value&&!answer.value&&patch({manual:false})){learning.patch({input:'',selected:'',revealed:false});sync()}}
  function updateInput(value:string){if(answer.value)return;if(revisiting.value)patch({input:value});else learning.patch({input:value})}
  function select(value:string){if(!answer.value&&!revisiting.value)learning.patch({selected:value})}
  function reveal(){if(revisiting.value)patch({revealed:true});else learning.reveal()}
- function hint(){if(revisiting.value)patch({revealed:true});else learning.hint()}
+ function hint(){return revisiting.value?state.value.hinted||state.value.revealed?true:patch({hinted:true}):learning.hint()}
  function submit(rating?:ReviewRating){
   if(answer.value)return false
   if(!revisiting.value)return learning.submit(rating)
@@ -78,10 +80,10 @@ export const useStudyPresentation=defineStore('study-presentation',()=>{
  }
  function next(){
   if(!answer.value)return
-  if(revisiting.value){if(index.value+1>=total.value)patch({finished:true});else patch({index:index.value+1,input:'',revealed:false,answer:null})}
+   if(revisiting.value){if(index.value+1>=total.value)patch({finished:true});else patch({index:index.value+1,input:'',revealed:false,hinted:false,answer:null})}
   else {learning.next();sync()}
  }
  function reset(){try{writeStorage(key,blank());state.value=blank();error.value='';return true}catch{error.value='界面进度暂时无法保存，请释放设备空间后重试。';return false}}
  watch(()=>profile.courseMemoryRevision,()=>{state.value=blank();sync()})
- return {state,error,sync,revisiting,current,mode,input,selected,revealed,answer,index,total,completed,earnedExp,chooseMode,automatic,updateInput,select,reveal,hint,submit,next,reset}
+ return {state,error,sync,revisiting,current,mode,input,selected,revealed,hinted,answer,index,total,completed,earnedExp,chooseMode,automatic,updateInput,select,reveal,hint,submit,next,reset}
 })

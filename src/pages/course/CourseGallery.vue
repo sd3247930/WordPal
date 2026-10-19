@@ -17,7 +17,7 @@
   </WPActionTile>
   <WPActionTile class="gallery-tool" :class="{active:batchOpen}" :selected="batchOpen" :disabled="!canManageBatch&&!batchOpen" aria-label="逐册卸载" :aria-expanded="batchOpen" aria-controls="gallery-batch-panel" aria-describedby="gallery-batch-note" @click="toggleBatch">
    <view class="gallery-tool-top"><view class="gallery-tool-icon"><CourseToolIcon name="uninstall"/></view><text class="gallery-tool-badge">{{batchOpen?'已展开':removableCount+' 本'}}</text></view>
-   <text class="gallery-tool-title">逐册卸载</text><text id="gallery-batch-note" class="gallery-tool-note">{{batchOpen?'再次点击，收起管理':batchUnavailable||'保留记录，按册管理'}}</text>
+   <text class="gallery-tool-title">逐册卸载</text><text id="gallery-batch-note" class="gallery-tool-note">{{batchOpen?'再次点击，收起管理':batchUnavailable||'备份记录，按册管理'}}</text>
   </WPActionTile>
  </view>
  <view v-if="tab==='installed'&&batchOpen" id="gallery-batch-panel"><CourseBatchUninstallPanel/></view>
@@ -113,11 +113,10 @@ const removeBlockedReason=computed(()=>{
  if(!selection.value)return ''
  if(selection.value.courseId==='starter')return '原创启蒙课程不可卸载，作为兜底保留。'
  if(profile.readOnly)return '档案处于只读状态，暂无法卸载。'
- if(profile.db.session&&!profile.db.session.completedAt&&(profile.db.session.courseId===selection.value.courseId||course.currentId===selection.value.courseId))return '当前有未完成的学习，请先完成或保存进度。'
  if(selection.value.courseId===course.currentId&&!replacements.value.length)return '至少需要保留一份已安装教材。请先安装其他教材。'
  return ''
 })
-async function remove(replacementId?:string){busy.value=true;const id=selectedId.value;try{const result=await course.uninstall(id,true,replacementId||replacements.value[replacementIndex.value]?.courseId);removeOpen.value=false;tab.value='discover';selectedId.value=id;message.value=result.pendingCleanup?'已删除教材，部分媒体待清理，重启后自动重试。':'已卸载或删除教材，学习记录与复习排程保留。';fault.value=false}catch(error){message.value=(error as Error).message;fault.value=true;removeOpen.value=false}finally{busy.value=false}}
+async function remove(replacementId?:string){busy.value=true;const id=selectedId.value;try{const result=await course.uninstall(id,true,replacementId||replacements.value[replacementIndex.value]?.courseId);removeOpen.value=false;tab.value='installed';selectedId.value=course.currentId;keyword.value='';message.value=result.pendingCleanup?'已删除教材，部分内容待清理，重启后自动重试。':'教材及本册专属记录已清理，本机记录备份已保存。共享词卡与全局奖励保留。';fault.value=false}catch(error){message.value=(error as Error).message;fault.value=true;removeOpen.value=false}finally{busy.value=false}}
 function startFromUnit(unitId:string){
  if(!requireReview()||!installed.value||!selectedPack.value)return
  const result=course.applyCourseSelection(selectedId.value);if(!result.ok){message.value=result.message||'';fault.value=true;return}

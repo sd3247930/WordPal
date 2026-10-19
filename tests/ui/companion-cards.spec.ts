@@ -1,12 +1,12 @@
 import {test,expect,type Page,type Locator} from '@playwright/test'
-import {go,database,setAppearance} from './helpers'
+import {go,database,setAppearance,openPetAction} from './helpers'
 import {goldenDatabase} from './fixtures'
 import {elements,petInfo} from '../../packages/pet_engine'
 import {starterPack} from '../../src/services/content/ContentRegistry'
 
 async function fixture(page:Page,readyForCheck=false){
  const db=goldenDatabase();db.version=2;db.currentCourseId='starter';db.auxiliaryRecords=[]
- db.courseProgress={starter:{currentLessonId:starterPack.units[0].lessons[0].id,completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{},introducedWords:Object.fromEntries(starterPack.vocabulary.map(w=>[w.id,'2026-10-17T08:00:00Z']))}}
+ db.courseProgress={starter:{currentLessonId:starterPack.units[0].lessons[0].id,completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{},fullLearnedWords:Object.fromEntries(starterPack.vocabulary.map(w=>[w.id,'2026-10-17T08:00:00Z']))}}
  for(const id of elements)db.pets[id]={...db.pets[id],level:8,exp:700}
  if(readyForCheck){db.session=null;for(const card of Object.values(db.cards))card.due='2100-01-01T00:00:00.000Z'}
  await page.addInitScript(db=>{if(!localStorage.getItem('wordpal.database.active.v2')){localStorage.setItem('wordpal.database.v2',JSON.stringify(db));localStorage.setItem('wordpal.database.active.v2',JSON.stringify('v2'))}},db)
@@ -30,7 +30,7 @@ for(const mode of ['light','dark'])for(const largeText of [false,true])test(`${m
  for(const element of elements){
   await go(page,'pet');await page.locator('.pet-choice').filter({hasText:petInfo[element].name}).click()
   for(const [index,stage]of ['juvenile','growing','evolved','unknown'].entries()){
-   await page.getByRole('group',{name:'宠物屋功能',exact:true}).getByRole('button',{name:'成长',exact:true}).click();await page.locator('.pet-growth-panel .pet-form-card').nth(index).click()
+   await openPetAction(page,'成长');await page.locator('.pet-growth-panel .pet-form-card').nth(index).click()
    for(const [screen,selector]of [['learn','.study-pet-companion'],['settings','.settings-pet']]){
     await go(page,screen);const card=page.locator(selector);await expect(card).toHaveAttribute('data-element',element);await expect(card).toHaveAttribute('data-form',String(index+1));await expect(card.locator('.companion-card-title')).toContainText(petInfo[element].name);await expect(card.locator('.pet-cutout-image img')).toHaveAttribute('src',new RegExp(element+'-'+stage+'[.]png$'));await inspect(card)
     if(index===0&&screen==='learn')washes.push(await card.evaluate(el=>getComputedStyle(el).getPropertyValue('--companion-wash')))

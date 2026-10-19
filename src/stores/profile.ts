@@ -11,17 +11,19 @@ import {restoreLearningBackup} from '../services/storage/LearningBackup'
 import {ensureIdentitySnapshot,IDENTITY_BACKUP_KEY} from '../services/storage/IdentityUpgrade'
 import {migrateParentSettings,type DailyNewWordLimit,type AbilityLevelId} from '../../packages/parent_settings'
 import {pruneCourseProgress,pruneCourseUiMemory} from '../services/learning/CourseProgressMemory'
+import {removedCourseScopes,backupCourseRemoval,pruneRemovedCourseRecords,pruneRemovedPreferences,type CourseRemovalScope} from '../services/content/CourseRemovalData'
 export interface AuxiliaryRecord {id:string;courseId:string;lessonId:string;kind:string;at:string;correct:number;total:number;objective?:boolean;hinted?:boolean;wordIds?:string[]}
 export interface Database {
   version: 1|2; cards: Record<string,MemoryCard>; session: LearningSession | null
   history: Answer[]; practiceAnswers?:Answer[]; rewardIds: string[]; gems: number; pets: Record<string,PetState>; companion: string
-  dailyLimit: DailyNewWordLimit; lastLessonAccuracy: number | null; lessonIndex: number; streakDates: string[]
+  /** Read only during legacy migration; never controls new assignments. */
+  dailyLimit?: DailyNewWordLimit; lastLessonAccuracy: number | null; lessonIndex: number; streakDates: string[]
   currentCourseId?:string;pendingCourseId?:string;courseProgress?:Record<string,CourseProgress>;auxiliaryRecords?:AuxiliaryRecord[];abilityLevel?:AbilityLevelId
   courseSessions?:Record<string,LearningSession>
-  parentSettingsVersion?:2;parentSettingsUpdatedAt?:number
+  parentSettingsVersion?:2|3;parentSettingsUpdatedAt?:number
 }
 export const DATABASE_KEY = 'wordpal.database.v1'
-export function freshDatabase(): Database { return {version:1,cards:{},session:null,history:[],rewardIds:[],gems:0,pets:Object.fromEntries(elements.map(e=>[e,createPet(e)])),companion:'water',dailyLimit:10,abilityLevel:'L3',parentSettingsVersion:2,parentSettingsUpdatedAt:0,lastLessonAccuracy:null,lessonIndex:0,streakDates:[]} }
+export function freshDatabase(): Database { return {version:1,cards:{},session:null,history:[],rewardIds:[],gems:0,pets:Object.fromEntries(elements.map(e=>[e,createPet(e)])),companion:'water',abilityLevel:'L3',parentSettingsVersion:3,parentSettingsUpdatedAt:0,lastLessonAccuracy:null,lessonIndex:0,streakDates:[]} }
 export const useProfileStore = defineStore('profile',()=>{
   loadCourseRegistry()
   const loaded=loadDatabase(freshDatabase),db=ref<Database>(loaded.database),storageError=ref(loaded.error),bootError=ref(loaded.readOnly?loaded.error:'')
@@ -32,7 +34,7 @@ export const useProfileStore = defineStore('profile',()=>{
     loaded.key=next.key;loaded.error=next.error;loaded.readOnly=next.readOnly
     db.value=next.database;readOnly.value=next.readOnly
     storageError.value=next.error;bootError.value=next.readOnly?next.error:''
-    if(next.database.version===2&&!next.readOnly)reconcileCourseMemory()
+    if(next.database.version===2&&!next.readOnly){removeCourseRecords();reconcileCourseMemory()}
     return next.database.version===2&&!next.readOnly
   }
   /**
@@ -85,8 +87,24 @@ export const useProfileStore = defineStore('profile',()=>{
     catch{storageError.value='教材进度清理尚未完成，请释放设备存储后重新打开应用。';return false}
   }
   function erase() { if(loaded.readOnly)throw new Error('需要先恢复档案。');const clean={...freshDatabase(),version:loaded.database.version,currentCourseId:'starter',courseProgress:{starter:initialProgress('starter')},auxiliaryRecords:[]};writeStorage(loaded.key,clean);db.value=clean as Database;for(const key of [V1_KEY,V2_KEY,MIGRATION_BACKUP_KEY,IDENTITY_BACKUP_KEY,'wordpal.migration.backup.digest'])if(key!==loaded.key)uni.removeStorageSync?.(key);storageError.value='' }
-  if(!loaded.readOnly&&db.value.parentSettingsVersion!==2)transact(d=>Object.assign(d,migrateParentSettings(d)))
+  if(!loaded.readOnly&&(db.value.parentSettingsVersion!==3||db.value.dailyLimit!==undefined))transact(d=>{const migrated=migrateParentSettings(d);delete d.dailyLimit;Object.assign(d,migrated)})
+  function removeCourseRecords(scopes:CourseRemovalScope[]=removedCourseScopes(db.value)){
+    if(loaded.readOnly)return false
+    if(!scopes.length)return true
+    try{
+      for(const scope of scopes)backupCourseRemoval(db.value,scope)
+      const candidate=JSON.parse(JSON.stringify(db.value)) as Database
+      for(const scope of scopes)pruneRemovedCourseRecords(candidate,scope)
+      if(JSON.stringify(candidate)!==JSON.stringify(db.value)&&!transact(draft=>{for(const scope of scopes)pruneRemovedCourseRecords(draft,scope)}))return false
+      const preferencesChanged=pruneRemovedPreferences(scopes)
+      let uiChanged=false
+      for(const scope of scopes)uiChanged=pruneCourseUiMemory(db.value,scope.courseId)||uiChanged
+      if(preferencesChanged||uiChanged||scopes.length)courseMemoryRevision.value++
+      return true
+    }catch{storageError.value='已删除教材的记录清理尚未完成，备份保留，请释放设备存储后重试。';return false}
+  }
+  removeCourseRecords()
   reconcileCourseMemory()
-  function restore(database:Database){try{const migrated=migrateParentSettings(database),key=restoreLearningBackup(migrated,uni.getStorageSync(loaded.key));loaded.key=key;loaded.readOnly=false;readOnly.value=false;db.value=JSON.parse(JSON.stringify(migrated));storageError.value='';bootError.value='';return reconcileCourseMemory()}catch(error){storageError.value=(error as Error).message;return false}}
-  return {db,readOnly,transact,erase,restore,retryMigration,faultSnapshot,storageError,bootError,reconcileCourseMemory,courseMemoryRevision}
+  function restore(database:Database){try{const migrated=migrateParentSettings(database),key=restoreLearningBackup(migrated,uni.getStorageSync(loaded.key));loaded.key=key;loaded.readOnly=false;readOnly.value=false;db.value=JSON.parse(JSON.stringify(migrated));storageError.value='';bootError.value='';return removeCourseRecords()&&reconcileCourseMemory()}catch(error){storageError.value=(error as Error).message;return false}}
+  return {db,readOnly,transact,erase,restore,retryMigration,faultSnapshot,storageError,bootError,reconcileCourseMemory,courseMemoryRevision,removeCourseRecords}
 })

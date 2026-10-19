@@ -1,8 +1,8 @@
 <template>
  <view class="pet-dress-grid" role="group" aria-label="选择精灵装扮">
-  <WPActionTile v-for="item in cosmetics" :key="item.id" class="cosmetic-button" :class="{equipped:pet.equippedCosmetics.includes(item.id)}" :disabled="pet.level<item.level" :aria-label="item.name+'，'+(pet.level<item.level?'Lv.'+item.level+' 解锁':pet.equippedCosmetics.includes(item.id)?'已穿戴，点击取下':'穿戴')" :aria-pressed="pet.equippedCosmetics.includes(item.id)" @click="$emit('equip',item.id)">
+  <WPActionTile v-for="item in cosmetics" :key="item.id" toggle-highlight class="cosmetic-button" :class="{equipped:pet.equippedCosmetics.includes(item.id)}" :disabled="pet.level<item.level" :aria-label="item.name+'，'+(pet.level<item.level?'Lv.'+item.level+' 解锁':pet.equippedCosmetics.includes(item.id)?'已穿戴，点击取下':'穿戴')" :aria-pressed="pet.equippedCosmetics.includes(item.id)" @click="$emit('equip',item.id)" @cancel="$emit('equip',item.id)">
    <view class="cosmetic-art"><PetDressIcon :name="item.id"/></view>
-   <view class="cosmetic-copy"><text class="cosmetic-name">{{item.name}}</text><text class="cosmetic-description">{{descriptions[item.id]}}</text><text class="cosmetic-state">{{pet.level<item.level?'Lv.'+item.level+' 解锁':pet.equippedCosmetics.includes(item.id)?'✓ 已穿戴 · 点击取下':'穿戴 →'}}</text></view>
+   <view class="cosmetic-copy"><text class="cosmetic-name">{{item.name}}</text><text class="cosmetic-description">{{descriptions[item.id]}}</text><text class="cosmetic-state">{{pet.level<item.level?'Lv.'+item.level+' 解锁':pet.equippedCosmetics.includes(item.id)?'已穿戴 · 点击取下':'穿戴 →'}}</text></view>
   </WPActionTile>
  </view>
 </template>

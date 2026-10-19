@@ -7,9 +7,9 @@ const sheet=readFileSync('src/components/course/CourseDeleteConfirmSheet.vue','u
 const store=readFileSync('src/stores/course.ts','utf8')
 const management=readFileSync('src/components/course/CourseManagement.vue','utf8')
 
-test('导入课程删除：以 catalog 写入为提交点，媒体进入待清理队列',()=>{
- assert.ok(storage.includes('writeStorage(CATALOG_KEY,catalog.filter(e=>e.courseId!==id))'))
- assert.ok(storage.includes('这是提交点')||storage.includes('This pointer is the commit point'))
+test('导入课程删除：以删除墓碑写入为提交点，媒体进入待清理队列',()=>{
+ assert.ok(storage.includes('markCourseDeleted(id,'))
+ assert.ok(storage.includes('This tombstone is the commit point'))
  assert.ok(storage.includes("installationStatus[id]='notInstalled'"))
 })
 
@@ -17,7 +17,7 @@ test('确认面板语义：bundled 说「卸载」、导入课程说「删除」
  assert.ok(sheet.includes("props.bundled?'卸载':'删除'"))
  assert.ok(sheet.includes('输入「{{actionLabel}}」以确认：'))
  assert.ok(sheet.includes('typed.value.trim()===actionLabel.value'))
- assert.ok(sheet.includes('已学 ${props.learnedWords} 词仍会参加到期复习'))
+ assert.ok(sheet.includes('备份本册记录后删除本地教材与专属内容'));assert.ok(sheet.includes('与其他教材共享的词卡、复习排程及全局奖励保留'))
  assert.ok(sheet.includes(':aria-label="actionLabel+\'教材确认\'"'))
 })
 

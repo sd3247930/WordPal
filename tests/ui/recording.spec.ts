@@ -16,7 +16,7 @@ test.beforeEach(async({page})=>{
   Object.defineProperty(window,'MediaRecorder',{value:Recorder})
  })
  await go(page,'home');await page.locator('.hero-cta').click()
- await page.locator('.answer-actions .wp-button').filter({hasText:'查看答案'}).click()
+ await expect(page.locator('.wp-word-card')).toBeVisible()
  await openExploration(page)
 })
 
@@ -43,4 +43,3 @@ test('跟读结束可临时回放，切词清理录音且不写评分或学习�
  await page.locator('.answer-feedback .wp-button').click()
  await expect(page.locator('.pronunciation-practice .wp-button').filter({hasText:'听我的录音'})).toHaveCount(0)
 })
-

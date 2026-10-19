@@ -40,7 +40,7 @@ import {useCourseStore} from '../../stores/course'
 import {cleanCourseLabel} from '../../services/course/CourseSelection'
 import {openCourseGallery} from '../../services/navigation'
 import {useProfileStore} from '../../stores/profile'
-import {courseRegistry,archiveStatus,wordById,resourceStatus,isCourseInstalled,isBundledCourse} from '../../services/content/ContentRegistry'
+import {courseRegistry,archiveStatus,wordById,resourceStatus,isCourseInstalled,isBundledCourse,isUserDeleted} from '../../services/content/ContentRegistry'
 import {installationLabel} from '../../services/content/CourseDirectory'
 import {defaultImportMetadata,previewImport,csvTemplate,type ImportPreview} from '../../services/course-import/ImportWizard'
 import {installTextCourse,installMediaCourse,exportCourse,enableBundledCourse,retryCourseCleanup,pendingCleanupCount} from '../../services/content/StorageRepository'
@@ -49,7 +49,7 @@ import CourseBatchUninstallPanel from './CourseBatchUninstallPanel.vue'
 import {canReinstall} from '../../services/content/CourseDirectory'
 import {readZip,makeZip} from '../../services/course-import/ZipImporter'
 import {pickCourseFile,canPickCourseFile,downloadLocalFile,type PickedCourseFile} from '../../services/course-import/FilePicker'
-const course=useCourseStore(),profile=useProfileStore(),packs=computed(()=>Object.values(courseRegistry).map(pack=>({...pack,title:cleanCourseLabel(pack.title)}))),input=ref(''),format=ref<'json'|'csv'|'markdown'>('csv'),meta=ref(defaultImportMetadata()),preview=ref<ImportPreview|null>(null),reuseConfirmed=ref(false),message=ref(''),busy=ref(false),fileLabel=ref(''),mappingText=ref(''),canPick=canPickCourseFile(),migrationOpen=ref(false)
+const course=useCourseStore(),profile=useProfileStore(),packs=computed(()=>Object.values(courseRegistry).filter(pack=>!isUserDeleted(pack.courseId)).map(pack=>({...pack,title:cleanCourseLabel(pack.title)}))),input=ref(''),format=ref<'json'|'csv'|'markdown'>('csv'),meta=ref(defaultImportMetadata()),preview=ref<ImportPreview|null>(null),reuseConfirmed=ref(false),message=ref(''),busy=ref(false),fileLabel=ref(''),mappingText=ref(''),canPick=canPickCourseFile(),migrationOpen=ref(false)
 let mediaFiles:Record<string,Uint8Array>|undefined
 watch([meta,mappingText],()=>{preview.value=null;reuseConfirmed.value=false},{deep:true,flush:'sync'})
 const startGrades=[{id:null,name:'未填写起点'},{id:1 as const,name:'1 年级起点'},{id:3 as const,name:'3 年级起点'}]
@@ -79,7 +79,6 @@ const removeLearned=computed(()=>removePack.value?removePack.value.vocabulary.fi
 const removeBlocked=computed(()=>{
  if(removeTarget.value==='starter')return '原创启蒙课程不可卸载，作为兜底保留。'
  if(profile.readOnly)return '档案处于只读状态，暂无法卸载。'
- if(profile.db.session&&!profile.db.session.completedAt&&(profile.db.session.courseId===removeTarget.value||course.currentId===removeTarget.value))return '当前有未完成的学习，请先完成或保存进度。'
  if(removeTarget.value===course.currentId&&!removeCandidates.value.length)return '至少需要保留一份已安装教材。请先安装其他教材。'
  return ''
 })
@@ -93,7 +92,7 @@ async function confirmRemoveCourse(replacementId:string){
  try{
   const result=await course.uninstall(target,true,replacementId||undefined)
   const mediaNote=removed?.assets.length?(result.pendingCleanup?'本地媒体文件将在下次启动继续清理。':'本地媒体文件已清理，'):''
-  message.value=`已${verb}《${removed?.title}》，${mediaNote}学习记录与复习排程保留；已学 ${learned} 词仍会参加到期复习。`
+  message.value=result.pendingCleanup?'教材已停用，部分内容待清理，重启后自动重试。本册记录备份已保存。':'教材及本册专属记录已清理，本机记录备份已保存。共享词卡与全局奖励保留。'
   removeOpen.value=false
  }catch(error){message.value=(error as Error).message}
  finally{busy.value=false;refreshCleanup()}

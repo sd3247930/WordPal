@@ -11,7 +11,6 @@
 .pet-theme-choice.selected{border-color:var(--pet-accent);background:var(--pet-tonal)}
 .pet-theme-thumbnail{display:block;width:100%;height:76px}
 .pet-theme-copy{display:flex;flex-direction:column;padding:9px 10px;gap:2px}
-.theme-check{color:var(--pet-accent)}
 .pet-action-workspace{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;min-width:0;scroll-margin-top:18px}
 .pet-action-menu{--pet-action-art-size:clamp(36px,calc((100vw - 150px)/5),48px);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;align-content:start;padding:6px 4px;border:1px solid var(--pet-border);border-radius:20px;background:var(--pet-surface);min-width:0}
 .pet-house .pet-action-tab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;margin:0;padding:8px 0;min-height:88px;min-width:0;border:2px solid transparent;border-radius:14px;background:var(--pet-surface);color:var(--pet-text);line-height:1.4;font-size:clamp(16px,var(--wp-font-body),20px)}
@@ -19,7 +18,6 @@
 .pet-action-icon{position:relative;display:flex;align-items:center;justify-content:center;width:var(--pet-action-art-size);height:var(--pet-action-art-size);flex-shrink:0;border-radius:12px;background:transparent}
 .pet-action-label{display:block;white-space:nowrap;font-weight:600}
 .pet-action-tab.selected .pet-action-label{font-weight:700}
-.pet-action-check{position:absolute;right:-2px;bottom:-2px;display:flex;align-items:center;justify-content:center;width:13px;height:13px;border-radius:50%;background:var(--pet-accent);color:var(--pet-surface);font-size:10px;line-height:1;font-weight:700}
 .pet-house .pet-action-tab:focus-visible{outline:2px solid var(--pet-accent);outline-offset:2px}
 .high-contrast .pet-action-icon{box-shadow:none}
 @media(min-width:840px){.pet-action-menu{--pet-action-art-size:40px}}

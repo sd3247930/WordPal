@@ -4,6 +4,7 @@
   <view v-if="!result.available" class="empty-small"><text>当前教材尚未安装或已移除，暂不能浏览完整词卡。</text><WPButton @click="openCourseGallery(courseId)">前往教材库</WPButton><text class="small muted">已有记忆仍可在全局已学词中查看。</text></view>
   <template v-else>
    <text v-if="resourceStatus[courseId]" class="notice" role="status">{{resourceStatus[courseId]}}</text>
+   <view v-if="pack" class="notice course-complete-summary" role="status"><text class="strong">全书完整学习 {{fullProgress.learned}} / {{fullProgress.total}} · {{fullProgress.percent}}%</text><text class="small muted block">{{fullProgress.position}} · 今日六环节 {{fullProgress.today}} / 6</text></view>
    <view class="course-card-counts"><text>词条 {{result.summary.totalOccurrences}}</text><text>已学 {{result.summary.learnedOccurrences}}</text><text>到期 {{result.summary.dueUniqueLexemes}} 词</text></view>
    <WPButton kind="quiet" :aria-expanded="summaryOpen" @click="summaryOpen=!summaryOpen">{{summaryOpen?'收起':'查看'}}范围熟知度</WPButton>
    <WPFamiliaritySummary v-if="summaryOpen" :summary="result.summary" :unit-title="unitOptions[unitIndex]?.title"/>
@@ -26,7 +27,7 @@
      <template v-for="(row,index) in result.pageRows" :key="row.occurrence.id">
       <view v-if="request.sort==='courseOrder'&&(index===0||result.pageRows[index-1].occurrence.unitId!==row.occurrence.unitId)" class="course-unit-heading"><text>{{row.occurrence.unitTitle}}</text><text class="small muted">{{result.rows.filter(item=>item.occurrence.unitId===row.occurrence.unitId).length}} {{merge?'词':'词条'}}</text></view>
       <view class="course-word-row" :class="{selected:selectedId===row.occurrence.id}" :data-occurrence="row.occurrence.id" :data-familiarity="row.familiarity.level">
-       <WPActionTile class="course-word-open" role="button" tabindex="0" :aria-label="row.word.word+'，'+row.word.meaning+'，'+row.familiarity.label+'，预览词卡'" :aria-pressed="selectedId===row.occurrence.id" @click="open(row)">
+       <WPActionTile toggle-highlight class="course-word-open" role="button" tabindex="0" :aria-label="row.word.word+'，'+row.word.meaning+'，'+row.familiarity.label+'，预览词卡'" :aria-pressed="selectedId===row.occurrence.id" @click="open(row)" @cancel="selectedId='';closeDetail()">
         <image v-if="row.word.image&&!failedImages.has(row.word.id)" class="course-word-thumb" :src="row.word.image" :alt="row.word.meaning" mode="aspectFit" :lazy-load="true" @error="failedImages.add(row.word.id)"/><text v-else class="course-word-placeholder" aria-hidden="true">{{wordIllustrations[row.word.id]||'📖'}}</text>
         <view class="course-word-copy"><text class="review-word">{{row.word.word}}</text><text class="small muted">{{row.word.ipa}}</text><text>{{row.word.meaning}}</text><text class="familiarity-label">{{row.familiarity.label}} · {{row.due?'今日到期':nextReviewLabel(profile.db.cards[row.word.id]?.due)}}</text><text v-if="request.sort!=='courseOrder'" class="small muted">{{row.occurrence.unitTitle}}</text></view>
        </WPActionTile>
@@ -58,6 +59,8 @@ import {useLearningStore} from '../../stores/learning'
 import {useCourseStore} from '../../stores/course'
 import {useReviewStore} from '../../stores/review'
 import {courseRegistry,resourceStatus} from '../../services/content/ContentRegistry'
+import {fullCourseWords,completedPrefix,STUDY_STEPS,selectDailyPlan} from '../../services/learning/DailyLearningPlan'
+import {orderedCourseWords} from '../../services/learning/CourseStudySequence'
 import {familiarityLevels,familiarityLabels,type FamiliarityLevel} from '../../services/content/FamiliaritySelector'
 import type {CourseCardQuery,CourseCardRow} from '../../services/content/WordbookQueryBuilder'
 import {windowLayout as layout} from '../../services/window'
@@ -68,6 +71,7 @@ import {nextReviewLabel} from '../../services/study-presentation'
 const props=defineProps<{courseId:string}>(),emit=defineEmits<{close:[]}>()
 const book=useWordbookStore(),profile=useProfileStore(),learning=useLearningStore(),course=useCourseStore(),review=useReviewStore()
 const pack=computed(()=>courseRegistry[props.courseId]),unitIndex=ref(0),keyword=ref(''),filterIndex=ref(0),sortIndex=ref(0),merge=ref(false),grid=ref(false),pageIndex=ref(0),selectedId=ref(''),detailOpen=ref(false),failedImages=ref(new Set<string>()),audioError=ref('')
+const fullProgress=computed(()=>{const book=pack.value;if(!book)return {learned:0,total:0,percent:0,position:'教材暂不可用',today:0};const ids=orderedCourseWords(book),learned=Object.keys(fullCourseWords(profile.db,book)).length,prefix=completedPrefix(profile.db,book),unit=book.units.find(u=>u.lessons.some(l=>l.wordIds.includes(ids[prefix]||ids.at(-1)||''))),plan=selectDailyPlan(profile.db,book);return {learned,total:ids.length,percent:ids.length?Math.floor(learned/ids.length*100):0,position:prefix===ids.length?'全书学习完成':`${unit?.title||'当前教材'} · 下个位置 ${prefix+1}/${ids.length}`,today:plan?.flow?STUDY_STEPS.filter(step=>plan.flow!.completed[step].length===plan.wordIds.length).length:0}})
 const summaryOpen=ref(false),optionsOpen=ref(false)
 const dual=computed(()=>layout.width>=1000&&layout.fontScale<1.4)
 const unitOptions=computed(()=>[{id:'',title:'全部单元'},...(pack.value?.units||[]).map((u,index)=>({id:u.id,title:u.title,order:u.order??index+1})).sort((a,b)=>a.order-b.order)])

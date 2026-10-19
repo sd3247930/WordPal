@@ -9,8 +9,9 @@ test('四款喂食道具可预览、切换、取消及键盘选择，确认扣�
  await page.setViewportSize({width:390,height:844});await seedDatabase(page,goldenDatabase());await open(page);const before=await database(page)
  await expect(foods(page).locator('.food-choice-name')).toHaveText(names)
  for(const name of names){
-  const button=foods(page).getByRole('button',{name,exact:true});await button.click();await expect(button).toHaveAttribute('aria-pressed','true');await expect(foods(page).locator('[aria-pressed="true"]')).toHaveCount(1);await expect(page.getByRole('region',{name:'分享预览',exact:true})).toContainText(name);expect(await database(page)).toEqual(before)
-  await button.click();expect(await database(page)).toEqual(before);await page.getByRole('button',{name:'取消',exact:true}).click();await expect(page.locator('.feed-preview')).toHaveCount(0);expect(await database(page)).toEqual(before)
+  const button=foods(page).getByRole('button',{name,exact:true});if(await button.getAttribute('aria-pressed')==='true')await button.click();await button.click();await expect(button).toHaveAttribute('aria-pressed','true');await expect(foods(page).locator('[aria-pressed="true"]')).toHaveCount(1);await expect(page.getByRole('region',{name:'分享预览',exact:true})).toContainText(name);expect(await database(page)).toEqual(before)
+  await button.click();await expect(button).toHaveAttribute('aria-pressed','false');await expect(page.locator('.feed-preview')).toHaveCount(0);expect(await database(page)).toEqual(before)
+  await button.click();await page.getByRole('button',{name:'取消',exact:true}).click();await expect(page.locator('.feed-preview')).toHaveCount(0);expect(await database(page)).toEqual(before)
  }
  await foods(page).getByRole('button',{name:'星光珍珠',exact:true}).focus();await page.keyboard.press('Enter');await expect(page.locator('.feed-preview')).toContainText('星光珍珠');await foods(page).getByRole('button',{name:'月光树叶',exact:true}).focus();await page.keyboard.press('Space');await expect(page.locator('.feed-preview')).toContainText('月光树叶');expect(await database(page)).toEqual(before)
  await page.getByRole('button',{name:'确认分享 · 5 灵石',exact:true}).click();const after=await database(page);expect(after.gems).toBe(before.gems-5);expect(after.pets.water.affection).toBe(before.pets.water.affection+5)

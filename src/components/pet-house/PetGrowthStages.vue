@@ -1,6 +1,6 @@
 <template>
  <view :class="variant==='growth'?'growth-track':'pet-album-grid'" class="pet-form-gallery" role="group" :aria-label="petInfo[pet.element].name+'的精灵形态'">
-  <WPActionTile v-for="(stage,i) in petStages" :key="stage.title" class="pet-form-card" :class="[variant==='growth'?'growth-step':'pet-album-entry','stage-'+presentations[i].state,{reached:presentations[i].unlocked,locked:!presentations[i].unlocked,'form-selected':forms.stage(pet.element)===i+1}]" :disabled="!presentations[i].unlocked" :data-state="presentations[i].state" :aria-label="stage.title+'，'+(presentations[i].unlocked?'已解锁':'点亮进度 '+presentations[i].percent+'%')" :aria-describedby="progressId(i)" :aria-pressed="forms.stage(pet.element)===i+1" @click="choose(i+1)">
+  <WPActionTile v-for="(stage,i) in petStages" :key="stage.title" toggle-highlight class="pet-form-card" :class="[variant==='growth'?'growth-step':'pet-album-entry','stage-'+presentations[i].state,{reached:presentations[i].unlocked,locked:!presentations[i].unlocked,'form-selected':forms.stage(pet.element)===i+1}]" :disabled="!presentations[i].unlocked" :data-state="presentations[i].state" :aria-label="stage.title+'，'+(presentations[i].unlocked?'已解锁':'点亮进度 '+presentations[i].percent+'%')" :aria-describedby="progressId(i)" :aria-pressed="forms.stage(pet.element)===i+1" @click="choose(i+1)">
    <view class="pet-form-art" :class="{'album-art':variant==='album'}">
     <view class="pet-form-sprite" :class="{'pet-unlock-pop':celebrating.includes(i)}" :style="{filter:presentations[i].unlocked?'none':'grayscale('+presentations[i].grayscale+'%)',opacity:presentations[i].opacity}">
      <PetHousePetArt :element="pet.element" :stage="i+1" :badge="false"/>
@@ -11,7 +11,7 @@
    <view class="pet-form-copy">
     <view class="pet-form-heading"><text class="pet-form-title">{{stage.title}}</text><text class="pet-form-requirement">{{stage.level?'Lv.'+stage.level+' 解锁':'全部教材学习 100%'}}</text></view>
     <view class="pet-form-progress"><text :id="progressId(i)" class="pet-form-progress-label">{{presentations[i].unlocked?'点亮完成':'点亮进度'}} {{presentations[i].percent}}%</text><WPProgress :value="presentations[i].percent" :total="100" :label="stage.title+'点亮进度'"/></view>
-    <text class="pet-form-status">{{presentations[i].unlocked?(forms.stage(pet.element)===i+1?'✓ 当前形态':'全彩已解锁 · 切换 →'):'还需 '+presentations[i].remaining+(i===3?' 词':' 经验')}}</text>
+    <text class="pet-form-status">{{presentations[i].unlocked?(forms.stage(pet.element)===i+1?'当前形态':'全彩已解锁 · 切换 →'):'还需 '+presentations[i].remaining+(i===3?' 词':' 经验')}}</text>
    </view>
   </WPActionTile>
  </view>

@@ -32,3 +32,11 @@ test('延迟加载超过300毫秒才提示、报错后重试可恢复，缺资�
  audio.startDelay=0;audio.failNext=true;await assert.rejects(service.play('bad.wav'));assert.ok(service.error.value);await service.replay();assert.equal(service.error.value,null);service.destroy()
  let created=0;const empty=new AudioPlaybackService(()=>{created++;return audio});await assert.rejects(empty.play(''));assert.equal(created,0);empty.destroy()
 })
+
+test('H5框架丢弃的play Promise被接住，切词主动中断不产生未处理拒绝',async()=>{
+ const audio=new FakeAudio(),html={play:()=>Promise.reject(Object.assign(new Error('interrupted'),{name:'AbortError'}))},oldPlay=audio.play.bind(audio)
+ ;(audio as any)._audio=html
+ audio.play=()=>{void html.play();oldPlay()}
+ const service=new AudioPlaybackService(()=>audio)
+ await service.play('cat.wav');await delay(0);service.stop();assert.equal(service.error.value,null);service.destroy()
+})

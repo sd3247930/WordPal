@@ -1,22 +1,17 @@
 import test from 'node:test'
+import {createPinia,setActivePinia} from 'pinia'
 import assert from 'node:assert/strict'
-import {courseSourceResidue,trimCourseSource} from '../src/services/course/CourseSourceTrimmer'
-
+import {trimCourseSource} from '../src/services/course/CourseSourceTrimmer'
+import {retainDescriptor} from '../src/services/content/CourseDirectory'
+import {installTextCourse} from '../src/services/content/StorageRepository'
+import {getCourseWord,loadCourseRegistry} from '../src/services/content/ContentRegistry'
+import {isUserDeleted} from '../packages/content_schema/course-lifecycle'
+import {lifecyclePack} from './helpers/lifecycle-fixture'
 const storage=new Map<string,string>()
-;(globalThis as any).uni={getStorageSync:(key:string)=>storage.get(key)??'',setStorageSync:(key:string,data:string)=>void storage.set(key,data)}
-
-test('裁剪后重新导入同一课程包可恢复该册，已学词条仍可复用',async()=>{
- storage.clear()
- storage.set('wordpal.content.directory.v1',JSON.stringify({'imported-demo':{courseId:'imported-demo',title:'导入示范册',positions:[{lexemeId:'alpha'}]}}))
- storage.set('wordpal.content.retained-lexemes.v1',JSON.stringify([{id:'alpha',word:'alpha',meaning:'阿尔法'}]))
- storage.set('wordpal.content.catalog.v2',JSON.stringify([]))
- await trimCourseSource('imported-demo')
- assert.deepEqual(JSON.parse(storage.get('wordpal.content.directory.v1')!),{})
- // 重新导入：安装目录与目录描述符写回同一 courseId
- storage.set('wordpal.content.catalog.v2',JSON.stringify([{courseId:'imported-demo',key:'wordpal.content.pack.imported-demo.0123456789abcdef'}]))
- storage.set('wordpal.content.directory.v1',JSON.stringify({'imported-demo':{courseId:'imported-demo',positions:[{lexemeId:'alpha'}]}}))
- const residue=await courseSourceResidue('imported-demo')
- assert.equal(residue.residues.catalogEntry,true)
- assert.equal(residue.residues.directoryDescriptor,true)
- assert.ok(JSON.parse(storage.get('wordpal.content.retained-lexemes.v1')!).some((word:{id:string})=>word.id==='alpha'))
+;(globalThis as any).uni={getStorageSync:(key:string)=>storage.get(key)||'',setStorageSync:(key:string,data:string)=>storage.set(key,data),removeStorageSync:(key:string)=>storage.delete(key)}
+test('旧残留裁剪后只能明确重新导入恢复教材，专属保留词条不会自动恢复',async()=>{
+ storage.clear();loadCourseRegistry();setActivePinia(createPinia());const pack=lifecyclePack('trim-reimport')
+ retainDescriptor(pack);storage.set('wordpal.content.installation.v1',JSON.stringify({[pack.courseId]:'notInstalled'}))
+ const result=await trimCourseSource(pack.courseId);assert(result.ok);assert(isUserDeleted(pack.courseId));assert.equal(getCourseWord(pack.courseId,'trim-reimport-word'),undefined)
+ await installTextCourse(pack);assert(!isUserDeleted(pack.courseId));assert(getCourseWord(pack.courseId,'trim-reimport-word'))
 })

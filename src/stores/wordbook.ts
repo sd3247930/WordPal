@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {ref,computed} from 'vue'
+import {ref,computed,watch} from 'vue'
 import {words,wordById} from '../../packages/content_schema'
 import {useProfileStore} from './profile'
 import {useLearningStore} from './learning'
@@ -18,6 +18,7 @@ function clean(value:unknown):string[]{return Array.isArray(value)?[...new Set(v
 export const useWordbookStore=defineStore('wordbook',()=>{
  const profile=useProfileStore(),learning=useLearningStore(),review=useReviewStore()
  const raw=readStorage<Partial<Preferences>|null>(key,null),preferences=ref<Preferences>({favorites:clean(raw?.favorites),later:clean(raw?.later)}),error=ref('')
+ watch(()=>profile.courseMemoryRevision,()=>{const saved=readStorage<Partial<Preferences>|null>(key,null);preferences.value={favorites:clean(saved?.favorites),later:clean(saved?.later)}})
  const evidence=computed(()=>[...new Map([...profile.db.history,...(profile.db.practiceAnswers||[]),...(profile.db.session?.answers||[]).filter(answer=>profile.db.session?.kind==='practice'||profile.db.session?.wordSources?.[answer.wordId]==='practice').map(answer=>({...answer,source:'practice' as const}))].map(answer=>[answer.id,answer])).values()])
  const historyByWord=computed(()=>{const index:Record<string,typeof profile.db.history>={};for(const word of words)index[word.id]=[];for(const answer of evidence.value)(index[answer.wordId]??=[]).push(answer);for(const history of Object.values(index))history.sort((a,b)=>(Date.parse(a.at)||0)-(Date.parse(b.at)||0));return index})
  const mistakes=computed(()=>words.filter(word=>needsRecentPractice(historyByWord.value[word.id])).map(word=>word.id))

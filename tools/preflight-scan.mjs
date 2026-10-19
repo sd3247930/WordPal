@@ -100,6 +100,14 @@ export function scanBytes(name,data,{maxBytes=5*1024*1024,localOnly=false}={}) {
  const text=decodeText(data)
  if(text===null){if(!localOnly)add('unreviewed binary content');return hits}
  for(const [label,pattern]of rules){pattern.lastIndex=0;for(const match of text.matchAll(pattern)){if(exempt(label,match,name))continue;add(label,text.slice(0,match.index).split('\n').length)}}
+ // Prefixed build variables and Gradle/XML syntax also carry credentials.
+ for(const match of text.matchAll(/^\s*["']?([A-Z][A-Z0-9_]*(?:PASSWORD|TOKEN|APPKEY|SECRET|PRIVATE_KEY|API_KEY))["']?\s*[:=]\s*([^\r\n]*)/gm)){
+  const raw=match[2].trim().replace(/[,;]$/,'').trim(),value=raw.replace(/^(["'])(.*)\1$/,'$2')
+  if(!value||/^(?:YOUR_[A-Z_]+|<[^>]+>|\$\{[\s\S]*\}|process\.env\.[A-Z_]+|import\.meta\.env\.[A-Z_]+)$/.test(value))continue
+  add('prefixed build credential',text.slice(0,match.index).split('\n').length)
+ }
+ for(const match of text.matchAll(/\b(?:storePassword|keyPassword)\s+(["'])([^"'\r\n]+)\1/g))if(!/^(?:YOUR_[A-Z_]+|<[^>]+>|\$\{[^}]+\})$/.test(match[2]))add('literal signing credential',text.slice(0,match.index).split('\n').length)
+ for(const match of text.matchAll(/<meta-data\b[^>]*android:name=["']dcloud_appkey["'][^>]*android:value=["'][a-f0-9]{32}["']/gi))add('embedded platform app key',text.slice(0,match.index).split('\n').length)
  if(extension==='.svg' && /<(?:script|foreignObject)\b|(?:href|src)\s*=\s*["']https?:/i.test(text))add('active or remote SVG content')
  return hits
 }

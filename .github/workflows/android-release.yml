@@ -1,0 +1,91 @@
+name: Android release
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  release:
+    if: github.repository == 'sd3247930/WordPal' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: windows-latest
+    environment: android-release
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
+      - uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4
+        with:
+          gradle-version: '8.14.3'
+          cache-disabled: true
+      - name: Validate release inputs
+        shell: pwsh
+        env:
+          WORDPAL_DCLOUD_APPKEY: ${{ secrets.WORDPAL_DCLOUD_APPKEY }}
+          WORDPAL_SIGN_STORE_BASE64: ${{ secrets.WORDPAL_SIGN_STORE_BASE64 }}
+          WORDPAL_SIGN_ALIAS: ${{ secrets.WORDPAL_SIGN_ALIAS }}
+          WORDPAL_SIGN_STORE_PASSWORD: ${{ secrets.WORDPAL_SIGN_STORE_PASSWORD }}
+          WORDPAL_SIGN_KEY_PASSWORD: ${{ secrets.WORDPAL_SIGN_KEY_PASSWORD }}
+          WORDPAL_ANDROID_SDK_URL: ${{ secrets.WORDPAL_ANDROID_SDK_URL }}
+          WORDPAL_ANDROID_SDK_SHA256: ${{ vars.WORDPAL_ANDROID_SDK_SHA256 }}
+        run: |
+          $required = @('WORDPAL_DCLOUD_APPKEY','WORDPAL_SIGN_STORE_BASE64','WORDPAL_SIGN_ALIAS','WORDPAL_SIGN_STORE_PASSWORD','WORDPAL_SIGN_KEY_PASSWORD','WORDPAL_ANDROID_SDK_URL','WORDPAL_ANDROID_SDK_SHA256')
+          foreach ($name in $required) { if (-not [Environment]::GetEnvironmentVariable($name)) { throw "Missing release configuration: $name. Configure the android-release environment; no debug-signing fallback is permitted." } }
+          $version = (Get-Content package.json -Raw | ConvertFrom-Json).version
+          if ($env:GITHUB_REF_NAME -ne "v$version") { throw 'Release tag does not match package.json.' }
+          git merge-base --is-ancestor HEAD origin/main
+          if ($LASTEXITCODE -ne 0) { throw 'Release tag must belong to the reviewed main branch.' }
+      - run: powershell -ExecutionPolicy Bypass -File tools/preflight-scan.ps1 -History
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build:app
+        env:
+          VITE_WORDPAL_LOCAL_CONTENT: '0'
+      - run: node tools/check-release-isolation.mjs dist/build/app
+      - run: node tools/android/download-sdk.mjs
+        env:
+          WORDPAL_ANDROID_SDK_URL: ${{ secrets.WORDPAL_ANDROID_SDK_URL }}
+          WORDPAL_ANDROID_SDK_SHA256: ${{ vars.WORDPAL_ANDROID_SDK_SHA256 }}
+      - run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - run: node tools/android/prepare-project.mjs --sdk build/dcloud-sdk
+      - name: Sign and build APK
+        shell: pwsh
+        env:
+          WORDPAL_DCLOUD_APPKEY: ${{ secrets.WORDPAL_DCLOUD_APPKEY }}
+          WORDPAL_SIGN_STORE_BASE64: ${{ secrets.WORDPAL_SIGN_STORE_BASE64 }}
+          WORDPAL_SIGN_ALIAS: ${{ secrets.WORDPAL_SIGN_ALIAS }}
+          WORDPAL_SIGN_STORE_PASSWORD: ${{ secrets.WORDPAL_SIGN_STORE_PASSWORD }}
+          WORDPAL_SIGN_KEY_PASSWORD: ${{ secrets.WORDPAL_SIGN_KEY_PASSWORD }}
+        run: |
+          $env:WORDPAL_SIGN_STORE_FILE = Join-Path $env:RUNNER_TEMP 'wordpal-release.keystore'
+          try {
+            [IO.File]::WriteAllBytes($env:WORDPAL_SIGN_STORE_FILE, [Convert]::FromBase64String($env:WORDPAL_SIGN_STORE_BASE64))
+            gradle --no-daemon --project-dir build/android assembleRelease
+            if ($LASTEXITCODE -ne 0) { throw 'Android release build failed.' }
+          } finally { if (Test-Path -LiteralPath $env:WORDPAL_SIGN_STORE_FILE) { Remove-Item -LiteralPath $env:WORDPAL_SIGN_STORE_FILE -Force } }
+      - name: Audit final APK
+        run: node tools/android/audit-release.mjs
+        env:
+          WORDPAL_EXPECTED_CERT_SHA256: ${{ vars.WORDPAL_EXPECTED_CERT_SHA256 }}
+      - name: Publish release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create $env:GITHUB_REF_NAME build/release/WordPal.apk build/release/WordPal.apk.sha256 --repo $env:GITHUB_REPOSITORY --verify-tag --latest --title "WordPal $env:GITHUB_REF_NAME" --notes-file .github/RELEASE_NOTES.md

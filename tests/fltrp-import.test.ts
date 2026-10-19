@@ -1,3 +1,4 @@
+import {startLegacyRound} from './helpers/daily-flow'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {generateCourses,BOOKS,splitLessons,type Extraction} from '../tools/import-fltrp/generate'
@@ -45,11 +46,11 @@ test('实际 Store 跨册保留 Card/历史/奖励，立即切册并恢复原会
  profile.transact(d=>{d.cards[id]=newCard(id,new Date('2000-01-01'))})
  const before=JSON.stringify({cards:profile.db.cards,history:profile.db.history,pets:profile.db.pets,gems:profile.db.gems})
  for(const pack of courses){assert.ok(course.choose(pack.courseId).ok);assert.equal(JSON.stringify({cards:profile.db.cards,history:profile.db.history,pets:profile.db.pets,gems:profile.db.gems}),before);assert.equal(courseRegistry[pack.courseId].vocabulary[0].id,id)}
- course.choose(courses[0].courseId);assert.ok(learning.start());assert.equal(learning.current!.id,id)
+ course.choose(courses[0].courseId);assert.ok(startLegacyRound(learning));assert.equal(learning.current!.id,id)
  const frozen=JSON.stringify(learning.session);assert.ok(course.choose(courses[1].courseId).ok);assert.equal(JSON.stringify(profile.db.courseSessions?.[courses[0].courseId]),frozen);assert.equal(course.currentId,courses[1].courseId);course.choose(courses[0].courseId);assert.equal(JSON.stringify(learning.session),frozen)
  learning.setMode('flash');learning.reveal();const old=JSON.parse(JSON.stringify(profile.db.cards[id]));assert.ok(learning.submit(3));const answer=profile.db.history.at(-1)!;assert.deepEqual(profile.db.cards[id],new FSRSScheduler().schedule(old,3,new Date(answer.at)).card)
  assert.equal(profile.db.history.filter(a=>a.wordId===id).length,1);assert.equal(Object.keys(profile.db.cards).filter(k=>k===id).length,1)
- assert.ok(getCourseWord(courses[1].courseId,id).word)
+ assert.ok(getCourseWord(courses[1].courseId,id)?.word)
  configureLocalCourses([]);loadCourseRegistry()
 })
 test('能力上限 5/5/10/15/20 与每日设置取小值，复习/错词优先且不被新词上限截断',()=>{
@@ -66,7 +67,7 @@ test('旧章节选择不改变未开始教材的首词，按课节原序跨课�
  const profile=useProfileStore(),course=useCourseStore(),learning=useLearningStore()
  course.choose(courses[0].courseId);const lesson=courses[0].units[0].lessons[1];assert.ok(course.chooseLesson(lesson.id))
  const before=JSON.stringify({cards:profile.db.cards,history:profile.db.history})
- assert.ok(learning.start());assert.deepEqual(learning.session!.wordIds.slice(0,8),courses[0].units[0].lessons[0].wordIds)
+ assert.ok(startLegacyRound(learning));assert.deepEqual(learning.session!.wordIds.slice(0,8),courses[0].units[0].lessons[0].wordIds)
  assert.equal(learning.session!.wordIds.length,10);assert.equal(JSON.stringify({cards:profile.db.cards,history:profile.db.history}),before)
  configureLocalCourses([]);loadCourseRegistry()
 })

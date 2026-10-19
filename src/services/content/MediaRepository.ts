@@ -2,6 +2,7 @@ import type {CoursePack} from '../../../packages/content_schema/course'
 import {safeRelativePath} from '../../../packages/content_schema/course'
 import {sha256} from './digest'
 import {strToU8,strFromU8} from 'fflate'
+import {assertContentReadable,courseIdFromPackKey,isUserDeleted} from '../../../packages/content_schema/course-lifecycle'
 const urls=new Map<string,string>()
 const runtimePlatform=()=>{try{return uni.getSystemInfoSync().platform}catch{return 'test'}}
 function openDb():Promise<IDBDatabase>{return new Promise((resolve,reject)=>{const request=indexedDB.open('wordpal-course-content',1);request.onupgradeneeded=()=>{if(!request.result.objectStoreNames.contains('files'))request.result.createObjectStore('files')};request.onerror=()=>reject(new Error('课程仓库无法打开。'));request.onsuccess=()=>resolve(request.result)})}
@@ -27,7 +28,7 @@ export async function saveManifest(key:string,pack:CoursePack){
  else if(typeof indexedDB!=='undefined'){await idbWrite(key+'/'+path,bytes);if(sha256(await idbRead(key+'/'+path))!==sha256(bytes))throw new Error('课程正文读回校验失败。')}
  else{const api=(globalThis as any).wx;if(api?.getFileSystemManager){const fs=api.getFileSystemManager(),dir=api.env.USER_DATA_PATH+'/wordpal/'+key.replace(/[^a-z0-9-]/g,'-');try{fs.mkdirSync(dir,true)}catch{}fs.writeFileSync(dir+'/'+path,bytes.slice().buffer);if(sha256(new Uint8Array(fs.readFileSync(dir+'/'+path)))!==sha256(bytes))throw new Error('课程正文读回校验失败。')}}
 }
-export async function readManifest(key:string){if(typeof plus!=='undefined')return JSON.parse(strFromU8(await nativeRead(nativeRelative(key,'manifest.json')))) as CoursePack;if(typeof indexedDB!=='undefined')return JSON.parse(strFromU8(await idbRead(key+'/manifest.json'))) as CoursePack;const api=(globalThis as any).wx;if(api?.getFileSystemManager)return JSON.parse(strFromU8(new Uint8Array(api.getFileSystemManager().readFileSync(api.env.USER_DATA_PATH+'/wordpal/'+key.replace(/[^a-z0-9-]/g,'-')+'/manifest.json')))) as CoursePack;return null}
+export async function readManifest(key:string){const id=courseIdFromPackKey(key);if(id)assertContentReadable(id);if(typeof plus!=='undefined')return JSON.parse(strFromU8(await nativeRead(nativeRelative(key,'manifest.json')))) as CoursePack;if(typeof indexedDB!=='undefined')return JSON.parse(strFromU8(await idbRead(key+'/manifest.json'))) as CoursePack;const api=(globalThis as any).wx;if(api?.getFileSystemManager)return JSON.parse(strFromU8(new Uint8Array(api.getFileSystemManager().readFileSync(api.env.USER_DATA_PATH+'/wordpal/'+key.replace(/[^a-z0-9-]/g,'-')+'/manifest.json')))) as CoursePack;return null}
 export async function saveMedia(key:string,pack:CoursePack,files:Record<string,Uint8Array>,progress?:(completed:number,total:number)=>void){
  let completed=0
  for(const asset of pack.assets){const bytes=files[asset.path];if(!safeRelativePath(asset.path)||!bytes||bytes.length!==asset.bytes||sha256(bytes)!==asset.sha256)throw new Error('资源摘要与清单不一致。')
@@ -37,17 +38,29 @@ export async function saveMedia(key:string,pack:CoursePack,files:Record<string,U
   progress?.(++completed,pack.assets.length)
  }
 }
-export async function readMedia(key:string,pack:CoursePack){const files:Record<string,Uint8Array>={};for(const asset of pack.assets){
+export async function readMedia(key:string,pack:CoursePack,explicitInstallation=false){if(!explicitInstallation)assertContentReadable(pack.courseId);const files:Record<string,Uint8Array>={};for(const asset of pack.assets){
  const bytes=typeof plus!=='undefined'?await nativeRead(nativeRelative(key,asset.path)):typeof indexedDB!=='undefined'?await idbRead(key+'/'+asset.path):new Uint8Array((globalThis as any).wx.getFileSystemManager().readFileSync((globalThis as any).wx.env.USER_DATA_PATH+'/wordpal/'+key.replace(/[^a-z0-9-]/g,'-')+'/'+asset.path))
  if(bytes.length!==asset.bytes||sha256(bytes)!==asset.sha256)throw new Error('媒体完整性检查未通过，请重新导入。');files[asset.path]=bytes
  if(typeof plus==='undefined'&&typeof indexedDB!=='undefined'){const urlKey=key+':'+asset.id;if(!urls.has(urlKey))urls.set(urlKey,URL.createObjectURL(new Blob([bytes.slice().buffer],{type:asset.mediaType})))}
  }return files}
-export function mediaUrl(key:string,assetId:string,pack:CoursePack){const asset=pack.assets.find(a=>a.id===assetId);if(!asset)return '';if(typeof plus!=='undefined')return nativeRelative(key,asset.path);if(typeof indexedDB!=='undefined')return urls.get(key+':'+assetId)||'';const api=(globalThis as any).wx;return api?api.env.USER_DATA_PATH+'/wordpal/'+key.replace(/[^a-z0-9-]/g,'-')+'/'+asset.path:''}
-export async function removeContentVersion(key:string,pack:CoursePack){
+export function mediaUrl(key:string,assetId:string,pack:CoursePack){if(isUserDeleted(pack.courseId))return '';const asset=pack.assets.find(a=>a.id===assetId);if(!asset)return '';if(typeof plus!=='undefined')return nativeRelative(key,asset.path);if(typeof indexedDB!=='undefined')return urls.get(key+':'+assetId)||'';const api=(globalThis as any).wx;return api?api.env.USER_DATA_PATH+'/wordpal/'+key.replace(/[^a-z0-9-]/g,'-')+'/'+asset.path:''}
+/** Enumerate only exact, validated version folders; similarly prefixed course IDs are separate owners. */
+export async function storedMediaVersions(courseId:string):Promise<string[]>{
+ if(!/^[a-z][a-z0-9-]*$/.test(courseId))throw new Error('教材标识不合法。')
+ if(typeof plus!=='undefined')return new Promise((resolve,reject)=>plus.io.resolveLocalFileSystemURL('_doc/wordpal/packs/',(entry:any)=>{
+  // HTML5+ returns the complete listing on every readEntries call.
+  entry.createReader().readEntries((entries:any[])=>resolve(entries.filter(item=>new RegExp('^wordpal-content-pack-'+courseId+'-[a-f0-9]{16}$').test(item.name)).map(item=>'wordpal.content.pack.'+courseId+'.'+item.name.slice(-16))),()=>reject(new Error('教材资源目录读取失败。')))
+ },()=>resolve([])))
+ if(typeof indexedDB!=='undefined'){const db=await openDb();try{return await new Promise<string[]>((resolve,reject)=>{const request=db.transaction('files').objectStore('files').getAllKeys();request.onerror=()=>reject(new Error('教材资源目录读取失败。'));request.onsuccess=()=>resolve([...new Set(request.result.map(String).map(key=>key.split('/')[0]).filter(key=>courseIdFromPackKey(key)===courseId))])})}finally{db.close()}}
+ const api=(globalThis as any).wx
+ if(api?.getFileSystemManager){const fs=api.getFileSystemManager();let names:string[];try{names=fs.readdirSync(api.env.USER_DATA_PATH+'/wordpal')}catch{return []}return names.filter(name=>new RegExp('^wordpal-content-pack-'+courseId+'-[a-f0-9]{16}$').test(name)).map(name=>'wordpal.content.pack.'+courseId+'.'+name.slice(-16))}
+ return []
+}
+export async function removeContentVersion(key:string,pack:Pick<CoursePack,'assets'>){
  if(!/^wordpal\.content\.pack\.[a-z][a-z0-9-]*\.[a-f0-9]{16}$/.test(key))throw new Error('课程清理标识不合法。')
  if(typeof plus!=='undefined')await new Promise<void>((resolve,reject)=>plus.io.resolveLocalFileSystemURL(nativeRelative(key,''),(entry:any)=>entry.removeRecursively(resolve,()=>reject(new Error('课程资源无法删除。'))),()=>resolve()))
- else if(typeof indexedDB!=='undefined'){const db=await openDb();try{await new Promise<void>((resolve,reject)=>{const tx=db.transaction('files','readwrite');for(const path of ['manifest.json',...pack.assets.map(a=>a.path)])tx.objectStore('files').delete(key+'/'+path);tx.oncomplete=()=>resolve();tx.onerror=tx.onabort=()=>reject(new Error('课程资源无法删除。'))})}finally{db.close()}}
+ else if(typeof indexedDB!=='undefined'){const db=await openDb();try{await new Promise<void>((resolve,reject)=>{const tx=db.transaction('files','readwrite'),request=tx.objectStore('files').openCursor(IDBKeyRange.bound(key+'/',key+'/\uffff'));request.onsuccess=()=>{const cursor=request.result;if(cursor){cursor.delete();cursor.continue()}};tx.oncomplete=()=>resolve();tx.onerror=tx.onabort=()=>reject(new Error('课程资源无法删除。'))})}finally{db.close()}}
  else{const api=(globalThis as any).wx;if(api?.getFileSystemManager){const fs=api.getFileSystemManager(),dir=api.env.USER_DATA_PATH+'/wordpal/'+key.replace(/[^a-z0-9-]/g,'-');try{fs.accessSync(dir)}catch{return}fs.rmdirSync(dir,true)}}
- for(const a of pack.assets){const handle=urls.get(key+':'+a.id);if(handle)URL.revokeObjectURL(handle);urls.delete(key+':'+a.id)}
+ for(const [id,handle] of urls)if(id.startsWith(key+':')){URL.revokeObjectURL(handle);urls.delete(id)}
  uni.removeStorageSync(key)
 }

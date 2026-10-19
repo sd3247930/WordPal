@@ -10,6 +10,16 @@ import {scanBytes,forbiddenPath,imageMetadata,runAudit} from '../tools/preflight
 const scanner=fileURLToPath(new URL('../tools/preflight-scan.mjs',import.meta.url))
 const secret=()=>['gh','p_', 'a'.repeat(32)].join('')
 const windowsPath=()=>String.fromCharCode(67,58,92)+'local'+String.fromCharCode(92)+'fixture'
+
+test('带项目前缀的构建凭据、Gradle密码和原生AppKey同样阻断，占位与构建注入可通过',()=>{
+ const key=['WORDPAL','DCLOUD','APPKEY'].join('_'),value='a'.repeat(32)
+ assert.ok(scanBytes('local.env',Buffer.from(key+'='+value)).some((h:any)=>h.category==='prefixed build credential'))
+ assert.deepEqual(scanBytes('.env.example',Buffer.from(key+'=YOUR_APPKEY')),[])
+ assert.deepEqual(scanBytes('workflow.yml',Buffer.from(key+': $'+'{{ secrets.'+key+' }}')),[])
+ assert.ok(scanBytes('app.gradle',Buffer.from(['store','Password'].join('')+" '"+value+"'")).some((h:any)=>h.category==='literal signing credential'))
+ const xml='<meta-data android:name="'+['dcloud','appkey'].join('_')+'" android:value="'+value+'"/>'
+ assert.ok(scanBytes('manifest.xml',Buffer.from(xml)).some((h:any)=>h.category==='embedded platform app key'))
+})
 test('公开词库 Git SHA 豁免仅限审核过的整行，邻行同一数字和其他文件仍阻断',()=>{
  const name='tools/master-vocabulary/index.ts',line=fs.readFileSync(name,'utf8').split('\n').find(row=>row.startsWith('const revision='))!,digits=line.match(/\d{16,19}/)![0]
  assert.deepEqual(scanBytes(name,Buffer.from(line)),[])

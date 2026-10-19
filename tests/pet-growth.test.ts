@@ -14,7 +14,7 @@ import {usePetFormsStore,petFormsKey} from '../src/stores/pet-forms'
 const storage=new Map<string,string>();let fail=false
 ;(globalThis as any).uni={getStorageSync:(key:string)=>storage.get(key)||'',setStorageSync:(key:string,value:string)=>{if(fail)throw new Error('Quota');storage.set(key,value)}}
 function reset(){storage.clear();fail=false;loadCourseRegistry();setActivePinia(createPinia())}
-function fullProgress(courseId:string){return {...initialProgress(courseId),introducedWords:Object.fromEntries(courseRegistry[courseId].vocabulary.map(word=>[word.id,'2026-10-16T08:00:00Z']))}}
+function fullProgress(courseId:string){return {...initialProgress(courseId),fullLearnedWords:Object.fromEntries(courseRegistry[courseId].vocabulary.map(word=>[word.id,'2026-10-16T08:00:00Z']))}}
 
 test('四象身份稳定，四阶段逐次放大10%并预留解锁动效空间',()=>{
  assert.deepEqual(elements.map(id=>petInfo[id].name),['玄冥','祝融','后土','飞廉'])
@@ -48,17 +48,17 @@ test('教材增加、归档、卸载、空目录与接近100%均按实时内容�
  archiveStatus[second.courseId]=false;installationStatus[second.courseId]='notInstalled';assert.equal(allCourseLearningProgress(db).complete,true)
  delete courseRegistry[second.courseId];db.courseProgress['deleted-book']=fullProgress('starter');assert.equal(allCourseLearningProgress(db).complete,true)
  const longBook=JSON.parse(JSON.stringify(starterPack));longBook.courseId='long-book';longBook.vocabulary=Array.from({length:1001},(_,i)=>({...starterPack.vocabulary[0],id:'large-'+i}));longBook.units=[];courseRegistry[longBook.courseId]=longBook
- db.courseProgress[longBook.courseId]=fullProgress(longBook.courseId);delete db.courseProgress[longBook.courseId].introducedWords!['large-1000']
+ db.courseProgress[longBook.courseId]=fullProgress(longBook.courseId);delete db.courseProgress[longBook.courseId].fullLearnedWords!['large-1000']
  assert.equal(allCourseLearningProgress(db).percent,99);assert.equal(allCourseLearningProgress(db).complete,false)
  for(const id of Object.keys(courseRegistry))delete courseRegistry[id];assert.equal(allCourseLearningProgress(db).complete,false);assert.equal(allCourseLearningProgress(db).percent,0)
 })
-test('已完成课程章节和当前正式首轮答题可兼容，越界词不计入',()=>{
+test('旧已完成章节保留，单次旧作答不冒充完整学习，越界词不计入',()=>{
  reset();const db=freshDatabase(),first=starterPack.units[0].lessons[0]
- db.courseProgress={starter:{...initialProgress('starter'),completedLessons:[first.id],introducedWords:{foreign:'2026-10-16T08:00:00Z'}}}
+ db.courseProgress={starter:{...initialProgress('starter'),completedLessons:[first.id],fullLearnedWords:{foreign:'2026-10-16T08:00:00Z'}}}
  assert.equal(allCourseLearningProgress(db).learned,new Set(first.wordIds).size)
  const next=starterPack.vocabulary.find(word=>!first.wordIds.includes(word.id))!.id,at='2026-10-16T08:00:00Z'
  db.session={id:'growth-evidence',courseId:'starter',date:'2026-10-16',startedAt:at,kind:'new_word',wordIds:[next],index:0,mode:'flash',input:'',selected:'',revealed:true,answers:[{id:'growth-evidence:0',wordId:next,rating:3,correct:true,at,source:'new_word',mode:'flash',input:''}]}
- const before=JSON.stringify(db);assert.equal(allCourseLearningProgress(db).learned,new Set(first.wordIds).size+1);assert.equal(JSON.stringify(db),before)
+ const before=JSON.stringify(db);assert.equal(allCourseLearningProgress(db).learned,new Set(first.wordIds).size);assert.equal(JSON.stringify(db),before)
 })
 test('默认幼年期不随等级自动切换，形态独立持久化，锁定或存储失败不写学习档案',()=>{
  reset();const profile=useProfileStore();profile.transact(db=>{db.pets.water={...createPet('water'),level:8,exp:700,evolutionStage:3}})

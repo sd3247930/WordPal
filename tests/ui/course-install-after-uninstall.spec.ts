@@ -1,5 +1,5 @@
 import {test,expect,type Page} from '@playwright/test'
-import {unlockParent} from './helpers'
+import {unlockParent,answerParentGate} from './helpers'
 
 const TITLE='合成测试教材 · 3 词'
 const row=(page:Page)=>page.locator('.course-item').filter({hasText:TITLE}).first()
@@ -17,35 +17,17 @@ async function uninstall(page:Page){
  await expect(page.locator('.sheet-panel')).toHaveCount(0)
 }
 
-test('卸载 bundled 课程后安装按钮可点击，连续两轮「卸载 → 安装」均成功',async({page})=>{
- await seedBundledCourse(page)
- await unlockParent(page)
- await expect(row(page)).toContainText('已安装')
- for(let round=1;round<=2;round++){
-  await uninstall(page)
-  await expect(row(page)).toContainText('未安装')
-  const install=row(page).getByRole('button',{name:'安装',exact:true})
-  await expect(install).toBeVisible()
-  // 安装按钮不得以任何禁用形态出现：这是 app-plus 缺陷的回归守卫。
-  await expect(install).toBeEnabled()
-  await expect(install).not.toHaveAttribute('aria-disabled','true')
-  await expect(install).not.toHaveAttribute('tabindex','-1')
-  await expect(install).not.toHaveAttribute('aria-busy','true')
-  await install.click()
-  await expect(row(page)).toContainText('已安装',{timeout:10000})
-  await expect(row(page)).not.toContainText('未安装')
-  await expect(row(page).getByRole('button',{name:'设为当前课程',exact:true})).toBeVisible()
+test('明确卸载后立即隐藏且重启不复活，主动重新安装成功才恢复',async({page})=>{
+ await seedBundledCourse(page);await unlockParent(page);await expect(row(page)).toContainText('已安装')
+ for(let round=0;round<2;round++){
+  await uninstall(page);await expect(row(page)).toHaveCount(0);await page.reload();await answerParentGate(page);await expect(row(page)).toHaveCount(0)
+  await page.evaluate(async()=>{const service=await import('/src/services/content/StorageRepository.ts' as string);service.enableBundledCourse('synthetic-classroom')})
+  await expect(row(page)).toContainText('已安装')
  }
 })
 
-test('未安装行不渲染禁用的「未安装」占位按钮，安装后入口随之切换',async({page})=>{
+test('从未安装的正常发现教材仍提供可用安装按钮',async({page})=>{
  await seedBundledCourse(page)
- await unlockParent(page)
- await uninstall(page)
- await expect(row(page).getByRole('button',{name:'未安装',exact:true})).toHaveCount(0)
- await expect(row(page).getByRole('button',{name:'设为当前课程',exact:true})).toHaveCount(0)
- await row(page).getByRole('button',{name:'安装',exact:true}).click()
- await expect(row(page)).toContainText('已安装',{timeout:10000})
- await expect(row(page).getByRole('button',{name:'安装',exact:true})).toHaveCount(0)
- await expect(row(page).getByRole('button',{name:'未安装',exact:true})).toHaveCount(0)
+ await page.addInitScript(()=>{if(!localStorage.getItem('wordpal.content.installation.v1'))localStorage.setItem('wordpal.content.installation.v1',JSON.stringify({'synthetic-classroom':'notInstalled'}))})
+ await unlockParent(page);await expect(row(page)).toContainText('未安装');const install=row(page).getByRole('button',{name:'安装',exact:true});await expect(install).toBeEnabled();await install.click();await expect(row(page)).toContainText('已安装');await expect(row(page).getByRole('button',{name:'设为当前课程',exact:true})).toBeVisible()
 })

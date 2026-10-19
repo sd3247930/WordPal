@@ -17,6 +17,7 @@ test('g5b：音频与图片解析为静态资源地址，一一对应',()=>{
  let withAudio=0,withImage=0
  for(const entry of pack.vocabulary){
   const word=getCourseWord('fltrp-3start-g5b',entry.id)
+  assert.ok(word)
   assert.ok(word.audio.startsWith('/static/local-course-media/audio/'),entry.lemma+' 音频未解析')
   assert.ok(word.image.startsWith('/static/local-course-media/images/'),entry.lemma+' 图片未解析')
   assert.ok(/\.mp3$/.test(word.audio));assert.ok(/\.webp$/.test(word.image))

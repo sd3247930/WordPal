@@ -37,10 +37,10 @@ export const useActivitiesStore=defineStore('activities',()=>{
   const lesson=course.lesson,pack=course.current
   if(!lesson)return false
   if(kind==='check'){review.refresh();const allowed=new Set(course.wordIds);if(review.due.some(card=>allowed.has(card.wordId))||lesson.wordIds.some(id=>!profile.db.cards[id])){error.value='先完成到期复习与本课未学词，再进行整课检查。';return false}}
-  const pool=course.wordIds.map(id=>getCourseWord(course.currentId,id)).filter(Boolean)
+  const pool=course.wordIds.flatMap(id=>{const word=getCourseWord(course.currentId,id);return word?[word]:[]})
   if(kind==='listen-picture'&&pool.filter(w=>!!w.image).length<2){error.value='本课没有足够的不同词图，可选择文字练习。';return false}
   if(['check','pair','challenge','speed'].includes(kind)&&pool.filter((w,i)=>pool.findIndex(other=>other.meaning===w.meaning)===i).length<2){error.value='词表不足以形成客观选择题，可先浏览或拼装单词。';return false}
-  const eligible=lesson.wordIds.filter(id=>{const w=getCourseWord(course.currentId,id),example=lesson.examples?.[id]||w.example;return kind==='cloze'?example.toLowerCase().split(/[^a-z'-]+/).includes(w.word.toLowerCase()):kind==='sentence'?!!example:kind==='picture'||kind==='listen-picture'?!!w.image&&(kind!=='listen-picture'||!!w.audio):kind==='phonics'?!!w.phonics.length&&w.phonics.length===w.phonemes.length&&!!w.audio:true})
+  const eligible=lesson.wordIds.filter(id=>{const w=getCourseWord(course.currentId,id);if(!w)return false;const example=lesson.examples?.[id]||w.example;return kind==='cloze'?example.toLowerCase().split(/[^a-z'-]+/).includes(w.word.toLowerCase()):kind==='sentence'?!!example:kind==='picture'||kind==='listen-picture'?!!w.image&&(kind!=='listen-picture'||!!w.audio):kind==='phonics'?!!w.phonics.length&&w.phonics.length===w.phonemes.length&&!!w.audio:true})
   if(!eligible.length){error.value='本课缺少该活动所需资源，请选择文字练习。';return false}
   const story=pack.stories?.find(s=>s.id===lesson.storyId)
   if(kind==='story'&&!story){error.value='本课暂无已审核故事，请选择其他练习。';return false}

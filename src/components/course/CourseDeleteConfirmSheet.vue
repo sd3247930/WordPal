@@ -46,8 +46,8 @@ const actionLabel=computed(()=>props.bundled?'卸载':'删除')
 const summary=computed(()=>{
  const words=props.wordCount||0,media=props.mediaCount||0
  return props.bundled
-  ?`卸载教材包并清除本册章节、学习会话与练习进度（${words} 词、${media} 个媒体）。单词记忆与复习排程保留，已学 ${props.learnedWords} 词仍会参加到期复习。`
-  :`删除本地教材媒体并清除本册章节、学习会话与练习进度（${words} 词、${media} 个媒体）。单词记忆与复习排程保留，已学 ${props.learnedWords} 词仍会参加到期复习。`
+  ?`卸载教材并备份、清除本册专属记录（${words} 词、${media} 个媒体）。与其他教材共享的词卡、复习排程及全局奖励保留；删除后需主动重新安装。随应用提供的只读资源不减少安装包体积。`
+  :`备份本册记录后删除本地教材与专属内容（${words} 词、${media} 个媒体）。与其他教材共享的词卡、复习排程及全局奖励保留；删除后需主动重新导入。`
 })
 const canConfirm=computed(()=>!props.blockedReason&&typed.value.trim()===actionLabel.value&&(!props.needsReplacement||!!replacementId.value))
 watch(()=>[props.open,props.title],()=>{typed.value='';replacementId.value=props.candidates[0]?.courseId||''})

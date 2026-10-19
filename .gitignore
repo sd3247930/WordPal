@@ -14,6 +14,9 @@ yarn-error.log
 # ===== 构建产物与缓存 =====
 dist/
 build/
+android/.gradle/
+android/app/libs/
+android/local.properties
 unpackage/
 .hbuilderx/
 .cache/

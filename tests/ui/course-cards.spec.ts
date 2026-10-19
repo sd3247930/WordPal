@@ -1,5 +1,5 @@
 import {test,expect,type Page} from '@playwright/test'
-import {go,database,seedDatabase,setAppearance} from './helpers'
+import {go,database,seedDatabase,setAppearance,completeDaily} from './helpers'
 import {freshDatabase} from '../../src/stores/profile'
 import {newCard} from '../../packages/srs_fsrs'
 import type {CoursePack} from '../../packages/content_schema/course'
@@ -21,11 +21,12 @@ test('整册未学词、十次本地发音重播、红绿蓝音块和返回均�
  await filter(page,'到期').click();await expect(page.locator('.course-word-row')).toHaveCount(0);await expect(page.locator('.empty-small')).toContainText('该范围暂无符合条件');expect(await database(page)).toEqual(before)
 })
 
-test('明确开始真实学习后提交一次，熟知度更新且原调度/新词上限沿用',async({page})=>{
- await seedDatabase(page,{...freshDatabase(),dailyLimit:5});await openCards(page);await page.getByRole('textbox',{name:'搜索教材词卡'}).fill('cat');await page.locator('.course-word-open').click();await page.getByRole('button',{name:'学习这个词',exact:true}).click()
- await expect(page.locator('.answer-actions')).toBeVisible();let db=await database(page);expect(db.session.wordIds[0]).toBe('cat');expect(db.session.wordIds).toHaveLength(5);expect(db.history).toHaveLength(0)
- await page.getByRole('button',{name:'查看答案',exact:true}).click();await page.getByRole('button',{name:'记住了',exact:true}).click();db=await database(page);expect(db.history).toHaveLength(1);expect(db.cards.cat.reps).toBe(1)
- await openCards(page);await page.getByRole('textbox',{name:'搜索教材词卡'}).fill('cat');await expect(page.locator('.course-word-row')).toHaveAttribute('data-familiarity','introduced');expect((await database(page)).history).toHaveLength(1)
+test('词卡入口开始正式六环节，闪现不提前排程，全部完成才更新熟知度',async({page})=>{
+ test.setTimeout(90000)
+ await seedDatabase(page,{...freshDatabase(),abilityLevel:'L1'});await openCards(page);await page.getByRole('textbox',{name:'搜索教材词卡'}).fill('cat');await page.locator('.course-word-open').click();await page.getByRole('button',{name:'学习这个词',exact:true}).click()
+ await expect(page.locator('.answer-actions')).toBeVisible();let db=await database(page);expect(db.courseProgress.starter.dailyPlan.wordIds[0]).toBe('cat');expect(db.courseProgress.starter.dailyPlan.wordIds).toHaveLength(5);expect(db.history).toHaveLength(0)
+ await page.getByRole('button',{name:'记住了',exact:true}).click();expect((await database(page)).history).toHaveLength(0);await completeDaily(page);db=await database(page);expect(db.history).toHaveLength(5);expect(db.cards.cat.reps).toBe(1)
+ await openCards(page);await page.getByRole('textbox',{name:'搜索教材词卡'}).fill('cat');await expect(page.locator('.course-word-row')).toHaveAttribute('data-familiarity','practicing');expect((await database(page)).history).toHaveLength(5)
 })
 
 test('熟练与今日到期并存，旧档待评估，重点不改变熟知度',async({page})=>{

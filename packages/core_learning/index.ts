@@ -3,6 +3,16 @@ import type {DailyNewWordLimit,EntryLevel} from '../parent_settings'
 export type ReviewRating = 1 | 2 | 3 | 4
 export type MasteryState = 'new' | 'learning' | 'review' | 'mastered'
 export type LearningMode = 'flash' | 'connect' | 'listen' | 'spell' | 'dictation'
+export type StudyStep = LearningMode | 'consolidate'
+export interface DailyFlow {
+  schemaVersion:1; step:StudyStep; entryLevel:EntryLevel; target:number
+  completed:Record<StudyStep,string[]>; attempts:Answer[]; begunAt?:string; finishedDate?:string
+}
+export interface CompletedDailyPlan {
+ id:string;courseId:string;date:string;completedAt:string;finishedDate:string
+ entryLevel:EntryLevel;target:number;wordIds:string[];contentVersion?:string
+ completed:Record<StudyStep,string[]>
+}
 export interface Word {
   id: string; word: string; ipa: string; meaning: string; pos: string
   phonics: string[]; phonemes: string[]; syllables: string[]
@@ -33,12 +43,16 @@ export interface LearningSession {
   id: string; startedAt: string; date: string; kind: 'review_due' | 'new_word' | 'practice'
   wordIds: string[]; index: number; mode: LearningMode; input: string
   revealed: boolean; selected: string; answers: Answer[]; completedAt?: string
+  /** Recall help is separate from revealing the correct answer; absent in legacy sessions. */
+  hinted?:boolean
   courseId?:string;contentVersion?:string;lessonId?:string;wordSnapshot?:Record<string,Word>;seed?:number
   wordSources?:Record<string,'review_due'|'new_word'|'practice'>
   plannerConfig?:{dailyNewWordLimit:DailyNewWordLimit;entryLevel:EntryLevel}
   /** First-pass targets follow textbook order; practice/review can still be requested explicitly. */
   sequenceWordIds?:string[]
   intent?:'course'|'review'|'practice'
+  /** The course-owned daily plan is the sole authority for six-step progress. */
+  flow?:DailyFlow
 }
 export const localDate = (date = new Date()) => `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`
 export function mastery(card?: MemoryCard): MasteryState {

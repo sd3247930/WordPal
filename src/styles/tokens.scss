@@ -1,4 +1,4 @@
-page {font-family:'Segoe UI','Roboto','PingFang SC','Noto Sans SC',sans-serif;}
+page {font-family:'Source Han Sans SC','思源黑体','Noto Sans SC','Noto Sans','Segoe UI','Arial Unicode MS',Arial,system-ui,'PingFang SC','Microsoft YaHei',sans-serif;}
 .wp-app {
  --wp-space-xs:6px;--wp-space-sm:12px;--wp-space-md:20px;--wp-space-lg:24px;--wp-space-xl:40px;
  --wp-card-pad-block:var(--wp-space-lg);--wp-card-pad-inline:var(--wp-space-lg);--wp-card-compact-block:12px;--wp-card-compact-inline:16px;--wp-card-gap:var(--wp-space-sm);--wp-card-safe-gap:8px;
@@ -6,9 +6,11 @@ page {font-family:'Segoe UI','Roboto','PingFang SC','Noto Sans SC',sans-serif;}
  --wp-motion-fast:180ms;--wp-motion-normal:240ms;--wp-motion-slow:320ms;
  --wp-font-caption:12px;--wp-font-small:14px;--wp-font-body:16px;--wp-font-body-large:17px;--wp-font-card:17px;--wp-font-title:30px;--wp-font-section:22px;--wp-font-headline:18px;--wp-font-word:48px;
  --wp-weight-normal:400;--wp-weight-medium:500;--wp-weight-bold:600;--wp-weight-display:700;
+ --wp-study-card-pad:16px;--wp-study-word-size:clamp(26px,calc(var(--wp-font-body)*1.75),48px);--wp-study-ipa-size:clamp(14px,calc(var(--wp-font-body)*.94),24px);--wp-study-meaning-size:clamp(15px,calc(var(--wp-font-body)*.96),26px);
  background:var(--wp-background);color:var(--wp-foreground);min-height:100vh;
  font-family:var(--wp-font-family);font-size:var(--wp-font-body);line-height:1.6;
 }
+@media(max-width:359px){.wp-app{--wp-study-card-pad:14px}}
 view,button,input,uni-view,uni-button,uni-input{box-sizing:border-box;}
 button,uni-button{font:inherit;cursor:pointer;}
 .wp-app button::after,.wp-app uni-button::after{border:0;}

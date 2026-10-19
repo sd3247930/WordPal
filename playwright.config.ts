@@ -8,5 +8,5 @@ export default defineConfig({
  use:{baseURL,browserName:'chromium',headless:true,viewport:{width:1280,height:900},timezoneId:'Asia/Dubai',locale:'zh-CN',colorScheme:'light',trace:'retain-on-failure'},
  outputDir:'test-results',reporter:[['list'],['html',{open:'never'}]],
  snapshotPathTemplate:'{testDir}/__screenshots__/{projectName}/{arg}{ext}',
- webServer:{command:'npx uni --host 127.0.0.1 --port '+port,url:baseURL,reuseExistingServer:false,timeout:120000,env:{VITE_WORDPAL_LOCAL_CONTENT:process.env.WORDPAL_TEST_LOCAL_CONTENT==='1'?'1':'0'}}
+ webServer:{command:'npx uni --host 127.0.0.1 --port '+port,url:baseURL,reuseExistingServer:false,timeout:120000,env:{WORDPAL_TEST_PORT:String(port),VITE_WORDPAL_LOCAL_CONTENT:process.env.WORDPAL_TEST_LOCAL_CONTENT==='1'?'1':'0'}}
 })

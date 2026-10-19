@@ -2,8 +2,8 @@
   "name": "WordPal 单词小搭子",
   "appid": "__UNI__B07BDFA",
   "description": "自然拼读、科学复习、四象伙伴陪伴学习",
-  "versionName": "1.2.0",
-  "versionCode": "120",
+  "versionName": "1.2.2",
+  "versionCode": "122",
   "transformPx": false,
   "vueVersion": "3",
   "app-plus": {
@@ -48,35 +48,35 @@
       },
       "icons": {
         "android": {
-          "ldpi": "static/icons/icon-36.png",
-          "mdpi": "static/icons/icon-48.png",
-          "hdpi": "static/icons/icon-72.png",
-          "xhdpi": "static/icons/icon-96.png",
-          "xxhdpi": "static/icons/icon-144.png",
-          "xxxhdpi": "static/icons/icon-192.png"
+          "ldpi": "src/static/icons/icon-48.png",
+          "mdpi": "src/static/icons/icon-48.png",
+          "hdpi": "src/static/icons/icon-72.png",
+          "xhdpi": "src/static/icons/icon-96.png",
+          "xxhdpi": "src/static/icons/icon-144.png",
+          "xxxhdpi": "src/static/icons/icon-192.png"
         },
         "ios": {
-          "appstore": "static/icons/icon-1024.png",
+          "appstore": "src/static/icons/icon-1024.png",
           "iphone": {
-            "app@2x": "static/icons/icon-120.png",
-            "app@3x": "static/icons/icon-180.png",
-            "notification@2x": "static/icons/icon-40.png",
-            "notification@3x": "static/icons/icon-60.png",
-            "settings@2x": "static/icons/icon-58.png",
-            "settings@3x": "static/icons/icon-87.png",
-            "spotlight@2x": "static/icons/icon-80.png",
-            "spotlight@3x": "static/icons/icon-120.png"
+            "app@2x": "src/static/icons/icon-120.png",
+            "app@3x": "src/static/icons/icon-180.png",
+            "notification@2x": "src/static/icons/icon-40.png",
+            "notification@3x": "src/static/icons/icon-60.png",
+            "settings@2x": "src/static/icons/icon-58.png",
+            "settings@3x": "src/static/icons/icon-87.png",
+            "spotlight@2x": "src/static/icons/icon-80.png",
+            "spotlight@3x": "src/static/icons/icon-120.png"
           },
           "ipad": {
-            "app": "static/icons/icon-76.png",
-            "app@2x": "static/icons/icon-152.png",
-            "proapp@2x": "static/icons/icon-167.png",
-            "notification": "static/icons/icon-20.png",
-            "notification@2x": "static/icons/icon-40.png",
-            "settings": "static/icons/icon-29.png",
-            "settings@2x": "static/icons/icon-58.png",
-            "spotlight": "static/icons/icon-40.png",
-            "spotlight@2x": "static/icons/icon-80.png"
+            "app": "src/static/icons/icon-76.png",
+            "app@2x": "src/static/icons/icon-152.png",
+            "proapp@2x": "src/static/icons/icon-167.png",
+            "notification": "src/static/icons/icon-20.png",
+            "notification@2x": "src/static/icons/icon-40.png",
+            "settings": "src/static/icons/icon-29.png",
+            "settings@2x": "src/static/icons/icon-58.png",
+            "spotlight": "src/static/icons/icon-40.png",
+            "spotlight@2x": "src/static/icons/icon-80.png"
           }
         }
       }

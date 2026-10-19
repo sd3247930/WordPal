@@ -2,6 +2,7 @@ import type {Element,PetState} from '../../packages/pet_engine'
 import type {Database} from '../stores/profile'
 import {courseRegistry,isCourseInstalled} from './content/ContentRegistry'
 import {courseIntroductions,orderedCourseWords} from './learning/CourseStudySequence'
+import {fullCourseWords} from './learning/DailyLearningPlan'
 
 export type PetForm=1|2|3|4
 // Reserve space for the largest form and its brief unlock animation inside every frame.
@@ -42,7 +43,7 @@ export function petStagePresentation(pet:Pick<PetState,'level'|'exp'>,index:numb
 /** First-pass learning belongs to each installed book, even when books share SRS cards. */
 export function allCourseLearningProgress(db:Database){
  const courses=Object.values(courseRegistry).filter(pack=>isCourseInstalled(pack.courseId)).map(pack=>{
-  const ids=orderedCourseWords(pack),introduced=courseIntroductions(db,pack.courseId)
+  const ids=orderedCourseWords(pack),introduced=fullCourseWords(db,pack)
   return {courseId:pack.courseId,total:ids.length,learned:ids.filter(id=>id in introduced).length}
  })
  const total=courses.reduce((sum,course)=>sum+course.total,0),learned=courses.reduce((sum,course)=>sum+course.learned,0)

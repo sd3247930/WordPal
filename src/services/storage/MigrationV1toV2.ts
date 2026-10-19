@@ -3,9 +3,10 @@ import {getCourseLessons,wordById} from '../content/ContentRegistry'
 import {sha256} from '../content/digest'
 import {writeStorage} from './index'
 import {validParentSettings,DAILY_NEW_WORD_LIMITS} from '../../../packages/parent_settings'
+import {validDailyPlan} from '../learning/DailyLearningPlan'
 export const V1_KEY='wordpal.database.v1',V2_KEY='wordpal.database.v2',POINTER_KEY='wordpal.database.active.v2'
 export const MIGRATION_BACKUP_KEY='wordpal.migration.backup.v1'
-export interface CourseProgress {currentLessonId:string;completedLessons:string[];lastLessonAccuracy:number|null;checkAccuracy:Record<string,number>;checkAttempts:Record<string,number>;introducedWords?:Record<string,string>}
+export interface CourseProgress {currentLessonId:string;completedLessons:string[];lastLessonAccuracy:number|null;checkAccuracy:Record<string,number>;checkAttempts:Record<string,number>;introducedWords?:Record<string,string>;dailyPlan?:import('../../../packages/core_learning').LearningSession;fullLearnedWords?:Record<string,string>;studyActivity?:'daily'|'independent';curriculumSchema?:1;completedDailyPlans?:import('../../../packages/core_learning').CompletedDailyPlan[]}
 export const initialProgress=(courseId:string,index=0):CourseProgress=>({currentLessonId:getCourseLessons(courseId)[index]?.id||getCourseLessons(courseId)[0]?.id||'',completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{}})
 export function validateDatabase(value:unknown){
  const d=value as Database
@@ -24,6 +25,8 @@ export function validateDatabase(value:unknown){
  }
  if(d.version===2&&(!d.courseProgress||typeof d.courseProgress!=='object'||Object.values(d.courseProgress).some(p=>!p||typeof p.currentLessonId!=='string'||!Array.isArray(p.completedLessons)||!p.checkAccuracy||!p.checkAttempts)||!Array.isArray(d.auxiliaryRecords)))return false
  if(Object.values(d.courseProgress||{}).some(p=>p.introducedWords!==undefined&&(!p.introducedWords||typeof p.introducedWords!=='object'||Array.isArray(p.introducedWords)||Object.values(p.introducedWords).some(at=>typeof at!=='string'||at!==''&&!Number.isFinite(Date.parse(at))))))return false
+ if(Object.entries(d.courseProgress||{}).some(([id,p])=>p.dailyPlan&&!validDailyPlan(p.dailyPlan,id)||p.fullLearnedWords&&Object.values(p.fullLearnedWords).some(at=>typeof at!=='string'||at!==''&&!Number.isFinite(Date.parse(at)))))return false
+ if(Object.entries(d.courseProgress||{}).some(([owner,p])=>p.completedDailyPlans!==undefined&&(!Array.isArray(p.completedDailyPlans)||p.completedDailyPlans.some(plan=>!plan||plan.courseId!==owner||typeof plan.id!=='string'||!Number.isFinite(Date.parse(plan.completedAt))||!Array.isArray(plan.wordIds)||!plan.completed||Object.values(plan.completed).some(ids=>!Array.isArray(ids)||ids.length!==plan.wordIds.length||ids.some((id,index)=>id!==plan.wordIds[index]))))))return false
  return true
 }
 export function convertV1(old:Database):Database{

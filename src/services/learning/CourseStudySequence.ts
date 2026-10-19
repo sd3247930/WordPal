@@ -1,18 +1,22 @@
 import type {CoursePack} from '../../../packages/content_schema/course'
 import type {LearningSession} from '../../../packages/core_learning'
 import type {Database} from '../../stores/profile'
-import {courseRegistry} from '../content/ContentRegistry'
+import {courseRegistry,isUserDeleted,isCourseReadable} from '../content/ContentRegistry'
 
 /** Course order is independent of a global memory card or a previously selected lesson. */
 export function orderedCourseWords(pack:CoursePack){
+ if(isUserDeleted(pack.courseId))return []
  const known=new Set(pack.vocabulary.map(word=>word.id)),seen=new Set<string>(),ids:string[]=[]
- const units=pack.units.map((unit,index)=>({unit,index})).sort((a,b)=>(a.unit.order??a.index+1)-(b.unit.order??b.index+1))
- for(const id of [...units.flatMap(({unit})=>unit.lessons.flatMap(lesson=>lesson.wordIds)),...pack.vocabulary.map(word=>word.id)])if(known.has(id)&&!seen.has(id)){seen.add(id);ids.push(id)}
+ const unitOrder=(unit:CoursePack['units'][number],index:number)=>unit.order??Number((unit.title+' '+unit.id).match(/(?:unit|module|u)[\s-]*0*(\d+)/i)?.[1]||index+1)
+ const entries=new Map(pack.vocabulary.map(word=>[word.id,word]))
+ const units=pack.units.map((unit,index)=>({unit,index})).sort((a,b)=>unitOrder(a.unit,a.index)-unitOrder(b.unit,b.index)||a.index-b.index)
+ const inUnit=({unit}:typeof units[number])=>unit.lessons.flatMap(lesson=>lesson.wordIds).map((id,index)=>({id,index})).sort((a,b)=>(entries.get(a.id)?.order??a.index+1)-(entries.get(b.id)?.order??b.index+1)||a.index-b.index).map(item=>item.id)
+ for(const id of [...units.flatMap(inUnit),...pack.vocabulary.map(word=>word.id)])if(known.has(id)&&!seen.has(id)){seen.add(id);ids.push(id)}
  return ids
 }
 export function sessionInCourse(session:LearningSession,courseId:string){
  const pack=courseRegistry[courseId],allowed=new Set(pack?.vocabulary.map(word=>word.id)||[])
- return !!pack&&(!session.courseId||session.courseId===courseId)&&session.wordIds.every(id=>allowed.has(id))&&session.answers.every(answer=>allowed.has(answer.wordId)&&session.wordIds.includes(answer.wordId))
+ return !!pack&&isCourseReadable(courseId)&&(!session.courseId||session.courseId===courseId)&&session.wordIds.every(id=>allowed.has(id))&&session.answers.every(answer=>allowed.has(answer.wordId)&&session.wordIds.includes(answer.wordId))
 }
 /** Only evidence owned by this textbook can advance its first pass. Shared SRS is not course progress. */
 export function courseIntroductions(db:Database,courseId:string){

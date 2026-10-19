@@ -1,3 +1,4 @@
+import {answerDailyWord,finishDaily} from './helpers/daily-flow'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {createPinia,setActivePinia} from 'pinia'
@@ -26,14 +27,14 @@ test('外国词的到期记录不进入当前教材，旧章节游标不会使�
 })
 
 test('已共享的 SRS 不等于教材已开始，未到期旧词以练习介绍且不重置原卡',()=>{
- reset();const profile=useProfileStore(),learning=useLearningStore();const card=newCard('cat',new Date('2100-01-01'));profile.transact(db=>{db.cards.cat=card});assert(learning.studyWords.includes('cat'));assert(!learning.newWords.includes('cat'));learning.start();assert.equal(learning.current?.id,'cat');assert.equal(learning.currentSource,'practice');learning.reveal();learning.submit(3);assert.equal(JSON.stringify(profile.db.cards.cat),JSON.stringify(card));assert.equal(profile.db.history.length,0);assert.equal(Object.keys(courseIntroductions(profile.db,'starter')).length,1);learning.next();assert.equal(learning.current?.id,'dog');assert.deepEqual(learning.currentPosition,{index:2,total:20})
+ reset();const profile=useProfileStore(),learning=useLearningStore();const card=newCard('cat',new Date('2100-01-01'));profile.transact(db=>{db.cards.cat=card});assert(learning.studyWords.includes('cat'));assert(!learning.newWords.includes('cat'));learning.start();assert.equal(learning.current?.id,'cat');assert.equal(learning.currentSource,'practice');learning.reveal();learning.submit(3);assert.equal(JSON.stringify(profile.db.cards.cat),JSON.stringify(card));assert.equal(profile.db.history.length,0);assert.equal(Object.keys(courseIntroductions(profile.db,'starter')).length,0);learning.next();assert.equal(learning.current?.id,'dog');assert.deepEqual(learning.currentPosition,{index:2,total:20})
 })
 
 test('整册分日逐词推进至最后一词，不受旧章节选择、到期词或新词选择入口打乱',context=>{
- reset();context.mock.timers.enable({apis:['Date'],now:new Date('2040-01-01T12:00:00Z')});const profile=useProfileStore(),course=useCourseStore(),learning=useLearningStore();profile.transact(db=>{db.dailyLimit=5;db.abilityLevel='L5'});const visited:string[]=[]
+ reset();context.mock.timers.enable({apis:['Date'],now:new Date('2040-01-01T12:00:00Z')});const profile=useProfileStore(),course=useCourseStore(),learning=useLearningStore();profile.transact(db=>{db.abilityLevel='L1'});const visited:string[]=[]
  for(let round=0;round<4;round++){
   course.chooseLesson('lesson-4');assert(learning.startSelected(undefined,'pencil'));assert.deepEqual(learning.session!.wordIds,orderedCourseWords(starterPack).slice(round*5,round*5+5))
-  while(!learning.session!.completedAt){visited.push(learning.current!.id);assert.equal(learning.currentPosition!.index,visited.length);learning.setMode('flash');learning.reveal();assert(learning.submit(3));assert(learning.next())}
+  visited.push(...learning.session!.wordIds);finishDaily(learning)
   assert.equal(learning.newToday,5);context.mock.timers.tick(86400000)
  }
  assert.deepEqual(visited,orderedCourseWords(starterPack));assert.equal(Object.keys(profile.db.courseProgress!.starter.introducedWords!).length,20);assert.equal(learning.studyWords.length,0);assert.equal(learning.current?.id,'pencil');assert(validateDatabase(profile.db))
@@ -56,6 +57,6 @@ test('旧版未作答的跳章新词队列回到教材首词，显式单词复�
  profile.transact(db=>{db.session=null;db.cards.dog=newCard('dog',new Date('2000-01-01'))});assert(learning.startDue(['dog']));const review=JSON.stringify(learning.session);setActivePinia(createPinia());assert.equal(JSON.stringify(useLearningStore().session),review);assert.equal(useLearningStore().current?.id,'dog')
 })
 
-test('完成的旧合法新词会话在下一轮创建时留下教材证据，不退回首词',()=>{
- reset();const profile=useProfileStore(),learning=useLearningStore(),session=oldSession(['cat']);Object.assign(session,{kind:'new_word',input:'',completedAt:'2000-01-01T00:00:00Z',answers:[{id:'legacy:0',wordId:'cat',rating:3,correct:true,at:'2000-01-01T00:00:00Z',source:'new_word',mode:'flash',input:''}]});profile.transact(db=>{db.session=session});assert(learning.start());assert.equal(learning.current?.id,'dog');assert('cat' in profile.db.courseProgress!.starter.introducedWords!);setActivePinia(createPinia());assert.equal(useLearningStore().current?.id,'dog')
+test('旧单环节会话完整保留为历史，不能冒充六环节完成而跳过教材首词',()=>{
+ reset();const profile=useProfileStore(),learning=useLearningStore(),session=oldSession(['cat']);Object.assign(session,{kind:'new_word',input:'',completedAt:'2000-01-01T00:00:00Z',answers:[{id:'legacy:0',wordId:'cat',rating:3,correct:true,at:'2000-01-01T00:00:00Z',source:'new_word',mode:'flash',input:''}]});profile.transact(db=>{db.session=session});assert(learning.start());assert.equal(learning.current?.id,'cat');assert.equal(profile.db.session?.answers[0].wordId,'cat');setActivePinia(createPinia());assert.equal(useLearningStore().current?.id,'cat')
 })

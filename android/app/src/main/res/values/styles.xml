@@ -1,0 +1,1 @@
+<resources><style name="DCloudActivityTheme" parent="Theme.AppCompat.Light.NoActionBar"><item name="android:windowNoTitle">true</item><item name="android:forceDarkAllowed">false</item></style></resources>

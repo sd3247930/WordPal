@@ -24,4 +24,8 @@ defineProps<{name:string;themeStyle:string;themeId?:ThemeId}>()
 [data-preview=swiss] .mini-layout{grid-template-columns:1fr 1fr}
 [data-preview=swiss] .mini-feature{background:var(--wp-surface);border-bottom:1px solid var(--wp-divider)}
 [data-preview=swiss] .mini-action{background:var(--wp-surface);color:var(--wp-primary);padding-left:0;text-align:left}
+[data-preview=clay]{border:1px solid var(--wp-border);background:var(--wp-background);box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+[data-preview=clay] .mini-feature{background:var(--wp-clay-task);border-radius:12px;box-shadow:var(--wp-elevation)}
+[data-preview=clay] .mini-action{border-radius:999px;box-shadow:0 3px 0 rgba(113,66,34,.18);width:80%}
+[data-preview=clay] .mini-dot{width:12px;height:12px;background:var(--wp-earth);box-shadow:0 2px 0 rgba(56,78,35,.15)}
 </style>

@@ -25,14 +25,14 @@ test('starter 替换保留课程和单词 ID、章节及冻结输入，旧会话
  const before=JSON.stringify(profile.db),structure=JSON.stringify(starterPack.units),ids=starterPack.vocabulary.map(entry=>entry.id),pack=replacement();configureStarterCourse(pack);loadCourseRegistry();const learning=useLearningStore()
  assert.equal(starterPack.courseId,'starter');assert.equal(JSON.stringify(starterPack.units),structure);assert.deepEqual(starterPack.vocabulary.map(entry=>entry.id),ids)
  assert.equal(learning.current!.meaning,'包');assert.equal(learning.current!.audio,'/static/local-starter-media/audio/bag.mp3');assert.equal(learning.current!.image,'/static/local-starter-media/images/bag.webp');assert.equal(learning.session!.input,'ba');assert.equal(JSON.stringify(profile.db),before);assert.equal(profile.db.session!.wordSnapshot!.bag.meaning,'书包')
- for(const entry of pack.vocabulary){const word=getCourseWord('starter',entry.id);assert.ok(word.audio.startsWith('/static/local-starter-media/'));assert.ok(word.image.startsWith('/static/local-starter-media/'));assert.ok(word.phonics.length)}
+ for(const entry of pack.vocabulary){const word=getCourseWord('starter',entry.id);assert.ok(word);assert.ok(word.audio.startsWith('/static/local-starter-media/'));assert.ok(word.image.startsWith('/static/local-starter-media/'));assert.ok(word.phonics.length)}
 })
 
 test('指定的中文更新兼容旧教材翻译，其他同形异义和词性冲突仍拒绝',async()=>{
  reset();const pack=replacement();configureStarterCourse(pack);loadCourseRegistry()
  assert.equal(wordIdentityMatches(wordById.bag,{word:'bag',meaning:'书包',pos:'n.'}),true);assert.equal(wordIdentityMatches(wordById.bag,{word:'bag',meaning:'解雇',pos:'n.'}),false);assert.equal(wordIdentityMatches(wordById.bag,{word:'bag',meaning:'包',pos:'v.'}),false)
  const other={...JSON.parse(JSON.stringify(pack)),courseId:'another-course',title:'其他教材'} as CoursePack;other.vocabulary.find(entry=>entry.id==='bag')!.meaning='书包';other.assets=[];for(const entry of other.vocabulary){delete entry.assetRefs;entry.audio='';entry.image=''}
- await installTextCourse(other);assert.ok(courseRegistry[other.courseId]);assert.equal(getCourseWord(other.courseId,'bag').meaning,'书包');assert.equal(getCourseWord('starter','bag').meaning,'包')
+ await installTextCourse(other);assert.ok(courseRegistry[other.courseId]);assert.equal(getCourseWord(other.courseId,'bag')?.meaning,'书包');assert.equal(getCourseWord('starter','bag')?.meaning,'包')
  const preview=previewImport(JSON.stringify(other),'json',{...defaultImportMetadata(),declared:true},wordById);assert.equal(preview.issues.some(issue=>issue.field==='id'),false);assert.equal(preview.reuse.bag,'bag')
 })
 
@@ -47,6 +47,6 @@ test('本机素材不能被当作公开发行内容，关闭替换后干净检�
 
 test('已有其他课程的专用录音不被 starter 覆盖，旧内置资源句柄可重新绑定',()=>{
  reset();const word=JSON.parse(JSON.stringify(wordById.cat));configureStarterCourse(replacement());loadCourseRegistry();const before=JSON.stringify(word)
- const rebound=resolveFrozenWord(word,'removed-course','1.0.0')!;assert.equal(rebound.audio,'/static/local-starter-media/audio/cat.mp3');assert.equal(rebound.image,'/static/local-starter-media/images/cat.webp');assert.equal(JSON.stringify(word),before)
- const dedicated={...word,audio:'_doc/other-course/cat.mp3'};assert.equal(resolveFrozenWord(dedicated,'other-course','1.0.0')!.audio,dedicated.audio)
+ const rebound=resolveFrozenWord(word,'starter','1.0.0')!;assert.equal(rebound.audio,'/static/local-starter-media/audio/cat.mp3');assert.equal(rebound.image,'/static/local-starter-media/images/cat.webp');assert.equal(JSON.stringify(word),before)
+ configureLocalCourses([{...JSON.parse(JSON.stringify(starterPack)),courseId:'other-course',title:'合成其他教材'}]);loadCourseRegistry();const dedicated={...word,audio:'_doc/other-course/cat.mp3'};assert.equal(resolveFrozenWord(dedicated,'other-course','1.0.0')!.audio,dedicated.audio)
 })

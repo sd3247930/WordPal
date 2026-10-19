@@ -1,6 +1,5 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {readFileSync} from 'node:fs'
 import {applyBatchError,applyBatchResult,alignBatchProgress,openBatchProgress,batchSummary,clearBatchProgress,emptyBatchProgress,nextBatchTarget,readBatchProgress,writeBatchProgress} from '../src/services/course/CourseBatchUninstall'
 
 const storage=new Map<string,string>()
@@ -17,7 +16,7 @@ test('逐册卸载：一次一册、跳过已完成与已失败、重复点同�
  assert.equal(again.retainedWordCount,7)
  const failed=applyBatchError(afterA,'b','请先完成当前学习，再移除教材。')
  assert.equal(nextBatchTarget(failed,['b','c']),'c')
- assert.equal(batchSummary(applyBatchResult(failed,'c',3)),'已卸载 2 册 · 已学 10 词保留')
+ assert.equal(batchSummary(applyBatchResult(failed,'c',3)),'已卸载 2 册 · 共享 10 词保留')
 })
 
 test('进度写入 wordpal.batch-uninstall.v1：中断后可续跑，结束后清空',()=>{
@@ -51,12 +50,3 @@ test('未完成的卸载任务继续原队列，不把新教材自动加入删�
  assert.deepEqual(opened.targets,['a','b']);assert.deepEqual(opened.done,['a']);assert.equal(opened.retainedWordCount,7);assert.equal(nextBatchTarget(opened,['b','new']),'b')
 })
 
-test('本机课程卸载同样写保留词条：保留早于 bundled 分支返回（先卸载再裁剪的前提）',()=>{
- const source=readFileSync('src/services/content/StorageRepository.ts','utf8')
- const body=source.slice(source.indexOf('export async function uninstallCourseContent('))
- const retained=body.indexOf("writeStorage('wordpal.content.retained-lexemes.v1',retained)")
- const bundledReturn=body.indexOf("if(isBundledCourse(id)){setInstallationState(id,'notInstalled')")
- assert.ok(retained>0&&bundledReturn>0,'保留词条与本机课程分支都必须存在')
- assert.ok(retained<bundledReturn,'保留词条必须早于本机课程的分支返回，否则裁剪内容源后已学词会丢词义')
- assert.ok(body.includes('retainedWordCount'),'返回保留词数供面板与审计使用')
-})

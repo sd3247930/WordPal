@@ -4,18 +4,25 @@ import {occurrences} from './IdentityModel'
 import type {CoursePack} from '../../../packages/content_schema/course'
 import type {Answer} from '../../../packages/core_learning'
 import {familiarityFor,familiarityLevels,type Familiarity,type FamiliarityLevel} from './FamiliaritySelector'
-export type WordbookScope='currentCourse'|'installedCourses'|'learnedGlobal'
+import {isUserDeleted} from '../../../packages/content_schema/course-lifecycle'
+export type WordbookScope='currentCourse'|'installedCourses'|'learnedGlobal'|'allWords'
 export type WordbookCategory='due'|'focus'|'mistakes'|'all'
-export interface WordbookQuery {scope:WordbookScope;currentCourseId:string;installedCourseIds:string[];unitId?:string;category:WordbookCategory;keyword:string}
+export interface WordbookQuery {scope:WordbookScope;currentCourseId:string;installedCourseIds:string[];unitId?:string;learnedOnly?:boolean;category:WordbookCategory;keyword:string}
 export interface WordbookIndex {words:Word[];positions:CourseOccurrence[];cards:Record<string,MemoryCard>;dueIds:string[];favorites:string[];mistakes:string[];learnedIds:string[];suggestions:string[]}
 /** Scope, unit and search are applied once, before deriving every counter and category. */
 export function queryWordbook(query:WordbookQuery,index:WordbookIndex){
  const courses=new Set(query.scope==='currentCourse'?[query.currentCourseId]:query.installedCourseIds),learned=new Set(index.learnedIds)
- const positions=index.positions.filter(p=>query.scope==='learnedGlobal'?learned.has(p.lexemeId):courses.has(p.courseId)&&(query.scope!=='currentCourse'||!query.unitId||p.unitId===query.unitId))
+ const livePositions=index.positions.filter(position=>!isUserDeleted(position.courseId)),surviving=new Set(livePositions.map(position=>position.lexemeId))
+ const deletedOnly=new Set(index.positions.filter(position=>isUserDeleted(position.courseId)&&!surviving.has(position.lexemeId)).map(position=>position.lexemeId))
+ const positions=livePositions.filter(p=>{
+  if(query.scope==='learnedGlobal'||query.scope==='allWords'&&query.learnedOnly)return learned.has(p.lexemeId)
+  if(query.scope==='allWords')return courses.has(p.courseId)||learned.has(p.lexemeId)
+  return courses.has(p.courseId)&&(query.scope!=='currentCourse'||!query.unitId||p.unitId===query.unitId)
+ })
  const positionsById=new Map<string,CourseOccurrence[]>()
  for(const row of positions){const rows=positionsById.get(row.lexemeId)||[];rows.push(row);positionsById.set(row.lexemeId,rows)}
  const keyword=query.keyword.trim().toLowerCase(),due=new Set(index.dueIds),focus=new Set(index.favorites),mistakes=new Set(index.mistakes),suggestions=new Set(index.suggestions)
- const base=index.words.filter(word=>(query.scope==='learnedGlobal'?learned.has(word.id):positionsById.has(word.id))&&(!keyword||[word.word,word.meaning,...(positionsById.get(word.id)||[]).map(p=>p.unitTitle)].join(' ').toLowerCase().includes(keyword)))
+ const base=index.words.filter(word=>!deletedOnly.has(word.id)&&(query.scope==='learnedGlobal'?learned.has(word.id):query.scope==='allWords'?positionsById.has(word.id)||learned.has(word.id):positionsById.has(word.id))&&(!(query.scope==='allWords'&&query.learnedOnly)||learned.has(word.id))&&(!keyword||[word.word,word.meaning,...(positionsById.get(word.id)||[]).map(p=>p.unitTitle)].join(' ').toLowerCase().includes(keyword)))
  const ids=new Set(base.map(w=>w.id)),occurrenceCount=positions.filter(row=>ids.has(row.lexemeId)).length
  const stats={dueUniqueLexemeCount:base.filter(w=>due.has(w.id)).length,focusCount:base.filter(w=>focus.has(w.id)).length,mistakesCount:base.filter(w=>mistakes.has(w.id)).length,totalCourseOccurrences:occurrenceCount,totalUniqueLexemes:base.length}
  const rows=base.filter(w=>query.category==='all'||(query.category==='due'?due:query.category==='focus'?focus:mistakes).has(w.id)).sort((a,b)=>{
@@ -37,7 +44,7 @@ export function summarizeCourseCards(rows:CourseCardRow[]){
 }
 /** The occurrence table is the base; absence of a memory card never removes a row. */
 export function queryCourseCards(query:CourseCardQuery,index:CourseCardIndex){
- const available=!!index.pack&&index.installed&&index.pack.courseId===query.courseId
+ const available=!isUserDeleted(query.courseId)&&!!index.pack&&index.installed&&index.pack.courseId===query.courseId
  const history=new Map<string,Answer[]>(),due=new Set(index.dueIds),stars=new Set(index.favorites),wrong=new Set(index.mistakes),keyword=normalize(query.keyword||''),cache=new Map<string,Familiarity>()
  for(const answer of index.answers)if(answer?.wordId){const list=history.get(answer.wordId)||[];list.push(answer);history.set(answer.wordId,list)}
  const base:CourseCardRow[]=[],vocabulary=new Map(index.pack?.vocabulary.map(word=>[word.id,word])||[]),examples=new Map<string,string>()

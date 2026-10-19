@@ -1,3 +1,4 @@
+import {startLegacyRound} from './helpers/daily-flow'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {readFileSync} from 'node:fs'
@@ -39,7 +40,7 @@ test('教材系列与资源扩展通过双重契约；缺起点可标记，冲�
 })
 test('本机目录冷启动、归档、清空导入保持词库，跨册同义词只保留一张 FSRS 卡',async()=>{
  const packs=fixture();reset(packs);const profile=useProfileStore(),course=useCourseStore(),learning=useLearningStore(),id=packs[0].vocabulary[0].id
- course.choose(packs[0].courseId);learning.start();learning.reveal();learning.submit(3);assert.equal(profile.db.cards[id].reps,1);const saved=JSON.stringify(profile.db.cards[id]);course.choose(packs[1].courseId);assert.equal(profile.db.currentCourseId,packs[1].courseId)
+ course.choose(packs[0].courseId);startLegacyRound(learning);learning.reveal();learning.submit(3);assert.equal(profile.db.cards[id].reps,1);const saved=JSON.stringify(profile.db.cards[id]);course.choose(packs[1].courseId);assert.equal(profile.db.currentCourseId,packs[1].courseId)
  assert.equal(learning.newWords.includes(id),false);assert.equal(JSON.stringify(profile.db.cards[id]),saved)
  setArchived(packs[0].courseId,true);loadCourseRegistry();assert.ok(wordById[id]);assert.equal(useReviewStore().due.filter(w=>w.wordId===id).length,0);await clearInstalledCourses();loadCourseRegistry();assert.ok(courseRegistry[packs[0].courseId]);assert.equal(!!archiveStatus[packs[0].courseId],false);await assert.rejects(exportCourse(packs[0].courseId),/本机/);await assert.rejects(installTextCourse(packs[0]),/内置/)
 })
@@ -54,6 +55,6 @@ const local=(JSON.parse(readFileSync('src/content/local-courses/catalog.json','u
 test('本机实际901行/12册/72单元/210课节全量资源与 ZIP 摘要验证，旧输入保持且到期优先',{skip:!local.length},()=>{
  reset(local);const audit=JSON.parse(readFileSync('private/master-vocabulary/import-audit.json','utf8'))
  assert.equal(audit.sourceRows,901);assert.equal(local.length,12);assert.equal(local.flatMap(c=>c.units).length,72);assert.equal(local.flatMap(c=>c.units.flatMap(u=>u.lessons)).length,210);assert.equal(new Set(local.flatMap(c=>c.vocabulary.map(w=>w.id))).size,795)
- for(const c of local){assert.equal(new Ajv({strict:false}).validate(schema,c),true);assert.equal(validateCourse(c).length,0);assert.equal(c.startGrade,null);assert.equal(c.editionYear,null);readZip(new Uint8Array(readFileSync('private/master-vocabulary/courses/'+c.courseId+'.zip')));for(const entry of c.vocabulary){const word=getCourseWord(c.courseId,entry.id);assert.ok(word.audio);const bytes=new Uint8Array(readFileSync('src'+word.audio)),asset=c.assets.find(a=>a.id===entry.assetRefs?.audio)!;assert.equal(sha256(bytes),asset.sha256);assert.equal(bytes.length,asset.bytes)}}
- const profile=useProfileStore(),course=useCourseStore(),learning=useLearningStore();course.choose(local[4].courseId);profile.transact(d=>{d.cards.cat=newCard('cat',new Date(Date.now()-86400000))});learning.start();assert.equal(learning.session?.kind,'review_due');assert.ok(learning.session?.wordIds.includes('cat'));learning.patch({input:'ca'});const snapshot=JSON.stringify(learning.session);loadCourseRegistry();assert.equal(JSON.stringify(learning.session),snapshot);assert.ok(resolveFrozenWord(learning.session?.wordSnapshot?.cat,learning.session?.courseId,learning.session?.contentVersion)?.audio)
+ for(const c of local){assert.equal(new Ajv({strict:false}).validate(schema,c),true);assert.equal(validateCourse(c).length,0);assert.equal(c.startGrade,null);assert.equal(c.editionYear,null);readZip(new Uint8Array(readFileSync('private/master-vocabulary/courses/'+c.courseId+'.zip')));for(const entry of c.vocabulary){const word=getCourseWord(c.courseId,entry.id);assert.ok(word);assert.ok(word.audio);const bytes=new Uint8Array(readFileSync('src'+word.audio)),asset=c.assets.find(a=>a.id===entry.assetRefs?.audio)!;assert.equal(sha256(bytes),asset.sha256);assert.equal(bytes.length,asset.bytes)}}
+ const profile=useProfileStore(),course=useCourseStore(),learning=useLearningStore();course.choose(local[4].courseId);profile.transact(d=>{d.cards.cat=newCard('cat',new Date(Date.now()-86400000))});startLegacyRound(learning);assert.equal(learning.session?.kind,'review_due');assert.ok(learning.session?.wordIds.includes('cat'));learning.patch({input:'ca'});const snapshot=JSON.stringify(learning.session);loadCourseRegistry();assert.equal(JSON.stringify(learning.session),snapshot);assert.ok(resolveFrozenWord(learning.session?.wordSnapshot?.cat,learning.session?.courseId,learning.session?.contentVersion)?.audio)
 })

@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia'
 import {computed} from 'vue'
 import {useProfileStore} from './profile'
-import {courseRegistry,archiveStatus,isCourseInstalled,getCourseLessons,getCourseWordIds} from '../services/content/ContentRegistry'
+import {courseRegistry,archiveStatus,isCourseInstalled,isCourseReadable,getCourseLessons,getCourseWordIds} from '../services/content/ContentRegistry'
 import {retainLearnedLexemes,setArchived,uninstallCourseContent} from '../services/content/StorageRepository'
 import {initialProgress} from '../services/storage/MigrationV1toV2'
 import {useParentSettingsStore} from './parent-settings'
@@ -11,11 +11,15 @@ import type {CoursePack} from '../../packages/content_schema/course'
 import {readStorage,writeStorage} from '../services/storage'
 import {occurrenceProgress} from '../services/content/IdentityModel'
 import {pruneCourseProgress,hasCourseMemory,PRESENTATION_KEY,ACTIVITY_KEY} from '../services/learning/CourseProgressMemory'
+import {courseRemovalScope} from '../services/content/CourseRemovalData'
+import {isUserDeleted} from '../services/content/ContentRegistry'
+import {stopAudio} from '../services/audio'
+import {warmUpcomingAudio} from '../services/audio/AudioPreload'
 function toast(message?:string){if(message)uni.showToast?.({title:message,icon:'none'})}
 export const useCourseStore=defineStore('course',()=>{
  const profile=useProfileStore()
  const displayPack=(pack:CoursePack)=>({...pack,title:cleanCourseLabel(pack.title),edition:pack.edition?cleanCourseLabel(pack.edition):pack.edition})
- const currentId=computed(()=>profile.db.currentCourseId||'starter'),current=computed(()=>displayPack(courseRegistry[currentId.value]||courseRegistry.starter))
+ const currentId=computed(()=>isCourseReadable(profile.db.currentCourseId||'starter')?profile.db.currentCourseId||'starter':'starter'),current=computed(()=>displayPack(courseRegistry[currentId.value]||courseRegistry.starter))
  const installed=computed(()=>Object.values(courseRegistry).filter(c=>isCourseInstalled(c.courseId)).map(displayPack))
  const parent=useParentSettingsStore(),recommendationConfig=computed(()=>parent.recommendationConfig)
  const recommendation=computed(()=>recommendCourses({...recommendationConfig.value,installed:installed.value,currentCourseId:currentId.value,learnedIds:new Set(Object.keys(profile.db.cards))}))
@@ -67,22 +71,25 @@ export const useCourseStore=defineStore('course',()=>{
  }
  function applyPending(){const id=profile.db.pendingCourseId;if(!id)return false;if(!isCourseInstalled(id))return profile.transact(d=>{d.pendingCourseId=undefined})&&false;return choose(id).ok}
  async function uninstall(id:string,confirmed:boolean,replacement?:string){
-  if(!confirmed)throw new Error('请先确认仅移除教材包，保留学习记录。')
+  if(!confirmed)throw new Error('请先确认删除教材及本册专属记录。')
   if(profile.readOnly)throw new Error('学习档案只读，暂不能移除教材。')
-  if(profile.db.session&&!profile.db.session.completedAt&&(profile.db.session.courseId===id||currentId.value===id))throw new Error('请先完成当前学习，再移除教材。')
+  if(id==='starter')throw new Error('默认启蒙课程需保留。')
+  if(isUserDeleted(id))return uninstallCourseContent(id)
+  const scope=courseRemovalScope(id,profile.db)
   const previous=currentId.value,original=JSON.parse(JSON.stringify(profile.db)) as typeof profile.db
-  const uiMemory=[PRESENTATION_KEY,ACTIVITY_KEY].map(key=>({key,value:readStorage<unknown>(key,null)}))
+  const uiMemory=[PRESENTATION_KEY,ACTIVITY_KEY,'wordpal.wordbook.preferences.v1'].map(key=>({key,value:readStorage<unknown>(key,null)}))
+  stopAudio();warmUpcomingAudio([])
   if(id===previous){if(!replacement||replacement===id||!isCourseInstalled(replacement))throw new Error('请选择另一份已安装教材作为当前课程。');if(!choose(replacement).ok)throw new Error('替代教材未保存，已保留原教材。')}
   try{
    // Persist progress removal before removing content; a full device must not leave revivable cursors.
-   if(!profile.reconcileCourseMemory(id))throw new Error('教材进度暂时无法清理，教材已保留，请释放设备存储后重试。')
+   if(!profile.removeCourseRecords([scope]))throw new Error('教材记录暂时无法备份和清理，教材已保留，请释放设备存储后重试。')
    const prefs=readStorage<{favorites:string[];later:string[]}>('wordpal.wordbook.preferences.v1',{favorites:[],later:[]})
    const retained=[...Object.keys(profile.db.cards),...profile.db.history.map(a=>a.wordId),...prefs.favorites,...prefs.later]
    const result=await uninstallCourseContent(id,retained)
    return result
   }catch(error){
    if(hasCourseMemory(id)){
-    const restored=profile.transact(draft=>{for(const field of ['currentCourseId','pendingCourseId','session','courseSessions','courseProgress'] as const){if(original[field]===undefined)delete draft[field];else (draft as any)[field]=original[field]}})
+    const restored=profile.transact(draft=>{for(const field of Object.keys(draft))delete (draft as any)[field];Object.assign(draft,original)})
     try{for(const item of uiMemory)writeStorage(item.key,item.value)}catch{profile.storageError='教材仍保留，但进度恢复未完成，请释放设备存储后重新打开应用。'}
     profile.courseMemoryRevision++
     if(!restored)throw new Error('教材未删除，原进度恢复未完成，请释放设备存储后重试。')

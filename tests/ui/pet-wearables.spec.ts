@@ -6,7 +6,7 @@ import {starterPack} from '../../src/services/content/ContentRegistry'
 
 async function fixture(page:Page){
  const db=goldenDatabase();db.version=2;db.currentCourseId='starter';db.auxiliaryRecords=[];db.session=null
- db.courseProgress={starter:{currentLessonId:starterPack.units[0].lessons[0].id,completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{},introducedWords:Object.fromEntries(starterPack.vocabulary.map(word=>[word.id,'2026-10-17T08:00:00Z']))}}
+ db.courseProgress={starter:{currentLessonId:starterPack.units[0].lessons[0].id,completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{},fullLearnedWords:Object.fromEntries(starterPack.vocabulary.map(word=>[word.id,'2026-10-17T08:00:00Z']))}}
  for(const id of elements)db.pets[id]={...db.pets[id],level:8,exp:700,equippedCosmetics:[]}
  await page.addInitScript(db=>{if(!localStorage.getItem('wordpal.database.v2')){localStorage.setItem('wordpal.database.v2',JSON.stringify(db));localStorage.setItem('wordpal.database.active.v2',JSON.stringify('v2'))}},db)
 }

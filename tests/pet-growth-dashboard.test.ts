@@ -1,3 +1,4 @@
+import {startLegacyRound} from './helpers/daily-flow'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {createPinia,setActivePinia} from 'pinia'
@@ -21,7 +22,7 @@ test('1. 经验与亲密度按当前精灵读取，跨级仅本级进度结转�
  const empty=petGrowthMetrics({...pet,exp:NaN,affection:101},history);assert.equal(empty.lifetimeXp,null);assert.equal(empty.levelXp,null);assert.equal(empty.bond,null);const unreadable=petGrowthMetrics(pet,history,true);assert.equal(unreadable.device.answerCount,null);assert.equal(unreadable.level,null)
 })
 test('1. 真实学习提交后统计刷新，重放同答案不重复发奖，读取和导航判定均不改档案',()=>{
- storage.clear();loadCourseRegistry();setActivePinia(createPinia());const profile=useProfileStore(),learning=useLearningStore();assert.equal(learning.start(),true);learning.reveal();assert.equal(learning.submit(3),true);const snapshot=JSON.stringify(profile.db),m=petGrowthMetrics(profile.db.pets.water,profile.db.history);assert.equal(m.device.answerCount,1);assert.equal(m.lifetimeXp,12);assert.equal(m.bond,2);assert.equal(learning.submit(3),false);assert.equal(JSON.stringify(profile.db),snapshot)
+ storage.clear();loadCourseRegistry();setActivePinia(createPinia());const profile=useProfileStore(),learning=useLearningStore();assert.equal(startLegacyRound(learning),true);learning.reveal();assert.equal(learning.submit(3),true);const snapshot=JSON.stringify(profile.db),m=petGrowthMetrics(profile.db.pets.water,profile.db.history);assert.equal(m.device.answerCount,1);assert.equal(m.lifetimeXp,12);assert.equal(m.bond,2);assert.equal(learning.submit(3),false);assert.equal(JSON.stringify(profile.db),snapshot)
  applyLearningReward(profile.db,profile.db.history[0]);assert.equal(JSON.stringify(profile.db),snapshot)
  assert.equal(petStudyDestination('starter'),'learn');installationStatus.starter='notInstalled';assert.equal(petStudyDestination('starter'),'course');installationStatus.starter='installed';archiveStatus.starter=true;assert.equal(petStudyDestination('starter'),'course');assert.equal(petStudyDestination('missing'),'course');assert.equal(JSON.stringify(profile.db),snapshot)
 })

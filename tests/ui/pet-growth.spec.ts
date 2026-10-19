@@ -1,5 +1,5 @@
 import {test,expect,type Page} from '@playwright/test'
-import {go,setAppearance,database} from './helpers'
+import {go,setAppearance,database,openPetAction} from './helpers'
 import {goldenDatabase} from './fixtures'
 import {elements} from '../../packages/pet_engine'
 import {petStages} from '../../src/services/pet-growth'
@@ -7,11 +7,11 @@ import {starterPack} from '../../src/services/content/ContentRegistry'
 
 async function fixture(page:Page,level:number,complete=false,learned=0){
  const db=goldenDatabase();db.version=2;db.currentCourseId='starter';db.auxiliaryRecords=[];db.session=null
- db.courseProgress={starter:{currentLessonId:starterPack.units[0].lessons[0].id,completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{},introducedWords:Object.fromEntries(starterPack.vocabulary.slice(0,complete?undefined:learned).map(word=>[word.id,'2026-10-16T08:00:00Z']))}}
+ db.courseProgress={starter:{currentLessonId:starterPack.units[0].lessons[0].id,completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{},fullLearnedWords:Object.fromEntries(starterPack.vocabulary.slice(0,complete?undefined:learned).map(word=>[word.id,'2026-10-16T08:00:00Z']))}}
  for(const id of elements)db.pets[id]={...db.pets[id],level,exp:(level-1)*100,evolutionStage:level>=8?3:level>=4?2:1}
  await page.addInitScript(db=>{if(!localStorage.getItem('wordpal.database.v2')){localStorage.setItem('wordpal.database.v2',JSON.stringify(db));localStorage.setItem('wordpal.database.active.v2',JSON.stringify('v2'))}},db)
 }
-async function growth(page:Page){await page.getByRole('group',{name:'宠物屋功能',exact:true}).getByRole('button',{name:'成长',exact:true}).click();await expect(page.locator('.pet-growth-panel')).toBeVisible()}
+async function growth(page:Page){await openPetAction(page,'成长');await expect(page.locator('.pet-growth-panel')).toBeVisible()}
 
 for(const level of [3,4,7,8])test('Lv.'+level+' 形态解锁边界、默认幼年期及等比高清展示',async({page})=>{
  await page.setViewportSize({width:390,height:844});await fixture(page,level);await go(page,'pet');const before=await database(page)

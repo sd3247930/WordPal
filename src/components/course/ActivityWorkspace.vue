@@ -65,7 +65,7 @@ const activities=computed(()=>Object.entries(names).map(([id,name])=>{
  const kind=id as ActivityKind
  const available=kind==='check'
   ?!review.due.some(card=>course.wordIds.includes(card.wordId))&&course.lesson.wordIds.every(wordId=>!!profile.db.cards[wordId])
-  :course.lesson.wordIds.some(wordId=>{const w=getCourseWord(course.currentId,wordId),example=course.lesson.examples?.[wordId]||w.example;return id==='picture'?!!w.image:id==='listen-picture'?!!w.image&&!!w.audio:id==='phonics'?!!w.audio&&!!w.phonics.length:id==='cloze'?example.toLowerCase().split(/[^a-z'-]+/).includes(w.word.toLowerCase()):id==='sentence'?!!example:id==='story'?!!course.lesson.storyId:true})
+  :course.lesson.wordIds.some(wordId=>{const w=getCourseWord(course.currentId,wordId);if(!w)return false;const example=course.lesson.examples?.[wordId]||w.example;return id==='picture'?!!w.image:id==='listen-picture'?!!w.image&&!!w.audio:id==='phonics'?!!w.audio&&!!w.phonics.length:id==='cloze'?example.toLowerCase().split(/[^a-z'-]+/).includes(w.word.toLowerCase()):id==='sentence'?!!example:id==='story'?!!course.lesson.storyId:true})
  const base=practiceReasons[kind]||''
  const reason=!courseHasImages.value&&(kind==='picture'||kind==='listen-picture')?'本册资源正在准备中':base
  return {id:kind,name,disabled:!available,reason:available?'':reason}

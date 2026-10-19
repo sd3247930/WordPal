@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia'
-import {computed} from 'vue'
+import {computed,ref} from 'vue'
 import {wordById,lessons,words} from '../../packages/content_schema'
 import {localDate,canUnlockNextUnit,type LearningMode,type ReviewRating,type Answer,type LearningSession} from '../../packages/core_learning'
 import {FSRSScheduler,newCard} from '../../packages/srs_fsrs'
@@ -13,35 +13,32 @@ import {readFeedbackSettings} from './feedback'
 import {initialProgress} from '../services/storage/MigrationV1toV2'
 import {getCourseWord,resolveFrozenWord} from '../services/content/ContentRegistry'
 import {useParentSettingsStore} from './parent-settings'
-import {planDailySession,plannedNewWordCeiling} from '../services/learning/SessionPlanner'
-import {needsRecentPractice} from '../services/study-presentation'
 import {orderedCourseWords,courseIntroductions,sessionInCourse} from '../services/learning/CourseStudySequence'
+import {selectDailyPlan,ensureDailyPlan,dailyTasks,advanceDailyPlan,recordDailyAnswer,fullCourseWords,completedPrefix,STEP_TITLES} from '../services/learning/DailyLearningPlan'
+import {todayCourseWordIds} from '../services/learning/StudyStats'
 export const modes:{id:LearningMode;name:string;description:string}[]=[{id:'flash',name:'闪现',description:'看看单词，回想它的意思'},{id:'connect',name:'连接',description:'为单词找到正确的中文意思'},{id:'listen',name:'听音',description:'听发音，选出对应的单词'},{id:'spell',name:'拼写',description:'看中文，用字母拼出单词'},{id:'dictation',name:'听写',description:'听发音，写出这个单词'}]
 export const useLearningStore=defineStore('learning',()=>{
  const profile=useProfileStore(),review=useReviewStore(),course=useCourseStore(),parent=useParentSettingsStore()
- const session=computed(()=>profile.db.session&&sessionInCourse(profile.db.session,course.currentId)?profile.db.session:null)
+ const clock=ref(Date.now())
+ const todayPlan=computed(()=>selectDailyPlan(profile.db,course.current,new Date(clock.value)))
+ const isDaily=computed(()=>course.progress.studyActivity==='daily'&&!!course.progress.dailyPlan?.flow?.begunAt)
+ const session=computed(()=>isDaily.value?course.progress.dailyPlan!:profile.db.session&&sessionInCourse(profile.db.session,course.currentId)?profile.db.session:null)
+ const tasks=computed(()=>dailyTasks(todayPlan.value))
+ const planProblem=computed(()=>todayPlan.value?.wordIds.some(id=>!allowedIds.value.has(id))?'教材内容已变更，原任务已保留。请在家长区恢复对应教材版本后继续。':'')
  const current=computed(()=>session.value ? resolveFrozenWord(session.value.wordSnapshot?.[session.value.wordIds[session.value.index]]||wordById[session.value.wordIds[session.value.index]],session.value.courseId,session.value.contentVersion):undefined)
  const todayAnswers=computed(()=>profile.db.history.filter(a=>localDate(new Date(a.at))===localDate()))
  const courseWordPool=computed(()=>orderedCourseWords(course.current)),allowedIds=computed(()=>new Set(courseWordPool.value))
  const introductions=computed(()=>courseIntroductions(profile.db,course.currentId))
- const newToday=computed(()=>Object.values(introductions.value).filter(at=>at&&localDate(new Date(at))===localDate()).length)
+ const newTodayWordIds=computed(()=>todayCourseWordIds(profile.db,course.current,new Date(clock.value)))
+ const newToday=computed(()=>newTodayWordIds.value.length)
  const newCandidates=computed(()=>courseWordPool.value.filter(id=>!(id in introductions.value)&&!!wordById[id]))
- const studyWords=computed(()=>newCandidates.value.slice(0,Math.max(0,plannedNewWordCeiling(parent.plannerConfig)-newToday.value)))
+ const studyWords=computed(()=>todayPlan.value&&!todayPlan.value.completedAt?todayPlan.value.wordIds:[])
  const newWords=computed(()=>studyWords.value.filter(id=>!profile.db.cards[id]))
  const due=computed(()=>review.due.filter(card=>allowedIds.value.has(card.wordId)))
- const lesson=computed(()=>{const id=session.value?.wordIds[session.value.index]||newCandidates.value[0];return course.lessons.find(lesson=>lesson.wordIds.includes(id))||course.lesson})
+ const lesson=computed(()=>{const id=session.value?.wordIds[session.value.index]||todayPlan.value?.wordIds[0]||newCandidates.value[0];return course.lessons.find(lesson=>lesson.wordIds.includes(id))||course.lesson})
  const needsConsolidation=computed(()=>course.currentId==='starter'&&profile.db.lastLessonAccuracy!==null && profile.db.lastLessonAccuracy<.8)
- const dailyPlan=computed(()=>{
-  if(studyWords.value.length){
-   const plan=planDailySession({config:parent.plannerConfig,dueIds:[],weakIds:[],newIds:studyWords.value,newToday:0})
-   const dueSet=new Set(due.value.map(card=>card.wordId))
-   for(const id of plan.wordIds)plan.wordSources[id]=profile.db.cards[id]?(dueSet.has(id)?'review_due':'practice'):'new_word'
-   return {...plan,newIds:plan.wordIds.filter(id=>plan.wordSources[id]==='new_word'),dueIds:plan.wordIds.filter(id=>plan.wordSources[id]==='review_due'),weakIds:plan.wordIds.filter(id=>plan.wordSources[id]==='practice'),sequenceIds:[...plan.wordIds]}
-  }
-  const weak=new Set(review.weak.map(c=>c.wordId)),history=new Map<string,Answer[]>()
-  for(const answer of profile.db.history){if(!history.has(answer.wordId))history.set(answer.wordId,[]);history.get(answer.wordId)!.push(answer)}
-  return {...planDailySession({config:parent.plannerConfig,dueIds:due.value.map(c=>c.wordId),weakIds:lesson.value.wordIds.filter(id=>id in introductions.value&&profile.db.cards[id]&&(needsConsolidation.value||weak.has(id)||needsRecentPractice(history.get(id)||[]))),newIds:[],newToday:newToday.value}),sequenceIds:[] as string[]}
- })
+ const dailyPlan=computed(()=>({wordIds:todayPlan.value?.wordIds||[],newIds:todayPlan.value?.wordIds||[],dueIds:[] as string[],weakIds:[] as string[],sequenceIds:todayPlan.value?.wordIds||[],wordSources:todayPlan.value?.wordSources||{}}))
+ const textbookProgress=computed(()=>{const ids=courseWordPool.value,learned=Object.keys(fullCourseWords(profile.db,course.current)).length,prefix=completedPrefix(profile.db,course.current);return {total:ids.length,learned,prefix,percent:ids.length?Math.floor(learned/ids.length*100):0}})
  const currentSource=computed(()=>session.value?.wordSources?.[current.value?.id||'']||session.value?.kind||'practice')
  const choices=computed(()=>{
   if(!current.value)return []
@@ -50,17 +47,7 @@ export const useLearningStore=defineStore('learning',()=>{
   const offset=(session.value?.index??0)%selected.length
   return [...selected.slice(offset),...selected.slice(0,offset)]
  })
- function start(request?:string[],scopedDue=false,selection?:{unitId?:string;wordId?:string}){
-  review.refresh()
-  if(session.value && !session.value.completedAt)return true
-  let ids:string[],kind:LearningSession['kind'],wordSources:LearningSession['wordSources'],sequenceWordIds:string[]|undefined
-  const requested=[...new Set(request||[])].filter(id=>allowedIds.value.has(id)&&!!wordById[id])
-  if(request?.length&&!requested.length){uni.showToast?.({title:'该单词不在当前教材中，请先选择对应教材。',icon:'none'});return false}
-  if(scopedDue){const allowed=new Set(requested);ids=due.value.map(c=>c.wordId).filter(id=>allowed.has(id));kind='review_due';wordSources=Object.fromEntries(ids.map(id=>[id,'review_due' as const]))}
-  else if(due.value.length&&requested.length){ids=due.value.map(c=>c.wordId);kind='review_due'}
-  else if(requested.length){ids=requested;kind='practice'}
-  else{const plan=dailyPlan.value;ids=plan.wordIds;wordSources=plan.wordSources;sequenceWordIds=plan.sequenceIds.length?plan.sequenceIds:undefined;kind=plan.newIds.length?'new_word':plan.dueIds.length?'review_due':'practice'}
-  if(!ids.length)return false
+ function freezeWords(ids:string[]){
   const snapshot:Record<string,typeof wordById[string]>={}
   for(const id of ids){
    const source=getCourseWord(course.currentId,id);if(!source)continue
@@ -70,21 +57,60 @@ export const useLearningStore=defineStore('learning',()=>{
    snapshot[id]=word
    for(const distractor of word.distractors)if(!snapshot[distractor])snapshot[distractor]=JSON.parse(JSON.stringify({...getCourseWord(course.currentId,distractor),distractors:[]}))
   }
-  return profile.transact(d=>{const introduced=courseIntroductions(d,course.currentId);if(Object.keys(introduced).length){d.courseProgress??={};const progress=d.courseProgress[course.currentId]??=initialProgress(course.currentId);progress.introducedWords=introduced}d.session={id:`session-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,startedAt:new Date().toISOString(),date:localDate(),kind,wordIds:ids,index:0,mode:'flash',input:'',selected:'',revealed:false,answers:[],courseId:course.currentId,contentVersion:course.current.contentVersion,lessonId:lesson.value.id,wordSnapshot:snapshot,seed:Date.now(),wordSources,plannerConfig:{...parent.plannerConfig},intent:scopedDue||requested.length&&kind==='review_due'?'review':requested.length?'practice':'course',...(sequenceWordIds?{sequenceWordIds}:{})}})
+  return snapshot
  }
- function patch(change:Partial<LearningSession>){return profile.transact(d=>{if(d.session && !d.session.completedAt)Object.assign(d.session,change)})}
- function setMode(mode:LearningMode){if(session.value?.answers[session.value.index]||!current.value||!availableModes(current.value,Object.values(session.value?.wordSnapshot||wordById),readFeedbackSettings().sound,session.value?.plannerConfig?.entryLevel).includes(mode))return false;return patch({mode,input:'',selected:'',revealed:false})}
+ function startIndependent(request?:string[],scopedDue=false,selection?:{unitId?:string;wordId?:string},practiceOnly=false){
+  review.refresh()
+  if(profile.db.session&&!profile.db.session.completedAt&&sessionInCourse(profile.db.session,course.currentId))return profile.transact(d=>{d.courseProgress![course.currentId].studyActivity='independent'})
+  let ids:string[],kind:LearningSession['kind'],wordSources:LearningSession['wordSources'],sequenceWordIds:string[]|undefined
+  const requested=[...new Set(request||[])].filter(id=>allowedIds.value.has(id)&&!!wordById[id])
+  if(request?.length&&!requested.length){uni.showToast?.({title:'该单词不在当前教材中，请先选择对应教材。',icon:'none'});return false}
+  if(practiceOnly){ids=requested;kind='practice';wordSources=Object.fromEntries(ids.map(id=>[id,'practice' as const]))}
+  else if(scopedDue){const allowed=new Set(requested);ids=due.value.map(c=>c.wordId).filter(id=>allowed.has(id));kind='review_due';wordSources=Object.fromEntries(ids.map(id=>[id,'review_due' as const]))}
+  else if(due.value.length&&requested.length){ids=due.value.map(c=>c.wordId);kind='review_due'}
+  else if(requested.length){ids=requested;kind='practice'}
+  else{ids=[];kind='practice'}
+  if(!ids.length)return false
+  const snapshot=freezeWords(ids)
+  return profile.transact(d=>{d.courseProgress??={};(d.courseProgress[course.currentId]??=initialProgress(course.currentId)).studyActivity='independent';const introduced=courseIntroductions(d,course.currentId);if(Object.keys(introduced).length){d.courseProgress??={};const progress=d.courseProgress[course.currentId]??=initialProgress(course.currentId);progress.introducedWords=introduced}d.session={id:`session-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,startedAt:new Date().toISOString(),date:localDate(),kind,wordIds:ids,index:0,mode:'flash',input:'',selected:'',revealed:false,answers:[],courseId:course.currentId,contentVersion:course.current.contentVersion,lessonId:lesson.value.id,wordSnapshot:snapshot,seed:Date.now(),wordSources,plannerConfig:{...parent.plannerConfig},intent:scopedDue||requested.length&&kind==='review_due'?'review':requested.length?'practice':'course',...(sequenceWordIds?{sequenceWordIds}:{})}})
+ }
+ function refreshDay(){clock.value=Date.now()}
+ // Page previews must not write a new daily assignment over an independent visit.
+ // The explicit start action atomically persists the plan and its frozen words.
+ function prepareDaily(){refreshDay();return !!todayPlan.value&&!planProblem.value}
+ function start(request?:string[],scopedDue=false,selection?:{unitId?:string;wordId?:string}){
+  if(request?.length||scopedDue)return startIndependent(request,scopedDue,selection)
+  refreshDay();if(!todayPlan.value||planProblem.value){if(planProblem.value)uni.showToast?.({title:planProblem.value,icon:'none'});return false}
+  const owner=course.currentId,pack=course.current
+  return profile.transact(d=>{
+   const plan=ensureDailyPlan(d,pack,new Date(clock.value))!;d.courseProgress![owner].studyActivity='daily'
+   if(!plan.wordSnapshot){
+    plan.wordSnapshot=freezeWords(plan.wordIds)
+    plan.wordSources=Object.fromEntries(plan.wordIds.map(id=>[id,d.cards[id]?(Date.parse(d.cards[id].due)<=clock.value?'review_due':'practice'):'new_word']))
+   }
+   plan.flow!.begunAt??=new Date(clock.value).toISOString();if(plan.mode==='flash'&&!plan.answers[plan.index])plan.revealed=true
+  })
+ }
+ function activeDraft(d:typeof profile.db){return isDaily.value?d.courseProgress?.[course.currentId]?.dailyPlan:d.session}
+ function patch(change:Partial<LearningSession>){return profile.transact(d=>{const target=activeDraft(d);if(target&&!target.completedAt){if(target.flow){for(const field of ['input','selected','revealed'] as const)if(change[field]!==undefined)(target as any)[field]=change[field]}else Object.assign(target,change)}})}
+ function setMode(mode:LearningMode){if(isDaily.value)return session.value?.mode===mode;if(session.value?.answers[session.value.index]||!current.value||!availableModes(current.value,Object.values(session.value?.wordSnapshot||wordById),readFeedbackSettings().sound,session.value?.plannerConfig?.entryLevel).includes(mode))return false;return patch({mode,input:'',selected:'',revealed:false,hinted:false})}
  function reveal(){return patch({revealed:true})}
- function hint(){return profile.transact(d=>{if(d.session&&!d.session.revealed&&!d.session.answers[d.session.index]){d.gems=Math.max(0,d.gems-1);d.session.revealed=true}})}
+ function hint(){
+  const s=session.value
+  if(!s||s.completedAt||s.answers[s.index])return false
+  if(s.hinted||s.mode!=='flash'&&s.revealed)return true
+  return profile.transact(d=>{const target=activeDraft(d);if(target&&target.id===s.id&&target.index===s.index&&!target.hinted&&!target.answers[target.index]){d.gems=Math.max(0,d.gems-1);target.hinted=true}})
+ }
  function submit(rating?:ReviewRating){
   if(!session.value||!current.value||session.value.completedAt||session.value.answers[session.value.index])return false
+  if(isDaily.value)return submitDaily(rating)
   const s=session.value,w=current.value,source=currentSource.value
   if(s.mode!=='flash' && ((s.mode==='connect'||s.mode==='listen')?!s.selected:!s.input.trim()))return false
   if(s.mode==='flash' && !s.revealed)return false
   const correct=s.mode==='flash' ? rating!==1 : (s.mode==='spell'||s.mode==='dictation') ? isCorrectSpelling(s.input,w) : s.selected===w.id
-  const actualRating:ReviewRating=correct?(s.revealed&&s.mode!=='flash'?2:rating??3):1
+  const actualRating:ReviewRating=correct?((s.hinted||s.revealed)&&s.mode!=='flash'?2:rating??3):1
   const now=new Date()
-  const answer:Answer={id:`${s.id}:${s.index}`,wordId:w.id,correct,rating:actualRating,at:now.toISOString(),source,mode:s.mode,input:s.input||s.selected,hinted:s.mode!=='flash'&&s.revealed,courseId:course.currentId,...(source==='review_due'&&profile.db.cards[w.id]?{dueAtSubmit:profile.db.cards[w.id].due}:{})}
+  const answer:Answer={id:`${s.id}:${s.index}`,wordId:w.id,correct,rating:actualRating,at:now.toISOString(),source,mode:s.mode,input:s.input||s.selected,hinted:s.mode!=='flash'&&!!(s.hinted||s.revealed),courseId:course.currentId,...(source==='review_due'&&profile.db.cards[w.id]?{dueAtSubmit:profile.db.cards[w.id].due}:{})}
   const ok=profile.transact(d=>{
    if(!d.session || d.session.answers[d.session.index])return
    d.session.answers.push(answer)
@@ -101,11 +127,36 @@ export const useLearningStore=defineStore('learning',()=>{
   })
   review.refresh();return ok
  }
+ function submitDaily(rating?:ReviewRating){
+  const s=session.value!,w=current.value!,owner=s.courseId!,step=s.flow!.step
+  if(planProblem.value||s.mode!=='flash'&&(['connect','listen'].includes(s.mode)?!s.selected:!s.input.trim())||s.mode==='flash'&&!s.revealed)return false
+  const correct=s.mode==='flash'?rating!==1:['spell','dictation'].includes(s.mode)?isCorrectSpelling(s.input,w):s.selected===w.id
+  const now=new Date(),hadError=s.flow!.attempts.some(a=>a.wordId===w.id&&!a.correct),actualRating:ReviewRating=correct?(hadError||s.mode!=='flash'&&(s.hinted||s.revealed)?2:rating??3):1
+  const source=step==='consolidate'&&correct?(s.wordSources?.[w.id]||'new_word'):'practice'
+  const answer:Answer={id:`${s.id}:${step}:${s.index}:${s.flow!.attempts.length}`,wordId:w.id,courseId:owner,at:now.toISOString(),correct,rating:actualRating,mode:s.mode,source,input:s.input||s.selected}
+  return profile.transact(d=>{
+   const target=d.courseProgress?.[owner]?.dailyPlan
+   if(!target||target.id!==s.id||target.flow?.step!==step||target.index!==s.index||!recordDailyAnswer(target,answer))return
+   d.practiceAnswers??=[]
+   // All six activities retain evidence, while SRS and original rewards settle once per word.
+   if(source==='practice')d.practiceAnswers.push(answer)
+   else if(!d.history.some(a=>a.id===answer.id||a.wordId===w.id&&localDate(new Date(a.at))===localDate(now))){
+    d.cards[w.id]=new FSRSScheduler().schedule(d.cards[w.id]??newCard(w.id,now),actualRating,now).card
+    d.history.push(answer);applyLearningReward(d,answer)
+   }else d.practiceAnswers.push({...answer,source:'practice'})
+   if(!d.streakDates.includes(localDate(now)))d.streakDates.push(localDate(now))
+  })
+ }
  function next(){
   if(!session.value||session.value.completedAt||!session.value.answers[session.value.index])return false
+  if(isDaily.value){const s=session.value,owner=s.courseId!,step=s.flow!.step,index=s.index;return profile.transact(d=>{
+   const p=d.courseProgress![owner],target=p.dailyPlan!
+   if(target.id!==s.id||target.flow?.step!==step||target.index!==index||!advanceDailyPlan(target))return
+   if(target.completedAt){const at=target.completedAt;p.fullLearnedWords??={};p.introducedWords??={};for(const id of target.wordIds){p.fullLearnedWords[id]=at;p.introducedWords[id]??=at}const nextId=courseWordPool.value[completedPrefix(d,course.current)]||target.wordIds.at(-1);const nextLesson=course.lessons.find(l=>l.wordIds.includes(nextId!));if(nextLesson)p.currentLessonId=nextLesson.id}
+  })}
   return profile.transact(d=>{
    const s=d.session!;
-   if(s.index<s.wordIds.length-1){s.index++;s.input='';s.selected='';s.revealed=false}
+   if(s.index<s.wordIds.length-1){s.index++;s.input='';s.selected='';s.revealed=false;delete s.hinted}
    else{
     s.completedAt=new Date().toISOString()
     if(s.sequenceWordIds?.length){const id=s.courseId||course.currentId,p=d.courseProgress![id],introduced=courseIntroductions(d,id),next=courseWordPool.value.find(wordId=>!(wordId in introduced)),target=course.lessons.find(lesson=>lesson.wordIds.includes(next||s.wordIds.at(-1)!))||lesson.value;p.currentLessonId=target.id;p.lastLessonAccuracy=s.answers.filter(answer=>answer.correct).length/s.answers.length;if(id==='starter'){d.lastLessonAccuracy=p.lastLessonAccuracy;d.lessonIndex=Math.max(0,lessons.findIndex(lesson=>lesson.id===target.id))}return}
@@ -127,10 +178,10 @@ export const useLearningStore=defineStore('learning',()=>{
    }
   })
  }
- function previous(){if(!session.value || session.value.index===0)return false;return patch({index:session.value.index-1,input:session.value.answers[session.value.index-1]?.input??'',revealed:true})}
+ function previous(){if(isDaily.value||!session.value || session.value.index===0)return false;return patch({index:session.value.index-1,input:session.value.answers[session.value.index-1]?.input??'',revealed:true})}
  const learnedCount=computed(()=>Object.keys(profile.db.cards).length)
  const remainingCount=computed(()=>course.wordIds.filter(id=>!profile.db.cards[id]).length)
  const positionFor=(id?:string)=>{const index=courseWordPool.value.indexOf(id||'');return index<0?null:{index:index+1,total:courseWordPool.value.length}}
  const currentPosition=computed(()=>positionFor(current.value?.id))
- return {session,current,currentSource,choices,todayAnswers,newToday,newWords,studyWords,due,dailyPlan,lesson,needsConsolidation,learnedCount,remainingCount,currentPosition,positionFor,start,startSelected:(unitId?:string,wordId?:string)=>start(undefined,false,{unitId,wordId}),startDue:(ids:string[])=>start(ids,true),patch,setMode,reveal,hint,submit,next,previous}
+ return {session,current,currentSource,choices,todayAnswers,newToday,newTodayWordIds,newWords,studyWords,due,dailyPlan,todayPlan,tasks,isDaily,planProblem,textbookProgress,prepareDaily,refreshDay,startPractice:()=>startIndependent(todayPlan.value?.wordIds||lesson.value.wordIds,false,undefined,true),stepTitles:STEP_TITLES,lesson,needsConsolidation,learnedCount,remainingCount,currentPosition,positionFor,start,startSelected:(unitId?:string,wordId?:string)=>start(undefined,false,{unitId,wordId}),startDue:(ids:string[])=>start(ids,true),patch,setMode,reveal,hint,submit,next,previous}
 })

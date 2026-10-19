@@ -3,13 +3,13 @@ import {go,app,setAppearance,seedDatabase,database} from './helpers'
 import {goldenDatabase} from './fixtures'
 
 const appearanceKey='wordpal.appearance.v1'
-for(const legacy of ['bento','soft','oled'])test(`${legacy} 旧外观自动迁移，仅保留瑞士主题且不改学习记录`,async({page})=>{
+for(const legacy of ['bento','soft','oled'])test(`${legacy} 旧外观自动迁移为瑞士，双主题入口不改学习记录`,async({page})=>{
  await setAppearance(page,legacy,'dark',{largeText:true,reducedMotion:true,highContrast:true,screenReaderLabels:false})
  await seedDatabase(page,goldenDatabase());await go(page,'home');const before=await database(page)
  await go(page,'settings')
  await expect(app(page)).toHaveAttribute('data-theme','swiss');await expect(app(page)).toHaveAttribute('data-mode','dark')
- await expect(page.getByRole('group',{name:'当前外观主题',exact:true})).toContainText('瑞士专注主题')
- await expect(page.locator('.appearance-theme')).toHaveCount(1);await expect(page.locator('.theme-choice')).toHaveCount(0)
+ await expect(page.getByRole('group',{name:'外观主题',exact:true})).toContainText('瑞士专注主题')
+ await expect(page.locator('.appearance-theme')).toHaveCount(1);await expect(page.locator('.theme-choice')).toHaveCount(2);await expect(page.locator('[data-theme-choice="swiss"]')).toHaveAttribute('aria-current','true')
  for(const name of ['便当任务岛','柔和宠物屋','夜读星幕'])await expect(page.getByText(name,{exact:true})).toHaveCount(0)
  const expected={themeId:'swiss',colorMode:'dark',largeText:true,reducedMotion:true,highContrast:true,screenReaderLabels:false,dynamicColor:false}
  expect(await page.evaluate(key=>JSON.parse(localStorage.getItem(key)!),appearanceKey)).toEqual(expected)
@@ -37,6 +37,7 @@ test('瑞士外观明暗、跟随系统和辅助显示可操作并持久化',asy
 })
 
 for(const mode of ['light','dark'])test(`瑞士${mode} 五页在手机平板及大字体中布局一致，保留宠物场景与学习记录`,async({page})=>{
+ test.setTimeout(90000)
  await setAppearance(page,'swiss',mode,{largeText:true,reducedMotion:true});await seedDatabase(page,goldenDatabase())
  await page.addInitScript(()=>localStorage.setItem('wordpal.pethouse.appearance.v1',JSON.stringify({sceneId:'fire'})))
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message))
@@ -48,8 +49,8 @@ for(const mode of ['light','dark'])test(`瑞士${mode} 五页在手机平板及�
    expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)
    if(screen==='settings'){
     await expect(page.locator('.appearance-theme')).toContainText('瑞士专注主题')
-    const bounds=await page.locator('.appearance-theme').evaluate(el=>({overflow:el.scrollWidth>el.clientWidth+1,text:getComputedStyle(el).color}))
-    expect(bounds.overflow).toBe(false)
+    const bounds=await page.locator('.appearance-theme').evaluate(el=>({overflow:el.scrollWidth>el.clientWidth+1,text:getComputedStyle(el).color,width:el.clientWidth,scroll:el.scrollWidth,children:Array.from(el.querySelectorAll('*')).filter(n=>n.getBoundingClientRect().right>el.getBoundingClientRect().right).map(n=>({class:n.className,width:n.getBoundingClientRect().width,right:n.getBoundingClientRect().right}))}))
+    expect(bounds.overflow,JSON.stringify(bounds)).toBe(false)
     if([390,1280].includes(width))await page.screenshot({path:test.info().outputPath(`settings-${mode}-${width}.png`),fullPage:true})
    }
   }

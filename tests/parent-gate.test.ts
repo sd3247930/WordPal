@@ -33,9 +33,9 @@ test('异步校验离开后不能解锁新访问；过期页面卸载不影响�
 })
 test('仅保存上一题key，重建Store或伪造持久化解锁均须重验；设置写入有状态和路由保护',async()=>{
  const gate=fresh(),profile=useProfileStore(),parent=useParentSettingsStore(),before=JSON.stringify(profile.db)
- assert.equal(parent.save({dailyNewWordLimit:20}),false);assert.equal(JSON.stringify(profile.db),before)
+ assert.equal(parent.save({entryLevel:5}),false);assert.equal(JSON.stringify(profile.db),before)
  gate.beginVisit({});await unlock(gate);const key=storage.get('wordpal.parent-gate.last-question.v1');assert.match(key!,/^[1-9]x[1-9]$/)
- route='pages/settings/index';assert.equal(gate.canAccess(),false);assert.equal(parent.save({dailyNewWordLimit:20}),false);assert.equal(JSON.stringify(profile.db),before)
+ route='pages/settings/index';assert.equal(gate.canAccess(),false);assert.equal(parent.save({entryLevel:5}),false);assert.equal(JSON.stringify(profile.db),before)
  storage.set('wordpal.parent-gate.unlocked','true');setActivePinia(createPinia());const rebuilt=useParentGateStore();assert.equal(rebuilt.unlocked,false);rebuilt.beginVisit({});assert.notEqual(parentQuestionKey(rebuilt.state.question!.left,rebuilt.state.question!.right),key)
 })
 test('所有原生导航及返回操作立即撤销本访问授权',async()=>{

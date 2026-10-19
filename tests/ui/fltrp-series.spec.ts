@@ -1,4 +1,4 @@
-import {openCustomPractice} from './helpers'
+import {openCustomPractice,selectWordbookScope} from './helpers'
 import {test,expect,type Page} from '@playwright/test'
 import {go,database,seedDatabase,setAppearance} from './helpers'
 import {freshDatabase} from '../../src/stores/profile'
@@ -22,7 +22,7 @@ test('默认 CI 六册合成课程：点击立即使用，不显示待核对，�
 })
 
 test('默认 CI 五题型能实际运行，跨册立即切换并恢复冻结 Session，Scope 不改学习目标',async({page})=>{
- const db=freshDatabase();db.abilityLevel='L5';db.dailyLimit=5;await seedDatabase(page,db);await setup(page);await choose(page,'g5b')
+ const db=freshDatabase();db.abilityLevel='L5';await seedDatabase(page,db);await setup(page);await choose(page,'g5b')
  await page.getByRole('button',{name:'开始今日学习',exact:true}).click()
  await openCustomPractice(page);for(const name of ['闪现','连接','听音','拼写','听写']){const button=page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:new RegExp('^'+name+'，')});await expect(button).toBeEnabled();await button.click()}
  await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^拼写，/}).click()
@@ -31,10 +31,10 @@ test('默认 CI 五题型能实际运行，跨册立即切换并恢复冻结 Ses
  await choose(page,'g4a');await expect(page.getByRole('dialog',{name:'排队切换教材'})).toHaveCount(0)
  const switched=await database(page);expect(switched.currentCourseId).toBe('fltrp-3start-g4a');expect(switched.pendingCourseId).toBeUndefined();expect(JSON.stringify(switched.courseSessions['fltrp-3start-g5b'])).toBe(frozen)
  await choose(page,'g5b');expect(JSON.stringify((await database(page)).session)).toBe(frozen)
- await go(page,'review');await page.getByRole('group',{name:'单词本课程范围'}).getByRole('button',{name:'全部已安装',exact:true}).click();await page.getByRole('button',{name:'继续当前学习',exact:true}).click();expect(JSON.stringify((await database(page)).session)).toBe(frozen)
+ await go(page,'review');await selectWordbookScope(page,'全部单词');await page.getByRole('button',{name:'继续当前学习',exact:true}).click();expect(JSON.stringify((await database(page)).session)).toBe(frozen)
  const snapshot=await database(page),word=snapshot.session.wordSnapshot[snapshot.session.wordIds[0]].word
  await page.locator('.spelling-input input').fill(word);await page.getByRole('button',{name:'确认答案 →',exact:true}).click();await expect(page.locator('.answer-feedback')).toContainText('记住啦')
- const saved=await database(page);expect(saved.history).toHaveLength(1);expect(saved.cards[saved.history[0].wordId].strategy).toBe('fsrs')
+ const saved=await database(page);expect(saved.history).toHaveLength(0);expect(saved.practiceAnswers).toHaveLength(1);expect(saved.practiceAnswers[0].correct).toBe(true)
  await page.reload();expect((await database(page)).history).toEqual(saved.history);expect((await database(page)).gems).toBe(saved.gems)
 })
 
@@ -45,9 +45,9 @@ test('默认 CI 瑞士主题明暗课程、单词本、宠物页无水平溢出�
   for(const screen of ['learn','review','pet']){await go(page,screen);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBeTruthy()}
  }
  await go(page,'review');await page.locator('.review-tabs .mode-button').filter({hasText:'所有单词'}).click();await expect(page.locator('.review-row')).toHaveCount(10)
- await page.getByRole('group',{name:'单词本课程范围'}).getByRole('button',{name:'全局已学词',exact:true}).click();await expect(page.locator('.review-row')).toHaveCount(0)
+ await selectWordbookScope(page,'只看已学');await expect(page.locator('.review-row')).toHaveCount(0)
 })
 
 test('默认 CI 单元入口确认后直接进入所选教材的实际 Study Session',async({page})=>{
- await setup(page);await choose(page,'g4a');await page.getByRole('button',{name:'选择教材',exact:true}).click();await page.getByRole('button',{name:'从这一单元开始',exact:true}).click();await expect(page.locator('.learn-workspace')).toBeVisible();const db=await database(page);expect(db.session.courseId).toBe('fltrp-3start-g4a');expect(db.courseProgress['fltrp-3start-g4a'].currentLessonId).toBe('unit-1-lesson-1');expect(db.history).toHaveLength(0)
+ await setup(page);await choose(page,'g4a');await page.getByRole('button',{name:'选择教材',exact:true}).click();await page.getByRole('button',{name:'从这一单元开始',exact:true}).click();await expect(page.locator('.learn-workspace')).toBeVisible();const db=await database(page);expect(db.courseProgress['fltrp-3start-g4a'].dailyPlan.courseId).toBe('fltrp-3start-g4a');expect(db.courseProgress['fltrp-3start-g4a'].dailyPlan.flow.step).toBe('flash');expect(db.history).toHaveLength(0)
 })

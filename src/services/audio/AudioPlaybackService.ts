@@ -29,6 +29,14 @@ export class AudioPlaybackService {
  private context(){
   if(this.backend)return this.backend
   const audio=this.factory();audio.autoplay=false;audio.startTime=0
+  // uni-app H5 discards HTMLMediaElement.play()'s promise. Rapid step changes
+  // intentionally stop playback; consume its AbortError instead of leaking an
+  // unhandled rejection. Native contexts do not expose this HTML audio handle.
+  const html=(audio as AudioBackend&{_audio?:{play:()=>Promise<void>}})._audio
+  if(html&&typeof html.play==='function'){
+   const play=html.play.bind(html)
+   html.play=()=>{const epoch=this.generation,promise=play();void promise?.catch(error=>{if(error?.name!=='AbortError'&&epoch===this.generation&&this.activeGeneration)this.fail('暂时无法播放，请检查声音设置或重试。')});return promise}
+  }
   // App exposes obeyMuteSwitch as a getter; supported mini programs allow a setter.
   const muteProperty=Object.getOwnPropertyDescriptor(audio,'obeyMuteSwitch')
   if(!muteProperty||muteProperty.set||muteProperty.writable)try{audio.obeyMuteSwitch=false}catch{}

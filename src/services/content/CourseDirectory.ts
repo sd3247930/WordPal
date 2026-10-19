@@ -1,7 +1,7 @@
 import {computed,reactive} from 'vue'
 import type {CoursePack} from '../../../packages/content_schema/course'
 import {readStorage,writeStorage} from '../storage'
-import {courseRegistry,archiveStatus,installationStatus,isCourseInstalled,isBundledCourse,resolveCourseAsset,wordById} from './ContentRegistry'
+import {courseRegistry,archiveStatus,installationStatus,isCourseInstalled,isBundledCourse,resolveCourseAsset,wordById,isUserDeleted} from './ContentRegistry'
 import {occurrences,type CourseOccurrence} from './IdentityModel'
 import {cleanCourseLabel} from '../course/CourseSelection'
 
@@ -18,7 +18,7 @@ export function describeCourse(pack:CoursePack):CourseDescriptor{
   units:pack.units.map(u=>({id:u.id,title:u.title,lessons:u.lessons.length})),wordCount:pack.vocabulary.length,occurrenceCount:positions.length,sources:pack.sources,positions,
   coverage:{audio:items.filter(w=>local(w?.audio)||local(w?.audioUS)||local(w?.audioUK)).length,image:items.filter(w=>local(w?.image)).length,example:items.filter(w=>!!w?.example).length,bytes:pack.assets.reduce((n,a)=>n+a.bytes,0)}}
 }
-export function loadDirectory(){for(const id of Object.keys(directoryCache))delete directoryCache[id];Object.assign(directoryCache,readStorage<Record<string,CourseDescriptor>>(DIRECTORY_KEY,{}))}
+export function loadDirectory(){for(const id of Object.keys(directoryCache))delete directoryCache[id];for(const [id,descriptor] of Object.entries(readStorage<Record<string,CourseDescriptor>>(DIRECTORY_KEY,{})))if(!isUserDeleted(id))directoryCache[id]=descriptor}
 export function retainDescriptor(pack:CoursePack){const descriptor=describeCourse(pack),next={...readStorage<Record<string,CourseDescriptor>>(DIRECTORY_KEY,{}),...directoryCache,[pack.courseId]:descriptor};writeStorage(DIRECTORY_KEY,next);Object.assign(directoryCache,next)}
 export function textbookIdentity(pack:Pick<CourseDescriptor,'courseId'|'route'|'publisher'|'edition'|'editionYear'|'startGrade'|'grade'|'semester'>){
  if(pack.route!=='textbook'||!pack.grade||!pack.semester)return ''
@@ -26,7 +26,7 @@ export function textbookIdentity(pack:Pick<CourseDescriptor,'courseId'|'route'|'
  return [series,pack.grade,pack.semester,pack.editionYear||'unspecified'].join('|')
 }
 export const courseDirectory=computed(()=>{
- const all=Object.values({...directoryCache,...Object.fromEntries(Object.values(courseRegistry).map(pack=>[pack.courseId,describeCourse(pack)]))})
+ const all=Object.values({...directoryCache,...Object.fromEntries(Object.values(courseRegistry).map(pack=>[pack.courseId,describeCourse(pack)]))}).filter(pack=>!isUserDeleted(pack.courseId))
  const installedBooks=new Set(all.filter(pack=>isCourseInstalled(pack.courseId)).map(textbookIdentity).filter(Boolean))
  return all.filter(pack=>isCourseInstalled(pack.courseId)||!textbookIdentity(pack)||!installedBooks.has(textbookIdentity(pack))).map(pack=>({...pack,title:cleanCourseLabel(pack.title),publisher:pack.publisher?cleanCourseLabel(pack.publisher):pack.publisher,edition:pack.edition?cleanCourseLabel(pack.edition):pack.edition}))
 })

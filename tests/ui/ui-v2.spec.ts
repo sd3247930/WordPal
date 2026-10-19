@@ -32,15 +32,16 @@ for(const theme of ['swiss'])test(theme+' 首页首屏能看到任务行和主�
  expect(await portrait.locator('img').evaluate((image:HTMLImageElement)=>image.naturalWidth)).toBeGreaterThanOrEqual(512)
 })
 
-test('学习模式一行排列，首屏显示词卡与主动作',async({page})=>{
+test('学习模式一行排列，词卡与主动作可滚动完整显示',async({page})=>{
  await seedDatabase(page,{...freshDatabase(),abilityLevel:'L5'})
  await page.setViewportSize({width:390,height:844});await go(page,'home');await page.locator('.hero-cta').click()
- // L5 starts on dictation; use flash so the primary action and word card are deterministic.
+ // Custom flash practice keeps the primary action and word card deterministic.
  await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'闪现'}).click()
- await expect(page.locator('.mode-selector .mode-button')).toHaveCount(5)
- const boxes=await page.locator('.mode-selector .mode-button').evaluateAll(items=>items.map(i=>i.getBoundingClientRect().top))
+ await expect(page.locator('.study-mode-selector .mode-button')).toHaveCount(5)
+ const boxes=await page.locator('.study-mode-selector .mode-button').evaluateAll(items=>items.map(i=>i.getBoundingClientRect().top))
  expect(new Set(boxes).size).toBe(1)
- const nav=(await page.locator('.bottom-nav').boundingBox())!,action=(await page.locator('.answer-actions .wp-button').boundingBox())!
+ await page.getByRole('button',{name:'查看答案',exact:true}).scrollIntoViewIfNeeded()
+ const nav=(await page.locator('.bottom-nav').boundingBox())!,action=(await page.getByRole('button',{name:'查看答案',exact:true}).boundingBox())!
  expect(action.y+action.height).toBeLessThan(nav.y)
  await expect(page.locator('.wp-word-card .word')).toHaveText('cat')
 })
@@ -67,8 +68,8 @@ test('零到期词本没有禁用大动作，并能浏览全部单词',async({pa
 
 test('六个设置区块与声音触感偏好独立保存，不改变学习数据',async({page})=>{
  await seedDatabase(page,goldenDatabase());await go(page,'settings');const before=await database(page)
- for(const name of ['外观','学习','声音与触感','宠物','数据与隐私','关于 WordPal'])await expect(page.locator('.settings-main').getByText(name,{exact:true}).first()).toBeVisible()
- await expect(page.locator('.appearance-theme')).toHaveCount(1);await expect(page.locator('.appearance-theme')).toContainText('瑞士专注主题')
+ for(const name of ['外观','学习','声音与触感','数据与隐私','关于 WordPal'])await expect(page.locator('.settings-main').getByText(name,{exact:true}).first()).toBeVisible()
+ await expect(page.locator('.settings-pet')).toContainText('宠物 · 当前陪伴');await expect(page.locator('.appearance-theme')).toHaveCount(1);await expect(page.locator('.appearance-theme')).toContainText('瑞士专注主题')
  await page.getByLabel('学习发音',{exact:true}).click();await page.getByLabel('正确回答轻震动',{exact:true}).click()
  await expect(page.getByRole('button',{name:'试听发音',exact:true})).toBeDisabled()
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('wordpal.feedback.v1')!))).toEqual({sound:false,haptics:false})

@@ -1,3 +1,4 @@
+import {startLegacyRound} from './helpers/daily-flow'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import {createPinia,setActivePinia} from 'pinia'
@@ -25,7 +26,7 @@ async function ready(){
  reset()
  const profile=useProfileStore(),course=useCourseStore(),learning=useLearningStore()
  await installTextCourse(pack('queue-one'));await installTextCourse(pack('queue-two'))
- course.choose('queue-one');learning.start()
+ course.choose('queue-one');startLegacyRound(learning)
  return {profile,course,learning}
 }
 

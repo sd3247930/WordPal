@@ -15,19 +15,18 @@ test('学习输入在旋转、五档缩放、切换明暗及异常退出后保�
  await page.reload();await expect(page.locator('.spelling-input input')).toHaveValue('ca');expect((await database(page)).session.id).toBe(original.session.id)
  await page.locator('.spelling-input input').fill('cat');await page.locator('.answer-actions [role=button]').filter({hasText:'确认答案'}).click()
  await expect(page.locator('.answer-feedback')).toContainText('很棒，记住啦')
- const saved=await database(page);expect(saved.cards.cat.strategy).toBe('fsrs');expect(saved.history).toHaveLength(1);expect(saved.gems).toBe(2)
- await page.reload();expect((await database(page)).history).toHaveLength(1);expect((await database(page)).gems).toBe(2)
- await page.evaluate(()=>{const pointer=JSON.parse(localStorage.getItem('wordpal.database.active.v2')!);const key=pointer==='v2'?'wordpal.database.v2':pointer.key;const db=JSON.parse(localStorage.getItem(key)!);db.cards.cat.due='2000-01-01T00:00:00Z';localStorage.setItem(key,JSON.stringify(db))})
+ const saved=await database(page);expect(saved.cards).toEqual({});expect(saved.history).toHaveLength(0);expect(saved.practiceAnswers).toHaveLength(1);expect(saved.gems).toBe(0)
+ await page.reload();expect((await database(page)).practiceAnswers).toHaveLength(1);expect((await database(page)).gems).toBe(0)
  await go(page,'review');await page.reload();await expect(app(page)).toBeVisible();const pending=await database(page);await page.getByRole('button',{name:'继续当前学习',exact:true}).click();await expect(page.locator('.answer-feedback')).toBeVisible();expect(await database(page)).toEqual(pending)
 })
 test('教材首轮保持词序，并保留历史到期词来源与已有排程',async({page})=>{
  const db=freshDatabase();db.cards.cat=newCard('cat',new Date('2020-01-01T00:00:00Z'));db.cards.cat.reps=1;db.cards.cat.stability=1;db.cards.cat.difficulty=5;db.cards.cat.state=2;db.cards.cat.last_review='2020-01-01T00:00:00Z'
  await seedDatabase(page,db);await go(page,'home');await expect(page.locator('.hero-counts')).toContainText('0');await page.locator('.hero-cta').click()
- const saved=await database(page);expect(saved.session.kind).toBe('new_word');expect(saved.session.wordIds[0]).toBe('cat');expect(saved.session.wordSources.cat).toBe('review_due');expect(Object.values(saved.session.wordSources).filter(s=>s==='new_word').length).toBeLessThanOrEqual(saved.dailyLimit);expect(saved.cards).toEqual(db.cards)
+ const saved=await database(page),plan=saved.courseProgress.starter.dailyPlan;expect(plan.kind).toBe('new_word');expect(plan.wordIds[0]).toBe('cat');expect(plan.wordSources.cat).toBe('review_due');expect(plan.wordIds).toHaveLength(10);expect(saved.cards).toEqual(db.cards)
 })
-test('首次错误进入本轮回看，灵石不能负数，低准确率巩固',async({page})=>{
+test('独立错题保留练习证据，提示不产生负灵石或正式学习奖励',async({page})=>{
  // Daily pool is whole-course now; pin the round to 5 new words so five wrong answers finish it.
- await seedDatabase(page,{...freshDatabase(),dailyLimit:5})
+ await seedDatabase(page,{...freshDatabase(),abilityLevel:'L3'})
  await go(page,'home');await page.locator('.hero-cta').click()
  for(let i=0;i<5;i++){
   await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'拼写'}).click();await page.locator('.spelling-input input').fill('wrong')
@@ -35,7 +34,7 @@ test('首次错误进入本轮回看，灵石不能负数，低准确率巩固',
   await page.locator('.answer-actions [role=button]').filter({hasText:'确认答案'}).click();await expect(page.locator('.answer-feedback')).toContainText('一起再认识它')
   await page.locator('.answer-feedback [role=button]').click()
  }
-  const db=await database(page);expect(db.gems).toBe(1);expect(db.lessonIndex).toBe(1);expect(db.lastLessonAccuracy).toBe(0);expect(db.history).toHaveLength(5)
+  const db=await database(page);expect(db.gems).toBe(0);expect(db.lessonIndex).toBe(0);expect(db.lastLessonAccuracy).toBeNull();expect(db.history).toHaveLength(0);expect(db.practiceAnswers.filter((a:any)=>!a.correct)).toHaveLength(5)
  await go(page,'review');await page.locator('.mode-button').filter({hasText:'错词本'}).click();await expect(page.locator('.review-row')).toHaveCount(0)
 })
 test('宠物切换和喂养不影响 SRS，数据删除需家长验证与明确文字',async({page})=>{
@@ -48,7 +47,7 @@ test('宠物切换和喂养不影响 SRS，数据删除需家长验证与明确�
 })
 test('键盘快捷键与焦点行为，大字体和减少动效',async({page})=>{
  await setAppearance(page,'swiss','light',{largeText:true,reducedMotion:true});await go(page,'home');await expect(app(page)).toHaveClass(/large-text/);await expect(app(page)).toHaveClass(/reduce-motion/)
- await page.locator('.hero-cta').click();await expect(page.locator('.learn-workspace')).toBeVisible();await page.locator('body').click({position:{x:5,y:5}});await page.keyboard.press('Enter');await expect(page.locator('.rating-grid')).toBeVisible();await page.keyboard.press('3');await expect(page.locator('.answer-feedback')).toBeVisible();await page.keyboard.press('ArrowRight');expect((await database(page)).session.index).toBe(1)
+ await page.locator('.hero-cta').click();await expect(page.locator('.learn-workspace')).toBeVisible();await page.locator('body').click({position:{x:5,y:5}});await expect(page.locator('.rating-grid')).toBeVisible();await page.keyboard.press('Enter');await expect(page.locator('.answer-feedback')).toBeVisible();await page.keyboard.press('ArrowRight');expect((await database(page)).courseProgress.starter.dailyPlan.index).toBe(1)
  await page.keyboard.press('Control+3');await expect(page.locator('.pet-workspace')).toBeVisible()
 })
 test('五档窗口与手机平板横竖屏无水平溢出，导航合适',async({page})=>{
@@ -63,5 +62,3 @@ test('没有外部统计、广告或业务请求',async({page,baseURL})=>{
  for(const screen of ['home','learn','pet','parent','settings'])await go(page,screen)
  expect(external).toEqual([])
 })
-
-
