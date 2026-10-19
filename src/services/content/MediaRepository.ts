@@ -43,6 +43,28 @@ export async function readMedia(key:string,pack:CoursePack,explicitInstallation=
  if(bytes.length!==asset.bytes||sha256(bytes)!==asset.sha256)throw new Error('媒体完整性检查未通过，请重新导入。');files[asset.path]=bytes
  if(typeof plus==='undefined'&&typeof indexedDB!=='undefined'){const urlKey=key+':'+asset.id;if(!urls.has(urlKey))urls.set(urlKey,URL.createObjectURL(new Blob([bytes.slice().buffer],{type:asset.mediaType})))}
  }return files}
+/** Bundled courses have asset handles but no imported-media catalog entry. */
+export async function readBundledMedia(pack:CoursePack,resolve:(id:string)=>string){
+ const files:Record<string,Uint8Array>={}
+ for(const asset of pack.assets){
+  const url=resolve(asset.id)
+  if(!url.startsWith('/static/')||!safeRelativePath(url.slice(1)))throw new Error('课程媒体尚未就绪，请重新打开课程后再导出。')
+  let bytes:Uint8Array
+  if(typeof plus!=='undefined')bytes=await nativeRead('_www'+url)
+  else if(typeof document!=='undefined'){
+   const response=await fetch(new URL(url.slice(1),document.baseURI).href)
+   if(!response.ok)throw new Error('课程媒体读取失败，请重新导入课程。')
+   bytes=new Uint8Array(await response.arrayBuffer())
+  }else{
+   const fs=(globalThis as any).wx?.getFileSystemManager?.()
+   if(!fs)throw new Error('当前环境无法读取课程媒体。')
+   bytes=new Uint8Array(fs.readFileSync(url))
+  }
+  if(bytes.length!==asset.bytes||sha256(bytes)!==asset.sha256)throw new Error('媒体完整性检查未通过，请重新导入。')
+  files[asset.path]=bytes
+ }
+ return files
+}
 export function mediaUrl(key:string,assetId:string,pack:CoursePack){if(isUserDeleted(pack.courseId))return '';const asset=pack.assets.find(a=>a.id===assetId);if(!asset)return '';if(typeof plus!=='undefined')return nativeRelative(key,asset.path);if(typeof indexedDB!=='undefined')return urls.get(key+':'+assetId)||'';const api=(globalThis as any).wx;return api?api.env.USER_DATA_PATH+'/wordpal/'+key.replace(/[^a-z0-9-]/g,'-')+'/'+asset.path:''}
 /** Enumerate only exact, validated version folders; similarly prefixed course IDs are separate owners. */
 export async function storedMediaVersions(courseId:string):Promise<string[]>{

@@ -2,7 +2,7 @@ import {test,expect} from '@playwright/test'
 import {go,setAppearance,seedDatabase,database} from './helpers'
 import {goldenDatabase} from './fixtures'
 
-for(const scale of [1.25,1.6])test(`顶部品牌字体按 ${scale} 比例放大，窄屏灵石换行保留完整信息`,async({page})=>{
+for(const scale of [1.25,1.6])test(`顶部品牌字体按 ${scale} 比例放大，窄屏灵石保留完整读屏信息`,async({page})=>{
  await setAppearance(page,'swiss','light',{largeText:scale===1.25});await seedDatabase(page,{...goldenDatabase(),gems:999999})
  for(const width of [320,390,600,840]){
   await page.setViewportSize({width,height:900});await go(page,'home')
@@ -10,7 +10,7 @@ for(const scale of [1.25,1.6])test(`顶部品牌字体按 ${scale} 比例放大�
   const header=page.locator('.wp-brand-header');await expect.poll(()=>header.locator('.brand-name').evaluate(n=>parseFloat(getComputedStyle(n).fontSize))).toBeCloseTo((width<360?22:width<600?24:26)*scale,1)
   const positions=await header.evaluate(h=>{const brand=h.querySelector('.compact-brand')!.getBoundingClientRect(),actions=h.querySelector('.topbar-actions')!.getBoundingClientRect(),subtitle=h.querySelector('.brand-subtitle')!,s=getComputedStyle(subtitle);return {overlap:brand.right>actions.left&&brand.top<actions.bottom&&actions.top<brand.bottom,stacked:actions.top>=brand.bottom,font:parseFloat(s.fontSize),height:h.getBoundingClientRect().height}})
   expect(positions.overlap).toBe(false);expect(positions.font).toBeCloseTo((width<360?13:14)*scale,1);if(width===320)expect(positions.stacked).toBe(true)
-  await expect(header.locator('.gem-chip')).toContainText('999999 灵石');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)
+  await expect(header.locator('.gem-chip')).toHaveAttribute('aria-label','灵石余额 999999，查看灵石说明');await expect(header.locator('.spirit-stone-count')).toHaveText('99.99万');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)
  }
 })
 

@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test'
-import {go,seedDatabase,setAppearance,database,openCustomPractice} from './helpers'
+import {go,seedDatabase,setAppearance,database,openCustomPractice,waitForArtwork} from './helpers'
 import {goldenDatabase} from './fixtures'
 import {freshDatabase} from '../../src/stores/profile'
 test('独立自动练习轮换五种题型，错词回看刷新保留且不推进正式任务或奖励',async({page})=>{
@@ -40,7 +40,8 @@ for(const theme of ['swiss'])for(const size of windows)test(`${theme} ${size.nam
  await page.clock.install({time:new Date('2026-10-04T08:00:00Z')});await page.setViewportSize(size);await setAppearance(page,theme,theme==='oled'?'dark':'light',{largeText:size.name==='split-narrow'});await seedDatabase(page,goldenDatabase());await go(page,'review')
  await page.locator('.wordbook-search input').fill('cat');await page.locator('.review-row').click();await expect(page.locator('.detail-word')).toHaveText('cat');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBeTruthy()
  // Full-page baselines start at the same document and panel scroll positions after click-to-focus.
+ await waitForArtwork(page)
  await page.evaluate(()=>{window.scrollTo(0,0);document.querySelectorAll('.word-detail-panel,.sidebar').forEach(e=>e.scrollTop=0)})
- await expect.poll(()=>page.evaluate(()=>scrollY)).toBe(0)
+ await expect.poll(()=>page.evaluate(()=>[scrollY,...Array.from(document.querySelectorAll('.word-detail-panel,.sidebar'),e=>e.scrollTop)].every(top=>top===0))).toBe(true)
  await expect(page).toHaveScreenshot(`wordbook-detail-${theme}-${size.name}.png`,{fullPage:true,animations:'disabled'})
 })

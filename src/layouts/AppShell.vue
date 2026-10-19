@@ -3,7 +3,7 @@
   <view class="app-shell">
    <WPSidebar :page="page"/>
    <view class="app-body">
-    <WPBrandHeader :page="page" :spirit-stone="profile.db.gems"/>
+    <WPBrandHeader ref="brandHeader" :page="page" :spirit-stone="profile.db.gems" :spirit-stone-unavailable="profile.readOnly||!!profile.bootError"/>
     <view class="main-content">
      <view v-if="profile.storageError" class="notice error" role="alert">{{profile.storageError}}</view>
      <slot />
@@ -21,7 +21,7 @@
 import WPActionTile from "../components/button/WPActionTile.vue"
 
 import {computed,ref,watch,nextTick,getCurrentInstance,onMounted,onUnmounted} from 'vue'
-import {onShow,onReady} from '@dcloudio/uni-app'
+import {onShow,onReady,onBackPress} from '@dcloudio/uni-app'
 import {windowLayout as layout} from '../services/window'
 import {useThemeStore} from '../stores/theme'
 import {useProfileStore} from '../stores/profile'
@@ -34,6 +34,12 @@ import WPNavIcon from '../components/wp-nav-icon/WPNavIcon.vue'
 import type {NavIconName} from '../services/nav-icons'
 import {friendlyNavStyle} from '../services/friendly-nav-icons'
 const props=defineProps<{page:PageId}>();const theme=useThemeStore(),profile=useProfileStore();const pageSubtitle=computed(()=>navigation.find(n=>n.id===props.page)?.subtitle)
+const brandHeader=ref<InstanceType<typeof WPBrandHeader>>()
+onBackPress(()=>{
+ if(brandHeader.value?.closePanels())return true
+ if(props.page==='parent'){navigate('settings');return true}
+ return false
+})
 // Reserve space for the floating bar and its breathing room only where it is visible.
 const navSpace=ref(108),instance=getCurrentInstance();let navMeasureTimer:ReturnType<typeof setTimeout>|undefined
 function measureNavigation(){clearTimeout(navMeasureTimer);navMeasureTimer=setTimeout(()=>{void nextTick(()=>{if(!instance?.proxy||props.page==='course'||layout.sizeClass!=='compact')return;uni.createSelectorQuery().in(instance.proxy).select('.bottom-nav').boundingClientRect(rect=>{if(rect&&!Array.isArray(rect)&&typeof rect.height==='number'&&rect.height>0)navSpace.value=Math.ceil(rect.height)+26}).exec()})},80)}

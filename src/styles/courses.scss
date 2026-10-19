@@ -65,3 +65,11 @@
 .activity-image-choices .answer-choice{flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;min-width:0;padding:12px;text-align:center}
 .activity-image-choices .small-picture{width:100%;height:88px;flex-shrink:0}
 .activity-image-choices .answer-choice>uni-text,.activity-image-choices .answer-choice>text{width:100%;white-space:normal;overflow-wrap:anywhere;line-height:1.45}
+
+/* Compact importer follows the active theme and preserves full touch targets. */
+.course-import-form{display:flex;flex-direction:column;gap:12px;min-width:0;padding-top:16px;border-top:1px solid var(--wp-border)}
+.course-import-heading{display:flex;flex-direction:column;gap:4px}.course-import-heading .section-title{margin:0}
+.course-import-form .course-textarea{height:156px}.course-import-form .course-check{align-items:flex-start;padding:12px;line-height:1.6;text-align:left;white-space:normal;overflow-wrap:anywhere}
+.course-consent-dot{display:block;flex:0 0 18px;width:18px;height:18px;margin-top:3px;border:2px solid var(--wp-border);border-radius:50%;box-sizing:border-box}
+.course-consent-dot.checked{border-color:var(--wp-primary);background:var(--wp-primary);box-shadow:inset 0 0 0 3px var(--wp-surface)}
+.course-import-form .import-preview{display:flex;flex-direction:column;gap:8px}.course-item>view:first-child{display:flex;flex-direction:column;gap:5px}

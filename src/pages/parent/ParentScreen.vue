@@ -21,7 +21,7 @@
 </template>
 <script setup lang="ts">
 import {computed,ref,onUnmounted,onDeactivated,onActivated} from 'vue'
-import {onShow,onHide,onUnload,onBackPress} from '@dcloudio/uni-app'
+import {onShow,onHide,onUnload} from '@dcloudio/uni-app'
 import CourseManagement from '../../components/course/CourseManagement.vue'
 import LearningBackupPanel from '../../components/course/LearningBackupPanel.vue'
 import ParentLearningSettings from '../../components/parent/ParentLearningSettings.vue'
@@ -45,7 +45,6 @@ onShow(resume);onActivated(resume)
 function leave(){uni.hideKeyboard();gate.leaveVisit(visit);deleteText.value='';gateMessage.value=''}
 onHide(()=>{const pages=getCurrentPages();if(pages[pages.length-1]?.route!=='pages/parent/index')leave()})
 onUnload(leave);onUnmounted(leave);onDeactivated(leave)
-onBackPress(()=>{leave();navigate('settings');return true})
 const weekly=computed(()=>Array.from({length:7},(_,i)=>{const day=new Date();day.setDate(day.getDate()-6+i);const date=localDate(day);return {date,label:`${day.getMonth()+1}/${day.getDate()}`,count:profile.db.history.filter(a=>localDate(new Date(a.at))===date).length}}))
 const max=computed(()=>Math.max(1,...weekly.value.map(d=>d.count)))
 const accuracy=computed(()=>profile.db.history.length?Math.round(profile.db.history.filter(a=>a.correct).length/profile.db.history.length*100):0)
