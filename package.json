@@ -1,6 +1,6 @@
 {
   "name": "wordpal",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "private": true,
   "description": "离线优先的自然拼读与四象伙伴学习应用",
   "scripts": {
