@@ -19,6 +19,7 @@
 .wp-app.high-contrast .spirit-stone-badge{background:var(--wp-surface);color:var(--wp-foreground);border:2px solid var(--wp-foreground);box-shadow:none}
 .wp-app.reduce-motion .wp-brand-header .spirit-stone-badge:not([disabled]):active,.wp-app.reduce-motion .spirit-stone-badge{transition:none;transform:none}
 .wp-app.scaled-text .wp-brand-header .topbar-actions{flex-wrap:wrap}
+.wp-app.large-text .wp-brand-header .spirit-stone-badge,.wp-app.large-text .wp-brand-header .install-trigger{min-height:56px}
 @media(max-width:599px){.spirit-stone-unit{display:none}.wp-app .wp-brand-header .spirit-stone-badge{padding:5px 8px}}
 @media(max-width:359px){.spirit-stone-icon{width:28px;height:28px;flex-basis:28px}.spirit-stone-count{font-size:calc(16px * var(--wp-brand-font-scale,1))}.spirit-stone-panel{padding:18px}.spirit-stone-balance{padding:12px;gap:12px}}
 @media(prefers-reduced-motion:reduce){.wp-app .wp-brand-header .spirit-stone-badge:not([disabled]):active,.wp-app .spirit-stone-badge{transition:none;transform:none}}
