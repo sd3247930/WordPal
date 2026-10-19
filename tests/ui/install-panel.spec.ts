@@ -6,9 +6,9 @@ for(const screen of [{width:320,height:700,largeText:true},{width:390,height:844
  await page.setViewportSize(screen);await setAppearance(page,theme,'light',{largeText:screen.largeText});await seedDatabase(page,freshDatabase())
  for(const route of ['home','learn','pet','review','settings']){
   await go(page,route)
-  const trigger=page.getByRole('button',{name:'📲 安装',exact:true}),gem=page.getByLabel('灵石数量'),buttonBox=await trigger.boundingBox(),gemBox=await gem.boundingBox()
+  const trigger=page.getByRole('button',{name:'安装 WordPal',exact:true}),gem=page.locator('.spirit-stone-badge'),buttonBox=await trigger.boundingBox(),gemBox=await gem.boundingBox()
   expect(buttonBox!.x+buttonBox!.width).toBeLessThanOrEqual(gemBox!.x+1)
-  expect(buttonBox!.height).toBeGreaterThanOrEqual(56)
+  expect(buttonBox!.height).toBeGreaterThanOrEqual(48)
   const before=await database(page)
   await trigger.click()
   const panel=page.getByRole('dialog',{name:'安装 WordPal',exact:true})
@@ -18,7 +18,7 @@ for(const screen of [{width:320,height:700,largeText:true},{width:390,height:844
   await page.keyboard.press('Escape');await expect(panel).toBeHidden();await expect(trigger).toBeFocused()
   expect(await database(page)).toEqual(before)
  }
- await page.getByRole('button',{name:'📲 安装',exact:true}).click()
+ await page.getByRole('button',{name:'安装 WordPal',exact:true}).click()
  await page.getByRole('button',{name:'前往学习备份',exact:true}).click()
  await expect(page.locator('.parent-math-question')).toBeVisible()
  await expect(page.locator('.learning-backup-panel')).toHaveCount(0)

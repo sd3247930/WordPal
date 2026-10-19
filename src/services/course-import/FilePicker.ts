@@ -1,5 +1,6 @@
 import {strToU8} from 'fflate'
 import {nativeWrite} from '../content/MediaRepository'
+import {sha256} from '../content/digest'
 export interface PickedCourseFile {name:string;bytes:Uint8Array}
 export function canPickCourseFile(){
  // #ifdef H5
@@ -67,10 +68,78 @@ export function readAndroidDocument(activity:any,resolver:any,uri:any):Uint8Arra
   if(temporary)try{native.invoke(temporary,'delete')}catch{}
  }
 }
-export async function downloadLocalFile(name:string,data:Uint8Array|string){
+/** Stage text once so Java can decode/copy large files without returning byte arrays through the bridge. */
+function stageAndroidExport(bytes:Uint8Array):Promise<any>{
+ const encoded=uni.arrayBufferToBase64(bytes.slice().buffer)
+ const name='wordpal-course-export-'+Date.now()+'-'+Math.random().toString(16).slice(2)+'.base64'
+ return new Promise((resolve,reject)=>{
+  const fail=()=>reject(new Error('无法准备课程文件，请检查可用空间。'))
+  plus.io.resolveLocalFileSystemURL('_doc/',(root:any)=>root.getFile(name,{create:true,exclusive:true},(entry:any)=>{
+   const removeAndFail=()=>entry.remove(fail,fail)
+   entry.createWriter((writer:any)=>{
+    writer.onerror=removeAndFail
+    writer.onwriteend=()=>entry.file((file:any)=>{if(file.size!==encoded.length){removeAndFail();return}resolve(entry)},removeAndFail)
+    writer.write(encoded)
+   },removeAndFail)
+  },fail),fail)
+ })
+}
+/** Use native channels in bulk; no large byte[] crosses Native.js on the write path. */
+function writeAndroidDocument(activity:any,resolver:any,uri:any,staged:any,total:number){
+ const native=plus.android,Input=native.importClass('java.io.FileInputStream') as any,Output=native.importClass('java.io.FileOutputStream') as any
+ const Decoder=native.importClass('android.util.Base64InputStream') as any,Channels=native.importClass('java.nio.channels.Channels') as any
+ const opened:any[]=[]
+ try{
+  const input=new Input(plus.io.convertLocalFileSystemURL(staged.toLocalURL()));opened.push(input)
+  const decoder=new Decoder(input,0);opened.push(decoder)
+  const descriptor=(native.invoke as any)(resolver,'openFileDescriptor',uri,'w');if(!descriptor)throw new Error('无法打开保存位置。');opened.push(descriptor)
+  const output=new Output(native.invoke(descriptor,'getFileDescriptor'));opened.push(output)
+  const destination=native.invoke(output,'getChannel'),source=Channels.newChannel(decoder)
+  let written=0
+  while(written<total){const count=Number((native.invoke as any)(destination,'transferFrom',source,written,total-written));if(!Number.isInteger(count)||count<=0)throw new Error('课程文件写入未完成。');written+=count}
+  native.invoke(output,'flush');native.invoke(output,'close')
+  const readback=readAndroidDocument(activity,resolver,uri)
+  return readback
+ }finally{for(const stream of opened.reverse())try{native.invoke(stream,'close')}catch{}}
+}
+/** Save to a selected Android document, without broad storage permissions. */
+export async function saveAndroidDocument(name:string,bytes:Uint8Array):Promise<boolean>{
+ const staged=await stageAndroidExport(bytes)
+ try{
+  const native=plus.android,activity=native.runtimeMainActivity() as any,Intent=native.importClass('android.content.Intent') as any
+  const requestCode=7315,previous=activity.onActivityResult
+  return await new Promise<boolean>((resolve,reject)=>{
+   const restore=()=>{activity.onActivityResult=previous}
+   activity.onActivityResult=(request:number,result:number,data:any)=>{
+    if(request!==requestCode){previous?.(request,result,data);return}
+    restore()
+    if(result!==-1||!data){resolve(false);return}
+    try{
+     const uri=native.invoke(data,'getData'),resolver=native.invoke(activity,'getContentResolver')
+     if(!uri)throw new Error('未选择保存位置。')
+     const readback=writeAndroidDocument(activity,resolver,uri,staged,bytes.length)
+     if(readback.length!==bytes.length||sha256(readback)!==sha256(bytes))throw new Error('导出文件读回校验失败，请重新保存。')
+     resolve(true)
+    }catch(error){reject(error instanceof Error?error:new Error('课程文件无法保存，请检查可用空间并重新选择位置。'))}
+   }
+   try{
+    const intent=new Intent(Intent.ACTION_CREATE_DOCUMENT)
+    intent.addCategory(Intent.CATEGORY_OPENABLE);intent.setType('application/zip')
+    intent.putExtra(Intent.EXTRA_TITLE,name)
+    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+    ;(native.invoke as any)(activity,'startActivityForResult',intent,requestCode)
+   }catch{restore();reject(new Error('系统保存窗口无法打开，请稍后重试。'))}
+  })
+ }finally{try{staged.remove(()=>{},()=>{})}catch{}}
+}
+export async function downloadLocalFile(name:string,data:Uint8Array|string,options:{chooseDestination?:boolean}={}){
  const safeName=name.replace(/[^a-zA-Z0-9_.-]/g,'-')
  // #ifndef H5
- if(typeof plus!=='undefined'){await nativeWrite('_doc/wordpal/exports/'+safeName,typeof data==='string'?strToU8(data):data);return true}
+ if(typeof plus!=='undefined'){
+  const bytes=typeof data==='string'?strToU8(data):data
+  if(options.chooseDestination&&uni.getSystemInfoSync().platform==='android')return saveAndroidDocument(safeName,bytes)
+  await nativeWrite('_doc/wordpal/exports/'+safeName,bytes);return true
+ }
  const api=(globalThis as any).wx;if(api?.getFileSystemManager){api.getFileSystemManager().writeFileSync(api.env.USER_DATA_PATH+'/'+safeName,typeof data==='string'?data:data.slice().buffer,typeof data==='string'?'utf8':undefined);return true}
  // #endif
  // #ifdef H5

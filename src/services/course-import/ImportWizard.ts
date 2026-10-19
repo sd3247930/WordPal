@@ -21,6 +21,21 @@ export function parseCsv(text:string){
 }
 const aliases:Record<string,string>={lemma:'word',english:'word',meaningzh:'meaning',translation:'meaning',phonetic:'ipa',example_sentence:'example',audio:'audio_ref',image:'image_ref'}
 const safeId=(value:string)=>value.normalize('NFKD').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')
+// Plain tables have no editable metadata form. Keep explicit IDs, otherwise derive
+// a repeatable identity from the table rather than overwriting every import.
+export function inferImportMetadata(text:string,format:'json'|'csv'|'markdown',filename='',mapping:Record<string,string>={}):ImportMetadata{
+ const meta=defaultImportMetadata()
+ if(format==='json')return meta // Structured packages retain their own metadata.
+ const rows=parseCsv(format==='markdown'?markdownToCsv(text):text)
+ const header=(rows.shift()?.values||[]).map(key=>mapping[key]||aliases[key.toLowerCase()]||key.toLowerCase())
+ const idColumn=header.indexOf('course_id'),ids=[...new Set(rows.map(row=>idColumn<0?'':row.values[idColumn]).filter(Boolean))]
+ if(ids.length>1)throw new Error('词表中包含多个课程 ID，请按课程分别导入。')
+ const canonical=rows.map(row=>JSON.stringify(row.values)).sort().join('\n')
+ meta.courseId=ids[0]||'import-'+sha256(JSON.stringify(header)+'\n'+canonical).slice(0,16)
+ const name=filename.replace(/^.*[\\/]/,'').replace(/\.(csv|md)$/i,'').trim()
+ if(name&&name!=='CSV 模板')meta.title=cleanCourseLabel(name)
+ return meta
+}
 export function csvToCourse(text:string,meta:ImportMetadata,mapping:Record<string,string>={}){
  const rows=parseCsv(text),header=(rows.shift()?.values||[]).map(key=>mapping[key]||aliases[key.toLowerCase()]||key.toLowerCase())
  if(!header.includes('word')||!header.includes('meaning'))throw new Error('表头必须包含 word、meaning；可先映射英文字段与中文词义字段。')
@@ -54,9 +69,9 @@ export function previewImport(text:string,format:'json'|'csv'|'markdown',meta:Im
   if(format==='json')preview.pack=JSON.parse(text.replace(/^\uFEFF/,'')) as CoursePack
   else{const parsed=csvToCourse(format==='markdown'?markdownToCsv(text):text,meta,mapping);preview.pack=parsed.pack;preview.duplicates=parsed.duplicates;const markdownLines=format==='markdown'?markdownRowLines(text):[];rowLines=parsed.lines.map(line=>markdownLines[line-1]||line)}
   const pack=preview.pack
+  if(!pack||typeof pack!=='object')throw new Error('课程 JSON 必须为对象。')
   if(typeof pack.title==='string')pack.title=cleanCourseLabel(pack.title)
   if(typeof pack.edition==='string')pack.edition=cleanCourseLabel(pack.edition)
-  if(!pack||typeof pack!=='object')throw new Error('课程 JSON 必须为对象。')
   // The parent declaration authorizes local use; it never grants publication permission.
   if(meta.declared&&Array.isArray(pack.sources))pack.sources=pack.sources.map(source=>({...source,rightsStatus:source.rightsStatus==='redistribution-approved'?source.rightsStatus:'private-use-declared',declaredAt:new Date().toISOString(),fileSha256:preview.digest}))
   preview.issues=validateCourse(pack).map(issue=>({...issue,line:rowLines[issue.line-2]||issue.line}))

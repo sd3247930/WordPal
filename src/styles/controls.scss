@@ -29,10 +29,10 @@
 .wp-app .wp-brand-header .brand-name{font-size:calc(var(--brand-name-size) * var(--wp-brand-font-scale,1));font-weight:600;line-height:calc(var(--brand-name-leading) * var(--wp-brand-font-scale,1));color:var(--wp-foreground);letter-spacing:-.4px;white-space:nowrap}
 .wp-app .wp-brand-header .brand-subtitle{font-size:calc(var(--brand-subtitle-size) * var(--wp-brand-font-scale,1));font-weight:500;line-height:calc(var(--brand-subtitle-leading) * var(--wp-brand-font-scale,1));margin-top:0;color:var(--wp-muted-foreground);white-space:nowrap}
 .wp-app .wp-brand-header .topbar-actions{display:flex;align-items:center;justify-content:flex-end;margin-left:auto;max-width:100%;min-width:0;flex:0 1 auto}
-.wp-app .wp-brand-header .gem-chip{min-height:44px;border-radius:13px;padding:0 12px;display:inline-flex;align-items:center;font-size:var(--wp-font-small)}
+@media(max-width:599px){.wp-app .wp-brand-header{--brand-logo-size:40px}}
 @media(min-width:600px){.wp-app .wp-brand-header{--brand-logo-size:64px;--brand-name-size:26px;--brand-name-leading:30px;--brand-copy-gap:2px;--brand-logo-gap:12px;--brand-actions-gap:16px;--brand-content-height:80px;--brand-side-padding:18px;--brand-logo-radius:15px}}
 @media(min-width:840px){.wp-app .wp-brand-header{--brand-side-padding:28px}}
-@media(max-width:359.98px){.wp-app .wp-brand-header{--brand-logo-size:52px;--brand-name-size:22px;--brand-name-leading:26px;--brand-subtitle-size:13px;--brand-subtitle-leading:17px;--brand-logo-gap:8px;--brand-actions-gap:8px;--brand-side-padding:16px}.wp-app .wp-brand-header .gem-chip{padding:0 8px}}
+@media(max-width:359.98px){.wp-app .wp-brand-header{--brand-logo-size:36px;--brand-name-size:22px;--brand-name-leading:26px;--brand-subtitle-size:13px;--brand-subtitle-leading:17px;--brand-logo-gap:8px;--brand-actions-gap:8px;--brand-side-padding:16px}}
 .wp-app .main-content{padding-top:var(--brand-header-content-gap)}.wp-app .page-title{font-size:var(--wp-font-title);line-height:1.27;font-weight:700}.wp-app .page-subtitle,.wp-app .home-heading .page-subtitle{font-size:var(--wp-font-body);line-height:1.5;margin-top:10px}
 /* Short landscape windows must still expose the final navigation destinations. */
 .wp-app .sidebar{overflow-y:auto;overscroll-behavior:contain}.wp-app .sidebar>.brand,.wp-app .sidebar>.nav-group,.wp-app .sidebar>.sidebar-note{flex-shrink:0}

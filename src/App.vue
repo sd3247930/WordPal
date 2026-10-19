@@ -28,4 +28,4 @@ onLaunch(()=>{startWindowService();const profile=useProfileStore();loadDirectory
 onShow(()=>{useReviewStore().refresh();useCourseStore().applyPending()})
 onHide(()=>{stopAudio();useActivitiesStore().pauseTimer()})
 </script>
-<style lang="scss">@use './styles/tokens.scss';@use './styles/app.scss';@use './styles/study-wordbook.scss';@use './styles/accessibility.scss';@use './styles/controls.scss';@use './styles/courses.scss';@use './styles/phonics.scss';@use './styles/course-wordbook.scss';@use './styles/navigation.scss';@use './styles/icon-interactions.scss';@use './styles/cream-clay.scss';</style>
+<style lang="scss">@use './styles/tokens.scss';@use './styles/app.scss';@use './styles/study-wordbook.scss';@use './styles/accessibility.scss';@use './styles/controls.scss';@use './styles/courses.scss';@use './styles/phonics.scss';@use './styles/course-wordbook.scss';@use './styles/navigation.scss';@use './styles/icon-interactions.scss';@use './styles/cream-clay.scss';@use './styles/spirit-stone.scss';</style>

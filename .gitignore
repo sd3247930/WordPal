@@ -5,6 +5,7 @@
 /src/static/local-master-audio/
 /src/static/local-course-media/
 /src/static/local-starter-media/
+/src/static/local-spirit-stone/
 
 # ===== 依赖与包管理 =====
 node_modules/
