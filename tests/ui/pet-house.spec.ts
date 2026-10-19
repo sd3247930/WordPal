@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test'
-import {go,setAppearance,seedDatabase,database} from './helpers'
+import {go,setAppearance,seedDatabase,database,waitForArtwork} from './helpers'
 import {goldenDatabase} from './fixtures'
 import {contrast} from '../../src/styles/themes'
 const tab=(page:import('@playwright/test').Page,name:string)=>page.locator('.pet-action-tab').filter({hasText:name})
@@ -73,6 +73,6 @@ for(const scene of ['water','fire','earth','wind'])test(scene+' 夜间大字体�
 })
 for(const scene of ['water','fire','earth','wind'])for(const size of devices)test(`宠物屋 ${scene} / ${size.name} 五页回归`,async({page})=>{
  await page.clock.install({time:new Date('2026-10-04T08:00:00Z')});await page.setViewportSize(size);await seedDatabase(page,goldenDatabase());await setAppearance(page,'swiss','light');await page.addInitScript(({key,scene})=>localStorage.setItem(key,JSON.stringify({sceneId:scene})),{key:sceneKey,scene});const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message))
- for(const screen of ['home','learn','pet','review','settings']){await go(page,screen);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);await expect(page.locator(size.width<600?'.bottom-nav':'.sidebar')).toBeVisible();expect((await database(page)).session?.id).toBe('golden-session');if(screen==='pet'){await expect(page.locator('.pet-scene')).toHaveClass(new RegExp('scene-'+scene));const boxes=await page.locator('.pet-theme-choice').evaluateAll(e=>e.map(x=>x.getBoundingClientRect()));expect(new Set(boxes.map(x=>x.y)).size).toBe(size.width<600?2:1);await expect(page).toHaveScreenshot(`pethouse-${scene}-${size.name}.png`,{fullPage:true,animations:'disabled'})}}
+ for(const screen of ['home','learn','pet','review','settings']){await go(page,screen);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);await expect(page.locator(size.width<600?'.bottom-nav':'.sidebar')).toBeVisible();expect((await database(page)).session?.id).toBe('golden-session');if(screen==='pet'){await expect(page.locator('.pet-scene')).toHaveClass(new RegExp('scene-'+scene));const boxes=await page.locator('.pet-theme-choice').evaluateAll(e=>e.map(x=>x.getBoundingClientRect()));expect(new Set(boxes.map(x=>x.y)).size).toBe(size.width<600?2:1);await waitForArtwork(page);await expect(page).toHaveScreenshot(`pethouse-${scene}-${size.name}.png`,{fullPage:true,animations:'disabled'})}}
  expect(errors).toEqual([])
 })

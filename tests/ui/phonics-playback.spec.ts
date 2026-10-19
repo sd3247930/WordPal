@@ -70,7 +70,7 @@ test('精确元数据同步、播放中重播、错误恢复、切模式/切词/
  await audioButton(page).click();await active(page,0);await tick(page,.28);await active(page,1);await tick(page,.6);await active(page,2)
  await expect(page.locator('.phonics-timing-note')).toHaveAttribute('data-timing','exact')
  await audioButton(page).click();await active(page,0);await tick(page,.6);await active(page,2);await event(page,'ended');await active(page,null)
-  await audioButton(page).click();await event(page,'error');await active(page,null);await expect(audioButton(page)).toContainText('重试播放')
+ await audioButton(page).click();await active(page,0);await event(page,'error');await active(page,null);await expect(audioButton(page)).toContainText('重试播放')
  await audioButton(page).click();await active(page,0);expect(await database(page)).toEqual(before)
  await page.locator('.mode-button').filter({hasText:'连接'}).click();await active(page,null);await page.getByRole('button',{name:/^查看提示/}).click();await expect(page.locator('.study-hint')).toBeVisible();await expect(page.locator('.phonics-breakdown')).toHaveCount(0)
  await audioButton(page).click();await active(page,0,false)
