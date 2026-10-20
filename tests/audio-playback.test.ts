@@ -10,6 +10,13 @@ class FakeAudio implements AudioBackend{
  pause(){this.paused=true;this.callbacks.pause()}seek(n:number){this.seeks.push(n)}destroy(){this.destroyed=true}end(){this.paused=true;this.callbacks.ended()}
 }
 const delay=(ms:number)=>new Promise(resolve=>setTimeout(resolve,ms))
+
+test('首次播放不停止尚未准备资源的原生上下文，结束后仍能重播与切词',async()=>{
+ const audio=new FakeAudio(),stop=audio.stop.bind(audio);let unpreparedStops=0
+ audio.stop=()=>{if(!audio.src){unpreparedStops++;audio.callbacks.error({errCode:10003,errMsg:'unprepared resource'});return}stop()}
+ const service=new AudioPlaybackService(()=>audio)
+ try{await service.play('cat.wav');assert.equal(unpreparedStops,0);assert.equal(service.isPlaying.value,true);audio.end();await service.replay();await service.play('dog.wav');assert.deepEqual(audio.plays,['cat.wav','cat.wav','dog.wav']);assert.equal(service.error.value,null)}finally{service.destroy()}
+})
 test('App只读静音属性不阻断初始化，十次重播仍沿用完整监听的同一实例',async()=>{const audio=new FakeAudio();Object.defineProperty(audio,'obeyMuteSwitch',{get:()=>true});const service=new AudioPlaybackService(()=>audio);for(let i=0;i<10;i++){await service.play('cat.wav');assert.equal(service.isPlaying.value,true);audio.end()}assert.equal(audio.listeners,6);service.destroy()})
 test('同词十次完整重播与下一词只创建一个播放器、只绑定一组监听',async()=>{
  const audio=new FakeAudio();let created=0;const service=new AudioPlaybackService(()=>{created++;return audio})

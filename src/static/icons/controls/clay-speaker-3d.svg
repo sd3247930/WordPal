@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 128 128" fill="none">
+ <defs>
+  <linearGradient id="cone" x1="29" y1="36" x2="78" y2="94" gradientUnits="userSpaceOnUse"><stop stop-color="#CA956B"/><stop offset=".45" stop-color="#93603D"/><stop offset="1" stop-color="#5C3424"/></linearGradient>
+  <linearGradient id="front" x1="24" y1="47" x2="48" y2="80" gradientUnits="userSpaceOnUse"><stop stop-color="#D5A77B"/><stop offset="1" stop-color="#825335"/></linearGradient>
+  <linearGradient id="edge" x1="69" y1="24" x2="81" y2="103" gradientUnits="userSpaceOnUse"><stop stop-color="#8F5F40"/><stop offset="1" stop-color="#47271C"/></linearGradient>
+  <linearGradient id="wave" x1="87" y1="32" x2="110" y2="95" gradientUnits="userSpaceOnUse"><stop stop-color="#B98256"/><stop offset="1" stop-color="#6B402A"/></linearGradient>
+ </defs>
+ <ellipse cx="64" cy="107" rx="35" ry="6" fill="#65432C" opacity=".1"/>
+ <path d="M44 48 68 28Q74 23 78 28L81 32V98Q79 104 73 100L44 79Z" fill="url(#edge)" stroke="#6D432D" stroke-width="2" stroke-linejoin="round"/>
+ <path d="M39 48 66 26Q72 21 74 29V95Q73 102 67 97L39 77Z" fill="url(#cone)" stroke="#805135" stroke-width="2" stroke-linejoin="round"/>
+ <rect x="18" y="48" width="30" height="32" rx="8" fill="#70442D"/>
+ <rect x="15" y="45" width="30" height="32" rx="8" fill="url(#front)" stroke="#976744" stroke-width="2"/>
+ <path d="M23 49H35M49 47 66 33" stroke="#F5D6AB" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/>
+ <path d="M88 47Q102 63 88 79" stroke="#5C3826" stroke-width="8" stroke-linecap="round"/>
+ <path d="M87 44Q101 60 87 76" stroke="url(#wave)" stroke-width="7" stroke-linecap="round"/>
+ <path d="M102 33Q123 63 102 93" stroke="#5C3826" stroke-width="8" stroke-linecap="round"/>
+ <path d="M101 30Q122 60 101 90" stroke="url(#wave)" stroke-width="7" stroke-linecap="round"/>
+ <path d="m87 44 3 4m11-18 3 4" stroke="#E9BE90" stroke-width="2" stroke-linecap="round"/>
+</svg>

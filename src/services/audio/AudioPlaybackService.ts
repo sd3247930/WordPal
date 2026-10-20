@@ -62,8 +62,10 @@ export class AudioPlaybackService {
    const begin=()=>{
     if(epoch!==this.generation){resolve();return}
     try{
-     const audio=this.context()
+     const fresh=!this.backend,audio=this.context()
      const start=()=>{if(epoch!==this.generation)return;this.pendingStart=undefined;this.activeGeneration=epoch;const same=audio.src===url;audio.src=url;audio.startTime=0;if(same)try{audio.seek(0)}catch{}this.isPlaying.value=false;this.loading.value=false;this.loadingTimer=setTimeout(()=>{if(epoch===this.generation)this.loading.value=true},300);this.timeout=setTimeout(()=>{if(epoch===this.generation)this.fail('播放未能开始，请重试。')},8000);audio.play()}
+     // A fresh native context has no previous resource to stop.
+     if(fresh){start();return}
      this.pendingStart=start;audio.stop()
      // Native bases may dispatch stop asynchronously or omit it when already stopped.
      if(this.pendingStart)this.stopTimer=setTimeout(()=>{if(this.pendingStart===start){this.pendingStart=undefined;start()}},60)
