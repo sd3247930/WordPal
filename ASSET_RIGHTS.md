@@ -40,3 +40,11 @@
 - 路径：`src/static/icons/home-priority/` 中4枚SVG及对应256px透明PNG，导出工具为 `tools/export-home-priority-icons.mjs`。
 - 作者 / 核验代号：WordPal Archive；按用户改造任务绘制书本嫩芽、日历时钟、靶心星星、绿色书堆意象，无私有参考图像素或第三方素材。PNG重新渲染并去除元数据，无新增依赖。
 - 根据实施文档，在缺少独立高清原图时作为功能性矢量替代，正式奶油粘土高清插画仍待提供。用户授权项目内制作与接入；本记录不选定独立素材许可证，也不扩大其他素材的再分发范围。
+
+## 首页六枚用户附件图标替换（2026-10-21）
+
+- 本次由项目用户直接提供六张独立透明 PNG，按上传顺序接入：粉色爱心爪印、粉色 3D 喇叭、书本嫩芽、日历时钟、靶心星星、绿色书堆。未重新生成或引用第三方图像；已目视核对为纯图标，不含个人身份信息。提供者为项目用户，核验及记录代号为 WordPal Archive。
+- 生产位置：`src/static/icons/companion/clay-paw.png`；`src/static/icons/controls/clay-speaker-3d.png` 及 `clay-speaker-3d-dark.png`；`src/static/icons/home-priority/` 下 `heading.png`、`due.png`、`weak.png`、`known.png`。六枚图形对应七个既有资源文件，静态候选总数量保持不变。
+- 使用 `tools/export-home-uploaded-icons.mjs` 从本机指定的六枚命名原图导出：仅整理透明留白、保持比例、统一为 256px，并保留必要 PNG 块以剥离 C2PA / EXIF / 文本元数据。附件原图只保存在本机备份，不进入 Git。浅深主题使用同一张原色喇叭，不重新调色；新爪印取消旧资源的深色增亮滤镜。
+- 上一节的四枚矢量功能替代图已由本次独立 3D 附件替换；保留其 SVG 源及原导出工具作为可恢复方案。旧爪印、浅深色喇叭和四枚旧 PNG 同时保存在本机带哈希的备份及历史提交；可用 `tools/restore-icon-backup.mjs` 先预览、再按需恢复图标，不触碰学习数据。
+- 用户明确授权本次项目内替换；未附加独立素材许可证或第三方署名，未改变既有项目的许可决定与其他资源授权范围。

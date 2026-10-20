@@ -94,7 +94,6 @@ onUnmounted(()=>observer?.disconnect())
 .companion-stacked .companion-copy{width:100%}
 .companion-dark.home-companion-lite.wp-card{box-shadow:none}
 .companion-dark .companion-open.wp-button{background:radial-gradient(ellipse at 35% 0%,rgba(255,226,187,.12),transparent 68%),linear-gradient(180deg,#75563e,#5b402b);border-color:#98734e;color:#ffe5c5;box-shadow:inset 0 2px 3px rgba(255,231,201,.15),inset 0 -3px 5px rgba(0,0,0,.2),0 3px 0 rgba(0,0,0,.2);text-shadow:0 1px 1px rgba(0,0,0,.35)}
-.companion-dark .companion-paw .companion-clay-icon{filter:brightness(1.45)}
 .high-contrast .home-companion-lite.wp-card{box-shadow:none;border-width:2px}
 .high-contrast .home-companion-lite .companion-open.wp-button{background:var(--wp-surface);color:var(--wp-foreground);border:2px solid var(--wp-foreground);box-shadow:none;text-shadow:none}
 @media(max-width:599px){.home-companion.home-companion-lite.wp-card{padding:16px}.home-companion-layout{gap:12px}}
