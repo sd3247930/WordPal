@@ -3,6 +3,7 @@ import path from 'node:path'
 import {execFileSync} from 'node:child_process'
 import {createHash} from 'node:crypto'
 import {unzipSync} from 'fflate'
+import {verifySpiritStoneArtwork} from '../lib/spirit-stone-artwork.mjs'
 const source='build/android/app/build/outputs/apk/release/app-release.apk'
 const sdk=process.env.ANDROID_HOME||process.env.ANDROID_SDK_ROOT
 const expected=process.env.WORDPAL_EXPECTED_CERT_SHA256?.replaceAll(':','').toLowerCase()
@@ -19,12 +20,17 @@ const permissions=[...run(exe('aapt2'),['dump','permissions',source]).matchAll(/
 const allowed=new Set(['android.permission.INTERNET','android.permission.ACCESS_NETWORK_STATE','android.permission.RECORD_AUDIO','android.permission.VIBRATE','com.wordpal.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'])
 if(permissions.some(permission=>!allowed.has(permission)))throw Error('APK requests a permission outside the reviewed application scope.')
 const bytes=fs.readFileSync(source),files=unzipSync(bytes)
-const forbidden=Object.keys(files).filter(name=>/(?:^|\/)(?:private|docs|test-results|local-course-media|local-starter-media|local-master-audio)(?:\/|$)|(?:^|\/)\.env(?:\.|$)|\.(?:keystore|jks|pem|key|log|har)$/i.test(name))
+verifySpiritStoneArtwork(file=>{
+ const suffix='/www/'+file,entries=Object.keys(files).filter(name=>name.startsWith('assets/apps/')&&name.endsWith(suffix))
+ if(entries.length!==1)throw Error('APK must contain exactly one reviewed spirit-stone asset: '+file)
+ return files[entries[0]]
+})
+const forbidden=Object.keys(files).filter(name=>/(?:^|\/)(?:private|docs|test-results|local-course-media|local-starter-media|local-master-audio|local-spirit-stone)(?:\/|$)|(?:^|\/)\.env(?:\.|$)|\.(?:keystore|jks|pem|key|log|har)$/i.test(name))
 if(forbidden.length)throw Error('APK includes excluded local or credential files.')
 fs.mkdirSync('build/release',{recursive:true})
 fs.copyFileSync(source,'build/release/WordPal.apk')
 const hash=createHash('sha256').update(bytes).digest('hex')
 fs.writeFileSync('build/release/WordPal.apk.sha256',hash+'  WordPal.apk\n')
-const report={version:pkg.version,versionCode:manifest.versionCode,packageName:identity[1],bytes:bytes.length,sha256:hash,signatureVerified:true,debuggable:false,zip16kAligned:true,permissions,excludedFiles:forbidden.length,localContentIncluded:false}
+const report={version:pkg.version,versionCode:manifest.versionCode,packageName:identity[1],bytes:bytes.length,sha256:hash,signatureVerified:true,debuggable:false,zip16kAligned:true,permissions,excludedFiles:forbidden.length,localContentIncluded:false,spiritStoneArtworkVerified:true}
 fs.writeFileSync('build/release-audit.json',JSON.stringify(report,null,2)+'\n')
 console.log(JSON.stringify(report,null,2))

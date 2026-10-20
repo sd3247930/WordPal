@@ -1,12 +1,13 @@
 import {test} from 'node:test'
 import assert from 'node:assert/strict'
-import {mkdtempSync,mkdirSync,writeFileSync,rmSync,realpathSync} from 'node:fs'
+import {mkdtempSync,mkdirSync,writeFileSync,copyFileSync,rmSync,realpathSync} from 'node:fs'
 import {tmpdir} from 'node:os'
 import path from 'node:path'
 import {spawnSync} from 'node:child_process'
 
 function fixture(run:(root:string)=>void){
  const root=mkdtempSync(path.join(tmpdir(),'wordpal-release-check-'))
+ for(const size of [128,192]){const file=`static/brand/spirit-stone-${size}.png`;mkdirSync(path.dirname(path.join(root,file)),{recursive:true});copyFileSync(path.join('src',file),path.join(root,file))}
  try{run(root)}finally{
   const relative=path.relative(realpathSync(tmpdir()),realpathSync(root))
   if(relative.startsWith('..')||path.isAbsolute(relative)||!relative.startsWith('wordpal-release-check-'))throw Error('Unexpected test cleanup target.')
@@ -25,4 +26,9 @@ test('发布检查拒绝测试开关或合成教材，即使位于嵌套产物�
 }))
 test('缺失或没有可检查构建文件时不能误报通过',()=>fixture(root=>{
  assert.notEqual(check(root).status,0);assert.notEqual(check(path.join(root,'missing')).status,0)
+}))
+test('公开构建即使有页面文件，漏打包水晶图也必须阻断',()=>fixture(root=>{
+ mkdirSync(path.join(root,'assets'));writeFileSync(path.join(root,'assets/app.js'),'const balance=13;')
+ rmSync(path.join(root,'static/brand/spirit-stone-128.png'))
+ assert.notEqual(check(root).status,0)
 }))
