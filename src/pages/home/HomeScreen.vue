@@ -1,6 +1,7 @@
 <template>
  <view class="page-heading home-heading"><view><text class="page-title">{{greeting}}，小探险家！</text><text class="home-date small muted">{{dateLabel}}</text><text class="page-subtitle">每天一点，探索更大的单词世界。</text></view></view>
- <view class="hero-counts home-stats" aria-label="今日学习概览">
+ <HomeStatsRow v-if="theme.settings.themeId==='clay'" :streak="streak" :due="learning.due.length" :planned="learning.planProblem?null:learning.todayPlan?.wordIds.length||0" :unavailable="profile.readOnly||!!profile.bootError"/>
+ <view v-else class="hero-counts home-stats" aria-label="今日学习概览">
   <view><text class="small muted">连续学习</text><text class="metric">{{streak}} <text class="small">天</text></text></view>
   <view><text class="small muted">今日复习</text><text class="metric">{{learning.due.length}} <text class="small">个</text></text></view>
   <view><text class="small muted">今日新词</text><text class="metric">{{learning.todayPlan?.wordIds.length||0}} <text class="small">个</text></text></view>
@@ -35,6 +36,7 @@
 </template>
 <script setup lang="ts">
 import PetHousePetArt from '../../components/pet-house/PetHousePetArt.vue'
+import HomeStatsRow from '../../components/home/HomeStatsRow.vue'
 import WPButton from "../../components/wp-button/WPButton.vue"
 import WPActionTile from "../../components/button/WPActionTile.vue"
 import WPControlIcon from '../../components/button/WPControlIcon.vue'
@@ -42,8 +44,8 @@ import {useCourseStore} from '../../stores/course'
 import {useActivitiesStore} from '../../stores/activities'
 import {getCourseWord} from '../../services/content/ContentRegistry'
 
-import {onShow} from '@dcloudio/uni-app'
-import {computed,ref,onUnmounted} from 'vue'
+import {onShow,onHide} from '@dcloudio/uni-app'
+import {computed,ref,onMounted,onUnmounted} from 'vue'
 import WPCard from '../../components/wp-card/WPCard.vue'
 import WPChip from '../../components/wp-chip/WPChip.vue'
 import WPProgress from '../../components/wp-progress/WPProgress.vue'
@@ -57,7 +59,7 @@ import {usePetHouseStore} from '../../stores/pet-house'
 import {useThemeStore} from '../../stores/theme'
 import {petHouseThemes,petHouseStyle} from '../../styles/pet-house'
 import {navigate} from '../../services/navigation'
-import {formatHomeDate} from '../../services/date'
+import {formatHomeDate,consecutiveLearningDays} from '../../services/date'
 import {playWord,stopAudio} from '../../services/audio'
 import {localDate,type LearningMode,type Word} from '../../../packages/core_learning'
 import {wordById} from '../../../packages/content_schema'
@@ -66,11 +68,20 @@ const learning=useLearningStore(),review=useReviewStore(),profile=useProfileStor
 const house=usePetHouseStore(),theme=useThemeStore()
 const scene=computed(()=>petHouseThemes[house.sceneId]),dark=computed(()=>theme.mode==='dark')
 const houseStyle=computed(()=>petHouseStyle(house.sceneId,dark.value,theme.settings.highContrast,theme.settings.themeId,theme.tokens))
-const dateLabel=formatHomeDate(),hour=new Date().getHours(),greeting=hour<11?'早上好':hour<18?'下午好':'晚上好'
+const now=ref(Date.now()),dateLabel=computed(()=>formatHomeDate(now.value)),greeting=computed(()=>{const hour=new Date(now.value).getHours();return hour<11?'早上好':hour<18?'下午好':'晚上好'})
 const moods={calm:'平静',happy:'开心',excited:'兴奋',curious:'好奇'}
 const companionGreeting={water:'我们一起，慢慢记住新单词。',fire:'一起试一试，收获新的勇气。',earth:'每天一点点，小进步会长大。',wind:'一起发现更多有趣的小世界。'}
-const streak=computed(()=>{let count=0;const day=new Date();if(!profile.db.streakDates.includes(localDate(day)))day.setDate(day.getDate()-1);while(profile.db.streakDates.includes(localDate(day))){count++;day.setDate(day.getDate()-1)}return count})
-onShow(()=>{learning.prepareDaily()})
+const streak=computed(()=>consecutiveLearningDays(profile.db.streakDates,new Date(now.value)))
+let statsTimer:ReturnType<typeof setInterval>|undefined,visible=true
+function refreshStats(){now.value=Date.now();review.refresh();learning.prepareDaily()}
+function pauseStats(){clearInterval(statsTimer);statsTimer=undefined}
+function resumeStats(){visible=true;refreshStats();pauseStats();statsTimer=setInterval(refreshStats,30000)}
+onShow(resumeStats);onHide(()=>{visible=false;pauseStats()});onMounted(resumeStats);onUnmounted(pauseStats)
+// #ifdef H5
+function foregroundStats(){if(!visible)return;if(document.visibilityState==='hidden')pauseStats();else resumeStats()}
+onMounted(()=>{document.addEventListener('visibilitychange',foregroundStats);window.addEventListener('focus',foregroundStats)})
+onUnmounted(()=>{document.removeEventListener('visibilitychange',foregroundStats);window.removeEventListener('focus',foregroundStats)})
+// #endif
 const todayWords=computed(()=>(learning.todayPlan?.wordIds||learning.lesson.wordIds).flatMap(id=>{const word=getCourseWord(course.currentId,id);return word?[word]:[]}))
 const reviewsToday=computed(()=>learning.todayAnswers.filter(a=>a.source==='review_due').length)
 const accuracy=computed(()=>learning.todayAnswers.length?Math.round(learning.todayAnswers.filter(a=>a.correct).length/learning.todayAnswers.length*100):0)

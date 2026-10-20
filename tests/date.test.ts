@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { formatHomeDate, formatLocalDate, formatLocalDateTime } from '../src/services/date'
+import { formatHomeDate, formatLocalDate, formatLocalDateTime, consecutiveLearningDays } from '../src/services/date'
 import { FSRSScheduler, newCard } from '../packages/srs_fsrs'
 
 test('日期展示与复习排程在缺少 Intl 和 locale 方法的基座中正常工作', () => {
@@ -27,6 +27,17 @@ test('日期展示与复习排程在缺少 Intl 和 locale 方法的基座中正
     dateMethods.forEach((name, index) => { Date.prototype[name] = originals[index] })
     String.prototype.localeCompare = localeCompare
   }
+})
+
+test('首页连续学习保留昨日起算规则，跨午夜/跨年读取最新日期且不改记录',()=>{
+ const dates=['2026-12-30','2026-12-31','2026-12-31'],before=JSON.stringify(dates),now=new Date(2026,11,31,23,59)
+ assert.equal(consecutiveLearningDays(dates,now),2)
+ assert.equal(consecutiveLearningDays(dates,new Date(2027,0,1,0,1)),2)
+ assert.equal(consecutiveLearningDays(dates,new Date(2027,0,2)),0)
+ assert.equal(consecutiveLearningDays([...dates,'2027-01-01'],new Date(2027,0,1)),3)
+ assert.equal(consecutiveLearningDays([],now),0)
+ assert.equal(consecutiveLearningDays(['invalid'],new Date(NaN)),0)
+ assert.equal(JSON.stringify(dates),before);assert.equal(now.getDate(),31)
 })
 
 test('日期格式覆盖跨年、所有星期和异常值', () => {
