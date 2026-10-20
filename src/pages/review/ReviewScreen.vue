@@ -2,6 +2,7 @@
  <CourseWordCardList v-if="cardsOpen" ref="cardBrowser" :course-id="course.currentId" @close="cardsOpen=false"/>
  <view v-else class="wordbook-overview">
  <view class="page-heading wordbook-heading"><view><text class="page-title">我的单词本</text><text class="page-subtitle">看看记忆长到哪一步，再和单词见一面。</text></view></view>
+ <template v-if="!priority">
  <WPButton class="wordbook-continue-link" kind="quiet" @click="begin">{{canContinueStudy?'继续当前学习':'继续当前课程'}}</WPButton>
  <view class="wordbook-course-filters">
   <WordbookScopeSwitch v-model="scope" v-model:learned-only="learnedOnly" :current-count="courseOverview.summary.uniqueLexemes" :all-count="allWords.stats.totalUniqueLexemes" :learned-count="learnedWords.stats.totalUniqueLexemes"/>
@@ -12,19 +13,24 @@
  </view>
  <template v-if="scope==='current'"><template v-if="courseOverview.available"><WPButton v-if="courseOverview.summary.dueUniqueLexemes" class="course-overview-due" @click="beginOverviewDue">复习当前教材到期词 · {{courseOverview.summary.dueUniqueLexemes}}</WPButton><WPFamiliaritySummary :summary="courseOverview.summary" :course-title="course.current.title"/><WPButton class="course-card-entry" @click="cardsOpen=true">查看教材全部单词 · {{courseOverview.summary.totalOccurrences}}</WPButton></template><WPCard v-else><text class="block">当前教材尚未安装或已移除，无法浏览完整词卡。</text><text class="small muted block">保留的已学词可在全部单词中查看。</text><WPButton @click="openGallery">前往教材库</WPButton></WPCard></template>
  <view class="wordbook-stats" aria-label="单词本统计"><view v-for="item in filters" :key="item.id"><text>{{item.count}}</text><text class="small muted">{{item.short}}</text></view></view>
+ </template>
+ <WPCard v-if="priority" class="wordbook-priority-context"><text class="section-title block">{{homeReviewPriorityLabels[priority]}}</text><text class="small muted block">{{priority==='due'?'当前教材：《'+course.current.title+'》 · ':''}}{{homeReviewPriorityNotes[priority]}}</text><WPButton kind="quiet" @click="priority=null">返回单词本</WPButton></WPCard>
  <view class="wordbook-search"><text aria-hidden="true">⌕</text><input :value="query" placeholder="搜索英文、中文或单元" aria-label="搜索单词本" :maxlength="80" @input="search"/><WPActionTile v-if="query" role="button" tabindex="0" aria-label="清空单词搜索" @click="query=''">×</WPActionTile></view>
+ <template v-if="!priority">
  <view class="wordbook-review-action"><WPButton v-if="result.stats.dueUniqueLexemeCount" @click="beginDue">开始到期复习 · {{result.stats.dueUniqueLexemeCount}}</WPButton><view v-else class="review-clear"><text class="small muted">✓ 当前范围没有到期复习</text><WPButton kind="quiet" @click="selectFilter('all')">浏览全部单词</WPButton></view></view>
  <WordbookCategorySelector v-model="filter"/>
  <text v-if="filter==='due'||filter==='weak'" class="small muted block wordbook-filter-note">{{filter==='due'?'按记忆计划显示已到复习时间的单词。':'只显示你手动星标的重点词，与到期时间无关。'}}</text>
  <view v-if="filter==='weak'" class="wordbook-focus-legend"><text>★ 我的重点 {{result.stats.focusCount}}</text><text>⚡ 系统建议 {{result.suggestions.length}}（单独列出）</text></view>
  <view v-if="filter==='weak'&&result.suggestions.length" class="wordbook-suggestions"><text class="small muted">系统建议多练</text><WPButton v-for="word in result.suggestions.slice(0,5)" :key="word.id" kind="quiet" @click="openSuggestion(word.id)">{{word.word}}</WPButton></view>
  <text v-if="filter==='mistakes'" class="small muted block wordbook-filter-note">最近多次需要帮助的单词，连续两次正式答对后移出。</text>
+ </template>
+ <text v-if="priorityUnavailable" class="notice error" role="status">词表暂不可用，请先在设置中恢复档案。</text>
  <view class="review-workspace wordbook-workspace">
-  <WPCard class="review-list"><view class="section-heading"><text>{{filters.find(item=>item.id===filter)?.name}}</text><text class="small muted">{{list.length}} 个独立词 · 预览</text></view>
-   <view v-if="!list.length" class="empty-small"><WPNavIcon name="review" :size="36"/><text>{{query?'没有找到这个单词':filter==='due'?'暂时没有到期单词':filter==='mistakes'?'这轮记忆很平稳':filter==='weak'?'还没有重点标记':'这里还没有单词'}}</text><text class="small muted">{{query?'试试英文、中文或单元名称。':filter==='weak'?'打开单词详情，把想多练的词加入重点。':'可以切换到所有单词，轻松看看。'}}</text></view>
+  <WPCard class="review-list"><view class="section-heading"><text>{{priority?homeReviewPriorityLabels[priority]:filters.find(item=>item.id===filter)?.name}}</text><text class="small muted">{{priorityUnavailable?'—':list.length}} 个独立词 · 预览</text></view>
+   <view v-if="!priorityUnavailable&&!list.length" class="empty-small"><WPNavIcon name="review" :size="36"/><text>{{query?'没有找到这个单词':priority?priority==='due'?'暂时没有到期单词':priority==='weak'?'暂时没有需要巩固的单词':'还没有已认识的单词':filter==='due'?'暂时没有到期单词':filter==='mistakes'?'这轮记忆很平稳':filter==='weak'?'还没有重点标记':'这里还没有单词'}}</text><text class="small muted">{{query?'试试英文、中文或单元名称。':priority?'浏览不会改变学习记录。':filter==='weak'?'打开单词详情，把想多练的词加入重点。':'可以切换到所有单词，轻松看看。'}}</text></view>
    <view class="wordbook-page-list" @touchstart="interaction.guard.start($event)" @touchmove="interaction.guard.move($event)" @touchend="interaction.guard.end($event)" @touchcancel="interaction.guard.cancel()">
     <view v-for="(item,index) in pageItems" :id="index===0?'wordbook-page-first':undefined" :key="item.key" class="review-row wordbook-row" :class="{selected:selected===item.key}" :data-word-id="item.word.id" :data-course-id="item.position?.courseId" :data-occurrence="item.key">
-     <view class="wordbook-row-copy"><text class="review-word">{{item.word.word}}<text v-if="book.preferences.favorites.includes(item.word.id)" class="wordbook-star" aria-label="我的重点">★</text></text><text class="wordbook-meaning">{{item.word.meaning}}</text><text class="wordbook-source">{{sourceLabel(item)}}</text><text v-if="filter==='weak'||book.preferences.later.includes(item.word.id)" class="small muted block">{{filter==='weak'?'我的重点':'稍后再看'}}</text></view>
+     <view class="wordbook-row-copy"><text class="review-word">{{item.word.word}}<text v-if="book.preferences.favorites.includes(item.word.id)" class="wordbook-star" aria-label="我的重点">★</text></text><text class="wordbook-meaning">{{item.word.meaning}}</text><text class="wordbook-source">{{sourceLabel(item)}}</text><text v-if="!priority&&filter==='weak'||book.preferences.later.includes(item.word.id)" class="small muted block">{{!priority&&filter==='weak'?'我的重点':'稍后再看'}}</text></view>
      <view class="wordbook-row-memory"><text class="familiarity-label">{{familiarityFor(item.word.id,profile.db.cards[item.word.id],book.historyByWord[item.word.id]||[]).label}}</text><text class="small muted">{{nextReviewLabel(profile.db.cards[item.word.id]?.due)}}</text><WPButton kind="quiet" class="wordbook-open" :selected="selected===item.key" :label="item.word.word+'，'+item.word.meaning+'，查看详情'" @click="open(item)">查看</WPButton></view>
     </view>
    </view>
@@ -67,10 +73,12 @@ import {wordById} from '../../../packages/content_schema'
 import {nextReviewLabel} from '../../services/study-presentation'
 import {windowLayout as layout} from '../../services/window'
 import {stopAudio} from '../../services/audio'
-import {navigate,openCourseGallery} from '../../services/navigation'
+import {homeReviewPriorityLabels,homeReviewPriorityNotes} from '../../services/home-review-priority'
+import {navigate,openCourseGallery,consumeHomePriority} from '../../services/navigation'
 import {courseNeedsReview} from '../../services/course/CourseSelection'
 const review=useReviewStore(),learning=useLearningStore(),profile=useProfileStore(),book=useWordbookStore(),course=useCourseStore()
 const study=useStudyPresentation(),interaction=useWordListInteraction()
+const priority=ref(consumeHomePriority())
 const cardsOpen=ref(false),courseOverview=computed(()=>book.courseCards({courseId:course.currentId}))
 const cardBrowser=ref<InstanceType<typeof CourseWordCardList>>()
 onBackPress(()=>cardsOpen.value?cardBrowser.value?.handleBack()||false:sheetOpen.value?(closeDetail(),true):false)
@@ -87,11 +95,12 @@ const filter=ref<WordbookFilter>('due'),query=ref(''),selected=ref(''),sheetOpen
 const scopeRequest=computed(()=>({scope:scope.value==='current'?'currentCourse' as const:'allWords' as const,learnedOnly:scope.value==='all'&&learnedOnly.value,currentCourseId:course.currentId,installedCourseIds:course.installed.map(c=>c.courseId),unitId:scope.value==='current'?unitOptions.value[unitIndex.value]?.id:undefined,keyword:query.value}))
 const allWords=computed(()=>book.query({scope:'allWords',currentCourseId:course.currentId,installedCourseIds:course.installed.map(c=>c.courseId),category:'all',keyword:''}))
 const learnedWords=computed(()=>book.query({scope:'allWords',learnedOnly:true,currentCourseId:course.currentId,installedCourseIds:course.installed.map(c=>c.courseId),category:'all',keyword:''}))
-const result=computed(()=>book.query({...scopeRequest.value,category:filter.value==='weak'?'focus':filter.value}))
+const result=computed(()=>priority.value?book.priority(priority.value,query.value):book.query({...scopeRequest.value,category:filter.value==='weak'?'focus':filter.value}))
 const filters=computed(()=>[{id:'due' as const,name:'到期复习',short:'到期',count:result.value.stats.dueUniqueLexemeCount},{id:'weak' as const,name:'重点复习',short:'重点',count:result.value.stats.focusCount},{id:'mistakes' as const,name:'错词本',short:'错词',count:result.value.stats.mistakesCount},{id:'all' as const,name:'所有单词',short:scope.value==='all'&&learnedOnly.value?'全部已学词':'全部独立词',count:result.value.stats.totalUniqueLexemes}])
-const list=computed(()=>result.value.rows)
-const pages=computed(()=>Math.max(1,Math.ceil(list.value.length/30))),pageItems=computed(()=>result.value.items.slice(pageIndex.value*30,pageIndex.value*30+30))
-watch([filter,query,scope,unitIndex,learnedOnly],()=>{pageIndex.value=0;closeDetail(false)})
+const priorityUnavailable=computed(()=>!!priority.value&&(profile.readOnly||!!profile.bootError))
+const list=computed(()=>priorityUnavailable.value?[]:result.value.rows)
+const pages=computed(()=>Math.max(1,Math.ceil(list.value.length/30))),pageItems=computed(()=>priorityUnavailable.value?[]:result.value.items.slice(pageIndex.value*30,pageIndex.value*30+30))
+watch([filter,query,scope,unitIndex,learnedOnly,priority],()=>{pageIndex.value=0;closeDetail(false)})
 watch(()=>result.value.items,rows=>{pageIndex.value=Math.min(pageIndex.value,pages.value-1);if(selected.value&&!rows.some(item=>item.key===selected.value))closeDetail(false)})
 const suggestionItem=ref<WordbookRow|null>(null)
 const detailItem=computed(()=>result.value.items.find(item=>item.key===selected.value)||suggestionItem.value?.key===selected.value&&suggestionItem.value||undefined)

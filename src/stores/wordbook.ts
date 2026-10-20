@@ -10,6 +10,8 @@ import {courseRegistry,archiveStatus,courseMemberships,isCourseInstalled,isCours
 import {occurrences} from '../services/content/IdentityModel'
 import {queryWordbook,queryCourseCards,type WordbookQuery,type CourseCardQuery} from '../services/content/WordbookQueryBuilder'
 import {getCourseWord} from '../services/content/ContentRegistry'
+import {useCourseStore} from './course'
+import {priorityItems,type HomeReviewPriority} from '../services/home-review-priority'
 export interface WordbookScope {courseId?:string;unitId?:string;learnedOnly?:boolean;installedOnly?:boolean}
 export type WordbookFilter='due'|'weak'|'mistakes'|'all'
 interface Preferences {favorites:string[];later:string[]}
@@ -28,6 +30,13 @@ export const useWordbookStore=defineStore('wordbook',()=>{
  const learnedIds=computed(()=>[...new Set([...Object.keys(profile.db.cards),...evidence.value.map(a=>a.wordId)])])
  function query(request:WordbookQuery){return queryWordbook(request,{words,positions:positions.value,wordFor:(courseId,id)=>courseRegistry[courseId]?getCourseWord(courseId,id):wordById[id],cards:profile.db.cards,dueIds:review.due.map(c=>c.wordId),favorites:preferences.value.favorites,mistakes:mistakes.value,learnedIds:learnedIds.value,suggestions:suggestions.value})}
  function courseCards(request:CourseCardQuery){return queryCourseCards(request,{pack:courseRegistry[request.courseId],installed:isCourseInstalled(request.courseId),wordFor:id=>getCourseWord(request.courseId,id),cards:profile.db.cards,answers:evidence.value,dueIds:review.due.map(c=>c.wordId),favorites:preferences.value.favorites,mistakes:mistakes.value})}
+ /** Homepage counts and their destination share exactly the same valid word set. */
+ function priority(kind:HomeReviewPriority,keyword=''){
+  const course=useCourseStore(),base=query({scope:kind==='due'?'currentCourse':'allWords',currentCourseId:course.currentId,installedCourseIds:course.installed.map(pack=>pack.courseId),category:'all',keyword})
+  const ids=kind==='due'?learning.due.map(card=>card.wordId):kind==='weak'?review.weak.map(card=>card.wordId):Object.keys(profile.db.cards)
+  const items=priorityItems(base.items,ids)
+  return {...base,items,rows:items.map(item=>item.word)}
+ }
  function toggle(field:keyof Preferences,id:string){
   if(!wordById[id])return false
   const next={...preferences.value,[field]:preferences.value[field].includes(id)?preferences.value[field].filter(word=>word!==id):[...preferences.value[field],id]}
@@ -40,5 +49,5 @@ export const useWordbookStore=defineStore('wordbook',()=>{
   const ordered=query({scope:scope.courseId?'currentCourse':'allWords',currentCourseId:scope.courseId||'',installedCourseIds:Object.values(courseRegistry).filter(pack=>isCourseInstalled(pack.courseId)).map(pack=>pack.courseId),unitId:scope.unitId,category:'all',keyword:search}),order=new Map(ordered.rows.map((word,index)=>[word.id,index]))
   return ids.map(id=>wordById[id]).filter(word=>word&&(!scoped||scoped.has(word.id))&&(!scope.learnedOnly||!!profile.db.cards[word.id])&&(!text||[word.word,word.meaning,word.unit,word.lesson,...courseMemberships(word.id).flatMap(m=>[m.courseTitle,m.unitTitle,m.lessonTitle])].join(' ').toLowerCase().includes(text))).sort((a,b)=>(order.get(a.id)??Infinity)-(order.get(b.id)??Infinity)||a.id.localeCompare(b.id,'en',{numeric:true})) }
  function reset(){try{const next={favorites:[],later:[]};writeStorage(key,next);preferences.value=next;error.value='';return true}catch{error.value='界面标记清除失败，请检查设备存储。';return false}}
- return {preferences,error,historyByWord,mistakes,suggestions,weak,toggle,list,query,courseCards,evidence,learnedIds,reset}
+ return {preferences,error,historyByWord,mistakes,suggestions,weak,toggle,list,query,courseCards,priority,evidence,learnedIds,reset}
 })

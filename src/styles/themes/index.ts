@@ -49,12 +49,12 @@ const variants:Record<ThemeId,Variant>={
    water:'#79BCEC','water-soft':'#EBF5FC','element-water':'#275E86',fire:'#EFC2BD','fire-soft':'#FBECDD','element-fire':'#924529',earth:'#A8CDB6','earth-soft':'#EAF3E9','element-earth':'#41683F',wind:'#C8B4DF','wind-soft':'#F5EBF4','element-wind':'#6A4E80',
    radius:'24px','radius-sm':'18px','radius-chip':'999px','radius-lg':'28px','radius-dialog':'28px',
    elevation:'inset 0 1px 0 rgba(255,255,255,.9),0 4px 0 rgba(168,117,67,.10),0 9px 20px rgba(108,73,39,.07)','shadow-raised':'inset 0 1px 0 rgba(255,255,255,.9),0 5px 0 rgba(168,117,67,.13),0 12px 26px rgba(108,73,39,.09)',
-   'clay-task':'#FFF0CD','clay-mint':'#ECF5E9','clay-sky':'#EDF6FB','clay-control-border':'#A68B73','clay-pressed':'inset 0 2px 3px rgba(83,50,24,.12),0 1px 0 rgba(168,117,67,.15)','motion-fast':'140ms'},
+   'clay-review-due':'#F9E9E5','clay-review-due-ink':'#8B4541','clay-task':'#FFF0CD','clay-mint':'#ECF5E9','clay-sky':'#EDF6FB','clay-control-border':'#A68B73','clay-pressed':'inset 0 2px 3px rgba(83,50,24,.12),0 1px 0 rgba(168,117,67,.15)','motion-fast':'140ms'},
   dark:{background:'#25201D',foreground:'#FFF2DF','surface-foreground':'#FFF2DF',surface:'#342C27','surface-raised':'#3D322B','surface-soft':'#44372E',muted:'#44372E','muted-foreground':'#D4BDA7',primary:'#F0B784','on-primary':'#35251A',brand:'#F0B784',secondary:'#503B2D',border:'#6A5445',divider:'#574537','focus-ring':'#F0B784',
    'water-soft':'#2C3941','element-water':'#B3D6EF','fire-soft':'#45312B','element-fire':'#F0B999','earth-soft':'#303D30','element-earth':'#BAD7B0','wind-soft':'#3B3040','element-wind':'#D7BFE9',
    radius:'24px','radius-sm':'18px','radius-chip':'999px','radius-lg':'28px','radius-dialog':'28px',
    elevation:'inset 0 1px 0 rgba(255,235,209,.07),0 4px 0 rgba(0,0,0,.18),0 9px 20px rgba(0,0,0,.12)','shadow-raised':'inset 0 1px 0 rgba(255,235,209,.09),0 5px 0 rgba(0,0,0,.22),0 12px 24px rgba(0,0,0,.16)',
-   'clay-task':'#433629','clay-mint':'#303A2E','clay-sky':'#2C3840','clay-control-border':'#B89C84','clay-pressed':'inset 0 2px 3px rgba(0,0,0,.24),0 1px 0 rgba(255,235,209,.06)','motion-fast':'140ms'},
+   'clay-review-due':'#46312F','clay-review-due-ink':'#F1BDB4','clay-task':'#433629','clay-mint':'#303A2E','clay-sky':'#2C3840','clay-control-border':'#B89C84','clay-pressed':'inset 0 2px 3px rgba(0,0,0,.24),0 1px 0 rgba(255,235,209,.06)','motion-fast':'140ms'},
   petRenderer:'illustration',rewardMotion:'fade'}
 }
 function complete(tokens:WordPalTokens):WordPalTokens {

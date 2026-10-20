@@ -10,3 +10,8 @@ export function closeCourseGallery(){uni.navigateBack({delta:1})}
 let requestedStudyPractice=false
 export function openStudyPractice(){requestedStudyPractice=true;navigate('learn')}
 export function consumeStudyPractice(){const requested=requestedStudyPractice;requestedStudyPractice=false;return requested}
+/** A transient browsing intent, following the existing practice/gallery entry pattern. */
+import type {HomeReviewPriority} from './home-review-priority'
+let requestedHomePriority:HomeReviewPriority|null=null
+export function openHomePriority(kind:HomeReviewPriority){requestedHomePriority=kind;navigate('review')}
+export function consumeHomePriority(){const requested=requestedHomePriority;requestedHomePriority=null;return requested}

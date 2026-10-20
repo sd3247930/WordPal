@@ -33,7 +33,7 @@
   <WPCard v-else class="home-word-list"><view class="section-heading"><text>今天认识的单词</text><WPChip :element="pet.current.element">{{learning.lesson.name}}</WPChip></view><view class="today-words"><WPActionTile role="button" tabindex="0" v-for="word in todayWords" :key="word.id" toggle-highlight class="today-word" :aria-label="word.audio?'听'+word.word+'的发音':word.word+'暂无音频'" :disabled="!word.audio" @click="listen(word)" @cancel="stopAudio()"><text class="word-mini">{{word.word}}</text><text class="small muted">{{word.meaning}}</text><WPControlIcon v-if="word.audio"/><text v-else class="small muted">暂无音频</text></WPActionTile></view><text class="small muted block">{{learning.needsConsolidation?'这课再熟悉一下，下次会更有把握。':'点一点，听听标准发音。'}}</text></WPCard>
   <view class="home-insights">
    <WPCard class="home-data"><view class="section-heading"><text>学习数据</text><text class="small muted">真实记录</text></view><view class="data-ring" role="progressbar" aria-label="今日正确率" :aria-valuenow="accuracy" aria-valuemin="0" aria-valuemax="100" :style="{background:'conic-gradient(var(--wp-primary) '+accuracy*3.6+'deg,var(--wp-secondary) 0)'}"><view class="data-ring-inner"><text class="progress-number">{{accuracy}}<text class="small">%</text></text><text class="small muted">今日正确率</text></view></view><view class="mini-stats"><view><text class="metric">{{learning.newToday}}</text><text class="small muted">新学单词</text></view><view><text class="metric">{{reviewsToday}}</text><text class="small muted">复习次数</text></view><view><text class="metric">{{learning.todayAnswers.length}}</text><text class="small muted">有效学习</text></view></view></WPCard>
-   <WPCard class="home-priority"><view class="section-heading"><text>复习优先级</text><text class="muted" aria-hidden="true">▥</text></view><WPActionTile role="button" tabindex="0" class="priority-row" @click="navigate('review')"><text class="status-dot due"/><text>到期复习</text><text class="strong">{{learning.due.length}} 个 →</text></WPActionTile><WPActionTile role="button" tabindex="0" class="priority-row" @click="navigate('review')"><text class="status-dot weak"/><text>重点巩固</text><text class="strong">{{review.weak.length}} 个 →</text></WPActionTile><WPActionTile role="button" tabindex="0" class="priority-row" @click="navigate('review')"><text class="status-dot known"/><text>已经认识</text><text class="strong">{{learning.learnedCount}} 个 →</text></WPActionTile></WPCard>
+   <HomeReviewPriority v-if="theme.settings.themeId==='clay'" :counts="priorityCounts" :unavailable="profile.readOnly||!!profile.bootError" @open="openPriority"/><WPCard v-else class="home-priority"><view class="section-heading"><text>复习优先级</text><text class="muted" aria-hidden="true">▥</text></view><WPActionTile role="button" tabindex="0" class="priority-row" :disabled="profile.readOnly||!!profile.bootError" @click="openPriority('due')"><text class="status-dot due"/><text>到期复习</text><text class="strong">{{profile.readOnly||profile.bootError?'—':priorityCounts.due}} 个 →</text></WPActionTile><WPActionTile role="button" tabindex="0" class="priority-row" :disabled="profile.readOnly||!!profile.bootError" @click="openPriority('weak')"><text class="status-dot weak"/><text>重点巩固</text><text class="strong">{{profile.readOnly||profile.bootError?'—':priorityCounts.weak}} 个 →</text></WPActionTile><WPActionTile role="button" tabindex="0" class="priority-row" :disabled="profile.readOnly||!!profile.bootError" @click="openPriority('known')"><text class="status-dot known"/><text>已经认识</text><text class="strong">{{profile.readOnly||profile.bootError?'—':priorityCounts.known}} 个 →</text></WPActionTile></WPCard>
   </view>
  </view><text v-if="audioError" class="notice error" role="status">{{audioError}}</text>
 </template>
@@ -42,6 +42,8 @@ import PetHousePetArt from '../../components/pet-house/PetHousePetArt.vue'
 import HomeStatsRow from '../../components/home/HomeStatsRow.vue'
 import HomePetCompanionCard from '../../components/home/HomePetCompanionCard.vue'
 import HomeTodayTasks from '../../components/home/HomeTodayTasks.vue'
+import HomeReviewPriority from '../../components/home/HomeReviewPriority.vue'
+import {useWordbookStore} from '../../stores/wordbook'
 import HomeWordList from '../../components/home/HomeWordList.vue'
 import WPButton from "../../components/wp-button/WPButton.vue"
 import WPActionTile from "../../components/button/WPActionTile.vue"
@@ -64,14 +66,19 @@ import {usePetStore} from '../../stores/pet'
 import {usePetHouseStore} from '../../stores/pet-house'
 import {useThemeStore} from '../../stores/theme'
 import {petHouseThemes,petHouseStyle} from '../../styles/pet-house'
-import {navigate} from '../../services/navigation'
+import type {HomeReviewPriority as HomePriorityKind} from '../../services/home-review-priority'
+import {navigate,openHomePriority} from '../../services/navigation'
 import {formatHomeDate,consecutiveLearningDays} from '../../services/date'
 import {playWord,stopAudio} from '../../services/audio'
 import {localDate,type LearningMode,type Word} from '../../../packages/core_learning'
 import {wordById} from '../../../packages/content_schema'
 import type {Element} from '../../../packages/pet_engine'
 const learning=useLearningStore(),review=useReviewStore(),profile=useProfileStore(),pet=usePetStore(),audioError=ref(''),course=useCourseStore(),activities=useActivitiesStore()
-const house=usePetHouseStore(),theme=useThemeStore()
+const house=usePetHouseStore(),theme=useThemeStore(),book=useWordbookStore()
+const priorityCounts=computed(()=>({due:book.priority('due').items.length,weak:book.priority('weak').items.length,known:book.priority('known').items.length}))
+let priorityOpening=false,priorityRelease:ReturnType<typeof setTimeout>|undefined
+function openPriority(kind:HomePriorityKind){if(priorityOpening||profile.readOnly||profile.bootError)return;priorityOpening=true;openHomePriority(kind);priorityRelease=setTimeout(()=>priorityOpening=false,650)}
+onUnmounted(()=>clearTimeout(priorityRelease))
 const scene=computed(()=>petHouseThemes[house.sceneId]),dark=computed(()=>theme.mode==='dark')
 const houseStyle=computed(()=>petHouseStyle(house.sceneId,dark.value,theme.settings.highContrast,theme.settings.themeId,theme.tokens))
 const now=ref(Date.now()),dateLabel=computed(()=>formatHomeDate(now.value)),greeting=computed(()=>{const hour=new Date(now.value).getHours();return hour<11?'早上好':hour<18?'下午好':'晚上好'})
