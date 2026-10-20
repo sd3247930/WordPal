@@ -12,7 +12,7 @@ for(const theme of ['swiss','clay'])for(const mode of ['light','dark'])test(`${t
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)
   await waitForArtwork(page)
   await page.screenshot({path:test.info().outputPath(`${theme}-${mode}-${screen}.png`),fullPage:true,animations:'disabled'})
-  if(theme==='clay'){const card=page.locator('.wp-card').first();await expect(card).toHaveCSS('border-radius','24px');const shadow=await card.evaluate(el=>getComputedStyle(el).boxShadow);expect(shadow).not.toBe('none')}
+  if(theme==='clay'){const card=page.locator('.wp-card').first();await expect(card).toHaveCSS('border-radius',screen==='home'?'28px':'24px');const shadow=await card.evaluate(el=>getComputedStyle(el).boxShadow);if(screen==='home'&&mode==='dark')expect(shadow).toBe('none');else expect(shadow).not.toBe('none')}
  }
  expect(await database(page)).toEqual(before);expect(errors).toEqual([])
 })

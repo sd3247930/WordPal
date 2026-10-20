@@ -1,7 +1,7 @@
 <template>
  <view class="pet-cutout" :class="{'pet-cutout-evolved':form>=3}" :data-form="form" :aria-label="identity">
   <image v-if="asset&&accessory" class="pet-wearable-back pet-wearable-layer" :src="petWearableSource(element,form,accessory,'back')" :style="imageSize" mode="aspectFit" aria-hidden="true"/>
-  <image v-if="asset" class="pet-cutout-image" :src="asset" :style="imageSize" mode="aspectFit" :aria-label="identity+' · '+petStages[form-1].title"/>
+  <image v-if="asset" class="pet-cutout-image" :src="asset" :style="imageSize" mode="aspectFit" :aria-label="identity+' · '+petStages[form-1].title" @error="$emit('error')"/>
   <view v-if="asset&&accessory" class="pet-accessory" :class="'accessory-'+accessory" :data-fit="element+'-'+form" :aria-label="accessoryName+'已穿戴'"><image class="pet-wearable-layer" :src="petWearableSource(element,form,accessory,'front')" :style="imageSize" mode="aspectFit" aria-hidden="true"/></view>
   <text v-if="asset&&badge&&form>1" class="pet-stage-badge">{{petStages[form-1].title}}</text>
  </view>
@@ -13,9 +13,10 @@ import {petGrowthAsset,petStages} from '../../services/pet-growth'
 import {usePetFormsStore} from '../../stores/pet-forms'
 import {isPetDressIconName} from '../../services/pet-dress-icons'
 import {petWearableSource} from '../../services/pet-wearables'
-const props=withDefaults(defineProps<{element:Element;stage?:number;cosmetic?:string;badge?:boolean}>(),{badge:true})
+const props=withDefaults(defineProps<{element:Element;stage?:number;cosmetic?:string;badge?:boolean;fit?:'growth'|'portrait'}>(),{badge:true,fit:'growth'})
+defineEmits<{error:[]}>()
 const forms=usePetFormsStore(),form=computed(()=>props.stage??forms.stage(props.element))
-const asset=computed(()=>petGrowthAsset(props.element,form.value)),scale=computed(()=>(petStages[form.value-1]?.scale||0)*100)
+const asset=computed(()=>petGrowthAsset(props.element,form.value)),scale=computed(()=>(props.fit==='portrait'?1:petStages[form.value-1]?.scale||0)*100)
 const imageSize=computed(()=>({width:scale.value+'%',height:scale.value+'%'}))
 const identity=computed(()=>petInfo[props.element].elementName+'精灵 · '+petInfo[props.element].name)
 const accessory=computed(()=>isPetDressIconName(props.cosmetic)?props.cosmetic:undefined)

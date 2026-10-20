@@ -7,7 +7,8 @@
   <view><text class="small muted">今日新词</text><text class="metric">{{learning.todayPlan?.wordIds.length||0}} <text class="small">个</text></text></view>
  </view>
  <view class="home-grid">
-  <WPCard class="home-companion" level="feature" :class="{'companion-dark':dark}" :style="houseStyle" :data-scene="house.sceneId">
+  <HomePetCompanionCard v-if="theme.settings.themeId==='clay'" :pet="profile.db.pets[profile.db.companion]" :scene="scene" :message="companionGreeting[pet.current.element]||'每天一点，一起成长。'" :unavailable="profile.readOnly||!!profile.bootError" @open="navigate('pet')"/>
+  <WPCard v-else class="home-companion home-companion-legacy" level="feature" :class="{'companion-dark':dark}" :style="houseStyle" :data-scene="house.sceneId">
    <view class="companion-scene">
     <view class="companion-art">
      <image :key="scene.id" class="companion-backdrop" :src="scene.sceneAsset" mode="aspectFill" aria-hidden="true"/>
@@ -37,6 +38,7 @@
 <script setup lang="ts">
 import PetHousePetArt from '../../components/pet-house/PetHousePetArt.vue'
 import HomeStatsRow from '../../components/home/HomeStatsRow.vue'
+import HomePetCompanionCard from '../../components/home/HomePetCompanionCard.vue'
 import WPButton from "../../components/wp-button/WPButton.vue"
 import WPActionTile from "../../components/button/WPActionTile.vue"
 import WPControlIcon from '../../components/button/WPControlIcon.vue'
@@ -98,26 +100,26 @@ function listen(word:Word){audioError.value='';playWord(word,m=>audioError.value
 onUnmounted(stopAudio)
 </script>
 <style scoped>
-.home-companion.card-feature{background:var(--pet-surface)!important;border:1px solid var(--pet-border);box-shadow:var(--pet-shadow);overflow:hidden}
-.home-companion .companion-scene{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);align-items:center;gap:16px}
-.home-companion .companion-art{position:relative;width:100%;max-width:180px;aspect-ratio:3/4;justify-self:center;border-radius:var(--wp-radius-sm);background:var(--pet-tonal);overflow:hidden}
-.home-companion .companion-backdrop{position:absolute;inset:0;width:100%;height:100%}
-.home-companion.companion-dark .companion-backdrop{filter:brightness(.6) saturate(.7)}
-.home-companion .companion-portrait{position:relative;display:block;width:100%;height:100%}
-.home-companion .companion-bubble{display:flex;flex-direction:column;gap:8px;min-width:0}
-.home-companion .companion-label{display:block;font-size:var(--wp-font-caption);line-height:1.5;letter-spacing:0;color:var(--wp-muted-foreground)}
-.home-companion .companion-identity{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.home-companion .companion-name{font-size:24px;line-height:1.25;font-weight:700;color:var(--wp-foreground)}
-.home-companion .companion-level{padding:2px 7px;border-radius:var(--wp-radius-chip);background:var(--pet-tonal);color:var(--pet-accent);font-size:var(--wp-font-caption);line-height:1.5;font-weight:600;white-space:nowrap}
-.home-companion .companion-message{font-size:var(--wp-font-small);line-height:1.6;color:var(--wp-foreground)}
-.home-companion .companion-status{display:flex;flex-wrap:wrap;gap:2px 10px;font-size:var(--wp-font-caption);line-height:1.5;color:var(--wp-muted-foreground)}
-.home-companion .companion-status>text{white-space:nowrap}
-.home-companion .companion-open{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;width:100%;margin:4px 0 0;padding:8px 12px;border:1px solid var(--wp-border);border-radius:var(--wp-radius-sm);background:var(--wp-secondary);color:var(--wp-primary);font-size:var(--wp-font-small);line-height:1.5;font-weight:600;text-align:left}
-@media(min-width:600px){.home-companion .companion-scene{grid-template-columns:minmax(0,1fr)}.home-companion .companion-art{max-width:168px}.home-companion .companion-bubble{min-width:0}}
-@media(min-width:1400px){.home-companion .companion-scene{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:14px}.home-companion .companion-art{max-width:180px}}
-@media(max-width:359px){.home-companion .companion-scene{gap:12px}.home-companion .companion-bubble{gap:6px}.home-companion .companion-name{font-size:22px}.home-companion .companion-open{padding:8px 10px}}
-.large-text .home-companion .companion-name{font-size:var(--wp-font-section)}
-.home-companion .companion-open{min-height:48px}
-.large-text .home-companion .companion-open{min-height:56px}
-@media(max-width:599px){.large-text .home-companion .companion-scene{grid-template-columns:minmax(0,1fr)}.large-text .home-companion .companion-art{max-width:150px}}
+.home-companion-legacy.card-feature{background:var(--pet-surface)!important;border:1px solid var(--pet-border);box-shadow:var(--pet-shadow);overflow:hidden}
+.home-companion-legacy .companion-scene{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);align-items:center;gap:16px}
+.home-companion-legacy .companion-art{position:relative;width:100%;max-width:180px;aspect-ratio:3/4;justify-self:center;border-radius:var(--wp-radius-sm);background:var(--pet-tonal);overflow:hidden}
+.home-companion-legacy .companion-backdrop{position:absolute;inset:0;width:100%;height:100%}
+.home-companion-legacy.companion-dark .companion-backdrop{filter:brightness(.6) saturate(.7)}
+.home-companion-legacy .companion-portrait{position:relative;display:block;width:100%;height:100%}
+.home-companion-legacy .companion-bubble{display:flex;flex-direction:column;gap:8px;min-width:0}
+.home-companion-legacy .companion-label{display:block;font-size:var(--wp-font-caption);line-height:1.5;letter-spacing:0;color:var(--wp-muted-foreground)}
+.home-companion-legacy .companion-identity{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.home-companion-legacy .companion-name{font-size:24px;line-height:1.25;font-weight:700;color:var(--wp-foreground)}
+.home-companion-legacy .companion-level{padding:2px 7px;border-radius:var(--wp-radius-chip);background:var(--pet-tonal);color:var(--pet-accent);font-size:var(--wp-font-caption);line-height:1.5;font-weight:600;white-space:nowrap}
+.home-companion-legacy .companion-message{font-size:var(--wp-font-small);line-height:1.6;color:var(--wp-foreground)}
+.home-companion-legacy .companion-status{display:flex;flex-wrap:wrap;gap:2px 10px;font-size:var(--wp-font-caption);line-height:1.5;color:var(--wp-muted-foreground)}
+.home-companion-legacy .companion-status>text{white-space:nowrap}
+.home-companion-legacy .companion-open{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;width:100%;margin:4px 0 0;padding:8px 12px;border:1px solid var(--wp-border);border-radius:var(--wp-radius-sm);background:var(--wp-secondary);color:var(--wp-primary);font-size:var(--wp-font-small);line-height:1.5;font-weight:600;text-align:left}
+@media(min-width:600px){.home-companion-legacy .companion-scene{grid-template-columns:minmax(0,1fr)}.home-companion-legacy .companion-art{max-width:168px}.home-companion-legacy .companion-bubble{min-width:0}}
+@media(min-width:1400px){.home-companion-legacy .companion-scene{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:14px}.home-companion-legacy .companion-art{max-width:180px}}
+@media(max-width:359px){.home-companion-legacy .companion-scene{gap:12px}.home-companion-legacy .companion-bubble{gap:6px}.home-companion-legacy .companion-name{font-size:22px}.home-companion-legacy .companion-open{padding:8px 10px}}
+.large-text .home-companion-legacy .companion-name{font-size:var(--wp-font-section)}
+.home-companion-legacy .companion-open{min-height:48px}
+.large-text .home-companion-legacy .companion-open{min-height:56px}
+@media(max-width:599px){.large-text .home-companion-legacy .companion-scene{grid-template-columns:minmax(0,1fr)}.large-text .home-companion-legacy .companion-art{max-width:150px}}
 </style>
