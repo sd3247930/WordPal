@@ -168,7 +168,7 @@ export const useLearningStore=defineStore('learning',()=>{
       if(canUnlockNextUnit(answers)&&lesson.value.wordIds.every(id=>d.cards[id]))d.lessonIndex=Math.min(d.lessonIndex+1,lessons.length-1)
       d.courseProgress.starter.currentLessonId=lessons[d.lessonIndex].id
      }
-    }else if((s.courseId||'starter')==='starter'&&(s.kind==='new_word'||s.kind==='practice')){
+    }else if((s.courseId||'starter')==='starter'&&s.kind==='new_word'){
      d.lastLessonAccuracy=s.answers.filter(a=>a.correct).length/s.answers.length
      if(canUnlockNextUnit(s.answers)&&s.wordIds.every(id=>lesson.value.wordIds.includes(id))&&lesson.value.wordIds.every(id=>d.cards[id]))d.lessonIndex=Math.min(d.lessonIndex+1,lessons.length-1)
      d.courseProgress??={};d.courseProgress.starter??=initialProgress('starter');d.courseProgress.starter.lastLessonAccuracy=d.lastLessonAccuracy;d.courseProgress.starter.currentLessonId=lessons[d.lessonIndex].id

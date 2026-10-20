@@ -23,7 +23,7 @@ for(const width of [390,1024])test(`${width} 五页导航可取消图标高亮�
  expect(await database(page)).toEqual(before)
 })
 test('学习题型保留有效模式、选择题可真正取消，取消不会提交答案或发奖',async({page})=>{
- await seedDatabase(page,{...freshDatabase(),abilityLevel:'L5'});await go(page,'learn');await page.getByRole('button',{name:'自定义练习 · 不计今日任务',exact:true}).click();const start=page.getByRole('button',{name:'开始自定义练习',exact:true});if(await start.count())await start.click();await openCustomPractice(page)
+ await seedDatabase(page,{...freshDatabase(),abilityLevel:'L5'});await go(page,'learn');await openCustomPractice(page)
  const group=page.getByRole('group',{name:'选择学习方式'}),connect=group.locator('[data-mode="connect"]');if(await connect.getAttribute('aria-pressed')!=='true')await connect.click();const before=await database(page)
  await connect.locator('img').click();await expect(connect).toHaveAttribute('aria-pressed','false');expect((await database(page)).session.mode).toBe('connect');await connect.click();await expect(connect).toHaveAttribute('aria-pressed','true');await expect(page.locator('.study-mode-check')).toHaveCount(0)
  const answer=page.locator('.answer-choice').first();await answer.click();await expect(answer).toHaveAttribute('aria-pressed','true');expect((await database(page)).session.selected).not.toBe('');await answer.click();await expect(answer).toHaveAttribute('aria-pressed','false');expect((await database(page)).session.selected).toBe('');await expect(page.getByRole('button',{name:'确认答案 →',exact:true})).toBeDisabled()

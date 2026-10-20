@@ -29,7 +29,7 @@ test('已完成闪现保留图标和标识，复习入口继续当前环节而�
 
 test('已有会话从任务入口继续，模式、草稿、排程和奖励均不被重置',async({page})=>{
  await go(page,'home');await page.locator('.hero-cta').click();await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'拼写'}).click();await page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true}).fill('ca');const before=await database(page)
- for(const title of ['新学单词','听音辨义','拼写练习']){await go(page,'home');await page.getByRole('button',{name:'去学习'+title,exact:true}).click();await expect(page.locator('.daily-step.active')).toContainText('闪现');expect((await database(page)).session).toEqual(before.session);expect((await database(page)).cards).toEqual(before.cards);expect((await database(page)).history).toEqual(before.history);await page.getByRole('button',{name:'自定义练习 · 不计今日任务',exact:true}).click();await expect(page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true})).toHaveValue('ca')}
+ for(const title of ['新学单词','听音辨义','拼写练习']){await go(page,'home');await page.getByRole('button',{name:'去学习'+title,exact:true}).click();await expect(page.locator('.daily-step.active')).toContainText('闪现');expect((await database(page)).session).toEqual(before.session);expect((await database(page)).cards).toEqual(before.cards);expect((await database(page)).history).toEqual(before.history);await openCustomPractice(page);await expect(page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true})).toHaveValue('ca')}
 })
 
 for(const mode of ['light','dark'])for(const largeText of [false,true])test(`${mode} 大字=${largeText} 图标、字体和任务排版覆盖手机平板`,async({page})=>{

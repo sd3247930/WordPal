@@ -53,7 +53,7 @@ const screens=[
  {name:'phone-large-text',width:320,height:700,largeText:true},
 ]
 
-for(const screen of screens)test(`自定义练习统一位于词卡后，展开收起与返回不改变正式进度 · ${screen.name}`,async({page},testInfo)=>{
+for(const screen of screens)test(`兼容题型工具位于词卡后，展开收起与返回不改变正式进度 · ${screen.name}`,async({page},testInfo)=>{
  await page.setViewportSize(screen)
  await setAppearance(page,'swiss','light',{largeText:screen.largeText})
  await seedDatabase(page,{...freshDatabase(),abilityLevel:'L5'})
@@ -61,7 +61,7 @@ for(const screen of screens)test(`自定义练习统一位于词卡后，展开�
  await page.locator('.hero-cta').click()
  await expect(page.locator('.daily-step-list')).toBeVisible()
  const original=await database(page),daily=original.courseProgress.starter.dailyPlan
- const entry=page.getByRole('button',{name:'自定义练习 · 不计今日任务',exact:true})
+ const entry=page.getByRole('button',{name:'本轮题型工具',exact:true})
  await expect(entry).toHaveCount(1)
  const mainBox=await page.locator('.study-main').boundingBox(),entryBox=await entry.boundingBox()
  expect(entryBox!.y).toBeGreaterThanOrEqual(mainBox!.y+mainBox!.height-1)

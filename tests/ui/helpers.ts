@@ -20,7 +20,15 @@ export async function selectWordbookScope(page:Page,scope:'当前教材'|'全部
  const target=page.getByRole('group',{name:'单词本课程范围'}).getByRole('button',{name:scope==='当前教材'?'当前教材':'全部单词',exact:true});if(await target.getAttribute('aria-pressed')!=='true')await target.click()
  if(scope!=='当前教材'){const toggle=page.getByRole('button',{name:'只看已学',exact:true});if((await toggle.getAttribute('aria-pressed')==='true')!==(scope==='只看已学'))await toggle.click()}
 }
-export async function openCustomPractice(page:Page){const button=page.getByRole('button',{name:/^自定义练习 ·/});await button.waitFor({state:'visible'});if(await button.getAttribute('aria-expanded')!=='true')await button.click()}
+/** Existing question-component regressions use the retained current-round tools. */
+export async function openCustomPractice(page:Page){
+ await page.locator('.study-modes,.study-ready').first().waitFor({state:'visible'})
+ const current=page.locator('.study-round-tools'),toggle=page.locator('.study-practice-toggle')
+ if(!await current.count()&&!await toggle.count()){const begin=page.getByRole('button',{name:'开始今日学习',exact:true});if(await begin.count())await begin.click()}
+ if(await current.count()){await current.click();return}
+ if(await toggle.count()){if(await toggle.getAttribute('aria-expanded')!=='true')await toggle.click();return}
+ await page.getByRole('button',{name:'自定义练习 · 不计今日任务',exact:true}).first().click()
+}
 export async function openExploration(page:Page){const button=page.getByRole('button',{name:'展开自然拼读与例句',exact:true});if(await button.count())await button.click()}
 /** Required navigation actions may already be selected after returning to the pet page. */
 export async function openPetAction(page:Page,name:string){const button=page.getByRole('group',{name:'宠物屋功能',exact:true}).getByRole('button',{name,exact:true});if(await button.getAttribute('aria-pressed')!=='true')await button.click()}

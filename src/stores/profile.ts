@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { Answer, LearningSession, MemoryCard } from '../../packages/core_learning'
+import type {CustomPracticeSession} from '../../packages/core_learning/custom-practice'
 import { readStorage, writeStorage } from '../services/storage'
 import {createPet,elements,type PetState} from '../../packages/pet_engine'
 import {loadCourseRegistry} from '../services/content/ContentRegistry'
-import {loadDatabase,initialProgress,validateDatabase,convertV1,type CourseProgress,V1_KEY,V2_KEY,POINTER_KEY,MIGRATION_BACKUP_KEY,exportRecoverySnapshot} from '../services/storage/MigrationV1toV2'
+import {loadDatabase,initialProgress,validateDatabase,convertV1,type CourseProgress,V1_KEY,V2_KEY,POINTER_KEY,MIGRATION_BACKUP_KEY,CUSTOM_RECOVERY_KEY,exportRecoverySnapshot} from '../services/storage/MigrationV1toV2'
 import {sha256} from '../services/content/digest'
 import {downloadLocalFile} from '../services/course-import/FilePicker'
 import {restoreLearningBackup} from '../services/storage/LearningBackup'
@@ -20,6 +21,7 @@ export interface Database {
   dailyLimit?: DailyNewWordLimit; lastLessonAccuracy: number | null; lessonIndex: number; streakDates: string[]
   currentCourseId?:string;pendingCourseId?:string;courseProgress?:Record<string,CourseProgress>;auxiliaryRecords?:AuxiliaryRecord[];abilityLevel?:AbilityLevelId
   courseSessions?:Record<string,LearningSession>
+  customPractice?:CustomPracticeSession|null
   parentSettingsVersion?:2|3;parentSettingsUpdatedAt?:number
 }
 export const DATABASE_KEY = 'wordpal.database.v1'
@@ -86,7 +88,7 @@ export const useProfileStore = defineStore('profile',()=>{
     try{const uiChanged=pruneCourseUiMemory(db.value,removedId);if(changed||uiChanged)courseMemoryRevision.value++;return true}
     catch{storageError.value='教材进度清理尚未完成，请释放设备存储后重新打开应用。';return false}
   }
-  function erase() { if(loaded.readOnly)throw new Error('需要先恢复档案。');const clean={...freshDatabase(),version:loaded.database.version,currentCourseId:'starter',courseProgress:{starter:initialProgress('starter')},auxiliaryRecords:[]};writeStorage(loaded.key,clean);db.value=clean as Database;for(const key of [V1_KEY,V2_KEY,MIGRATION_BACKUP_KEY,IDENTITY_BACKUP_KEY,'wordpal.migration.backup.digest'])if(key!==loaded.key)uni.removeStorageSync?.(key);storageError.value='' }
+  function erase() { if(loaded.readOnly)throw new Error('需要先恢复档案。');const clean={...freshDatabase(),version:loaded.database.version,currentCourseId:'starter',courseProgress:{starter:initialProgress('starter')},auxiliaryRecords:[]};writeStorage(loaded.key,clean);db.value=clean as Database;for(const key of [V1_KEY,V2_KEY,MIGRATION_BACKUP_KEY,CUSTOM_RECOVERY_KEY,IDENTITY_BACKUP_KEY,'wordpal.migration.backup.digest'])if(key!==loaded.key)uni.removeStorageSync?.(key);storageError.value='' }
   if(!loaded.readOnly&&(db.value.parentSettingsVersion!==3||db.value.dailyLimit!==undefined))transact(d=>{const migrated=migrateParentSettings(d);delete d.dailyLimit;Object.assign(d,migrated)})
   function removeCourseRecords(scopes:CourseRemovalScope[]=removedCourseScopes(db.value)){
     if(loaded.readOnly)return false

@@ -4,8 +4,10 @@ import {sha256} from '../content/digest'
 import {writeStorage} from './index'
 import {validParentSettings,DAILY_NEW_WORD_LIMITS} from '../../../packages/parent_settings'
 import {validDailyPlan} from '../learning/DailyLearningPlan'
+import {validCustomPractice} from '../learning/CustomPractice'
 export const V1_KEY='wordpal.database.v1',V2_KEY='wordpal.database.v2',POINTER_KEY='wordpal.database.active.v2'
 export const MIGRATION_BACKUP_KEY='wordpal.migration.backup.v1'
+export const CUSTOM_RECOVERY_KEY='wordpal.custom-practice.recovery.v1'
 export interface CourseProgress {currentLessonId:string;completedLessons:string[];lastLessonAccuracy:number|null;checkAccuracy:Record<string,number>;checkAttempts:Record<string,number>;introducedWords?:Record<string,string>;dailyPlan?:import('../../../packages/core_learning').LearningSession;fullLearnedWords?:Record<string,string>;studyActivity?:'daily'|'independent';curriculumSchema?:1;completedDailyPlans?:import('../../../packages/core_learning').CompletedDailyPlan[]}
 export const initialProgress=(courseId:string,index=0):CourseProgress=>({currentLessonId:getCourseLessons(courseId)[index]?.id||getCourseLessons(courseId)[0]?.id||'',completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{}})
 export function validateDatabase(value:unknown){
@@ -15,6 +17,7 @@ export function validateDatabase(value:unknown){
  if(d.history.some(a=>!a||typeof a.wordId!=='string'||typeof a.id!=='string'||!Number.isFinite(Date.parse(a.at))||![1,2,3,4].includes(a.rating)||typeof a.correct!=='boolean'))return false
  if(d.practiceAnswers!==undefined&&(!Array.isArray(d.practiceAnswers)||d.practiceAnswers.some(a=>!a||a.source!=='practice'||typeof a.wordId!=='string'||typeof a.id!=='string'||!Number.isFinite(Date.parse(a.at))||![1,2,3,4].includes(a.rating)||typeof a.correct!=='boolean')))return false
  if(d.courseSessions!==undefined&&(!d.courseSessions||typeof d.courseSessions!=='object'||Array.isArray(d.courseSessions)))return false
+ if(d.customPractice!=null&&!validCustomPractice(d.customPractice))return false
  if(Object.entries(d.courseSessions||{}).some(([id,s])=>!s||s.courseId&&s.courseId!==id))return false
  for(const s of [d.session,...Object.values(d.courseSessions||{})]){
  if(s&&(!Array.isArray(s.wordIds)||!s.wordIds.length||s.wordIds.some(id=>typeof id!=='string')||new Set(s.wordIds).size!==s.wordIds.length||!Number.isInteger(s.index)||s.index<0||s.index>=s.wordIds.length||!Array.isArray(s.answers)||s.answers.length>s.wordIds.length||typeof s.input!=='string'||typeof s.selected!=='string'||!['flash','connect','listen','spell','dictation'].includes(s.mode)))return false
@@ -40,7 +43,22 @@ export function loadDatabase(fresh:()=>Database):{database:Database;key:string;e
  const activeKey=pointer==='v2'?V2_KEY:pointer&&typeof pointer==='object'&&(pointer as any).version===2&&/^wordpal\.database\.restore\.[a-f0-9]{16}$/.test((pointer as any).key)?(pointer as any).key:null
  if(pointer&&!activeKey)return {database:{...fresh(),version:2},key:V2_KEY,error:'档案版本指针不合法，已停止写入。请导出故障快照。',readOnly:true}
  if(activeKey){
-  try{const db=JSON.parse(uni.getStorageSync(activeKey));if(db.version!==2||!validateDatabase(db))throw new Error();return {database:db,key:activeKey,error:'',readOnly:false}}catch{return {database:{...fresh(),version:2},key:activeKey,error:'最新学习档案无法读取，已保护数据并停止写入，不会自动用旧备份覆盖。',readOnly:true}}
+  try{
+   const db=JSON.parse(uni.getStorageSync(activeKey))
+   if(db.version!==2)throw new Error()
+   if(db.customPractice!=null&&!validCustomPractice(db.customPractice)){
+    const candidate={...db,customPractice:null}
+    if(!validateDatabase(candidate))throw new Error()
+    const recovery={version:1,at:new Date().toISOString(),customPractice:db.customPractice}
+    writeStorage(CUSTOM_RECOVERY_KEY,recovery)
+    if(uni.getStorageSync(CUSTOM_RECOVERY_KEY)!==JSON.stringify(recovery))throw new Error()
+    writeStorage(activeKey,candidate)
+    if(uni.getStorageSync(activeKey)!==JSON.stringify(candidate))throw new Error()
+    return {database:candidate,key:activeKey,error:'上次自定义练习断点无法校验，已单独备份。正式学习档案仍可用。',readOnly:false}
+   }
+   if(!validateDatabase(db))throw new Error()
+   return {database:db,key:activeKey,error:'',readOnly:false}
+  }catch{return {database:{...fresh(),version:2},key:activeKey,error:'最新学习档案无法读取，已保护数据并停止写入，不会自动用旧备份覆盖。',readOnly:true}}
  }
  let old:Database,raw:string
  try{raw=uni.getStorageSync(V1_KEY)||JSON.stringify(fresh());old=JSON.parse(raw);if(old.version!==1||!validateDatabase(old))throw new Error()}catch{return {database:fresh(),key:V1_KEY,error:'旧学习档案无法读取，已停止写入。请在家长区保存故障快照。',readOnly:true}}

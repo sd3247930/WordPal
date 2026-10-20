@@ -4,12 +4,15 @@ import type {Database} from '../../stores/profile'
 import {courseRegistry,isUserDeleted,isCourseReadable} from '../content/ContentRegistry'
 
 /** Course order is independent of a global memory card or a previously selected lesson. */
+export function orderedCourseUnits(pack:CoursePack){
+ const order=(unit:CoursePack['units'][number],index:number)=>unit.order??Number((unit.title+' '+unit.id).match(/(?:unit|module|u)[\s-]*0*(\d+)/i)?.[1]||index+1)
+ return pack.units.map((unit,index)=>({unit,index})).sort((a,b)=>order(a.unit,a.index)-order(b.unit,b.index)||a.index-b.index).map(item=>item.unit)
+}
 export function orderedCourseWords(pack:CoursePack){
  if(isUserDeleted(pack.courseId))return []
  const known=new Set(pack.vocabulary.map(word=>word.id)),seen=new Set<string>(),ids:string[]=[]
- const unitOrder=(unit:CoursePack['units'][number],index:number)=>unit.order??Number((unit.title+' '+unit.id).match(/(?:unit|module|u)[\s-]*0*(\d+)/i)?.[1]||index+1)
  const entries=new Map(pack.vocabulary.map(word=>[word.id,word]))
- const units=pack.units.map((unit,index)=>({unit,index})).sort((a,b)=>unitOrder(a.unit,a.index)-unitOrder(b.unit,b.index)||a.index-b.index)
+ const units=orderedCourseUnits(pack).map((unit,index)=>({unit,index}))
  const inUnit=({unit}:typeof units[number])=>unit.lessons.flatMap(lesson=>lesson.wordIds).map((id,index)=>({id,index})).sort((a,b)=>(entries.get(a.id)?.order??a.index+1)-(entries.get(b.id)?.order??b.index+1)||a.index-b.index).map(item=>item.id)
  for(const id of [...units.flatMap(inUnit),...pack.vocabulary.map(word=>word.id)])if(known.has(id)&&!seen.has(id)){seen.add(id);ids.push(id)}
  return ids

@@ -1,6 +1,8 @@
 <template>
+ <CustomPracticeWorkspace v-if="custom.isOpen"/>
+ <template v-else>
  <view class="page-heading study-heading"><view><text class="page-title">今日学习</text><text class="page-subtitle">今天，记住一点点。</text><text class="small muted block">{{headingSourceLabel}}</text></view><text class="study-estimate small muted">{{view.revisiting?'本轮错词回看':'预计 '+estimate+' 分钟'}}</text></view>
- <StudyPetCompanion :pet="pet.current"><template v-if="!learning.session&&!extraActive" #default><view class="study-ready"><text class="section-title">{{learning.studyWords.length||learning.due.length?'和单词，见一面':'今天的任务已经完成'}}</text><text class="small muted">{{learning.studyWords.length?'按教材顺序逐词学习，题型会自动安排。':'只复习当前教材中的单词。'}}</text><WPButton v-if="learning.studyWords.length||learning.due.length||learning.needsConsolidation" @click="beginReady">{{practiceEntry?'开始自定义练习':'开始今日学习'}}</WPButton><WPButton v-else kind="secondary" @click="activities.start('check')">整课检查</WPButton></view></template></StudyPetCompanion>
+ <StudyPetCompanion :pet="pet.current"><template v-if="!learning.session&&!extraActive" #default><view class="study-ready"><text class="section-title">{{learning.studyWords.length||learning.due.length?'和单词，见一面':'今天的任务已经完成'}}</text><text class="small muted">{{learning.studyWords.length?'按教材顺序逐词学习，题型会自动安排。':'只复习当前教材中的单词。'}}</text><WPButton v-if="learning.studyWords.length||learning.due.length||learning.needsConsolidation" @click="beginReady">开始今日学习</WPButton><WPButton v-else kind="secondary" @click="activities.start('check')">整课检查</WPButton></view></template></StudyPetCompanion>
  <PendingBanner :pending="courseStore.pendingCourse" @cancel="cancelPending" @progress="showProgress"/>
  <view class="current-course-card">
   <view class="current-course-head">
@@ -12,7 +14,8 @@
   </view>
   <text class="study-effective-line">L{{learning.todayPlan?.flow?.entryLevel||parent.settings.entryLevel}} · 今日{{learning.todayPlan?.wordIds.length||0}}词 · 全书已完整学习 {{learning.textbookProgress.learned}} / {{learning.textbookProgress.total}}（{{learning.textbookProgress.percent}}%）</text><WPProgress :value="learning.textbookProgress.learned" :total="learning.textbookProgress.total" label="当前教材完整学习进度"/><text v-if="learning.todayPlan?.flow&&learning.todayPlan.wordIds.length<learning.todayPlan.flow.target" class="small muted block">教材剩余不足目标，今天学习 {{learning.todayPlan.wordIds.length}} 词。</text><text v-if="learning.todayPlan&&!learning.todayPlan.completedAt&&learning.todayPlan.date!==localDate()" class="notice">待续学 · 完成上次任务后，下一学习日再安排新词。</text><text v-if="learning.planProblem" class="notice error" role="alert">{{learning.planProblem}}</text>
  </view>
- <text v-if="practiceEntry" class="notice study-practice-entry" role="status">{{practiceEntryHint}}</text>
+ <text v-if="custom.notice" class="notice study-practice-entry" role="status">{{custom.notice}}</text>
+ <WPCard v-if="custom.recoverable&&custom.session" class="study-custom-resume"><text class="strong block">上次自定义练习已保存</text><text class="small muted block">{{custom.session.courseTitle}} · {{custom.session.wordIds.length}} 个不同词条</text><WPButton kind="secondary" @click="custom.showPaused()">继续上次自定义练习</WPButton></WPCard>
  <view v-if="!extraActive" class="study-formal">
  <StudyStatsRow :today="learning.newToday" :due="learning.due.length" :round="roundProgress" :daily="learning.isDaily" :today-open="todayOpen" :ready-hint="learning.studyWords.length?'开始今日学习':learning.due.length?'开始到期复习':'查看教材单词'" @today="todayOpen=!todayOpen" @review="openDueReview" @round="resumeRound"/>
  <WPCard v-if="todayOpen" class="study-today-details" role="region" aria-label="今日已学新词明细"><view class="section-heading"><text class="strong">今日已学新词 · {{learning.newToday}} 词</text><WPButton kind="quiet" @click="todayOpen=false">收起明细</WPButton></view><text class="small muted block">当前教材 · 今天完整完成六环节的单词</text><view v-if="todayWords.length" class="study-today-words"><view v-for="word in todayWords" :key="word.id" class="study-today-word"><text class="strong">{{word.word}}</text><text class="muted">{{word.meaning}}</text></view></view><text v-else class="muted block">今天还没有新学单词，完成今日学习后会显示在这里。</text></WPCard>
@@ -31,8 +34,10 @@
   </view>
   <view class="learn-modes study-modes" aria-label="自定义练习工具">
    <WPButton v-if="learning.isDaily" kind="quiet" class="study-practice-entry-button" @click="independentPractice">自定义练习 · 不计今日任务</WPButton>
+   <WPButton v-if="learning.isDaily" kind="quiet" class="study-round-tools" @click="openRoundTools">本轮题型工具</WPButton>
    <template v-else>
-    <WPButton kind="quiet" class="study-practice-toggle" :aria-expanded="customOpen" aria-controls="study-custom-practice" @click="toggleCustomPractice">自定义练习 · {{modeTitles[view.mode]}} {{customOpen?'⌃':'⌄'}}</WPButton>
+    <WPButton kind="quiet" class="study-practice-entry-button" @click="independentPractice">自定义练习 · 不计今日任务</WPButton>
+    <WPButton kind="quiet" class="study-practice-toggle" :aria-expanded="customOpen" aria-controls="study-custom-practice" @click="toggleCustomPractice">调整本轮题型 · {{modeTitles[view.mode]}} {{customOpen?'⌃':'⌄'}}</WPButton>
     <view v-show="customOpen" id="study-custom-practice" class="custom-practice" role="region" aria-label="自定义练习内容">
      <StudyModeSelector :model-value="view.mode" :options="modeOptions" :disabled="!!view.answer||view.revisiting" :locked-reason="view.revisiting?'回看期间不可切换':'进入下一词后可切换'" @update:model-value="view.chooseMode"/>
      <WPActionTile v-if="!view.revisiting" role="button" tabindex="0" class="auto-mode-button" :class="{selected:!view.state.manual}" :disabled="!!view.answer" :aria-pressed="!view.state.manual" @click="view.automatic()">{{view.state.manual?'恢复自动编排':'自动编排中'}}</WPActionTile>
@@ -47,9 +52,12 @@
  <view v-if="extraActive||!learning.session||view.completed" class="button-row daily-entry-actions"><WPButton v-if="learning.isDaily||!learning.session" kind="quiet" @click="independentPractice">自定义练习 · 不计今日任务</WPButton><WPButton v-else kind="secondary" @click="beginStudy">返回今日六环节</WPButton></view>
  <ActivityWorkspace v-if="!learning.session||!!learning.session.completedAt"/>
  <text v-if="audioError||view.error" class="notice error" role="alert">{{audioError||view.error}}</text>
+ </template>
 </template>
 <script setup lang="ts">
 import PendingBanner from '../../components/course/PendingBanner.vue'
+import CustomPracticeWorkspace from '../../components/study/CustomPracticeWorkspace.vue'
+import {useCustomPracticeStore} from '../../stores/custom-practice'
 import StudyPetCompanion from '../../components/pet-house/StudyPetCompanion.vue'
 import StudyStatsRow from '../../components/study/StudyStatsRow.vue'
 import {studyRoundProgress} from '../../services/learning/StudyStats'
@@ -92,19 +100,21 @@ import {navigate,openCourseGallery,consumeStudyPractice} from '../../services/na
 import {courseSummary as summarizeCourse} from '../../services/course/CourseSelection'
 import {windowLayout} from '../../services/window'
 const learning=useLearningStore(),review=useReviewStore(),profile=useProfileStore(),pet=usePetStore(),theme=useThemeStore(),view=useStudyPresentation(),audioError=ref(''),courseStore=useCourseStore(),activities=useActivitiesStore(),feedback=useFeedbackStore(),parent=useParentSettingsStore()
+const custom=useCustomPracticeStore()
 const phonicsController=new PhonicsPlaybackController()
 let stepTimer:ReturnType<typeof setTimeout>|undefined
 function clearStepTimer(){if(stepTimer)clearTimeout(stepTimer);stepTimer=undefined}
-watch(()=>view.answer,answer=>{
+watch(()=>learning.isDaily?learning.session?.answers[learning.session.index]?.id:undefined,()=>{
+ const answer=view.answer
  clearStepTimer()
- if(!learning.isDaily||!answer?.correct||view.index!==view.total-1)return
+ if(custom.isOpen||!learning.isDaily||!answer?.correct||view.index!==view.total-1)return
  const id=learning.session?.id,step=learning.session?.flow?.step,index=view.index
  stepTimer=setTimeout(()=>{if(learning.session?.id===id&&learning.session?.flow?.step===step&&view.index===index){view.next()}},700)
 })
 onUnmounted(clearStepTimer)
 onHide(clearStepTimer)
 const systemVoice=computed(()=>!!view.current?.tags?.includes('offline-system-fallback-en-us'))
-const practiceEntry=consumeStudyPractice(),customOpen=ref(practiceEntry),exploreOpen=ref(false)
+const practiceEntry=consumeStudyPractice(),customOpen=ref(false),exploreOpen=ref(false)
 let practiceEntryHandled=false
 const hintOpen=ref(false),hintFailure=ref('')
 const hintText=computed(()=>view.current?studyHint(view.current,view.mode):'暂时没有更多提示，可以先听一遍发音。')
@@ -153,10 +163,12 @@ async function scrollPracticeIntoView(){
   if(bounds&&viewport)uni.pageScrollTo?.({scrollTop:Math.max(0,viewport.scrollTop+bounds.top-windowLayout.safeTop-12),duration:theme.reduced?0:150})
  })
 }
-function independentPractice(){if(learning.startPractice()){customOpen.value=true;view.sync();void scrollPracticeIntoView()}}
+function independentPractice(){clearStepTimer();phonicsController.stop();stopAudio();custom.openConfig();uni.pageScrollTo?.({scrollTop:0,duration:0})}
+// Retain the existing current-word-group tools for legacy independent/review sessions.
+function openRoundTools(){clearStepTimer();phonicsController.stop();stopAudio();if(learning.startPractice()){customOpen.value=true;view.sync();void scrollPracticeIntoView()}}
 function toggleCustomPractice(){customOpen.value=!customOpen.value;if(customOpen.value)void scrollPracticeIntoView()}
 function beginStudy(){courseStore.applyPending();learning.start()}
-function beginReady(){if(practiceEntry)independentPractice();else beginStudy()}
+function beginReady(){beginStudy()}
 const course=computed(()=>learning.lesson)
 const estimate=computed(()=>Math.max(1,Math.ceil((view.total||learning.due.length||learning.studyWords.length||5)*.7)))
 const roundProgress=computed(()=>studyRoundProgress(learning.session)),todayOpen=ref(false)
@@ -195,15 +207,15 @@ watch(()=>view.current,word=>{phonicsController.setWord(word)},{immediate:true})
 watch([()=>learning.session?.id,()=>view.current?.id,()=>view.index,()=>view.mode],()=>{exploreOpen.value=false})
 watch(()=>[view.current?.audio,learning.session?.index],()=>{const session=learning.session,id=session?.wordIds[(session.index||0)+1],next=id?resolveFrozenWord(session?.wordSnapshot?.[id],session?.courseId,session?.contentVersion):undefined;warmUpcomingAudio([view.current?.audio||'',next?.audio||''])},{immediate:true})
 watch(()=>[view.current?.id,view.current?.audio,view.mode],()=>{stopAudio();audioError.value='';if(['listen','dictation'].includes(view.mode)&&!view.answer)play()})
-onShow(()=>{learning.prepareDaily();if(practiceEntry&&!practiceEntryHandled){practiceEntryHandled=true;if(learning.isDaily)independentPractice()}view.sync()})
-onHide(()=>{phonicsController.stop();stopAudio();activities.pauseTimer()})
+onShow(()=>{learning.prepareDaily();if(practiceEntry&&!practiceEntryHandled){practiceEntryHandled=true;independentPractice()}view.sync()})
+onHide(()=>{phonicsController.stop();stopAudio();activities.pauseTimer();custom.leave()})
 watch(()=>view.answer,answer=>{if(answer?.correct)successHaptic(theme.reduced)})
 function play(){if(view.current){audioError.value='';void phonicsController.play(view.current).catch(error=>audioError.value=(error as Error).message)}}
 function updateInput(event:any){view.updateInput(event.detail?.value??event.target?.value??'')}
 function submit(){uni.hideKeyboard?.();if(view.answer)view.next();else view.submit(view.mode==='flash'?3:undefined)}
 function another(){stopAudio();courseStore.applyPending();if(learning.studyWords.length||learning.due.length||learning.needsConsolidation)learning.start();else activities.start('check')}
 function shortcut(event:{key:string;metaKey?:boolean;ctrlKey?:boolean}){
- if(event.metaKey||event.ctrlKey)return
+ if(custom.isOpen||event.metaKey||event.ctrlKey)return
  if(event.key===' ')play()
  else if(event.key==='Enter'){if(view.mode==='flash'&&!view.revealed)view.reveal();else submit()}
  else if(event.key==='ArrowLeft'&&!view.revisiting)learning.previous()

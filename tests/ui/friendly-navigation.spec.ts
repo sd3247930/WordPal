@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test'
-import {go,app,setAppearance,seedDatabase,database} from './helpers'
+import {go,app,setAppearance,seedDatabase,database,openCustomPractice} from './helpers'
 import {goldenDatabase} from './fixtures'
 const destinations=[['home','首页'],['learn','学习'],['pet','宠物屋'],['review','单词本'],['settings','设置']]
 
@@ -38,7 +38,7 @@ for(const mode of ['light','dark'])for(const highContrast of [false,true])test(`
 test('常规字体适度增大，课程页隐藏底栏，刷新与横竖屏不丢失学习草稿',async({page})=>{
  await page.setViewportSize({width:390,height:844});await go(page,'learn')
  await expect(page.locator('.bottom-label').first()).toHaveCSS('font-size','15px')
- await page.getByRole('button',{name:'开始今日学习',exact:true}).click();await page.getByRole('button',{name:/^自定义练习 ·/}).click();await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^拼写，/}).click();await page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true}).fill('ca')
+ await page.getByRole('button',{name:'开始今日学习',exact:true}).click();await openCustomPractice(page);await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^拼写，/}).click();await page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true}).fill('ca')
  const before=await database(page);await page.locator('.bottom-nav').getByRole('button',{name:'设置',exact:true}).click();await page.locator('.bottom-nav').getByRole('button',{name:'学习',exact:true}).click()
  for(const size of [{width:844,height:390},{width:390,height:844}]){await page.setViewportSize(size);await expect(page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true})).toHaveValue('ca')}
  await page.reload();await expect(page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true})).toHaveValue('ca');expect(await database(page)).toEqual(before)

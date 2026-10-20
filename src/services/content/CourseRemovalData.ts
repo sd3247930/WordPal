@@ -32,6 +32,7 @@ export function backupCourseRemoval(database:Database,scope:CourseRemovalScope){
  const snapshot={schemaVersion:1,courseId:id,createdAt:new Date().toISOString(),wordIds:scope.wordIds,exclusiveWordIds:scope.exclusiveWordIds,
   cards:Object.fromEntries(Object.entries(database.cards).filter(([id])=>exclusive.has(id))),history:database.history.filter(row=>owned(row,scope)),practiceAnswers:database.practiceAnswers?.filter(row=>owned(row,scope)),auxiliaryRecords:database.auxiliaryRecords?.filter(row=>row.courseId===id),
   progress:database.courseProgress?.[id],session:(database.session?.courseId||database.currentCourseId)===id?database.session:null,courseSession:database.courseSessions?.[id],
+  customPractice:database.customPractice?.courseId===id?database.customPractice:null,
   descriptor:readStorage<Record<string,unknown>>('wordpal.content.directory.v1',{})[id],preferences:readStorage<unknown>('wordpal.wordbook.preferences.v1',null),
   presentation:readStorage<unknown>(PRESENTATION_KEY,null),activities:readStorage<unknown>(ACTIVITY_KEY,null)}
  writeStorage(key,snapshot)
@@ -44,6 +45,7 @@ export function pruneRemovedCourseRecords(database:Database,scope:CourseRemovalS
  database.history=database.history.filter(row=>!owned(row,scope))
  if(database.practiceAnswers)database.practiceAnswers=database.practiceAnswers.filter(row=>!owned(row,scope))
  if(database.auxiliaryRecords)database.auxiliaryRecords=database.auxiliaryRecords.filter(row=>row.courseId!==scope.courseId)
+ if(database.customPractice?.courseId===scope.courseId)database.customPractice=null
  pruneCourseProgress(database,scope.courseId)
  return before!==JSON.stringify(database)
 }

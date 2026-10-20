@@ -15,6 +15,7 @@ import {configureLocalCourses,configureStarterCourse} from './services/content/C
 import type {CoursePack} from '../packages/content_schema/course'
 import {useActivitiesStore} from './stores/activities'
 import {useCourseStore} from './stores/course'
+import {useCustomPracticeStore} from './stores/custom-practice'
 const useLocalContent=import.meta.env.VITE_WORDPAL_LOCAL_CONTENT==='1'||import.meta.env.DEV&&import.meta.env.VITE_WORDPAL_LOCAL_CONTENT!=='0'
 // Automated acceptance can opt into a public synthetic course without touching the real catalog.
 const allowTestContent=import.meta.env.DEV||import.meta.env.VITE_WORDPAL_ACCEPTANCE==='1'
@@ -26,6 +27,6 @@ const activeLocalPacks=useSyntheticSeries?[...localPacks.filter(pack=>!synthetic
 configureLocalCourses(useSynthetic?[...activeLocalPacks,synthetic as CoursePack,syntheticArchived as CoursePack]:activeLocalPacks)
 onLaunch(()=>{startWindowService();const profile=useProfileStore();loadDirectory();void(async()=>{if(profile.removeCourseRecords())try{if(await retryCourseCleanup())profile.storageError='已删除教材的部分资源待清理，重启后将重试。'}catch{profile.storageError='已删除教材的内容清理尚未完成，重启后可重试。'}await hydrateMedia()})()})
 onShow(()=>{useReviewStore().refresh();useCourseStore().applyPending()})
-onHide(()=>{stopAudio();useActivitiesStore().pauseTimer()})
+onHide(()=>{stopAudio();useActivitiesStore().pauseTimer();useCustomPracticeStore().pause()})
 </script>
-<style lang="scss">@use './styles/tokens.scss';@use './styles/app.scss';@use './styles/study-wordbook.scss';@use './styles/accessibility.scss';@use './styles/controls.scss';@use './styles/courses.scss';@use './styles/phonics.scss';@use './styles/course-wordbook.scss';@use './styles/navigation.scss';@use './styles/icon-interactions.scss';@use './styles/cream-clay.scss';@use './styles/spirit-stone.scss';</style>
+<style lang="scss">@use './styles/tokens.scss';@use './styles/app.scss';@use './styles/study-wordbook.scss';@use './styles/accessibility.scss';@use './styles/controls.scss';@use './styles/courses.scss';@use './styles/phonics.scss';@use './styles/course-wordbook.scss';@use './styles/navigation.scss';@use './styles/icon-interactions.scss';@use './styles/cream-clay.scss';@use './styles/spirit-stone.scss';@use './styles/custom-practice.scss';</style>
