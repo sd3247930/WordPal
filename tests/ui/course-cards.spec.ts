@@ -40,9 +40,9 @@ test('600 词30条分页回到首词、搜索/Unit/排序/去重及离线文本�
  for(const width of [390,1280]){
   await page.setViewportSize({width,height:900})
   const first=await page.locator('.course-word-row').first().getAttribute('data-occurrence');await page.getByRole('button',{name:'下一页',exact:true}).click();await expect(page.locator('.course-word-row')).toHaveCount(30);expect(await page.locator('.course-word-row').first().getAttribute('data-occurrence')).not.toBe(first)
-  await expect.poll(async()=>Math.abs((await page.locator('.course-word-row').first().boundingBox())!.y-8)).toBeLessThan(2)
+  await expect.poll(async()=>Math.abs((await page.locator('.course-word-row').first().boundingBox())!.y-12)).toBeLessThan(2)
   await page.getByRole('button',{name:'上一页',exact:true}).click();await expect(page.locator('.course-word-row').first()).toHaveAttribute('data-occurrence',first!)
-  await expect.poll(async()=>Math.abs((await page.locator('.course-word-row').first().boundingBox())!.y-8)).toBeLessThan(2)
+  await expect.poll(async()=>Math.abs((await page.locator('.course-word-row').first().boundingBox())!.y-12)).toBeLessThan(2)
  }
  await picker(page,'课程词卡单元',2);await expect(page.locator('.course-card-actions')).toContainText('300 个词条');await expect(page.locator('.course-word-row').first()).toContainText('sample300')
  await page.getByRole('textbox',{name:'搜索教材词卡'}).fill('sample42');await expect(page.locator('.course-word-row')).toHaveCount(10);await page.getByRole('button',{name:/^筛选与排序/}).click();await picker(page,'教材词卡排序',1);await page.getByRole('button',{name:'显示重复教材出现',exact:true}).click();await expect(page.locator('.course-card-actions')).toContainText('10 个独立词')

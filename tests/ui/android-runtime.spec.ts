@@ -19,7 +19,7 @@ test('缺少 Intl 的运行环境可打开首页、提交学习并查看复习�
   await page.locator('.mode-button').filter({ hasText: '所有单词' }).click()
   const row=page.locator('.review-row').filter({hasText:'cat'})
   await expect(row).toContainText(/(今天|明天|下周|\d+ 天后)/)
-  await row.click()
+  await row.locator('.wordbook-open').click()
   await expect(page.locator('.word-detail-panel')).toContainText(/复习日期 \d{4}\/\d+\/\d+/)
   expect(errors).toEqual([])
 })

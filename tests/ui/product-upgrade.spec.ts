@@ -32,7 +32,7 @@ test('运行中的教材取消卸载保留原任务，强确认后清除本册�
 test('查询统计跟随关键词，三 Scope 清理 Unit，手动重点不混入风险建议',async({page})=>{
  await seedDatabase(page,goldenDatabase());await go(page,'review');const before=await database(page);await expect(page.getByRole('group',{name:'单词本课程范围'}).getByRole('button')).toHaveCount(2)
  await page.locator('.wordbook-search input').fill('cat');await expect(page.locator('.wordbook-stats')).toContainText('全部独立词');await expect(page.locator('.wordbook-stats > uni-view').last()).toContainText('1');await expect(page.locator('.review-row')).toHaveCount(1)
- await selectWordbookScope(page,'只看已学');await expect(page.locator('uni-picker[aria-label="选择浏览单元"]')).toHaveCount(0);await expect(page.locator('.review-row')).toHaveCount(1);await page.locator('.review-row').click();await page.getByRole('button',{name:'标记为我的重点',exact:true}).click();await page.keyboard.press('Escape');await page.locator('.review-tabs .mode-button').filter({hasText:'重点复习'}).click();await expect(page.locator('.wordbook-focus-legend')).toContainText('我的重点 1');await expect(page.locator('.review-row')).toHaveCount(1);expect(await database(page)).toEqual(before)
+ await selectWordbookScope(page,'只看已学');await expect(page.locator('uni-picker[aria-label="选择浏览单元"]')).toHaveCount(0);await expect(page.locator('.review-row')).toHaveCount(1);await page.locator('.review-row .wordbook-open').click();await page.getByRole('button',{name:'标记为我的重点',exact:true}).click();await page.keyboard.press('Escape');await page.locator('.review-tabs .mode-button').filter({hasText:'重点复习'}).click();await expect(page.locator('.wordbook-focus-legend')).toContainText('我的重点 1');await expect(page.locator('.review-row')).toHaveCount(1);expect(await database(page)).toEqual(before)
 })
 test('核心学习默认折叠，自定义题型和答案探索按状态展开，图片不提前泄题',async({page})=>{
  await seedDatabase(page,{...freshDatabase(),abilityLevel:'L5'});await go(page,'home');await page.locator('.hero-cta').click();await expect(page.getByRole('button',{name:/^自定义练习/})).toBeVisible();await expect(page.getByRole('group',{name:'选择学习方式'})).toBeHidden();await expect(page.locator('.wp-word-card')).toHaveAttribute('data-phase','revealed');await expect(page.locator('.wp-word-card')).toHaveAttribute('data-density','independent')
@@ -44,7 +44,7 @@ for(const theme of ['swiss'])test(`${theme} 新查询与折叠卡跨 599/600/839
  await setAppearance(page,theme,theme==='oled'?'dark':'light',{largeText:true,reducedMotion:true});await seedDatabase(page,goldenDatabase())
  for(const width of [390,599,600,839,840,1280]){
   await page.setViewportSize({width,height:900});await go(page,'review');if(await page.getByRole('button',{name:'关闭单词详情',exact:true}).count())await page.getByRole('button',{name:'关闭单词详情',exact:true}).click();await page.locator('.wordbook-search input').fill('cat')
-  const row=page.locator('.review-row');if(await row.getAttribute('aria-pressed')==='true'){await row.click();await expect(page.locator('.detail-word')).toHaveCount(0)}
+  const row=page.locator('.review-row .wordbook-open');if(await row.getAttribute('aria-pressed')==='true'){await row.click();await expect(page.locator('.detail-word')).toHaveCount(0)}
   await row.click();await expect(page.locator('.detail-word')).toHaveText('cat');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBeTruthy();expect(await page.locator('[role=button]:visible').evaluateAll(nodes=>Math.min(...nodes.map(n=>n.getBoundingClientRect().height)))).toBeGreaterThanOrEqual(48)
  }
 })

@@ -16,10 +16,10 @@ test('独立自动练习轮换五种题型，错词回看刷新保留且不推�
 test('英文、中文、单元搜索；重点、稍后、Sheet 焦点与跨窗口状态',async({page})=>{
  await page.setViewportSize({width:390,height:844});await seedDatabase(page,goldenDatabase());await go(page,'review');const before=await database(page)
  await page.locator('.review-tabs .mode-button').filter({hasText:'所有单词'}).click();await page.locator('.wordbook-search input').fill('CAT');await expect(page.locator('.review-row')).toHaveCount(1)
- await page.locator('.wordbook-search input').fill('猫');await expect(page.locator('.review-row')).toHaveCount(1);await page.locator('.review-row').click();await expect(page.getByRole('dialog')).toBeVisible();await expect(page.locator('.detail-word')).toHaveText('cat')
+ await page.locator('.wordbook-search input').fill('猫');await expect(page.locator('.review-row')).toHaveCount(1);await page.locator('.review-row .wordbook-open').click();await expect(page.getByRole('dialog')).toBeVisible();await expect(page.locator('.detail-word')).toHaveText('cat')
  await expect(page.getByRole('button',{name:'关闭单词详情'})).toBeFocused();await page.getByRole('button',{name:'标记为我的重点',exact:true}).click();await page.getByRole('button',{name:/^更多记忆信息/}).click();await page.getByRole('button',{name:'稍后再看',exact:true}).click();expect(await database(page)).toEqual(before)
  await page.setViewportSize({width:768,height:1024});await expect(page.getByRole('dialog')).toHaveCount(0);await expect(page.locator('.detail-word')).toHaveText('cat');await expect(page.locator('.wordbook-search input')).toHaveValue('猫')
- await page.setViewportSize({width:390,height:844});await expect(page.getByRole('dialog')).toBeVisible();await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);await expect(page.locator('.review-row')).toBeFocused()
+ await page.setViewportSize({width:390,height:844});await expect(page.getByRole('dialog')).toBeVisible();await page.keyboard.press('Escape');await expect(page.getByRole('dialog')).toHaveCount(0);await expect(page.locator('.review-row .wordbook-open')).toBeFocused()
  await page.getByRole('button',{name:'清空单词搜索'}).click();await page.locator('.wordbook-search input').fill('探索单元 1');await expect(page.locator('.review-row')).toHaveCount(10)
  await page.getByRole('button',{name:'清空单词搜索'}).click();await page.locator('.review-tabs .mode-button').filter({hasText:'重点复习'}).click();await expect(page.locator('.wordbook-focus-legend')).toContainText('我的重点 1');await page.reload();await page.locator('.review-tabs .mode-button').filter({hasText:'重点复习'}).click();await expect(page.locator('.review-row').filter({hasText:'cat'})).toContainText('我的重点')
  expect(await database(page)).toEqual(before)
@@ -38,7 +38,7 @@ test('手机滚动到连接提交与闪现评分后完整可见，不被导航�
 })
 for(const theme of ['swiss'])for(const size of windows)test(`${theme} ${size.name} 单词详情与搜索截图`,async({page})=>{
  await page.clock.install({time:new Date('2026-10-04T08:00:00Z')});await page.setViewportSize(size);await setAppearance(page,theme,theme==='oled'?'dark':'light',{largeText:size.name==='split-narrow'});await seedDatabase(page,goldenDatabase());await go(page,'review')
- await page.locator('.wordbook-search input').fill('cat');await page.locator('.review-row').click();await expect(page.locator('.detail-word')).toHaveText('cat');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBeTruthy()
+ await page.locator('.wordbook-search input').fill('cat');await page.locator('.review-row .wordbook-open').click();await expect(page.locator('.detail-word')).toHaveText('cat');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBeTruthy()
  // Full-page baselines start at the same document and panel scroll positions after click-to-focus.
  await waitForArtwork(page)
  await page.evaluate(()=>{window.scrollTo(0,0);document.querySelectorAll('.word-detail-panel,.sidebar').forEach(e=>e.scrollTop=0)})

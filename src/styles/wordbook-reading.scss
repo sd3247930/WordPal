@@ -1,0 +1,27 @@
+.wp-app .wordbook-row.review-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;cursor:default;text-align:left}
+.wp-app .wordbook-row .wordbook-row-copy{min-width:0;overflow-wrap:anywhere;gap:5px}
+.wp-app .wordbook-meaning{display:block;font-size:var(--wp-font-body);line-height:1.5;white-space:normal;overflow-wrap:anywhere}
+.wp-app .wordbook-source{display:block;font-size:calc(var(--wp-font-caption) + 1px);line-height:1.55;color:var(--wp-muted-foreground);white-space:normal;overflow-wrap:anywhere}
+.wp-app .wordbook-row .wordbook-row-memory{width:calc(var(--wp-font-body)*2 + 28px);max-width:none;min-width:0;display:flex;align-items:flex-end;flex-direction:column;gap:6px;text-align:right}
+.wp-app .wordbook-row .wordbook-open.wp-button{margin:0;min-width:64px;min-height:48px;padding:8px 12px;white-space:nowrap;font-size:var(--wp-font-body)}
+.wp-app .course-word-content{display:grid;grid-template-columns:52px minmax(0,1fr);gap:5px 12px;flex:1;min-width:0;align-items:center}
+.wp-app .course-word-content>.wordbook-source{grid-column:2}
+.wp-app .course-word-copy{min-width:0}.wp-app .course-word-copy>.course-word-meaning{font-size:var(--wp-font-body);line-height:1.5}
+.wp-app .course-word-tools .course-word-open.wp-button{width:auto;flex:none;min-width:64px;min-height:48px;justify-content:center;margin:0;padding:8px 12px;white-space:nowrap;font-size:var(--wp-font-body)}
+.wp-app .course-word-row .course-word-thumb{padding:0}
+.wp-app .word-detail-panel .detail-word-hero{display:grid;grid-template-columns:minmax(0,.48fr) minmax(0,.52fr);gap:12px;align-items:center}
+.wp-app .word-detail-panel .detail-word-copy{min-width:0;gap:10px}
+.wp-app .word-detail-panel .detail-word{font-size:calc(var(--wp-font-body)*1.625);line-height:1.3;font-weight:700;white-space:normal;word-break:normal;overflow-wrap:anywhere}
+.wp-app .word-detail-panel .detail-word.detail-phrase{font-size:calc(var(--wp-font-body)*1.375);line-height:1.4}
+.wp-app .word-detail-panel .detail-word-copy .ipa{font-size:var(--wp-font-body);line-height:1.5;overflow-wrap:anywhere}
+.wp-app .detail-image-frame{position:relative;min-width:0;width:100%;aspect-ratio:1;max-height:320px;border-radius:var(--wp-radius-sm);background:var(--wp-surface-tonal);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.wp-app .word-detail-panel .detail-image-frame .detail-picture{position:absolute;inset:0;display:block;width:100%;height:100%;padding:0;object-fit:contain;border-radius:var(--wp-radius-sm)}
+.wp-app .detail-image-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;max-width:100%;text-align:center;padding:12px;box-sizing:border-box}
+.wp-app .detail-image-placeholder>text:first-child{font-size:40px}.wp-app .detail-image-placeholder .wp-button{white-space:normal;margin:0;min-height:48px}
+.wp-app .word-detail-panel .detail-meaning{display:flex;flex-direction:column;gap:4px;font-size:calc(var(--wp-font-body) + 1px);line-height:1.55;overflow-wrap:anywhere}
+.wp-app .word-detail-panel .detail-example>text:not(.eyebrow):not(.small){font-size:calc(var(--wp-font-body)*1.375);line-height:1.5;overflow-wrap:anywhere}
+.wp-app .word-detail-panel .detail-primary-source{margin:0}
+.wp-app .word-detail-panel.detail-stack .detail-word-hero{grid-template-columns:minmax(0,1fr)}
+.wp-app .word-detail-panel.detail-stack .detail-image-frame{width:min(100%,300px);justify-self:center}
+@media(max-width:599px){.wp-app .course-word-content{width:100%;flex-basis:100%}.wp-app .course-word-tools{flex-wrap:wrap;gap:10px}.wp-app .course-word-tools>.wp-button{flex:none}.wp-app .word-detail-sheet{padding-left:20px;padding-right:20px}}
+@media(max-width:359px){.wp-app .wordbook-row.review-row{grid-template-columns:minmax(0,1fr)}.wp-app .wordbook-row .wordbook-row-memory{width:auto;flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap;text-align:left}}

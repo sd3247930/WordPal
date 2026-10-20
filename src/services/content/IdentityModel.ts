@@ -1,16 +1,21 @@
 import type {CoursePack} from '../../../packages/content_schema/course'
 import type {Word,MemoryCard,Answer} from '../../../packages/core_learning'
+import {orderedUnits,orderedWordIds} from '../../../packages/content_schema/course-order'
 
-export interface CourseOccurrence {id:string;courseId:string;unitId:string;unitTitle:string;lexemeId:string;order:number;lessonIds:string[]}
+export interface CourseOccurrence {id:string;courseId:string;unitId:string;unitTitle:string;lexemeId:string;order:number;lessonIds:string[];unitWordOrder?:number;bookWordOrder?:number;positionStatus?:'confirmed'|'unconfirmed'}
 /** Existing canonical IDs already distinguish meanings; never deduplicate by spelling. */
 export function occurrences(pack:CoursePack):CourseOccurrence[]{
  const result:CourseOccurrence[]=[]
- const ordered=pack.units.map((unit,index)=>({unit,index})).sort((a,b)=>(a.unit.order??a.index+1)-(b.unit.order??b.index+1))
- for(const {unit} of ordered){const seen=new Map<string,CourseOccurrence>();for(const lesson of unit.lessons)for(const id of lesson.wordIds){
-  let row=seen.get(id)
-  if(!row){row={id:JSON.stringify([pack.courseId,unit.id,id]),courseId:pack.courseId,unitId:unit.id,unitTitle:unit.title,lexemeId:id,order:result.length,lessonIds:[]};seen.set(id,row);result.push(row)}
-  if(!row.lessonIds.includes(lesson.id))row.lessonIds.push(lesson.id)
- }}
+ const known=new Set(pack.vocabulary.map(word=>word.id)),assigned=new Set<string>()
+ for(const unit of orderedUnits(pack)){
+  const lessonsByWord=new Map<string,string[]>()
+  for(const lesson of unit.lessons)for(const id of new Set(lesson.wordIds)){const lessons=lessonsByWord.get(id)||[];lessons.push(lesson.id);lessonsByWord.set(id,lessons)}
+  for(const [index,id] of orderedWordIds(pack,[...lessonsByWord.keys()]).entries()){
+   result.push({id:JSON.stringify([pack.courseId,unit.id,id]),courseId:pack.courseId,unitId:unit.id,unitTitle:unit.title,lexemeId:id,order:result.length,bookWordOrder:result.length+1,unitWordOrder:index+1,positionStatus:known.has(id)?'confirmed':'unconfirmed',lessonIds:lessonsByWord.get(id)!})
+   assigned.add(id)
+  }
+ }
+ for(const id of orderedWordIds(pack,pack.vocabulary.map(word=>word.id)).filter(id=>!assigned.has(id)))result.push({id:JSON.stringify([pack.courseId,'',id]),courseId:pack.courseId,unitId:'',unitTitle:'',lexemeId:id,order:result.length,bookWordOrder:result.length+1,positionStatus:pack.units.length?'unconfirmed':'confirmed',lessonIds:[]})
  return result
 }
 export function lexeme(word:Word){return {id:word.id,lemma:word.word,language:'en' as const,pos:word.pos,meaningsZh:[word.meaning],phonics:word.phonics,ipa:word.ipa}}

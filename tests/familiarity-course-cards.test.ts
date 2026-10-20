@@ -56,7 +56,7 @@ test('统一搜索/Unit/状态/到期/重点、缺失资源及未安装空教材
  assert.equal(queryCourseCards({courseId:'a',keyword:'戏剧'},index()).totalRows,1)
  assert.equal(queryCourseCards({courseId:'b'},index()).available,false)
  assert.equal(queryCourseCards({courseId:'a'},{...index(),installed:false}).totalRows,0)
- assert.equal(queryCourseCards({courseId:'a'},{...index(),pack:{...p,units:[]}}).totalRows,0)
+ const noUnits=queryCourseCards({courseId:'a'},{...index(),pack:{...p,units:[]}});assert.equal(noUnits.totalRows,p.vocabulary.length);assert.deepEqual(noUnits.rows.map(row=>row.occurrence.bookWordOrder),p.vocabulary.map((_,index)=>index+1))
  const damaged=queryCourseCards({courseId:'a'},{...index(),wordFor:()=>undefined});assert.equal(damaged.totalRows,7);assert.ok(damaged.rows.every(row=>row.familiarity.level==='unrated'))
  assert.equal(queryCourseCards({courseId:'a',dueOnly:true},index()).totalRows,1)
 })
