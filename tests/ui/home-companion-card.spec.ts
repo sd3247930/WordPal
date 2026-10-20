@@ -14,6 +14,7 @@ async function inspect(page:Page){
 test('首页复用真实宠物资料，取消信息小框和CTA箭头，独立今日任务与三栏统计保留',async({page})=>{
  await page.setViewportSize({width:390,height:844});await prepare(page);const before=await database(page),card=page.locator('.home-companion-lite')
  await expect(card.locator('.companion-label')).toHaveText('当前陪伴 · 水象精灵');await expect(card.locator('.companion-name')).toHaveText('玄冥');await expect(card.locator('.companion-level')).toHaveText('Lv.2');await expect(card.locator('.companion-status')).toContainText('开心');await expect(card.locator('.companion-status')).toContainText('亲密度 36');await expect(card.locator('.companion-open')).toHaveText('看看伙伴');await expect(card.locator('.companion-paw')).toBeVisible();await expect(card).not.toContainText('今日任务');await expect(card).not.toContainText('→');await expect(card.locator('.companion-bubble')).toHaveCount(0)
+ for(const icon of ['paw','smile','heart']){const image=card.locator(`.companion-clay-icon img[src*="clay-${icon}"]`);await expect(image).toHaveJSProperty('naturalWidth',256);await expect(image).toHaveJSProperty('naturalHeight',256)}
  await expect(page.locator('.home-today .section-heading')).toContainText('今日任务');await expect(page.locator('.home-stats-strip .home-stat-value')).toHaveText(['3','3','5']);await inspect(page);await card.locator('.companion-name').click();await expect(card).toBeVisible();expect(await database(page)).toEqual(before)
 })
 
@@ -44,6 +45,7 @@ test('CTA鼠标、Enter与Space沿用宠物屋导航，快速点击仅调用一�
 
 test('图片失败有占位和重试，背景故障不影响资料及CTA，恢复后显示同一精灵',async({page})=>{
  let fail=true;await page.route('**/static/pet-house/growth/water-juvenile.png',route=>fail?route.fulfill({status:404,body:''}):route.continue());await page.route('**/static/pet-house/water-scene.jpg',route=>route.abort());await prepare(page);const before=await database(page)
+ await page.route('**/static/icons/companion/*.png',route=>route.abort());await page.reload();await expect(page.locator('.home-companion-lite .companion-clay-icon')).toHaveCount(0);await expect(page.locator('.companion-smile.icon-fallback')).toBeVisible();await expect(page.locator('.companion-heart')).toBeVisible();await expect(page.locator('.companion-paw>uni-view')).toHaveCount(5);await expect(page.locator('.companion-status')).toContainText('开心');await expect(page.locator('.companion-status')).toContainText('亲密度 36')
  await expect(page.getByRole('img',{name:'玄冥配图暂不可用',exact:true})).toBeVisible();await expect(page.locator('.home-companion-lite .companion-backdrop')).toHaveCount(0);await expect(page.locator('.companion-level')).toHaveText('Lv.2');fail=false;await page.getByRole('button',{name:'重试配图',exact:true}).click();await expect(page.locator('.companion-portrait img')).toHaveJSProperty('naturalWidth',960);expect(await database(page)).toEqual(before);await page.locator('.companion-open').click();await expect(page.locator('.pet-house')).toBeVisible();expect(await database(page)).toEqual(before)
 })
 
