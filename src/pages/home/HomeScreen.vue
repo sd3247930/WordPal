@@ -23,7 +23,8 @@
     </view>
    </view>
   </WPCard>
-  <WPCard class="home-today task-list-card"><view class="section-heading"><text>今日任务</text><WPChip>{{completedTasks}} / 4</WPChip></view>
+  <HomeTodayTasks v-if="theme.settings.themeId==='clay'" :tasks="tasks" :note="taskNote" :action-label="taskActionLabel" :unavailable="taskUnavailable" :unreadable="profile.readOnly||!!profile.bootError" :busy="taskOpening" @start="begin"/>
+  <WPCard v-else class="home-today task-list-card"><view class="section-heading"><text>今日任务</text><WPChip>{{completedTasks}} / 4</WPChip></view>
    <WPButton class="hero-cta" :spread="true" @click="begin">{{learning.session&&!learning.session.completedAt?'继续今日学习':'开始今日学习'}} <text aria-hidden="true">→</text></WPButton>
    <WPTaskCard v-for="task in tasks" :key="task.title" :icon="task.icon" :title="task.title" :detail="task.detail" :value="task.value" :element="task.element" :completed="task.done" action="去学习" @click="beginMode(task.mode)"/>
    <text class="small muted block">{{learning.todayPlan?.completedAt?'今天的六环节已完成，下一学习日继续下一批。':learning.todayPlan&&learning.todayPlan.date!==localDate()?'待续学：先完成上次的固定词表。':'按教材顺序完成六环节，每一步都算数。'}}</text>
@@ -39,6 +40,7 @@
 import PetHousePetArt from '../../components/pet-house/PetHousePetArt.vue'
 import HomeStatsRow from '../../components/home/HomeStatsRow.vue'
 import HomePetCompanionCard from '../../components/home/HomePetCompanionCard.vue'
+import HomeTodayTasks from '../../components/home/HomeTodayTasks.vue'
 import WPButton from "../../components/wp-button/WPButton.vue"
 import WPActionTile from "../../components/button/WPActionTile.vue"
 import WPControlIcon from '../../components/button/WPControlIcon.vue'
@@ -94,7 +96,13 @@ const tasks=computed(()=>[
  {title:'复习巩固',detail:'完成今天全部单词的巩固',icon:'review',element:'water',mode:'flash'}
 ].map((task,index)=>({...task,icon:task.icon as TaskIconName,element:task.element as Element,mode:task.mode as LearningMode,value:learning.tasks[index].done+' / '+learning.tasks[index].total,done:learning.tasks[index].complete})))
 const completedTasks=computed(()=>tasks.value.filter(t=>t.done).length)
-function begin(){course.applyPending();if(learning.start())navigate('learn');else if(learning.planProblem)uni.showToast?.({title:learning.planProblem,icon:'none'});else navigate('learn')}
+const taskNote=computed(()=>learning.todayPlan?.completedAt?'今天的六环节已完成，下一学习日继续下一批。':learning.todayPlan&&learning.todayPlan.date!==localDate()?'待续学：先完成上次的固定词表。':'按教材顺序完成六环节，每一步都算数。')
+const taskActionLabel=computed(()=>learning.todayPlan?.completedAt?'查看今日成果':learning.todayPlan?.flow?.begunAt?'继续今日学习':'开始今日学习')
+const taskUnavailable=computed(()=>profile.readOnly||profile.bootError?'学习档案暂不可用，请先在设置中恢复档案。':course.pendingCourse?'':learning.planProblem||(!learning.todayPlan?.wordIds.length?'当前教材暂无今日任务，可前往学习页查看课程。':''))
+const taskOpening=ref(false)
+let taskReleaseTimer:ReturnType<typeof setTimeout>|undefined
+onShow(()=>taskOpening.value=false);onUnmounted(()=>clearTimeout(taskReleaseTimer))
+function begin(){if(theme.settings.themeId==='clay'){if(taskOpening.value||taskUnavailable.value)return;taskOpening.value=true;taskReleaseTimer=setTimeout(()=>taskOpening.value=false,650)}course.applyPending();if(learning.start())navigate('learn');else if(learning.planProblem)uni.showToast?.({title:learning.planProblem,icon:'none'});else navigate('learn')}
 function beginMode(_mode:LearningMode){begin()}
 function listen(word:Word){audioError.value='';playWord(word,m=>audioError.value=m)}
 onUnmounted(stopAudio)
