@@ -4,7 +4,8 @@
  <view class="page-heading study-heading"><view><text class="page-title">今日学习</text><text class="page-subtitle">今天，记住一点点。</text><text class="small muted block">{{headingSourceLabel}}</text></view><text class="study-estimate small muted">{{view.revisiting?'本轮错词回看':'预计 '+estimate+' 分钟'}}</text></view>
  <StudyPetCompanion :pet="profile.db.pets[profile.db.companion]" :unavailable="!!profile.bootError"><template v-if="!learning.session&&!extraActive" #default><view class="study-ready"><text class="section-title">{{learning.studyWords.length||learning.due.length?'和单词，见一面':'今天的任务已经完成'}}</text><text class="small muted">{{learning.studyWords.length?'按教材顺序逐词学习，题型会自动安排。':'只复习当前教材中的单词。'}}</text><WPButton v-if="learning.studyWords.length||learning.due.length||learning.needsConsolidation" @click="beginReady">开始今日学习</WPButton><WPButton v-else kind="secondary" @click="activities.start('check')">整课检查</WPButton></view></template></StudyPetCompanion>
  <PendingBanner :pending="courseStore.pendingCourse" @cancel="cancelPending" @progress="showProgress"/>
- <view class="current-course-card">
+ <StudyCurrentCourseCard v-if="theme.settings.themeId==='clay'" :pack="courseStore.current" :plan="learning.todayPlan" :progress="learning.textbookProgress" :entry-level="parent.settings.entryLevel" :today="statsDate" :unavailable="!!profile.bootError" :problem="learning.planProblem" @choose="openGallery"><template v-if="learning.planProblem||learning.todayPlan&&(learning.todayPlan.flow&&learning.todayPlan.wordIds.length<learning.todayPlan.flow.target||!learning.todayPlan.completedAt&&learning.todayPlan.date!==statsDate)" #default><text v-if="learning.todayPlan?.flow&&learning.todayPlan.wordIds.length<learning.todayPlan.flow.target" class="small muted block">教材剩余不足目标，今天学习 {{learning.todayPlan.wordIds.length}} 词。</text><text v-if="learning.todayPlan&&!learning.todayPlan.completedAt&&learning.todayPlan.date!==statsDate" class="notice">待续学 · 完成上次任务后，下一学习日再安排新词。</text><text v-if="learning.planProblem" class="notice error" role="alert">{{learning.planProblem}}</text></template></StudyCurrentCourseCard>
+ <view v-else class="current-course-card">
   <view class="current-course-head">
    <view class="current-course-copy">
     <view class="course-gallery-title"><text class="strong">当前教材</text></view>
@@ -60,6 +61,7 @@ import CustomPracticeWorkspace from '../../components/study/CustomPracticeWorksp
 import {useCustomPracticeStore} from '../../stores/custom-practice'
 import StudyPetCompanion from '../../components/pet-house/StudyPetCompanion.vue'
 import StudyStatsRow from '../../components/study/StudyStatsRow.vue'
+import StudyCurrentCourseCard from '../../components/study/StudyCurrentCourseCard.vue'
 import {studyRoundProgress} from '../../services/learning/StudyStats'
 import ActivityWorkspace from '../../components/course/ActivityWorkspace.vue'
 import {useCourseStore} from '../../stores/course'
@@ -192,8 +194,9 @@ async function openDueReview(){
  }
  if(learning.startDue(learning.due.map(card=>card.wordId))){view.sync();await resumeRound()}
 }
+const statsDate=ref(localDate())
 let statsTimer:ReturnType<typeof setInterval>|undefined
-function refreshStats(){learning.refreshDay();review.refresh()}
+function refreshStats(){statsDate.value=localDate();learning.refreshDay();review.refresh()}
 function stopStatsTimer(){if(statsTimer)clearInterval(statsTimer);statsTimer=undefined}
 onShow(()=>{refreshStats();stopStatsTimer();statsTimer=setInterval(refreshStats,30000)})
 onHide(stopStatsTimer)
