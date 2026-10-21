@@ -36,7 +36,11 @@ test('完整五模式用相同快照自动衔接，重复发音有效且正式�
  for(const mode of CUSTOM_MODES){
   await expect(page.locator('.custom-training-header')).toContainText(CUSTOM_MODE_NAMES[mode]);expect((await database(page)).customPractice.wordIds).toEqual(initial.wordIds)
   await waitForArtwork(page);await page.screenshot({path:test.info().outputPath(`custom-training-${mode}-phone.png`),fullPage:true})
-  if(mode==='flash'){for(let i=0;i<3;i++)await page.getByRole('button',{name:'播放当前练习单词的发音',exact:true}).click();await page.getByRole('button',{name:'查看答案',exact:true}).click();await page.locator('.rating-grid').getByRole('button').nth(2).click()}
+  if(mode==='flash'){
+   // Rapid clicks are deliberately coalesced by audio; verify each independent replay actually starts.
+   for(let i=0;i<3;i++){const plays=await page.evaluate(()=>(window as any).customAudioPlays);await page.getByRole('button',{name:'播放当前练习单词的发音',exact:true}).click();await expect.poll(()=>page.evaluate(()=>(window as any).customAudioPlays)).toBe(plays+1)}
+   await page.getByRole('button',{name:'查看答案',exact:true}).click();await page.locator('.rating-grid').getByRole('button').nth(2).click()
+  }
   else{if(mode==='connect'||mode==='listen')await page.locator(`.answer-choice[data-word-id="${initial.wordIds[0]}"]`).click();else await page.locator('.spelling-input input').fill(initial.wordSnapshot[initial.wordIds[0]].word);await expect(page.getByRole('button',{name:'确认答案 →',exact:true})).toBeEnabled();await page.getByRole('button',{name:'确认答案 →',exact:true}).click()}
  }
  await expect(page.locator('[data-custom-screen="summary"]')).toBeVisible();await expect(page.locator('.custom-complete-card')).toContainText('1 个不同词条 · 5/5 模式')
