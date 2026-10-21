@@ -26,7 +26,7 @@
   <HomeTodayTasks v-if="theme.settings.themeId==='clay'" :tasks="tasks" :note="taskNote" :action-label="taskActionLabel" :unavailable="taskUnavailable" :unreadable="profile.readOnly||!!profile.bootError" :busy="taskOpening" @start="begin"/>
   <WPCard v-else class="home-today task-list-card"><view class="section-heading"><text>今日任务</text><WPChip>{{completedTasks}} / 4</WPChip></view>
    <WPButton class="hero-cta" :spread="true" @click="begin">{{learning.session&&!learning.session.completedAt?'继续今日学习':'开始今日学习'}} <text aria-hidden="true">→</text></WPButton>
-   <WPTaskCard v-for="task in tasks" :key="task.title" :icon="task.icon" :title="task.title" :detail="task.detail" :value="task.value" :element="task.element" :completed="task.done" action="去学习" @click="beginMode(task.mode)"/>
+   <WPTaskCard v-for="task in tasks" :key="task.title" :icon="task.icon" :title="task.title" :value="task.value" :element="task.element" :completed="task.done" action="去学习" @click="beginMode(task.mode)"/>
    <text class="small muted block">{{learning.todayPlan?.completedAt?'今天的六环节已完成，下一学习日继续下一批。':learning.todayPlan&&learning.todayPlan.date!==localDate()?'待续学：先完成上次的固定词表。':'按教材顺序完成六环节，每一步都算数。'}}</text>
   </WPCard>
   <HomeWordList v-if="theme.settings.themeId==='clay'" :today="localDate(new Date(now))"/>
@@ -102,10 +102,10 @@ const homeLearningData=computed(()=>selectHomeLearningData(profile.db,course.cur
 const reviewsToday=computed(()=>homeLearningData.value?.reviewEvents||0)
 const accuracy=computed(()=>profile.readOnly||profile.bootError?null:homeLearningData.value?.accuracy??null)
 const tasks=computed(()=>[
- {title:'新学单词',detail:'闪现 · 认识今天的单词',icon:'new',element:'earth',mode:'flash'},
- {title:'听音辨义',detail:'连接 → 听音',icon:'listen',element:'fire',mode:'connect'},
- {title:'拼写练习',detail:'拼写 → 听写',icon:'spell',element:'wind',mode:'spell'},
- {title:'复习巩固',detail:'完成今天全部单词的巩固',icon:'review',element:'water',mode:'flash'}
+ {title:'新学单词',icon:'new',element:'earth',mode:'flash'},
+ {title:'听音辨义',icon:'listen',element:'fire',mode:'connect'},
+ {title:'拼写练习',icon:'spell',element:'wind',mode:'spell'},
+ {title:'复习巩固',icon:'review',element:'water',mode:'flash'}
 ].map((task,index)=>({...task,icon:task.icon as TaskIconName,element:task.element as Element,mode:task.mode as LearningMode,value:learning.tasks[index].done+' / '+learning.tasks[index].total,done:learning.tasks[index].complete})))
 const completedTasks=computed(()=>tasks.value.filter(t=>t.done).length)
 const taskNote=computed(()=>learning.todayPlan?.completedAt?'今天的六环节已完成，下一学习日继续下一批。':learning.todayPlan&&learning.todayPlan.date!==localDate()?'待续学：先完成上次的固定词表。':'按教材顺序完成六环节，每一步都算数。')

@@ -78,7 +78,7 @@ onUnmounted(()=>observer?.disconnect())
 .companion-paw>view:nth-child(3){width:23%;height:32%;left:27%;top:0}
 .companion-paw>view:nth-child(4){width:23%;height:32%;right:23%;top:0}
 .companion-paw>view:nth-child(5){width:23%;height:32%;right:0;top:23%;transform:rotate(22deg)}
-.companion-smile{position:relative;flex:0 0 24px;width:24px;height:24px;border-radius:50%;color:var(--wp-primary)}
+.companion-smile{position:relative;flex:0 0 28px;width:28px;height:28px;border-radius:50%;color:var(--wp-primary)}
 .companion-smile.icon-fallback{background:var(--wp-secondary)}
 .companion-smile>view:nth-child(1),.companion-smile>view:nth-child(2){position:absolute;top:6px;width:2.5px;height:2.5px;border-radius:50%;background:currentColor}
 .companion-smile>view:nth-child(1){left:5px}.companion-smile>view:nth-child(2){right:5px}

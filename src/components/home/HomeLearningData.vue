@@ -42,7 +42,7 @@ const metrics=computed(()=>[
 ])
 const width=ref(280),contentElement=ref<HTMLElement|{$el?:HTMLElement}>(),instance=getCurrentInstance(),scale=computed(()=>Math.max(layout.fontScale,theme.settings.largeText?1.25:1)),large=computed(()=>scale.value>=1.4),wide=computed(()=>!large.value&&width.value>=520*scale.value)
 const countWidth=computed(()=>Math.max(2,...metrics.value.map(item=>String(item.value).length))+'ch'),stacked=computed(()=>large.value||width.value<240||metrics.value.some(item=>String(item.value).length>4))
-const ringSize=computed(()=>Math.min(wide.value?(width.value-24)*.42:width.value,Math.min(232,Math.max(176,(wide.value?232:184)*scale.value))))
+const ringSize=computed(()=>Math.min(wide.value?(width.value-24)*.42:width.value,Math.min(248,Math.max(192,(wide.value?232:208)*scale.value))))
 function measure(){void nextTick(()=>{
  // #ifdef H5
  const element=contentElement.value instanceof HTMLElement?contentElement.value:contentElement.value?.$el
@@ -68,12 +68,12 @@ onUnmounted(()=>observer?.disconnect())
 .learning-data-body{display:grid;grid-template-columns:minmax(0,1fr);align-items:center;gap:20px;min-width:0}
 .learning-data-rate{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:0;color:var(--wp-foreground)}
 .learning-data-ring{--learning-ring-progress:var(--wp-brand);box-sizing:border-box;display:flex;align-items:center;justify-content:center;flex:none;width:var(--learning-ring-size);height:var(--learning-ring-size);max-width:100%;padding:10px;border-radius:50%;background:conic-gradient(var(--learning-ring-progress) var(--learning-ring-angle),var(--wp-secondary) 0)}
-.learning-ring-face{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:100%;height:100%;padding:8px;border-radius:50%;background:var(--wp-surface-raised)}
+.learning-ring-face{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;height:100%;padding:8px;border-radius:50%;background:var(--wp-surface-raised)}
 .learning-rate-reading{display:flex;align-items:baseline;justify-content:center;flex-wrap:wrap;max-width:100%;font-variant-numeric:tabular-nums;line-height:1.1;color:var(--wp-foreground)}
 .learning-rate-number{font-size:calc(var(--wp-font-body)*2.75);font-weight:700;overflow-wrap:anywhere}
 .learning-rate-percent{font-size:calc(var(--wp-font-body)*1.35);font-weight:600;line-height:1.1}
 .learning-rate-label{display:block;max-width:100%;font-size:var(--wp-font-body);line-height:1.45;color:var(--wp-muted-foreground);text-align:center;overflow-wrap:anywhere}
-.learning-rate-book{display:block;flex:none;width:76px;height:48px}
+.learning-rate-book{display:block;flex:none;width:112px;height:80px}
 .learning-rate-empty,.learning-data-unavailable{display:block;max-width:100%;font-size:var(--wp-font-small);line-height:1.6;color:var(--wp-muted-foreground);overflow-wrap:anywhere}
 .learning-rate-empty{text-align:center}.learning-data-unavailable{margin-bottom:14px;color:var(--wp-foreground)}
 .learning-data-metrics{display:flex;flex-direction:column;gap:12px;min-width:0}

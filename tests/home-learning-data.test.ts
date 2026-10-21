@@ -35,9 +35,9 @@ test('跨午夜按设备本地日期刷新，系统时间前后调整不残留�
  assert.equal(selectHomeLearningData(db,starterPack,beforeMidnight)!.accuracy,0);assert.equal(selectHomeLearningData(db,starterPack,afterMidnight)!.accuracy,100)
  assert.equal(selectHomeLearningData(db,starterPack,new Date(2026,9,22))!.accuracy,null);assert.equal(selectHomeLearningData(db,starterPack,beforeMidnight)!.reviewEvents,1);assert.equal(JSON.stringify(db),snapshot)
 })
-test('五枚独立学习数据图标保持透明与规格，不包含私有源图元数据',async()=>{
- for(const name of ['heading','accuracy','new','review','effective']){
-  const bytes=await fs.readFile(`src/static/icons/home-learning-data/${name}.png`),meta=await sharp(bytes).metadata();assert.equal(meta.width,256);assert.equal(meta.height,256);assert(meta.hasAlpha)
+test('学习数据与开心图标保持透明与规格，不包含私有源图元数据',async()=>{
+ for(const file of [...['heading','accuracy','new','review','effective'].map(name=>`src/static/icons/home-learning-data/${name}.png`),'src/static/icons/companion/clay-smile.png']){
+  const bytes=await fs.readFile(file),meta=await sharp(bytes).metadata();assert.equal(meta.width,256);assert.equal(meta.height,256);assert(meta.hasAlpha)
   const pixels=await sharp(bytes).ensureAlpha().raw().toBuffer();assert.equal(pixels[3],0);assert.equal(pixels[pixels.length-1],0)
   for(let offset=8;offset<bytes.length;){const size=bytes.readUInt32BE(offset),type=bytes.toString('ascii',offset+4,offset+8);assert(['IHDR','IDAT','IEND','PLTE','tRNS'].includes(type));offset+=size+12}
  }

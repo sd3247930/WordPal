@@ -4,7 +4,7 @@
    <view class="section-heading"><text class="today-tasks-title">今日任务</text><WPChip class="task-count" :aria-label="unreadable?'今日任务完成数暂不可用':'今日任务已完成'+completed+'项，共'+tasks.length+'项'">{{unreadable?'—':completed}} / {{tasks.length}}</WPChip></view>
    <WPButton class="hero-cta" :disabled="busy||!!unavailable" :loading="busy" @click="$emit('start')">{{actionLabel}}</WPButton>
    <text v-if="unavailable" class="task-unavailable" role="status">{{unavailable}}</text>
-   <WPTaskCard v-for="task in tasks" :key="task.icon" variant="clay" :stacked="stacked" :icon="task.icon" :title="task.title" :detail="task.detail" :value="unreadable?'— / —':task.value" :element="task.element" :completed="!unreadable&&task.done" :disabled="busy||!!unavailable" action="去学习" @click="$emit('start')"/>
+   <WPTaskCard v-for="task in tasks" :key="task.icon" variant="clay" :stacked="stacked" :icon="task.icon" :title="task.title" :value="unreadable?'— / —':task.value" :element="task.element" :completed="!unreadable&&task.done" :disabled="busy||!!unavailable" action="去学习" @click="$emit('start')"/>
    <text class="today-tasks-note">{{note}}</text>
   </view>
  </WPCard>
@@ -20,7 +20,7 @@ import WPCard from '../wp-card/WPCard.vue'
 import WPChip from '../wp-chip/WPChip.vue'
 import WPButton from '../wp-button/WPButton.vue'
 import WPTaskCard from '../wp-task-card/WPTaskCard.vue'
-const props=defineProps<{tasks:readonly {icon:TaskIconName;title:string;detail:string;value:string;done:boolean;element:Element}[];actionLabel:string;note:string;unavailable?:string;unreadable?:boolean;busy?:boolean}>()
+const props=defineProps<{tasks:readonly {icon:TaskIconName;title:string;value:string;done:boolean;element:Element}[];actionLabel:string;note:string;unavailable?:string;unreadable?:boolean;busy?:boolean}>()
 defineEmits<{start:[]}>()
 const theme=useThemeStore(),instance=getCurrentInstance(),width=ref(320),completed=computed(()=>props.tasks.filter(task=>task.done).length)
 const stacked=computed(()=>width.value<270||Math.max(layout.fontScale,theme.settings.largeText?1.25:1)>=1.4)

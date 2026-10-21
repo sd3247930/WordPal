@@ -1,4 +1,4 @@
-import {test,expect,type Page} from '@playwright/test'
+import {test,expect,type Page,type Locator} from '@playwright/test'
 import {go,setAppearance,database,waitForArtwork,completeDaily,unlockParent,openCustomPractice} from './helpers'
 import {freshDatabase,type Database} from '../../src/stores/profile'
 import {initialProgress} from '../../src/services/storage/MigrationV1toV2'
@@ -18,18 +18,18 @@ const card=(page:Page)=>page.locator('.home-today-clay')
 async function inspect(page:Page){
  const metrics=await card(page).evaluate(node=>{
   const bounds=node.getBoundingClientRect(),counter=node.querySelector('.task-count')!.getBoundingClientRect(),inside=(a:DOMRect,b:DOMRect)=>a.left>=b.left-.2&&a.right<=b.right+.2&&a.top>=b.top-.2&&a.bottom<=b.bottom+.2
-  const rows=Array.from(node.querySelectorAll('.task')).map(row=>{const title=row.querySelector('.task-title')!.getBoundingClientRect(),value=row.querySelector('.task-value')!.getBoundingClientRect(),detail=row.querySelector('.task-detail')!,description=detail.getBoundingClientRect(),action=row.querySelector('.task-action,.task-done')!.getBoundingClientRect(),icon=row.querySelector('.task-icon')!,art=icon.getBoundingClientRect(),copy=row.querySelector('.task-copy')!.getBoundingClientRect();return {inside:inside(action,bounds)&&inside(art,bounds)&&inside(copy,bounds),overflow:row.scrollWidth>row.clientWidth+1,vertical:title.bottom<=value.top+.2&&value.bottom<=description.top+.2,aligned:Math.abs(value.left-description.left)<.2,right:Math.abs(counter.right-action.right),actionWidth:action.width,actionHeight:action.height,iconWidth:art.width,iconBackground:getComputedStyle(icon).backgroundColor,expectedBackground:getComputedStyle(node.closest('.wp-app')!).getPropertyValue('--wp-secondary').trim(),detailVisible:getComputedStyle(detail).display!=='none',separate:art.right<=copy.left+.2&&(action.left>=copy.right-.2||action.top>=copy.bottom-.2)}})
+  const rows=Array.from(node.querySelectorAll('.task')).map(row=>{const title=row.querySelector('.task-title')!.getBoundingClientRect(),value=row.querySelector('.task-value')!.getBoundingClientRect(),action=row.querySelector('.task-action,.task-done')!.getBoundingClientRect(),icon=row.querySelector('.task-icon')!,art=icon.getBoundingClientRect(),copy=row.querySelector('.task-copy')!.getBoundingClientRect();return {inside:inside(action,bounds)&&inside(art,bounds)&&inside(copy,bounds),overflow:row.scrollWidth>row.clientWidth+1,vertical:title.bottom<=value.top+.2,aligned:Math.abs(value.left-title.left)<.2,right:Math.abs(counter.right-action.right),actionWidth:action.width,actionHeight:action.height,iconWidth:art.width,iconBackground:getComputedStyle(icon).backgroundColor,expectedBackground:getComputedStyle(node.closest('.wp-app')!).getPropertyValue('--wp-surface-raised').trim(),detailRemoved:!row.querySelector('.task-detail'),separate:art.right<=copy.left+.2&&(action.left>=copy.right-.2||action.top>=copy.bottom-.2)}})
   return {rows,overflow:node.scrollWidth>node.clientWidth+1,width:bounds.width,clientWidth:node.clientWidth,scrollWidth:node.scrollWidth}
  })
  expect(metrics.overflow,JSON.stringify(metrics)).toBe(false)
- expect(metrics.rows.every(row=>row.inside&&!row.overflow&&row.vertical&&row.aligned&&row.right<1.5&&row.actionHeight>=48&&row.iconWidth>=48&&row.detailVisible&&row.separate),JSON.stringify(metrics)).toBe(true)
+ expect(metrics.rows.every(row=>row.inside&&!row.overflow&&row.vertical&&row.aligned&&row.right<1.5&&row.actionHeight>=48&&row.iconWidth>=48&&row.detailRemoved&&row.separate),JSON.stringify(metrics)).toBe(true)
  expect(Math.max(...metrics.rows.map(row=>row.actionWidth))-Math.min(...metrics.rows.map(row=>row.actionWidth))).toBeLessThan(1)
  expect(Math.max(...metrics.rows.map(row=>row.actionHeight))-Math.min(...metrics.rows.map(row=>row.actionHeight))).toBeLessThan(1)
  for(const row of metrics.rows){const hex='#'+row.iconBackground.match(/\d+/g)!.slice(0,3).map(value=>Number(value).toString(16).padStart(2,'0')).join('');expect(hex.toLowerCase()).toBe(row.expectedBackground.toLowerCase());expect(hex).not.toBe('#ffffff')}
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)
 }
 
-for(const mode of ['light','dark'])for(const largeText of [false,true])test(`Clay ${mode} 大字${largeText} 任务三层信息、按钮对齐与奶茶图标底座`,async({page})=>{
+for(const mode of ['light','dark'])for(const largeText of [false,true])test(`Clay ${mode} 大字${largeText} 精简任务信息、按钮对齐与主题图标底座`,async({page})=>{
  await prepare(page,mode,largeText);const before=await database(page)
  await expect(card(page).locator('.task-title')).toHaveText(titles);await expect(card(page).locator('.task-value')).toHaveText(['0 / 5','0 / 5','0 / 5','0 / 5'])
  await expect(card(page).locator('.hero-cta')).toHaveText('开始今日学习');await expect(card(page).locator('.task-action')).toHaveText(['去学习','去学习','去学习','去学习'])
@@ -40,6 +40,23 @@ for(const mode of ['light','dark'])for(const largeText of [false,true])test(`Cla
  }
  const colors=await card(page).locator('.hero-cta,.task-action').evaluateAll(nodes=>nodes.map(node=>{const style=getComputedStyle(node),hex=(value:string)=>'#'+value.match(/\d+/g)!.slice(0,3).map(part=>Number(part).toString(16).padStart(2,'0')).join('');return {fg:hex(style.color),bg:hex(style.backgroundColor)}}));expect(colors.every(color=>contrast(color.fg,color.bg)>=4.5),JSON.stringify(colors)).toBe(true)
  await page.setViewportSize({width:320,height:1100});await page.evaluate(async()=>{const {windowLayout}=await import('/src/services/window/index.ts' as string);windowLayout.fontScale=2});await expect(card(page)).toHaveClass(/home-tasks-stacked/);await inspect(page);expect(await database(page)).toEqual(before)
+})
+
+for(const theme of ['swiss','clay'])for(const mode of ['light','dark'])test(`${theme} ${mode} 首页精简、图标同底色与透明资源，保持高亮取消和学习数据`,async({page})=>{
+ await prepare(page,mode);await page.setViewportSize({width:390,height:1000});await page.evaluate(async theme=>{const {useThemeStore}=await import('/src/stores/theme.ts' as string);useThemeStore().settings.themeId=theme},theme)
+ const tasks=page.locator('.home-today');await expect(tasks.locator('.task')).toHaveCount(4);const before=await database(page)
+ await expect(tasks.locator('.task-detail,.task-meta')).toHaveCount(0);await expect(tasks.locator('.task-value')).toHaveText(Array(4).fill('0 / 5'));await expect(tasks).not.toContainText('连接 → 听音');await expect(tasks).not.toContainText('闪现 · 认识今天的单词')
+ for(const icon of await tasks.locator('.task-icon').all()){
+  const color=await tasks.evaluate(node=>getComputedStyle(node).backgroundColor);await expect(icon).toHaveCSS('background-color',color);await icon.locator('img').click();await expect(icon).toHaveAttribute('aria-pressed','true');await expect(icon).toHaveCSS('background-color',color);await icon.click();await expect(icon).toHaveAttribute('aria-pressed','false')
+ }
+ expect(await tasks.locator('.task').evaluateAll(rows=>rows.every(row=>row.getBoundingClientRect().height<=90))).toBe(true)
+ if(theme==='clay'){
+  const book=page.locator('.learning-rate-book'),face=page.locator('.learning-ring-face'),reading=page.locator('.learning-rate-reading');const bounds=await book.boundingBox(),ring=await face.boundingBox(),number=await reading.boundingBox();expect(bounds!.width).toBeGreaterThanOrEqual(112);expect(bounds!.height).toBeGreaterThanOrEqual(80);expect(bounds!.y+ bounds!.height).toBeLessThanOrEqual(ring!.y+ring!.height);expect(number!.y+number!.height).toBeLessThan(bounds!.y)
+  await expect(page.locator('.companion-smile img')).toHaveJSProperty('naturalWidth',256);expect((await page.locator('.companion-smile').boundingBox())!.width).toBeGreaterThanOrEqual(28)
+ }
+ const shots:[string,Locator][]=[[`tasks-${theme}-${mode}`,tasks]]
+ if(theme==='clay')shots.push([`smile-${mode}`,page.locator('.home-companion-lite')],[`accuracy-${mode}`,page.locator('.home-learning-data-clay')])
+ for(const [name,target]of shots){await target.evaluate(node=>node.scrollIntoView({block:'center'}));await target.screenshot({path:test.info().outputPath(name+'.png')})}expect(await database(page)).toEqual(before)
 })
 
 test('五个入口保持同一正式任务，快速重复点击只启动和导航一次，不提前完成或发奖',async({page})=>{

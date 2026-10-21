@@ -54,3 +54,9 @@
 - 路径：`src/static/icons/home-learning-data/` 下的 `heading.png`、`accuracy.png`、`new.png`、`review.png`、`effective.png`。提供者为项目用户；核验与记录代号为 WordPal Archive。按本次指定设计目录中的五枚独立图标接入，未裁切参考效果图、未重新生成图形，已目视核对为无个人信息的纯图标。
 - 用户明确授权本次界面接入；用 `tools/export-home-learning-data-icons.mjs` 仅规范透明留白、等比导出 256px 并剥离 C2PA / EXIF / 文本等辅助元数据。原始参考素材和设计文档仍仅保留本机，不进入 Git。
 - 原有图标及统计卡基线保留于历史提交与本机备份，未新增字体或依赖。本次项目内接入不另行选定素材许可证，不扩大其他既有资源的再分发授权。
+
+## 首页开心与正确率图标更新（2026-10-21）
+
+- 用户提供两枚替换图。`src/static/icons/companion/clay-smile.png` 使用所提供的黄色开心表情，通过内置 imagegen 去除白色背景后导出；`src/static/icons/home-learning-data/accuracy.png` 使用所提供的透明嫩芽书本。图像均目视确认为无个人信息的独立图标。
+- `tools/export-home-polish-icons.mjs` 从本机参数目录读取透明输入，规范留白、等比输出 256px，并只保留 PNG 必需块，去除 C2PA / EXIF / 文本元数据。原始附件、去背景中间图和旧资源仅在本机备份保留，旧图可由此前提交恢复。
+- 任务图标已有透明背景，本次保留其原图，仅让图标底座使用当前主题卡片底色。未新增素材数量、依赖、字体或许可决定；用户授权范围仍限本次项目内接入。
