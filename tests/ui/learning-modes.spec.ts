@@ -4,14 +4,14 @@ import {go,database,seedDatabase} from './helpers'
 import {freshDatabase} from '../../src/stores/profile'
 // Dictation and the five-mode row are level-gated; these specs verify mode mechanics.
 const advanced=()=>({...freshDatabase(),abilityLevel:'L5'})
-test('闪现与连接答题前隐藏中文答案，听音与听写隐藏词形',async({page})=>{
+test('闪现显示中英，连接隐藏词义，听音与听写隐藏词形',async({page})=>{
  await seedDatabase(page,advanced())
  await go(page,'home');await page.locator('.hero-cta').click()
  // L5 starts on dictation, so switch to flash to assert the visible-word baseline first.
- await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'闪现'}).click();await expect(page.locator('.word')).toHaveText('cat');await expect(page.locator('.meaning')).toHaveCount(0)
+ await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'闪现'}).click();await expect(page.locator('.word')).toHaveText('cat');await expect(page.locator('.meaning')).toHaveText('猫')
  await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'连接'}).click();await expect(page.locator('.meaning')).toHaveCount(0)
  await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'听音'}).click();await expect(page.locator('.word')).toHaveText('···');await expect(page.locator('.meaning')).toHaveCount(0)
- await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'听写'}).click();await expect(page.locator('.word')).toHaveText('···');await expect(page.locator('.meaning')).toHaveCount(0)
+ await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'听写'}).click();await expect(page.locator('.word')).toHaveCount(0);await expect(page.locator('.meaning')).toHaveCount(0)
  await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'拼写'}).click();await expect(page.locator('.meaning')).toHaveText('猫');await expect(page.locator('.word')).toHaveText('···')
 })
 test('独立连接练习保留证据而不改正式SRS，音频资源可离线加载',async({page})=>{

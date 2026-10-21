@@ -14,17 +14,16 @@
    <template v-else-if="custom.screen==='training'">
     <text v-if="custom.resumeProblem" class="notice error" role="alert">{{custom.resumeProblem}}</text>
     <view class="custom-training-layout"><CustomPracticeRoute v-if="custom.session.modes.length>1" :session="custom.session" compact/>
-     <view class="custom-training-main"><view class="custom-training-header"><text class="section-title">{{CUSTOM_MODE_NAMES[custom.mode]}} {{custom.session.results[custom.mode].completedWordIds.length}}/{{custom.progress.total}}</text><text class="small muted">第 {{custom.session.modeIndex+1}} / {{custom.session.modes.length}} 项</text></view><WPProgress :value="custom.session.results[custom.mode].completedWordIds.length" :total="custom.progress.total" :label="CUSTOM_MODE_NAMES[custom.mode]+'练习进度'"/>
-      <template v-if="custom.mode==='connect'&&custom.current"><CustomPracticeMatch/><WPAudioButton class="practice-audio match-audio" :icon-src="theme.settings.themeId==='clay'?practiceSpeaker:''" :url="custom.current.audio" text="听发音" label="播放当前练习单词的发音" @click="play"/></template>
-      <template v-else-if="custom.current">
+     <view class="custom-training-main compact-custom-main"><view class="custom-training-header"><text class="section-title">{{CUSTOM_MODE_NAMES[custom.mode]}} {{custom.session.results[custom.mode].completedWordIds.length}}/{{custom.progress.total}}</text><text class="small muted">第 {{custom.session.modeIndex+1}} / {{custom.session.modes.length}} 项</text></view><WPProgress :value="custom.session.results[custom.mode].completedWordIds.length" :total="custom.progress.total" :label="CUSTOM_MODE_NAMES[custom.mode]+'练习进度'"/>
+      <template v-if="custom.current">
        <WPWordCard :correct="custom.session.answer?.correct" :practice="theme.settings.themeId==='clay'" :mode="custom.mode" :word="custom.current" :heading="CUSTOM_MODE_NAMES[custom.mode]" :variant="custom.mode==='flash'?'flash':'default'" :conceal="['listen','spell','dictation'].includes(custom.mode)&&!custom.session.answer" :show-meaning="custom.session.revealed||!!custom.session.answer" :reveal-meaning="custom.mode==='spell'" :phonics="phonics?.data" :active-chunk-index="activeChunkIndex" :playback-state="playbackState"><WPAudioButton class="practice-audio" :icon-src="theme.settings.themeId==='clay'?practiceSpeaker:''" :url="custom.current.audio" :text="['listen','dictation'].includes(custom.mode)?'再听一次':'听发音'" label="播放当前练习单词的发音" @click="play"/></WPWordCard>
-       <view v-if="custom.mode==='listen'" class="choice-grid" role="group" aria-label="选择听到的单词"><WPActionTile v-for="choice in custom.choices" :key="choice.id" toggle-highlight class="answer-choice" :selected="custom.session.selected===choice.id" :disabled="!!custom.session.answer" :data-word-id="choice.id" @click="custom.patch({selected:choice.id})" @cancel="custom.patch({selected:''})">{{choice.word}}</WPActionTile></view>
+       <CustomPracticeMatch v-if="custom.mode==='connect'"/><view v-if="custom.mode==='listen'" class="choice-grid study-choice-options" :class="{'choice-locked':choiceLocked}" role="group" aria-label="选择听到的单词"><WPActionTile v-for="choice in custom.choices" :key="choice.id" toggle-highlight class="answer-choice" :selected="custom.session.selected===choice.id" :disabled="!!custom.session.answer||choiceLocked" :data-word-id="choice.id" @click="guardChoice(()=>custom.patch({selected:choice.id}))" @cancel="guardChoice(()=>custom.patch({selected:''}))">{{choice.word}}</WPActionTile></view>
        <LetterBlockInput :word="custom.current" :letter-draft="custom.session.letterDraft" :default-tiles="theme.settings.themeId==='clay'" :correct="custom.session.answer?.correct" v-if="['spell','dictation'].includes(custom.mode)" :model-value="custom.session.input" :mode="custom.mode" :disabled="!!custom.session.answer" :question-key="custom.token" @change="custom.patch($event)" @confirm="submit()"/>
       </template>
       <text v-if="audioError" class="notice error" role="alert">{{audioError}}</text>
       <view v-if="custom.current&&!custom.resumeProblem" class="answer-panel">
        <view v-if="custom.session.answer" class="answer-feedback" :class="custom.session.answer.correct?'correct':'incorrect'" role="status" aria-live="polite"><text class="strong">{{custom.session.answer.correct?'很棒，记住啦！':'再试一次：'+custom.current.word+' · '+custom.current.meaning}}</text><text class="small">额外练习已保存，不改变正式任务和复习日期。</text><WPButton @click="custom.next()">{{!custom.session.answer.correct?'再试一次':custom.session.index===custom.progress.total-1?custom.session.modeIndex===custom.session.modes.length-1?'查看本次总结':'进入下一模式':'下一个单词'}} →</WPButton></view>
-       <view v-else class="answer-actions"><template v-if="custom.mode==='flash'"><WPButton v-if="!custom.session.revealed" @click="custom.patch({revealed:true})">查看答案</WPButton><view v-else class="rating-grid"><WPButton v-for="(label,index) in childRatings" :key="label" :kind="index===2?'primary':'secondary'" @click="submit((index+1) as ReviewRating)">{{label}}</WPButton></view></template><WPButton v-else :disabled="!canSubmit" @click="submit()">确认答案 →</WPButton></view>
+       <view v-else class="answer-actions"><template v-if="custom.mode==='flash'"><WPButton v-if="!custom.session.revealed" @click="custom.patch({revealed:true})">开始自评</WPButton><view v-else class="rating-grid"><WPButton v-for="(label,index) in childRatings" :key="label" :kind="index===2?'primary':'secondary'" @click="submit((index+1) as ReviewRating)">{{label}}</WPButton></view></template><WPButton v-else :disabled="!canSubmit" @click="submit()">确认答案 →</WPButton></view>
       </view>
      </view>
     </view>
@@ -73,9 +72,11 @@ import type {ReviewRating} from '../../../packages/core_learning'
 import {windowLayout} from '../../services/window'
 import {useThemeStore} from '../../stores/theme'
 import {ref} from 'vue'
+import {useChoiceGuard} from '../../composables/useChoiceGuard'
 const custom=useCustomPracticeStore(),pet=usePetStore(),audioError=ref(''),controller=new PhonicsPlaybackController()
 const footerHeight=ref(112),instance=getCurrentInstance(),theme=useThemeStore()
 const {phonics,activeChunkIndex,playbackState}=controller
+const {locked:choiceLocked,choose:guardChoice}=useChoiceGuard(()=>custom.token)
 let timer:ReturnType<typeof setTimeout>|undefined,playEpoch=0
 let measureTimer:ReturnType<typeof setTimeout>|undefined
 function measureFooter(){clearTimeout(measureTimer);measureTimer=setTimeout(()=>{void nextTick(()=>{if(!instance?.proxy)return;uni.createSelectorQuery().in(instance.proxy).select('.custom-action-bar').boundingClientRect(rect=>{if(rect&&!Array.isArray(rect)&&typeof rect.height==='number'&&rect.height>0)footerHeight.value=Math.ceil(rect.height)+20}).exec()})},80)}

@@ -2,8 +2,8 @@ import type {Page} from '@playwright/test'
 import {freshDatabase} from '../../src/stores/profile'
 import {wordById} from '../../packages/content_schema'
 import type {Word,LearningMode} from '../../packages/core_learning'
-export async function seedSpellingPractice(page:Page,mode:LearningMode='spell',lemma='doctor',meaning='医生，大夫',ratio=.75){
- const word:Word={...wordById.cat,id:'easy-word',word:lemma,meaning,audio:'/static/audio/cat.wav',image:'/static/easy-picture.svg',phonics:[],phonemes:[],syllables:[],phonicsData:undefined,ipa:''}
+export async function seedSpellingPractice(page:Page,mode:LearningMode='spell',lemma='doctor',meaning='医生，大夫',ratio=.75,media:{audio?:string;image?:string}={}){
+ const word:Word={...wordById.cat,id:'easy-word',word:lemma,meaning,audio:media.audio??'/static/audio/cat.wav',image:media.image??'/static/easy-picture.svg',phonics:[],phonemes:[],syllables:[],phonicsData:undefined,ipa:''}
  const words=[word,wordById.dog,wordById.fish,wordById.cat];word.distractors=words.slice(1).map(w=>w.id)
  const db={...freshDatabase(),version:2,abilityLevel:'L5',gems:10,currentCourseId:'easy-fixture',courseProgress:{'easy-fixture':{currentLessonId:'l01',completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{}}},auxiliaryRecords:[],session:{id:'easy-session',date:'2026-10-21',startedAt:'2026-10-21T08:00:00Z',kind:'practice',wordIds:[word.id,'dog'],index:0,mode,input:'',selected:'',revealed:false,answers:[],courseId:'easy-fixture',contentVersion:'1.0.0',wordSnapshot:Object.fromEntries(words.map(w=>[w.id,w]))}}
  const pack={schemaVersion:2,courseId:'easy-fixture',contentVersion:'1.0.0',title:'合成输入练习',route:'theme',abilityLevels:['L5'],sources:[{id:'easy-source',type:'author-created',rightsStatus:'redistribution-approved',attribution:'合成测试',revision:'r1'}],assets:[],units:[{id:'unit-1',title:'Unit 1',lessons:[{id:'l01',title:'合成词',wordIds:words.map(w=>w.id)}]}],vocabulary:words.map(w=>({id:w.id,language:'en',lemma:w.word,meaning:w.meaning,pos:w.pos,sourceId:'easy-source',audio:w.audio,image:w.image}))}

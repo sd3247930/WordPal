@@ -7,3 +7,4 @@ const props=withDefaults(defineProps<{kind?:'primary'|'secondary'|'quiet'|'dange
 const blocked=computed(()=>wpButtonBlocked(props)),busy=computed(()=>wpButtonBusy(props))
 defineEmits(['click'])
 </script>
+<style scoped>.wp-button{position:relative;box-sizing:border-box}.wp-button>.wp-spinner{position:absolute;inset-inline-start:4px;top:50%;margin-top:-9px;pointer-events:none}</style>

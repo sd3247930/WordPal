@@ -40,8 +40,8 @@ test('学习模式一行排列，词卡与主动作可滚动完整显示',async(
  await expect(page.locator('.study-mode-selector .mode-button')).toHaveCount(5)
  const boxes=await page.locator('.study-mode-selector .mode-button').evaluateAll(items=>items.map(i=>i.getBoundingClientRect().top))
  expect(new Set(boxes).size).toBe(1)
- await page.getByRole('button',{name:'查看答案',exact:true}).scrollIntoViewIfNeeded()
- const nav=(await page.locator('.bottom-nav').boundingBox())!,action=(await page.getByRole('button',{name:'查看答案',exact:true}).boundingBox())!
+ await page.getByRole('button',{name:'开始自评',exact:true}).scrollIntoViewIfNeeded()
+ const nav=(await page.locator('.bottom-nav').boundingBox())!,action=(await page.getByRole('button',{name:'开始自评',exact:true}).boundingBox())!
  expect(action.y+action.height).toBeLessThan(nav.y)
  await expect(page.locator('.wp-word-card .word')).toHaveText('cat')
 })

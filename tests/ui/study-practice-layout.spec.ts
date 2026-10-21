@@ -19,7 +19,7 @@ for(const screen of [{width:359,height:780,theme:'clay',largeText:false},{width:
  await expect(page.locator('.current-course-card')).toContainText(longCourse.title)
  await openCustomPractice(page)
  await panel.locator('[data-mode="flash"]').click()
- await page.getByRole('button',{name:'查看答案',exact:true}).click()
+ await page.getByRole('button',{name:'开始自评',exact:true}).click()
  await expect(page.locator('.meaning')).toHaveText(longCourse.vocabulary[0].meaning)
  for(const mode of ['flash','connect','listen','spell','dictation']){
   const tile=panel.locator(`[data-mode="${mode}"]`)
@@ -82,7 +82,7 @@ for(const screen of screens)test(`兼容题型工具位于词卡后，展开收�
  await expect(panel.locator('.study-mode-tile.selected')).toHaveAttribute('data-mode','connect')
  if(screen.width>=840){
   await panel.getByRole('button',{name:/^闪现，/}).click()
-  await page.getByRole('button',{name:'查看答案',exact:true}).click()
+  await page.getByRole('button',{name:'开始自评',exact:true}).click()
   await page.getByRole('button',{name:'展开自然拼读与例句',exact:true}).click()
   const content=await page.locator('.study-main').boundingBox(),context=await page.locator('.study-context').boundingBox(),tools=await page.locator('.study-modes').boundingBox()
   expect(context!.x).toBeGreaterThanOrEqual(content!.x+content!.width)

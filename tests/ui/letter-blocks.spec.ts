@@ -10,7 +10,7 @@ const formal=(db:any)=>({history:db.history,cards:db.cards,courseProgress:db.cou
 
 for(const [word,total,groups]of [['doctor',6,1],['food group',9,2],['a few',4,2],["that's enough",11,2],['Merry Christmas!',14,2],['be late for school',15,4],['well-known',9,2]] as const)test('积木拼写与原判题：'+word,async({page})=>{
  await page.setViewportSize({width:390,height:844});await setAppearance(page,'clay','light');await seedSpellingPractice(page,'spell',word,word==="that's enough"?'那就够了':'合成练习词义');await go(page,'learn');const before=formal(await database(page))
- await expect(page.locator('.letter-tile')).toHaveCount(total);await expect(page.locator('.block-slot')).toHaveCount(total);await expect(page.locator('.block-word-group')).toHaveCount(groups);await expect(confirm(page)).toBeDisabled();await expect(page.locator('.word-core .word')).toHaveCount(0)
+ await expect(page.locator('.letter-tile')).toHaveCount(total);await expect(page.locator('.block-slot')).toHaveCount(total);await expect(page.locator('.block-word-group')).toHaveCount(groups);await expect(confirm(page)).toBeDisabled();await expect(page.locator('.word-core .word')).toHaveText('···')
  if(word.includes("'"))await expect(page.locator('.block-fixed')).toHaveText("'");if(word.endsWith('!'))await expect(page.locator('.block-fixed')).toHaveText('!')
  await spell(page,word);await expect(confirm(page)).toBeEnabled();await expect(page.locator('.answer-feedback')).toHaveCount(0);await confirm(page).evaluate(node=>{(node as HTMLElement).click();(node as HTMLElement).click()});await expect(page.locator('.answer-feedback')).toContainText('很棒');const after=await database(page);expect(after.practiceAnswers).toHaveLength(1);expect(after.practiceAnswers[0].inputAssistance).toBe('tiles');expect(after.practiceAnswers[0].hinted).toBe(true);expect(formal(after)).toEqual(before)
 })
@@ -40,7 +40,7 @@ test('奶油主题自定义五模式连续训练完成，积木草稿暂停刷�
  await setAppearance(page,'clay','light');await go(page,'home');await page.locator('.hero-cta').click();const before=formal(await database(page));await page.getByRole('button',{name:'自定义练习 · 不计今日任务',exact:true}).first().click();await page.locator('.custom-count-input input').fill('1');await page.getByRole('button',{name:/^五项连续练习/}).click();await page.getByRole('button',{name:'查看连续训练总览',exact:true}).click();await page.getByRole('button',{name:'开始连续训练',exact:true}).click();const initial=(await database(page)).customPractice,word=initial.wordSnapshot[initial.wordIds[0]].word
  for(const mode of ['flash','connect','listen','spell','dictation']){
   await expect.poll(async()=>{const session=(await database(page)).customPractice;return session.modes[session.modeIndex]}).toBe(mode)
-  if(mode==='flash'){await page.getByRole('button',{name:'查看答案',exact:true}).click();await page.locator('.rating-grid').getByRole('button').nth(2).click()}
+  if(mode==='flash'){await page.getByRole('button',{name:'开始自评',exact:true}).click();await page.locator('.rating-grid').getByRole('button').nth(2).click()}
   else if(mode==='connect'||mode==='listen'){await page.locator(`.answer-choice[data-word-id="${initial.wordIds[0]}"]`).click();await confirm(page).click()}
   else{
    const chars=normalizeSpellingWord(word).slots.map(s=>s.char.toLowerCase());await(await tile(page,chars[0])).click()

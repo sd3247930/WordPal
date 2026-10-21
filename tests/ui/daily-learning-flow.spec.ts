@@ -24,7 +24,7 @@ async function answer(page:Page){
  },plan)
  if(['connect','listen'].includes(plan.mode)){await page.locator('.answer-choice').filter({has:page.getByText(plan.mode==='connect'?word.meaning:word.word,{exact:true})}).first().click();await page.getByRole('button',{name:'确认答案 →',exact:true}).click()}
  else if(['spell','dictation'].includes(plan.mode)){await page.locator('.spelling-input input').fill(word.word);await page.getByRole('button',{name:'确认答案 →',exact:true}).click()}
- else {if(!plan.revealed)await page.getByRole('button',{name:'查看答案',exact:true}).click();await page.locator('.rating-grid').getByRole('button').nth(2).click()}
+ else {if(!plan.revealed)await page.getByRole('button',{name:'开始自评',exact:true}).click();await page.locator('.rating-grid').getByRole('button').nth(2).click()}
  if(plan.index<plan.wordIds.length-1)await page.locator('.answer-feedback').getByRole('button').click()
  else await expect.poll(async()=>{const next=(await database(page)).courseProgress.starter.dailyPlan;return next.completedAt?'done':next.flow.step}).not.toBe(plan.flow.step)
 }
@@ -32,7 +32,7 @@ test('手机完整六环节自动衔接、答案隐藏、首页四项统一5/5�
  test.setTimeout(60000)
  await page.setViewportSize({width:390,height:844});await seed(page);await go(page,'learn')
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message))
- for(const step of STUDY_STEPS){await expect(page.locator('.daily-step.active')).toContainText(step==='consolidate'?'复习巩固':({flash:'闪现',connect:'连接',listen:'听音',spell:'拼写',dictation:'听写'} as const)[step]);for(let i=0;i<5;i++){if(['listen','spell','dictation'].includes(step)){await expect(page.locator('.word-core .ipa')).toHaveCount(0);await expect(page.locator('.word-core .word')).toHaveText('···')}await answer(page)}}
+ for(const step of STUDY_STEPS){await expect(page.locator('.daily-step.active')).toContainText(step==='consolidate'?'复习巩固':({flash:'闪现',connect:'连接',listen:'听音',spell:'拼写',dictation:'听写'} as const)[step]);for(let i=0;i<5;i++){if(['listen','spell','dictation'].includes(step)){await expect(page.locator('.word-core .ipa')).toHaveCount(0);if(step==='dictation')await expect(page.locator('.word-core .word')).toHaveCount(0);else await expect(page.locator('.word-core .word')).toHaveText('···')}await answer(page)}}
  await expect(page.locator('.study-completion')).toContainText('今日六环节');const before=await database(page);expect(before.history).toHaveLength(5);expect(before.pets.water.exp).toBe(70)
  await go(page,'home');for(const task of await page.locator('.home-today .task').all())await expect(task).toContainText('5 / 5')
  await page.getByRole('button',{name:/今日学习/}).first().click();await expect(page.locator('.study-completion')).toBeVisible();const after=await database(page);expect(after.history).toEqual(before.history);expect(after.pets).toEqual(before.pets);expect(errors).toEqual([])

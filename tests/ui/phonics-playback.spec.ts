@@ -130,7 +130,7 @@ for(const {theme,mode,highContrast} of rgbCases)test(`${theme} ${mode}${highCont
 for(const mode of ['flash','connect','listen','spell','dictation'] as const)test(`${mode} 音块遵守题面隐藏，反馈后可重播且不改排程`,async({page})=>{
  await mockClock(page);await seed(page,sample('rain'),mode,false);await go(page,'learn');await openCustomPractice(page);await openExploration(page);const before=await database(page),hidden=['listen','spell','dictation'].includes(mode)
  await expect(page.locator('.phonics-word')).toHaveCount(hidden?0:1);await expect(page.locator('.phonics-breakdown')).toHaveCount(0)
- if(mode==='flash'){await page.locator('.answer-actions .wp-button').filter({hasText:'查看答案'}).click();await page.locator('.rating-grid .wp-button').filter({hasText:'记住了'}).click()}
+ if(mode==='flash'){await page.locator('.answer-actions .wp-button').filter({hasText:'开始自评'}).click();await page.locator('.rating-grid .wp-button').filter({hasText:'记住了'}).click()}
  else{if(mode==='spell'||mode==='dictation')await page.locator('.spelling-input input').fill('rain');else await page.locator('.answer-choice').filter({hasText:mode==='connect'?'雨':'rain'}).click();await page.locator('.answer-actions .wp-button').filter({hasText:'确认答案'}).click()}
   await openExploration(page);await expect(page.locator('.phonics-word .chunk-grapheme')).toHaveText(['r','ai','n']);await audioButton(page).click();await active(page,0);await tick(page,.8);await active(page,2)
  expect(await page.locator('.answer-choice .phonics-chunk').count()).toBe(0)

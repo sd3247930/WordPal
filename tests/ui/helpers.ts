@@ -59,7 +59,7 @@ export async function completeDaily(page:Page){
   if(!plan.answers[plan.index]){
    if(['connect','listen'].includes(plan.mode)){await page.locator('.answer-choice').filter({has:page.getByText(plan.mode==='connect'?word.meaning:word.word,{exact:true})}).first().click();await page.getByRole('button',{name:'确认答案 →',exact:true}).click()}
    else if(['spell','dictation'].includes(plan.mode)){await page.locator('.spelling-input input').fill(word.word);await page.getByRole('button',{name:'确认答案 →',exact:true}).click()}
-   else{if(!plan.revealed)await page.getByRole('button',{name:'查看答案',exact:true}).click();await page.locator('.rating-grid').getByRole('button').nth(2).click()}
+   else{if(!plan.revealed)await page.getByRole('button',{name:'开始自评',exact:true}).click();await page.locator('.rating-grid').getByRole('button').nth(2).click()}
   }
   if(plan.index<plan.wordIds.length-1)await page.locator('.answer-feedback').getByRole('button').click()
   else await expect.poll(async()=>{const next=(await database(page)).courseProgress[db.currentCourseId||'starter'].dailyPlan;return next.completedAt?'done':next.flow.step}).not.toBe(plan.flow.step)

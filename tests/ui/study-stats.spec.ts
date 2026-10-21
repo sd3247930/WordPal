@@ -1,5 +1,5 @@
 import {test,expect,type Page} from '@playwright/test'
-import {go,database,setAppearance} from './helpers'
+import {go as baseGo,database,setAppearance} from './helpers'
 import {freshDatabase,type Database} from '../../src/stores/profile'
 import {initialProgress} from '../../src/services/storage/MigrationV1toV2'
 import {selectDailyPlan} from '../../src/services/learning/DailyLearningPlan'
@@ -46,14 +46,14 @@ test('今日已学的明细与计数一致，键盘打开、关闭或刷新不�
  const button=stat(page,'today').getByRole('button');await button.focus();await page.keyboard.press('Enter')
  await expect(button).toHaveAttribute('aria-expanded','true');await expect(page.getByRole('region',{name:'今日已学新词明细'})).toContainText('cat');await expect(page.locator('.study-today-word')).toHaveCount(1)
  await page.getByRole('button',{name:'收起明细',exact:true}).click();await expect(page.locator('.study-today-details')).toHaveCount(0)
- expect(await database(page)).toEqual(before);await page.reload();await expect(stat(page,'today').locator('.study-stat-value')).toHaveText('1');expect(await database(page)).toEqual(before)
+ expect(await database(page)).toEqual(before);await page.reload();await openOverview(page);await expect(stat(page,'today').locator('.study-stat-value')).toHaveText('1');expect(await database(page)).toEqual(before)
 })
 
 test('点击本轮开始一次，重复点击及刷新恢复原轮次且不发奖',async({page})=>{
  await seed(page);await go(page,'learn');await stat(page,'round').getByRole('button').click()
  await expect(stat(page,'round').locator('.study-stat-value')).toHaveText('0 / 30');await expect(stat(page,'round').getByRole('progressbar')).toHaveAttribute('aria-valuenow','0')
  const before=await database(page);await stat(page,'round').getByRole('button').click();expect(await database(page)).toEqual(before)
- await page.reload();await expect(stat(page,'round').locator('.study-stat-value')).toHaveText('0 / 30');expect(await database(page)).toEqual(before)
+ await page.reload();await openOverview(page);await expect(stat(page,'round').locator('.study-stat-value')).toHaveText('0 / 30');expect(await database(page)).toEqual(before)
 })
 
 test('六环节进度从持久记录恢复，错题和重试不虚增，待复习入口保留当前任务',async({page})=>{
@@ -66,7 +66,7 @@ test('六环节进度从持久记录恢复，错题和重试不虚增，待复�
  await expect(page.locator('.answer-feedback')).toContainText('再认识它');await expect(stat(page,'round').locator('.study-stat-value')).toHaveText('5 / 30')
  await page.getByRole('button',{name:'再试一次 →',exact:true}).click();await page.locator('.answer-choice').first().click();await page.getByRole('button',{name:'确认答案 →',exact:true}).click()
  await expect(stat(page,'round').locator('.study-stat-value')).toHaveText('6 / 30');await expect(stat(page,'round').getByRole('progressbar')).toHaveAttribute('aria-valuenow','20')
- const submitted=await database(page);await page.reload();await expect(stat(page,'round').locator('.study-stat-value')).toHaveText('6 / 30');expect(await database(page)).toEqual(submitted)
+ const submitted=await database(page);await page.reload();await openOverview(page);await expect(stat(page,'round').locator('.study-stat-value')).toHaveText('6 / 30');expect(await database(page)).toEqual(submitted)
 })
 
 test('待复习读取真实排程并可进入，数量不受每日五词限制',async({page})=>{
@@ -75,7 +75,7 @@ test('待复习读取真实排程并可进入，数量不受每日五词限制',
  await seed(page,db);await go(page,'learn');await expect(stat(page,'review').locator('.study-stat-value')).toHaveText('12')
  await stat(page,'review').getByRole('button').click();await expect(page.locator('.learn-workspace')).toBeVisible();const started=await database(page)
  expect(started.session.kind).toBe('review_due');expect(started.session.wordIds).toHaveLength(12);expect(started.history).toEqual([]);expect(started.cards).toEqual(db.cards)
- await page.getByRole('button',{name:'查看答案',exact:true}).click();await page.locator('.rating-grid').getByRole('button').nth(2).click()
+ await page.getByRole('button',{name:'开始自评',exact:true}).click();await page.locator('.rating-grid').getByRole('button').nth(2).click()
  await expect(stat(page,'review').locator('.study-stat-value')).toHaveText('11');await expect(stat(page,'round').locator('.study-stat-value')).toHaveText('1 / 12')
 })
 
@@ -126,3 +126,6 @@ for(const mode of ['light','dark'])test(`${mode} 点击和键盘激活高亮对�
  expect(await database(page)).toEqual(before)
  await page.locator('.study-stats-row').evaluate(el=>el.scrollIntoView({block:'start'}));await page.locator('.study-stats-row').screenshot({path:test.info().outputPath(`stats-highlight-${mode}.png`)})
 })
+
+async function openOverview(page:Page){const button=page.getByRole('button',{name:'查看学习概览',exact:true});if(await button.isVisible())await button.click()}
+async function go(page:Page,screen:string){await baseGo(page,screen);if(screen==='learn')await openOverview(page)}

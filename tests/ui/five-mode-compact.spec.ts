@@ -1,0 +1,47 @@
+import {test,expect,type Page} from '@playwright/test'
+import {seedSpellingPractice} from '../helpers/spelling-practice'
+import {go,database,setAppearance,waitForArtwork,openCustomPractice} from './helpers'
+import {freshDatabase} from '../../src/stores/profile'
+import {initialProgress} from '../../src/services/storage/MigrationV1toV2'
+import {STUDY_STEPS} from '../../src/services/learning/DailyLearningPlan'
+import type {LearningMode} from '../../packages/core_learning'
+const confirm=(page:Page)=>page.getByRole('button',{name:'确认答案 →',exact:true})
+for(const theme of ['swiss','clay'])for(const mode of ['flash','connect','listen','spell','dictation'] as LearningMode[])test(`紧凑左右卡与题面隐藏 ${theme} ${mode}`,async({page})=>{
+ await page.setViewportSize({width:390,height:844});await setAppearance(page,theme,'light');await seedSpellingPractice(page,mode,'doctor','医生，大夫');await go(page,'learn');await expect(page.locator('.word-info-card')).toHaveCount(1)
+ if(mode==='dictation'){await expect(page.locator('.word-picture-stage,.meaning,.ipa,.word')).toHaveCount(0);await expect(page.locator('.dictation-hero')).toBeVisible()}
+ else{const image=await page.locator('.word-picture-stage').boundingBox(),copy=await page.locator('.word-content').boundingBox();expect(image!.x+image!.width).toBeLessThan(copy!.x);expect(image!.width/(image!.width+copy!.width)).toBeCloseTo(.42,2);expect(Math.abs(image!.y+image!.height/2-copy!.y-copy!.height/2)).toBeLessThan(2);if(mode==='flash'||mode==='spell')await expect(page.locator('.meaning')).toHaveText('医生，大夫');else await expect(page.locator('.meaning')).toHaveCount(0);if(mode==='spell'||mode==='listen')await expect(page.locator('.word')).toHaveText('···');else await expect(page.locator('.word')).toHaveText('doctor')}
+ if(mode==='connect'||mode==='listen'){const boxes=await page.locator('.answer-choice').evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height}}));expect(boxes).toHaveLength(4);expect(boxes.every((b,i)=>b.h>=48&&Math.abs(b.x-boxes[0].x)<1&&(!i||b.y>=boxes[i-1].y+boxes[i-1].h+11))).toBe(true)}
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);await waitForArtwork(page);await page.screenshot({path:test.info().outputPath(`${theme}-${mode}-390.png`),fullPage:true})
+})
+
+test('选项防连击300ms、取消选择与播放状态不改变几何或滚动',async({page})=>{
+ await setAppearance(page,'clay','light');await seedSpellingPractice(page,'connect');await go(page,'learn');const options=page.locator('.answer-choice');await options.first().scrollIntoViewIfNeeded();const before=await options.evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height}})),scroll=await page.evaluate(()=>scrollY)
+ await options.first().evaluate(n=>(n as HTMLElement).click());const selected=(await database(page)).session.selected;await options.nth(1).evaluate(n=>(n as HTMLElement).click());expect((await database(page)).session.selected).toBe(selected);expect(await options.first().isDisabled()).toBe(true);await expect(options.first()).toBeEnabled();const after=await options.evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect();return {x:r.x,y:r.y,w:r.width,h:r.height}}));expect(after).toEqual(before);expect(await page.evaluate(()=>scrollY)).toBe(scroll)
+ await options.first().click();expect((await database(page)).session.selected).toBe('');await expect(options.first()).toBeEnabled();await options.nth(1).click();expect((await database(page)).session.selected).not.toBe(selected);expect((await database(page)).practiceAnswers||[]).toHaveLength(0);const card=await page.locator('.word-info-card').boundingBox();await confirm(page).evaluate(n=>(n as HTMLElement).click());await expect(page.locator('.answer-feedback')).toBeVisible();expect(await page.locator('.word-info-card').boundingBox()).toEqual(card)
+})
+
+test('音频加载、播放和错误文案保持固定大小，缺图有明确降级',async({page})=>{
+ await setAppearance(page,'clay','light');await seedSpellingPractice(page,'spell');await go(page,'learn');const audio=page.getByRole('button',{name:'播放当前单词的标准发音',exact:true});await audio.scrollIntoViewIfNeeded();const before=await audio.boundingBox();await audio.click();await expect(audio).toHaveAttribute('data-audio-state','playing');expect(await audio.boundingBox()).toEqual(before)
+ await page.locator('.word-picture').dispatchEvent('error');await expect(page.locator('.word-picture-fallback')).toContainText('图片暂缺');await expect(page.locator('.word-picture-fallback img')).toHaveJSProperty('naturalWidth',256)
+ await page.evaluate(async()=>{const {audioPlayback}=await import('/src/services/audio/index.ts' as string);audioPlayback.isPlaying.value=false;audioPlayback.loading.value=true});await expect(audio).toHaveAttribute('data-audio-state','loading');expect(await audio.boundingBox()).toEqual(before);await page.evaluate(async()=>{const {audioPlayback}=await import('/src/services/audio/index.ts' as string);audioPlayback.loading.value=false;audioPlayback.error.value=new Error('合成故障')});await expect(audio).toContainText('重试播放');expect(await audio.boundingBox()).toEqual(before);await page.setViewportSize({width:320,height:844});await page.evaluate(async()=>{const {windowLayout}=await import('/src/services/window/index.ts' as string);windowLayout.fontScale=2});await expect(page.locator('.wp-app')).toHaveClass(/scaled-text/);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)
+})
+
+test('无图魔法书与无音标签保留拼写作答',async({page})=>{
+ await setAppearance(page,'clay','light');await seedSpellingPractice(page,'spell','xylophonic','合成无资源词',.75,{audio:'',image:''});await go(page,'learn');await expect(page.locator('.word-no-audio')).toHaveText('暂无发音');await expect(page.locator('.practice-audio')).toHaveCount(0);await expect(page.locator('.word-picture-fallback img')).toHaveJSProperty('naturalWidth',256);await page.getByRole('button',{name:'键盘输入',exact:true}).click();await page.locator('.slot-native input').fill('xylophonic');await confirm(page).click();await expect(page.locator('.answer-feedback')).toContainText('很棒')
+})
+
+test('从首页完成今日六环节，首页任务全满且返回不重复结算',async({page})=>{
+ test.setTimeout(120000);await page.setViewportSize({width:390,height:844});await setAppearance(page,'clay','light');const db={...freshDatabase(),version:2,currentCourseId:'starter',courseProgress:{starter:initialProgress('starter')},auxiliaryRecords:[],abilityLevel:'L1',gems:10};await page.addInitScript(db=>{if(localStorage.getItem('wordpal.database.active.v2'))return;localStorage.setItem('wordpal.database.v2',JSON.stringify(db));localStorage.setItem('wordpal.database.active.v2',JSON.stringify('v2'))},db);await go(page,'home');await page.locator('.hero-cta').click()
+ for(const step of STUDY_STEPS){const first=await database(page),plan=first.courseProgress.starter.dailyPlan;expect(plan.flow.step).toBe(step);await page.screenshot({path:test.info().outputPath(`today-${step}.png`),fullPage:true});for(let i=0;i<plan.wordIds.length;i++){
+  const current=(await database(page)).courseProgress.starter.dailyPlan,word=await page.evaluate(async plan=>{const {resolveFrozenWord}=await import('/src/services/content/ContentRegistry.ts' as string);return resolveFrozenWord(plan.wordSnapshot[plan.wordIds[plan.index]],plan.courseId,plan.contentVersion)},current)
+  if(['connect','listen'].includes(current.mode)){await page.locator('.answer-choice').filter({has:page.getByText(current.mode==='connect'?word.meaning:word.word,{exact:true})}).first().click();await confirm(page).click()}
+  else if(['spell','dictation'].includes(current.mode)){await page.locator('.slot-native input').fill(word.word);await confirm(page).click()}
+  else{if(!current.revealed)await page.getByRole('button',{name:'开始自评',exact:true}).click();await page.locator('.rating-grid').getByRole('button').nth(2).click()}
+  if(i<plan.wordIds.length-1)await page.locator('.answer-feedback').getByRole('button').last().click();else await expect.poll(async()=>{const p=(await database(page)).courseProgress.starter.dailyPlan;return p.completedAt?'done':p.flow.step}).not.toBe(step)
+ }}
+ await expect(page.locator('.study-completion')).toBeVisible();const before=await database(page);expect(before.history).toHaveLength(5);await go(page,'home');for(const task of await page.locator('.home-today .task').all())await expect(task).toContainText('5 / 5');await page.locator('.hero-cta').click();await expect(page.locator('.study-completion')).toBeVisible();const after=await database(page);for(const field of ['history','cards','pets','gems','rewardIds'])expect(after[field]).toEqual(before[field])
+})
+
+for(const width of [320,360,428,768,1280])test(`小屏大字左右布局和确认可触达 ${width}`,async({page})=>{
+ await page.setViewportSize({width,height:width===1280?800:844});await setAppearance(page,'clay','dark');await seedSpellingPractice(page,'spell',"that's enough",'那就够了');await go(page,'learn');await page.evaluate(async()=>{const {windowLayout}=await import('/src/services/window/index.ts' as string);windowLayout.fontScale=2});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);const image=await page.locator('.word-picture-stage').boundingBox(),copy=await page.locator('.word-content').boundingBox();expect(copy!.x).toBeGreaterThan(image!.x+image!.width);await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'听写'}).click();await expect(page.locator('.word-picture-stage')).toHaveCount(0)
+})

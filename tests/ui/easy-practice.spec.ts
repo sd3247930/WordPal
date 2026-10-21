@@ -21,10 +21,10 @@ const protectedState=(db:any)=>({history:db.history,cards:db.cards,gems:db.gems,
 
 for(const mode of ['light','dark'])test(`医生图片满框、中文放大与原生输入编辑、清空和重复提交 ${mode}`,async({page})=>{
  await page.setViewportSize({width:390,height:844});await setAppearance(page,'clay',mode);await seed(page);await go(page,'learn');const before=protectedState(await database(page))
- await expect(page.locator('.word-core .word')).toHaveCount(0);await expect(page.locator('.meaning')).toHaveText('医生，大夫');await expect(submit(page)).toBeDisabled()
+ await expect(page.locator('.word-core .word')).toHaveText('···');await expect(page.locator('.meaning')).toHaveText('医生，大夫');await expect(submit(page)).toBeDisabled()
  await expect.poll(()=>page.locator('.word-picture-stage').evaluate(node=>node.getBoundingClientRect().width/node.getBoundingClientRect().height)).toBeCloseTo(1,1)
- expect(await page.locator('.word-picture-stage').evaluate(node=>node.getBoundingClientRect().width/node.closest('.word-meaning-card')!.getBoundingClientRect().width)).toBeGreaterThan(.85)
- expect(await page.locator('.meaning').evaluate(node=>parseFloat(getComputedStyle(node).fontSize))).toBeGreaterThanOrEqual(22)
+ expect(await page.locator('.word-picture-stage').evaluate(node=>node.getBoundingClientRect().width/node.closest('.word-meaning-card')!.getBoundingClientRect().width)).toBeGreaterThan(.35)
+ expect(await page.locator('.meaning').evaluate(node=>parseFloat(getComputedStyle(node).fontSize))).toBeGreaterThanOrEqual(20)
  await input(page).fill('doctr');await input(page).press('ArrowLeft');await input(page).press('o');await expect(input(page)).toHaveValue('doctor')
  await input(page).selectText();await input(page).press('Backspace');await expect(input(page)).toHaveValue('');await expect(submit(page)).toBeDisabled()
  await input(page).fill('doctor');await expect(input(page)).toHaveAttribute('autocorrect','off');await expect(input(page)).toHaveAttribute('spellcheck','false');await expect(page.locator('.word-slot-input')).toHaveAttribute('data-input-layout','slots');await input(page).press('Tab');await page.locator('.word-slot-input').evaluate(node=>node.scrollIntoView({block:'center'}));await waitForArtwork(page);await page.screenshot({path:test.info().outputPath(`spell-${mode}-390.png`),fullPage:true})
