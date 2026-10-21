@@ -12,7 +12,7 @@
    </view>
   </view>
   <!-- Pushed pages (e.g. the textbook gallery) own their bottom action bar and hide the tab bar. -->
-  <view v-if="page!=='course'&&!customOpen" class="bottom-nav" role="navigation" aria-label="底部导航"><WPActionTile role="button" tabindex="0" v-for="item in ['home','learn','pet','review','settings'].map(id=>navigation.find(n=>n.id===id)!)" :key="item.id" v-slot="{highlighted}" toggle-highlight :selected="page===item.id" class="bottom-item" :class="{active:page===item.id}" :style="friendlyNavStyle(item.id as NavIconName,{dark:theme.mode==='dark',highContrast:theme.settings.highContrast})" :aria-label="item.name" :aria-current="page===item.id?'page':undefined" @click="navigate(item.id)"><view class="nav-icon-container"><WPNavIcon :name="item.id as NavIconName" :active="highlighted" variant="friendly" :size="40"/></view><text class="bottom-label">{{item.name}}</text></WPActionTile></view>
+  <view v-if="page!=='course'&&!customOpen" v-show="!studyInput.keyboardRaised" class="bottom-nav" role="navigation" aria-label="底部导航"><WPActionTile role="button" tabindex="0" v-for="item in ['home','learn','pet','review','settings'].map(id=>navigation.find(n=>n.id===id)!)" :key="item.id" v-slot="{highlighted}" toggle-highlight :selected="page===item.id" class="bottom-item" :class="{active:page===item.id}" :style="friendlyNavStyle(item.id as NavIconName,{dark:theme.mode==='dark',highContrast:theme.settings.highContrast})" :aria-label="item.name" :aria-current="page===item.id?'page':undefined" @click="navigate(item.id)"><view class="nav-icon-container"><WPNavIcon :name="item.id as NavIconName" :active="highlighted" variant="friendly" :size="40"/></view><text class="bottom-label">{{item.name}}</text></WPActionTile></view>
   <view class="native-safe-cap" aria-hidden="true"/>
   <KeyboardBridge />
  </view>
@@ -28,6 +28,7 @@ import {useProfileStore} from '../stores/profile'
 import {useReviewStore} from '../stores/review'
 import {useCustomPracticeStore} from '../stores/custom-practice'
 import {navigation,navigate,type PageId} from '../services/navigation'
+import {studyInput} from '../services/study-input'
 import KeyboardBridge from '../components/KeyboardBridge.vue'
 import WPBrandHeader from '../components/brand/WPBrandHeader.vue'
 import WPSidebar from '../components/wp-sidebar/WPSidebar.vue'
@@ -46,7 +47,7 @@ onBackPress(()=>{
 // Reserve space for the floating bar and its breathing room only where it is visible.
 const navSpace=ref(108),instance=getCurrentInstance();let navMeasureTimer:ReturnType<typeof setTimeout>|undefined
 function measureNavigation(){clearTimeout(navMeasureTimer);navMeasureTimer=setTimeout(()=>{void nextTick(()=>{if(!instance?.proxy||props.page==='course'||layout.sizeClass!=='compact')return;uni.createSelectorQuery().in(instance.proxy).select('.bottom-nav').boundingClientRect(rect=>{if(rect&&!Array.isArray(rect)&&typeof rect.height==='number'&&rect.height>0)navSpace.value=Math.ceil(rect.height)+26}).exec()})},80)}
-const appearanceStyle=computed(()=>{const scale=Math.max(layout.fontScale,theme.settings.largeText?1.25:1);return `${theme.style};--wp-native-top:${layout.safeTop}px;--wp-brand-font-scale:${scale};--wp-bottom-nav-space:${props.page!=='course'&&!customOpen.value&&layout.sizeClass==='compact'?navSpace.value+'px':'0px'};--wp-font-body:${16*scale}px;--wp-font-small:${14*scale}px;--wp-font-caption:${12*scale}px;--wp-font-card:${17*scale}px;--wp-font-section:${22*scale}px;--wp-font-title:${30*scale}px;--wp-font-word:${Math.min(64,48*scale)}px`})
+const appearanceStyle=computed(()=>{const scale=Math.max(layout.fontScale,theme.settings.largeText?1.25:1);return `${theme.style};--wp-native-top:${layout.safeTop}px;--wp-brand-font-scale:${scale};--wp-bottom-nav-space:${props.page!=='course'&&!customOpen.value&&!studyInput.keyboardRaised&&layout.sizeClass==='compact'?navSpace.value+'px':'0px'};--wp-font-body:${16*scale}px;--wp-font-small:${14*scale}px;--wp-font-caption:${12*scale}px;--wp-font-card:${17*scale}px;--wp-font-section:${22*scale}px;--wp-font-title:${30*scale}px;--wp-font-word:${Math.min(64,48*scale)}px`})
 watch(()=>[layout.width,layout.height,layout.fontScale,theme.settings.largeText],measureNavigation)
 onShow(()=>{useReviewStore().refresh();theme.applyNativeAppearance();measureNavigation()})
 onReady(()=>{theme.applyNativeAppearance();measureNavigation()})

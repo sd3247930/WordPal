@@ -17,3 +17,10 @@
 @media(min-width:1600px){.custom-action-bar{left:max(220px,calc((100vw - 1840px)/2 + 220px))}}
 @media(min-width:1000px){.custom-training-layout{display:grid;grid-template-columns:minmax(180px,.4fr) minmax(0,1fr);align-items:start}}
 @media(max-width:359px){.custom-practice-workspace .custom-config-section.wp-card{padding:10px}.custom-match-grid{gap:8px}.custom-action-bar{padding-left:16px;padding-right:16px}.custom-action-inner{gap:8px}.custom-match-word{padding:8px;font-size:var(--wp-font-body)}}
+
+.wp-app .easy-practice-badge{width:36px;height:36px;flex-shrink:0;vertical-align:middle;margin-right:6px}
+.wp-app.theme-clay .practice-audio{min-height:64px!important;padding:8px 20px!important;gap:10px;font-size:var(--wp-font-body);max-width:100%;white-space:normal}
+.wp-app.theme-clay .practice-audio .audio-control-icon{width:48px;height:48px}
+.match-audio{margin-top:16px}
+.study-typing .study-modes{margin-top:12px}
+.wp-app.theme-clay .study-space .wp-word-card.easy-practice-card{background:transparent;box-shadow:none}

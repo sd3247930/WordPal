@@ -8,3 +8,7 @@ export const studyModeIcons:Record<LearningMode,{src:string;fallback:string}>={
  spell:{src:'/static/icons/study-modes/wordpal_study_spell_256.png',fallback:'Aa'},
  dictation:{src:'/static/icons/study-modes/wordpal_study_dictation_256.png',fallback:'✎'}
 }
+
+// User-provided, metadata-free practice artwork; the existing five mode icons stay shared.
+export const practiceSpeaker='/static/icons/easy-practice/speaker.png'
+export const practiceBadge='/static/icons/easy-practice/sprout-book.png'
