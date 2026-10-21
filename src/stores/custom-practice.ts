@@ -65,7 +65,7 @@ export const useCustomPracticeStore=defineStore('custom-practice',()=>{
   if(!save(db=>runCustom(db.customPractice!)))return false
   recoveredRunningId='';stop();screen.value='training';return true
  }
- function patch(values:Partial<Pick<NonNullable<typeof session.value>,'input'|'selected'|'revealed'>>){
+ function patch(values:Partial<Pick<NonNullable<typeof session.value>,'input'|'selected'|'revealed'|'letterDraft'|'inputAssistance'>>){
   if(!session.value||session.value.status!=='running'||session.value.answer||resumeProblem.value)return false
   const expected=token.value;return save(db=>{const s=db.customPractice;if(!s||customToken(s)!==expected||s.status!=='running'||s.answer)return false;Object.assign(s,values);s.updatedAt=new Date().toISOString();return true})
  }

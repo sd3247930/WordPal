@@ -24,7 +24,7 @@ for(const mode of ['flash','connect','listen','spell','dictation'] as LearningMo
  answerDailyWord(useLearningStore());assert.equal(useLearningStore().session!.hinted,undefined);assert.equal(restored.hinted,false)
 })
 test('提示写入失败不扣费或改题；零灵石不负数，不静默改变成揭晓答案',()=>{
- const {profile,learning,view}=fresh();assert(learning.start());const before=JSON.stringify(profile.db);fail=true;assert.equal(view.hint(),false);assert.equal(JSON.stringify(profile.db),before);fail=false;profile.transact(d=>{d.gems=0});assert(view.hint());assert.equal(profile.db.gems,0);assert.equal(learning.session!.hinted,true)
+ const {profile,learning,view}=fresh();assert(learning.start());const before=JSON.stringify(profile.db);fail=true;assert.equal(view.hint(),false);assert.equal(JSON.stringify(profile.db),before);fail=false;profile.transact(d=>{d.gems=0});const empty=JSON.stringify(profile.db);assert.equal(view.hint(),false);assert.equal(profile.db.gems,0);assert.equal(learning.session!.hinted,undefined);assert.equal(JSON.stringify(profile.db),empty)
 })
 test('旧非闪现揭晓标记按已用提示兼容读取，不重新扣费或在题面显示正确答案',()=>{
  const {profile,learning,view}=fresh();assert(learning.start());while(learning.session!.mode!=='connect')answerDailyWord(learning);learning.patch({revealed:true});view.sync();const before=JSON.stringify(profile.db);assert(view.hinted);assert.equal(view.revealed,false);assert(view.hint());assert.equal(JSON.stringify(profile.db),before)

@@ -13,6 +13,7 @@ for(const screen of [{width:359,height:780,theme:'clay',largeText:false},{width:
  await go(page,'learn');await openCustomPractice(page)
  const panel=page.getByRole('region',{name:'自定义练习内容',exact:true})
  const original=await database(page),baseline=await panel.boundingBox()
+ if(await page.getByRole('button',{name:'查看学习概览',exact:true}).count())await page.getByRole('button',{name:'查看学习概览',exact:true}).click()
  await page.getByRole('button',{name:'选择教材',exact:true}).click()
  await page.locator('.course-gallery-card').filter({hasText:longCourse.title}).click()
  await expect(page.locator('.current-course-card')).toContainText(longCourse.title)
@@ -31,6 +32,7 @@ for(const screen of [{width:359,height:780,theme:'clay',largeText:false},{width:
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)
  }
  const selected=(await database(page)).session
+ if(await page.getByRole('button',{name:'查看学习概览',exact:true}).count())await page.getByRole('button',{name:'查看学习概览',exact:true}).click()
  await page.getByRole('button',{name:'选择教材',exact:true}).click()
  await page.locator('.course-gallery-card').filter({hasText:'原创启蒙课程'}).click()
  await expect(panel).toBeVisible()
@@ -39,6 +41,7 @@ for(const screen of [{width:359,height:780,theme:'clay',largeText:false},{width:
  expect(restored.session).toEqual(original.session)
  expect(restored.cards).toEqual(original.cards)
  expect(restored.history).toEqual(original.history)
+ if(await page.getByRole('button',{name:'查看学习概览',exact:true}).count())await page.getByRole('button',{name:'查看学习概览',exact:true}).click()
  await page.getByRole('button',{name:'选择教材',exact:true}).click()
  await page.locator('.course-gallery-card').filter({hasText:longCourse.title}).click()
  expect((await database(page)).session).toEqual(selected)

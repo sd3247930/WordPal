@@ -24,3 +24,7 @@
 .match-audio{margin-top:16px}
 .study-typing .study-modes{margin-top:12px}
 .wp-app.theme-clay .study-space .wp-word-card.easy-practice-card{background:transparent;box-shadow:none}
+
+.block-practice-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}.block-practice-heading>view{min-width:0;flex:1}.block-practice-heading>.wp-button{min-height:48px;flex-shrink:0;font-size:var(--wp-font-small);padding:8px 10px}.block-practice-heading .page-title{font-size:var(--wp-font-title);font-weight:750;line-height:1.4}.block-practice-heading .page-subtitle{display:block;font-size:var(--wp-font-body);line-height:1.6;margin-top:6px}
+.study-space.learn-workspace.study-focus-workspace{max-width:1360px}.study-focus-workspace .practice-round-card{padding:16px 18px;margin-bottom:18px;border:1px solid var(--wp-border);border-radius:24px;background:var(--wp-surface);box-shadow:var(--wp-elevation)}.study-focus-workspace .practice-round-card .session-header{margin-bottom:10px}.study-focus-workspace .study-word-position{margin-bottom:10px}
+@media(max-width:479px){.block-practice-heading{flex-wrap:wrap}.block-practice-heading>view{min-width:200px}.block-practice-heading>.wp-button{margin-left:auto}.study-focus-workspace .practice-round-card{padding:14px}}

@@ -1,3 +1,4 @@
+import {spellingInputReady,type LetterBlockDraft,type SpellingInputChange} from '../../packages/phonics/letter-blocks'
 import {defineStore} from 'pinia'
 import {ref,computed,watch} from 'vue'
 import {readStorage,writeStorage} from '../services/storage'
@@ -12,7 +13,7 @@ import {availableModes} from '../../packages/content_schema/course'
 import {readFeedbackSettings} from './feedback'
 import {resolveFrozenWord} from '../services/content/ContentRegistry'
 interface RevisitAnswer {wordId:string;correct:boolean}
-interface Presentation {sessionId:string;manual:boolean;revisitStarted:boolean;queue:string[];index:number;input:string;selected:string;revealed:boolean;hinted?:boolean;answer:RevisitAnswer|null;answers:RevisitAnswer[];finished:boolean;petId:string;startExp:number;rewardTracked:boolean}
+interface Presentation {retrying?:boolean;retryAnswer?:RevisitAnswer|null;letterDraft?:LetterBlockDraft;inputAssistance?:'tiles';sessionId:string;manual:boolean;revisitStarted:boolean;queue:string[];index:number;input:string;selected:string;revealed:boolean;hinted?:boolean;answer:RevisitAnswer|null;answers:RevisitAnswer[];finished:boolean;petId:string;startExp:number;rewardTracked:boolean}
 import {PRESENTATION_KEY as key,hasCourseMemory} from '../services/learning/CourseProgressMemory'
 const blank=():Presentation=>({sessionId:'',manual:false,revisitStarted:false,queue:[],index:0,input:'',selected:'',revealed:false,answer:null,answers:[],finished:false,petId:'water',startExp:0,rewardTracked:false})
 export const useStudyPresentation=defineStore('study-presentation',()=>{
@@ -56,34 +57,38 @@ export const useStudyPresentation=defineStore('study-presentation',()=>{
  const revisiting=computed(()=>!!learning.session?.completedAt&&state.value.sessionId===learning.session.id&&state.value.revisitStarted&&!state.value.finished)
  const current=computed(()=>revisiting.value?resolveFrozenWord(wordById[state.value.queue[state.value.index]],learning.session?.courseId,learning.session?.contentVersion):learning.current)
  const mode=computed<LearningMode>(()=>revisiting.value?'spell':learning.session?.mode||'flash')
- const input=computed(()=>revisiting.value?state.value.input:learning.session?.input||'')
+ const retrying=computed(()=>!!state.value.retrying&&state.value.sessionId===learning.session?.id&&!learning.isDaily&&!learning.session?.completedAt)
+ const input=computed(()=>revisiting.value||retrying.value?state.value.input:learning.session?.input||'')
  const selected=computed(()=>revisiting.value?state.value.selected:learning.session?.selected||'')
- const revealed=computed(()=>revisiting.value?!!state.value.answer:learning.session?.mode==='flash'?learning.session.revealed:!!learning.session?.answers[learning.session.index])
- const hinted=computed(()=>revisiting.value?!!(state.value.hinted||state.value.revealed):!!(learning.session?.hinted||mode.value!=='flash'&&!answer.value&&learning.session?.revealed))
- const answer=computed(()=>revisiting.value?state.value.answer:learning.session?.answers[learning.session.index])
+ const revealed=computed(()=>retrying.value?!!state.value.retryAnswer:revisiting.value?!!state.value.answer:learning.session?.mode==='flash'?learning.session.revealed:!!learning.session?.answers[learning.session.index])
+ const hinted=computed(()=>retrying.value?!!state.value.hinted:revisiting.value?!!(state.value.hinted||state.value.revealed):!!(learning.session?.hinted||mode.value!=='flash'&&!answer.value&&learning.session?.revealed))
+ const answer=computed(()=>retrying.value?state.value.retryAnswer:revisiting.value?state.value.answer:learning.session?.answers[learning.session.index])
  const index=computed(()=>revisiting.value?state.value.index:learning.session?.index||0)
  const total=computed(()=>revisiting.value?state.value.queue.length:learning.session?.wordIds.length||0)
  const completed=computed(()=>!!learning.session?.completedAt&&!revisiting.value&&state.value.finished)
  const earnedExp=computed(()=>state.value.rewardTracked?Math.max(0,pet.all.reduce((sum,item)=>sum+item.exp,0)-state.value.startExp):null)
- function chooseMode(value:LearningMode){if(learning.isDaily)return;if(!revisiting.value&&!answer.value&&learning.current&&availableModes(learning.current,Object.values(learning.session?.wordSnapshot||wordById),readFeedbackSettings().sound,learning.session?.plannerConfig?.entryLevel).includes(value)&&patch({manual:true}))learning.setMode(value)}
- function automatic(){if(!revisiting.value&&!answer.value&&patch({manual:false})){learning.patch({input:'',selected:'',revealed:false});sync()}}
- function updateInput(value:string){if(answer.value)return;if(revisiting.value)patch({input:value});else learning.patch({input:value})}
+ function chooseMode(value:LearningMode){if(learning.isDaily||retrying.value)return;if(!revisiting.value&&!answer.value&&learning.current&&availableModes(learning.current,Object.values(learning.session?.wordSnapshot||wordById),readFeedbackSettings().sound,learning.session?.plannerConfig?.entryLevel).includes(value)&&patch({manual:true}))learning.setMode(value)}
+ function automatic(){if(!revisiting.value&&!retrying.value&&!answer.value&&patch({manual:false})){learning.patch({input:'',selected:'',revealed:false,letterDraft:undefined,inputAssistance:undefined});sync()}}
+ function updateSpellingInput(value:SpellingInputChange){if(answer.value)return;if(revisiting.value||retrying.value)patch(value);else learning.patch(value)}
+ function updateInput(value:string){if(answer.value)return;if(revisiting.value||retrying.value)patch({input:value});else learning.patch({input:value})}
  function select(value:string){if(!answer.value&&!revisiting.value)learning.patch({selected:value})}
- function reveal(){if(revisiting.value)patch({revealed:true});else learning.reveal()}
- function hint(){return revisiting.value?state.value.hinted||state.value.revealed?true:patch({hinted:true}):learning.hint()}
+ function reveal(){if(revisiting.value||retrying.value)patch({revealed:true});else learning.reveal()}
+ function hint(){return revisiting.value||retrying.value?state.value.hinted||state.value.revealed?true:patch({hinted:true}):learning.hint()}
  function submit(rating?:ReviewRating){
   if(answer.value)return false
+  if(retrying.value){if(!current.value||!spellingInputReady(input.value,current.value,state.value.letterDraft))return false;return patch({retryAnswer:{wordId:current.value.id,correct:isCorrectSpelling(input.value,current.value)},revealed:true})}
   if(!revisiting.value)return learning.submit(rating)
-  if(!current.value||!input.value.trim())return false
+  if(!current.value||!spellingInputReady(input.value,current.value,state.value.letterDraft))return false
   const response={wordId:current.value.id,correct:isCorrectSpelling(input.value,current.value)}
   return patch({answer:response,revealed:true,answers:[...state.value.answers,response]})
  }
+ function retry(){if(learning.isDaily||revisiting.value||!answer.value||answer.value.correct||!['spell','dictation'].includes(mode.value))return false;return patch({retrying:true,retryAnswer:null,input:'',hinted:false,revealed:false,letterDraft:undefined,inputAssistance:undefined})}
  function next(){
   if(!answer.value)return
-   if(revisiting.value){if(index.value+1>=total.value)patch({finished:true});else patch({index:index.value+1,input:'',revealed:false,hinted:false,answer:null})}
-  else {learning.next();sync()}
+   if(revisiting.value){if(index.value+1>=total.value)patch({finished:true});else patch({index:index.value+1,input:'',revealed:false,hinted:false,answer:null,letterDraft:undefined,inputAssistance:undefined})}
+  else {if(retrying.value)patch({retrying:false,retryAnswer:null,input:'',letterDraft:undefined,inputAssistance:undefined});learning.next();sync()}
  }
  function reset(){try{writeStorage(key,blank());state.value=blank();error.value='';return true}catch{error.value='界面进度暂时无法保存，请释放设备空间后重试。';return false}}
  watch(()=>profile.courseMemoryRevision,()=>{state.value=blank();sync()})
- return {state,error,sync,revisiting,current,mode,input,selected,revealed,hinted,answer,index,total,completed,earnedExp,chooseMode,automatic,updateInput,select,reveal,hint,submit,next,reset}
+ return {state,error,sync,revisiting,current,mode,input,selected,revealed,hinted,answer,retrying,retry,index,total,completed,earnedExp,chooseMode,automatic,updateInput,updateSpellingInput,select,reveal,hint,submit,next,reset}
 })

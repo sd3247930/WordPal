@@ -11,8 +11,8 @@ import type {Word,LearningMode} from '../../packages/core_learning'
 function sample(lemma='apple'):Word{
  return JSON.parse(JSON.stringify(wordById[lemma]||{...wordById.apple,id:lemma,word:lemma,ipa:'/ʃɪp/',meaning:'船',phonics:[],phonemes:[],syllables:[],audio:'/static/audio/apple.wav'}))
 }
-async function seed(page:Page,word=sample(),mode:LearningMode='flash',revealed=mode==='flash'){
- const db={...freshDatabase(),version:2,currentCourseId:'phonics-fixture',courseProgress:{'phonics-fixture':{currentLessonId:'l01',completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{}}},auxiliaryRecords:[]}
+async function seed(page:Page,word=sample(),mode:LearningMode='flash',revealed=mode==='flash',gems=0){
+ const db={...freshDatabase(),gems,version:2,currentCourseId:'phonics-fixture',courseProgress:{'phonics-fixture':{currentLessonId:'l01',completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{}}},auxiliaryRecords:[]}
  const words=[word,sample('dog'),sample('fish'),sample('cat')];word.distractors=words.slice(1).map(w=>w.id)
  db.session={id:'phonics-session',date:'2026-10-05',startedAt:'2026-10-05T08:00:00Z',kind:'practice',wordIds:[word.id,'dog'],index:0,mode,input:'',selected:'',revealed,answers:[],courseId:'phonics-fixture',contentVersion:'1.0.0',wordSnapshot:Object.fromEntries(words.map(w=>[w.id,w]))}
  const pack={schemaVersion:2,courseId:'phonics-fixture',contentVersion:'1.0.0',title:'合成拼读测试',route:'theme',abilityLevels:['L5'],sources:[{id:'phonics-source',type:'author-created',rightsStatus:'redistribution-approved',attribution:'合成测试',revision:'r1'}],assets:[],units:[{id:'unit-1',title:'Unit 1',lessons:[{id:'l01',title:'合成词',wordIds:words.map(w=>w.id)}]}],vocabulary:words.map(w=>({id:w.id,language:'en',lemma:w.word,meaning:w.meaning,pos:w.pos,ipa:w.ipa,sourceId:'phonics-source',audio:w.audio,image:w.image,phonics:w.phonics,phonemes:w.phonemes,syllables:w.syllables,phonicsData:w.phonicsData,example:w.example}))}
@@ -66,7 +66,7 @@ test('真实离线 apple 发音连续重播10次，主词与拆分同步且完�
 
 test('精确元数据同步、播放中重播、错误恢复、切模式/切词/离页均无残留',async({page})=>{
  const word=sample(),bounds=[0,260,480,920];word.phonicsData={...resolvePhonics(word).data,chunks:resolvePhonics(word).data.chunks.map((chunk,i)=>({...chunk,startMs:bounds[i],endMs:bounds[i+1]}))}
- await mockClock(page);await seed(page,word);await go(page,'learn');await openCustomPractice(page);await openExploration(page);const before=await database(page)
+ await mockClock(page);await seed(page,word,'flash',true,2);await go(page,'learn');await openCustomPractice(page);await openExploration(page);const before=await database(page)
  await audioButton(page).click();await active(page,0);await tick(page,.28);await active(page,1);await tick(page,.6);await active(page,2)
  await expect(page.locator('.phonics-timing-note')).toHaveAttribute('data-timing','exact')
  await audioButton(page).click();await active(page,0);await tick(page,.6);await active(page,2);await event(page,'ended');await active(page,null)
@@ -79,7 +79,7 @@ test('精确元数据同步、播放中重播、错误恢复、切模式/切词/
  await audioButton(page).click();await expect(page.locator('.phonics-word .is-active')).toHaveCount(1)
  await page.getByRole('button',{name:'单词本',exact:true}).click();await expect(page.locator('.phonics-word')).toHaveCount(0)
  expect(await page.evaluate(()=>(window as any).phonicsTest.paused())).toBeTruthy();expect(await page.evaluate(()=>(window as any).phonicsTest.players())).toBe(1)
- const after=await database(page);for(const field of ['cards','history','rewardIds','gems','pets'])expect(after[field]).toEqual(before[field])
+ const after=await database(page);for(const field of ['cards','history','rewardIds','pets'])expect(after[field]).toEqual(before[field]);expect(after.gems).toBe(before.gems-2)
 })
 
 test('无时间能力使用明确教育提示，apple/ship/rain 的拼写与音块连续无缝',async({page})=>{

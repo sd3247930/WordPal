@@ -1,4 +1,5 @@
 import type {PhonicsData} from '../phonics/types'
+import type {LetterBlockDraft} from '../phonics/letter-blocks'
 import type {DailyNewWordLimit,EntryLevel} from '../parent_settings'
 export type ReviewRating = 1 | 2 | 3 | 4
 export type MasteryState = 'new' | 'learning' | 'review' | 'mastered'
@@ -38,6 +39,7 @@ export interface Answer {
   id: string; wordId: string; rating: ReviewRating; correct: boolean; at: string
   source: 'review_due' | 'new_word' | 'practice'; mode: LearningMode; input: string
   hinted?:boolean; dueAtSubmit?:string;courseId?:string
+  inputAssistance?:'tiles'
 }
 export interface LearningSession {
   id: string; startedAt: string; date: string; kind: 'review_due' | 'new_word' | 'practice'
@@ -45,6 +47,7 @@ export interface LearningSession {
   revealed: boolean; selected: string; answers: Answer[]; completedAt?: string
   /** Recall help is separate from revealing the correct answer; absent in legacy sessions. */
   hinted?:boolean
+  letterDraft?:LetterBlockDraft;inputAssistance?:'tiles'
   courseId?:string;contentVersion?:string;lessonId?:string;wordSnapshot?:Record<string,Word>;seed?:number
   wordSources?:Record<string,'review_due'|'new_word'|'practice'>
   plannerConfig?:{dailyNewWordLimit:DailyNewWordLimit;entryLevel:EntryLevel}

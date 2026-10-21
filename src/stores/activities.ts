@@ -7,9 +7,10 @@ import {getCourseLessons,getCourseWord,getCourseWordIds,resolveFrozenWord} from 
 import {readStorage,writeStorage} from '../services/storage'
 import {initialProgress} from '../services/storage/MigrationV1toV2'
 import {isCorrectSpelling,normalizeSpelling} from '../../packages/phonics'
+import {spellingInputReady,type LetterBlockDraft,type SpellingInputChange} from '../../packages/phonics/letter-blocks'
 import type {Word} from '../../packages/core_learning'
 export type ActivityKind='check'|'pair'|'letters'|'sentence'|'cloze'|'story'|'picture'|'listen-picture'|'phonics'|'challenge'|'speed'
-export interface ActivityState {id:string;courseId:string;contentVersion:string;lessonId:string;kind:ActivityKind;wordIds:string[];words:Record<string,Word>;index:number;input:string;selected:string;answers:{wordId:string;correct:boolean}[];completed:boolean;recorded:boolean;storyId?:string;storySnapshot?:{title:string;sentences:string[];questions?:{question:string;options:string[];answer:number}[]};revealed:boolean;hinted:boolean;timer?:{remainingMs:number;runningSince:number|null}}
+export interface ActivityState {id:string;courseId:string;contentVersion:string;lessonId:string;kind:ActivityKind;wordIds:string[];words:Record<string,Word>;index:number;input:string;selected:string;answers:{wordId:string;correct:boolean}[];completed:boolean;recorded:boolean;storyId?:string;storySnapshot?:{title:string;sentences:string[];questions?:{question:string;options:string[];answer:number}[]};revealed:boolean;hinted:boolean;timer?:{remainingMs:number;runningSince:number|null};letterDraft?:LetterBlockDraft;inputAssistance?:'tiles';retrying?:boolean;retryAnswer?:{wordId:string;correct:boolean}|null;retryAttempts?:{wordId:string;correct:boolean;input:string}[]}
 import {ACTIVITY_KEY as key,hasCourseMemory} from '../services/learning/CourseProgressMemory'
 export const useActivitiesStore=defineStore('activities',()=>{
  const profile=useProfileStore(),course=useCourseStore(),review=useReviewStore(),error=ref('')
@@ -51,6 +52,8 @@ export const useActivitiesStore=defineStore('activities',()=>{
   return patch(next)
  }
  function input(value:string){if(state.value&&!state.value.completed)patch({...state.value,input:value})}
+ function blockInput(value:SpellingInputChange){const s=state.value;if(s&&!s.completed&&(!s.answers[s.index]||s.retrying&&!s.retryAnswer))return patch({...s,...value});return false}
+ function retry(){const s=state.value;if(!s||s.kind!=='letters'||!s.answers[s.index]||s.completed)return false;return patch({...s,retrying:true,retryAnswer:null,input:'',letterDraft:undefined,revealed:false})}
  function select(value:string){if(state.value&&!state.value.completed)patch({...state.value,selected:value})}
  function hint(){if(state.value)patch({...state.value,hinted:true,revealed:true})}
  const remainingMs=(now=Date.now())=>{const t=state.value?.timer;return t?Math.max(0,t.remainingMs-(t.runningSince===null?0:Math.max(0,now-t.runningSince))):0}
@@ -58,25 +61,27 @@ export const useActivitiesStore=defineStore('activities',()=>{
  function resumeTimer(now=Date.now()){const s=state.value;if(!s?.timer||s.completed||s.answers[s.index]||s.timer.runningSince!==null)return false;if(s.timer.remainingMs===0)return expireTimer(now);return patch({...s,timer:{...s.timer,runningSince:now}})}
  function expireTimer(now=Date.now()){const s=state.value,w=current.value;if(!s?.timer||!w||s.completed||s.answers[s.index]||remainingMs(now)>0)return false;return patch({...s,timer:{remainingMs:0,runningSince:null},answers:[...s.answers,{wordId:w.id,correct:false}],revealed:true})}
  function submit(){
-  const s=state.value,w=current.value;if(!s||!w||s.completed||s.answers[s.index])return false
+  const s=state.value,w=current.value;if(!s||!w||s.completed||s.answers[s.index]&&!(s.kind==='letters'&&s.retrying&&!s.retryAnswer))return false
+  if(s.kind==='letters'&&!spellingInputReady(s.input,w,s.letterDraft))return false
   let correct=false
   if(s.kind==='speed'){if(!s.timer||s.timer.runningSince===null)return false;if(remainingMs()===0)return expireTimer()}
   if(['check','pair','picture','listen-picture','challenge','speed'].includes(s.kind)){if(!s.selected)return false;correct=s.selected===w.id}
   else if(s.kind==='story'){const q=s.storySnapshot?.questions?.[s.index];if(q&&!s.selected)return false;correct=q?+s.selected===q.answer:true}
   else if(s.kind==='phonics')correct=true
   else{if(!s.input.trim())return false;correct=s.kind==='sentence'?normalizeSpelling(s.input).replace(/[.!?]$/,'')===normalizeSpelling(w.example).replace(/[.!?]$/,''):isCorrectSpelling(s.input,w)}
+  if(s.kind==='letters'&&s.retrying)return patch({...s,retryAnswer:{wordId:w.id,correct},retryAttempts:[...(s.retryAttempts||[]),{wordId:w.id,correct,input:s.input}],revealed:true})
   return patch({...s,answers:[...s.answers,{wordId:w.id,correct}],revealed:true,...(s.timer?{timer:{remainingMs:remainingMs(),runningSince:null}}:{})})
  }
- function next(){const s=state.value;if(!s||!s.answers[s.index]||s.completed)return false;if(s.index+1===total.value){if(!patch({...s,completed:true}))return false;return record()}return patch({...s,index:s.index+1,input:'',selected:'',revealed:false,...(s.timer?{timer:{remainingMs:15000,runningSince:null}}:{})})}
+ function next(){const s=state.value;if(!s||!s.answers[s.index]||s.completed||s.retrying&&!s.retryAnswer)return false;if(s.index+1===total.value){if(!patch({...s,completed:true}))return false;return record()}return patch({...s,index:s.index+1,input:'',selected:'',revealed:false,letterDraft:undefined,retrying:false,retryAnswer:null,...(s.timer?{timer:{remainingMs:15000,runningSince:null}}:{})})}
  function record(){const s=state.value;if(!s?.completed||s.recorded)return false;const correct=s.answers.filter(a=>a.correct).length,total=s.kind==='story'?s.answers.length:s.wordIds.length
   const ok=profile.transact(d=>{
    d.auxiliaryRecords??=[];if(d.auxiliaryRecords.some(a=>a.id===s.id))return
-   d.auxiliaryRecords.push({id:s.id,courseId:s.courseId,lessonId:s.lessonId,kind:s.kind,at:new Date().toISOString(),correct,total,wordIds:[...new Set(s.wordIds)],objective:['check','pair','letters','sentence','cloze','picture','listen-picture'].includes(s.kind),hinted:s.hinted})
+   d.auxiliaryRecords.push({id:s.id,courseId:s.courseId,lessonId:s.lessonId,kind:s.kind,at:new Date().toISOString(),correct,total,wordIds:[...new Set(s.wordIds)],objective:['check','pair','letters','sentence','cloze','picture','listen-picture'].includes(s.kind),hinted:s.hinted||s.inputAssistance==='tiles'})
    if(s.kind==='check'&&s.answers.length===s.wordIds.length){d.courseProgress??={};const p=d.courseProgress[s.courseId]??=initialProgress(s.courseId);p.checkAttempts[s.lessonId]=(p.checkAttempts[s.lessonId]||0)+1;p.checkAccuracy[s.lessonId]=correct/total;if(correct/total>=.8){if(!p.completedLessons.includes(s.lessonId))p.completedLessons.push(s.lessonId);const lessons=getCourseLessons(s.courseId),index=lessons.findIndex(l=>l.id===s.lessonId);p.currentLessonId=lessons[Math.min(index+1,lessons.length-1)].id}}
   });if(!ok){error.value=profile.storageError;return false}return patch({...s,recorded:true})
  }
  function close(){return patch(null)}
  function reset(){try{writeStorage(key,null);savedStates.value={};error.value='';return true}catch{error.value='练习进度无法保存，请释放设备空间后重试。';return false}}
  const recommendation=computed(()=>{const records=(profile.db.auxiliaryRecords||[]).filter(r=>r.objective&&!r.hinted&&new Date(r.at).getTime()>Date.now()-14*86400000);const total=records.reduce((n,r)=>n+r.total,0),correct=records.reduce((n,r)=>n+r.correct,0),unique=new Set(records.flatMap(r=>r.wordIds||[]));return records.length>=3&&unique.size>=20&&correct/total>=.85?'最近练习越来越熟悉，可请家长考虑下一能力级别。':''})
- return {state,current,total,choices,error,start,input,select,hint,submit,next,record,close,reset,recommendation,remainingMs,pauseTimer,resumeTimer,expireTimer}
+ return {state,current,total,choices,error,start,input,blockInput,retry,select,hint,submit,next,record,close,reset,recommendation,remainingMs,pauseTimer,resumeTimer,expireTimer}
 })

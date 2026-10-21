@@ -1,3 +1,4 @@
+import {spellingInputReady} from '../../../packages/phonics/letter-blocks'
 import type {Answer,LearningMode,ReviewRating,Word} from '../../../packages/core_learning'
 import type {CustomPracticeScope,CustomPracticeSession} from '../../../packages/core_learning/custom-practice'
 import type {CoursePack} from '../../../packages/content_schema/course'
@@ -87,8 +88,9 @@ export function recordCustomAnswer(db:Database,token:string,rating?:ReviewRating
  if(!session||session.status!=='running'||customToken(session)!==token||session.answer)return false
  const mode=session.modes[session.modeIndex],id=session.wordIds[session.index],word=session.wordSnapshot[id],result=session.results[mode]
  if(!word||mode==='flash'&&!session.revealed||['listen','dictation'].includes(mode)&&!heard||['connect','listen'].includes(mode)&&!session.selected||['spell','dictation'].includes(mode)&&!session.input.trim())return false
+ if(['spell','dictation'].includes(mode)&&!spellingInputReady(session.input,word,session.letterDraft))return false
  const correct=mode==='flash'?rating!==1:['connect','listen'].includes(mode)?session.selected===id:isCorrectSpelling(session.input,word)
- const answer:Answer={id:`${session.id}:${mode}:${session.index}:${result.attempts.length}`,wordId:id,courseId:session.courseId,mode,source:'practice',correct,rating:correct?rating||3:1,input:session.input||session.selected,at:now.toISOString()}
+ const answer:Answer={id:`${session.id}:${mode}:${session.index}:${result.attempts.length}`,wordId:id,courseId:session.courseId,mode,source:'practice',correct,rating:correct?(session.inputAssistance==='tiles'?2:rating||3):1,...(session.inputAssistance==='tiles'?{inputAssistance:'tiles' as const,hinted:true}:{}),input:session.input||session.selected,at:now.toISOString()}
  result.attempts.push(answer);session.answer=answer;checkpointCustom(session,now)
  if(correct&&!result.completedWordIds.includes(id))result.completedWordIds.push(id)
  db.practiceAnswers??=[];if(!db.practiceAnswers.some(item=>item.id===answer.id))db.practiceAnswers.push(answer)
@@ -101,7 +103,7 @@ export function advanceCustom(session:CustomPracticeSession,token:string,now=new
   else if(session.modeIndex<session.modes.length-1){session.modeIndex++;session.index=0}
   else{accountTime(session,now);session.status='completed';session.completedAt=now.toISOString();return true}
  }
- session.input='';session.selected='';session.revealed=false;session.answer=null;checkpointCustom(session,now);return true
+ delete session.letterDraft;delete session.inputAssistance;session.input='';session.selected='';session.revealed=false;session.answer=null;checkpointCustom(session,now);return true
 }
 export function customProgress(session:CustomPracticeSession){
  const total=session.wordIds.length,steps=session.modes.reduce((sum,mode)=>sum+session.results[mode].completedWordIds.length,0)
@@ -137,7 +139,7 @@ export function validCustomPractice(value:unknown):value is CustomPracticeSessio
   if(index<0&&(count||result.attempts.length)||index>=0&&index<s.modeIndex&&count!==s.wordIds.length||index>s.modeIndex&&(count||result.attempts.length))return false
  }
  const mode=s.modes[s.modeIndex],result=s.results[mode]
- if(s.answer&&(!result.attempts.length||JSON.stringify(s.answer)!==JSON.stringify(result.attempts.at(-1))||s.answer.wordId!==s.wordIds[s.index]))return false
+ if(s.answer&&(!result.attempts.length||JSON.stringify(s.answer)!==JSON.stringify(result.attempts[result.attempts.length-1])||s.answer.wordId!==s.wordIds[s.index]))return false
  if(result.completedWordIds.length!==s.index+(s.answer?.correct?1:0))return false
  return s.status!=='completed'||s.modes.every(mode=>s.results[mode].completedWordIds.length===s.wordIds.length)
 }

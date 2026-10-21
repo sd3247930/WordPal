@@ -1,6 +1,6 @@
 <template>
  <view class="word-slot-input" :class="{focused,soft:!slotted,answered:disabled}" :data-input-layout="slotted?'slots':'line'" :style="inputStyle">
-  <text class="slot-instruction">{{mode==='spell'?'看中文，用字母拼出单词':'听一听，用字母写下来'}}</text>
+  <text v-if="showInstruction" class="slot-instruction">{{mode==='spell'?'看中文，用字母拼出单词':'听一听，用字母写下来'}}</text>
   <view class="slot-editor">
    <view v-if="slotted" class="letter-slots" aria-hidden="true"><view v-for="index in count" :key="index" class="letter-slot" :class="{current:focused&&cursor===index-1,filled:index<=modelValue.length}"/></view>
    <!-- Keep one visible native input for selection, paste, IME and hardware keyboards. -->
@@ -15,7 +15,7 @@ import {onHide} from '@dcloudio/uni-app'
 import {windowLayout} from '../../services/window'
 import {useThemeStore} from '../../stores/theme'
 import {studyInput} from '../../services/study-input'
-const props=withDefaults(defineProps<{modelValue:string;mode:string;disabled?:boolean;questionKey:string}>(),{disabled:false})
+const props=withDefaults(defineProps<{modelValue:string;mode:string;disabled?:boolean;questionKey:string;showInstruction?:boolean}>(),{disabled:false,showInstruction:true})
 const emit=defineEmits<{(event:'update:modelValue',value:string):void;(event:'confirm'):void}>()
 const theme=useThemeStore(),instance=getCurrentInstance(),focused=ref(false),cursor=ref(0),composing=ref(false),width=ref(240)
 let timer:ReturnType<typeof setTimeout>|undefined,blurTimer:ReturnType<typeof setTimeout>|undefined,focusHeight=0

@@ -53,10 +53,10 @@ export function advanceDailyPlan(plan:LearningSession,now=new Date()){
  if(!plan.flow||plan.completedAt)return false
  const answer=plan.answers[plan.index]
  if(!answer)return false
- if(!answer.correct){plan.answers.splice(plan.index);plan.input='';plan.selected='';plan.revealed=plan.mode==='flash';return true}
- if(plan.index<plan.wordIds.length-1){plan.index++;plan.input='';plan.selected='';plan.revealed=plan.mode==='flash';delete plan.hinted;return true}
+ if(!answer.correct){plan.answers.splice(plan.index);plan.input='';delete plan.letterDraft;plan.selected='';plan.revealed=plan.mode==='flash';return true}
+ if(plan.index<plan.wordIds.length-1){plan.index++;plan.input='';delete plan.letterDraft;plan.selected='';plan.revealed=plan.mode==='flash';delete plan.hinted;delete plan.inputAssistance;return true}
  const next=STUDY_STEPS[STUDY_STEPS.indexOf(plan.flow.step)+1]
- if(next){plan.flow.step=next;plan.mode=stepMode(next);plan.index=0;plan.answers=[];plan.input='';plan.selected='';plan.revealed=next==='flash';delete plan.hinted}
+ if(next){plan.flow.step=next;plan.mode=stepMode(next);plan.index=0;plan.answers=[];plan.input='';delete plan.letterDraft;delete plan.inputAssistance;plan.selected='';plan.revealed=next==='flash';delete plan.hinted}
  else{plan.completedAt=now.toISOString();plan.flow.finishedDate=localDate(now)}
  return true
 }

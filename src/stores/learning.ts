@@ -1,3 +1,4 @@
+import {spellingInputReady} from '../../packages/phonics/letter-blocks'
 import {defineStore} from 'pinia'
 import {computed,ref} from 'vue'
 import {wordById,lessons,words} from '../../packages/content_schema'
@@ -92,14 +93,17 @@ export const useLearningStore=defineStore('learning',()=>{
   })
  }
  function activeDraft(d:typeof profile.db){return isDaily.value?d.courseProgress?.[course.currentId]?.dailyPlan:d.session}
- function patch(change:Partial<LearningSession>){return profile.transact(d=>{const target=activeDraft(d);if(target&&!target.completedAt){if(target.flow){for(const field of ['input','selected','revealed'] as const)if(change[field]!==undefined)(target as any)[field]=change[field]}else Object.assign(target,change)}})}
- function setMode(mode:LearningMode){if(isDaily.value)return session.value?.mode===mode;if(session.value?.answers[session.value.index]||!current.value||!availableModes(current.value,Object.values(session.value?.wordSnapshot||wordById),readFeedbackSettings().sound,session.value?.plannerConfig?.entryLevel).includes(mode))return false;return patch({mode,input:'',selected:'',revealed:false,hinted:false})}
+ function patch(change:Partial<LearningSession>){return profile.transact(d=>{const target=activeDraft(d);if(target&&!target.completedAt){if(target.flow){for(const field of ['input','selected','revealed','letterDraft','inputAssistance'] as const)if(change[field]!==undefined)(target as any)[field]=change[field]}else Object.assign(target,change)}})}
+ function setMode(mode:LearningMode){if(isDaily.value)return session.value?.mode===mode;if(session.value?.answers[session.value.index]||!current.value||!availableModes(current.value,Object.values(session.value?.wordSnapshot||wordById),readFeedbackSettings().sound,session.value?.plannerConfig?.entryLevel).includes(mode))return false;return patch({mode,input:'',selected:'',revealed:false,hinted:false,letterDraft:undefined,inputAssistance:undefined})}
  function reveal(){return patch({revealed:true})}
  function hint(){
   const s=session.value
   if(!s||s.completedAt||s.answers[s.index])return false
   if(s.hinted||s.mode!=='flash'&&s.revealed)return true
-  return profile.transact(d=>{const target=activeDraft(d);if(target&&target.id===s.id&&target.index===s.index&&!target.hinted&&!target.answers[target.index]){d.gems=Math.max(0,d.gems-1);target.hinted=true}})
+  if(profile.db.gems<1)return false
+  let provided=false
+  const saved=profile.transact(d=>{const target=activeDraft(d);if(target&&target.id===s.id&&target.index===s.index&&!target.hinted&&!target.answers[target.index]&&d.gems>=1){d.gems-=1;target.hinted=true;provided=true}})
+  return saved&&provided
  }
  function submit(rating?:ReviewRating){
   if(!session.value||!current.value||session.value.completedAt||session.value.answers[session.value.index])return false
@@ -107,10 +111,11 @@ export const useLearningStore=defineStore('learning',()=>{
   const s=session.value,w=current.value,source=currentSource.value
   if(s.mode!=='flash' && ((s.mode==='connect'||s.mode==='listen')?!s.selected:!s.input.trim()))return false
   if(s.mode==='flash' && !s.revealed)return false
+  if(['spell','dictation'].includes(s.mode)&&!spellingInputReady(s.input,w,s.letterDraft))return false
   const correct=s.mode==='flash' ? rating!==1 : (s.mode==='spell'||s.mode==='dictation') ? isCorrectSpelling(s.input,w) : s.selected===w.id
-  const actualRating:ReviewRating=correct?((s.hinted||s.revealed)&&s.mode!=='flash'?2:rating??3):1
+  const actualRating:ReviewRating=correct?((s.hinted||s.revealed||s.inputAssistance==='tiles')&&s.mode!=='flash'?2:rating??3):1
   const now=new Date()
-  const answer:Answer={id:`${s.id}:${s.index}`,wordId:w.id,correct,rating:actualRating,at:now.toISOString(),source,mode:s.mode,input:s.input||s.selected,hinted:s.mode!=='flash'&&!!(s.hinted||s.revealed),courseId:course.currentId,...(source==='review_due'&&profile.db.cards[w.id]?{dueAtSubmit:profile.db.cards[w.id].due}:{})}
+  const answer:Answer={id:`${s.id}:${s.index}`,wordId:w.id,correct,rating:actualRating,at:now.toISOString(),source,mode:s.mode,input:s.input||s.selected,hinted:s.mode!=='flash'&&!!(s.hinted||s.revealed||s.inputAssistance==='tiles'),courseId:course.currentId,...(s.inputAssistance==='tiles'?{inputAssistance:'tiles' as const}:{}),...(source==='review_due'&&profile.db.cards[w.id]?{dueAtSubmit:profile.db.cards[w.id].due}:{})}
   const ok=profile.transact(d=>{
    if(!d.session || d.session.answers[d.session.index])return
    d.session.answers.push(answer)
@@ -130,10 +135,11 @@ export const useLearningStore=defineStore('learning',()=>{
  function submitDaily(rating?:ReviewRating){
   const s=session.value!,w=current.value!,owner=s.courseId!,step=s.flow!.step
   if(planProblem.value||s.mode!=='flash'&&(['connect','listen'].includes(s.mode)?!s.selected:!s.input.trim())||s.mode==='flash'&&!s.revealed)return false
+  if(['spell','dictation'].includes(s.mode)&&!spellingInputReady(s.input,w,s.letterDraft))return false
   const correct=s.mode==='flash'?rating!==1:['spell','dictation'].includes(s.mode)?isCorrectSpelling(s.input,w):s.selected===w.id
-  const now=new Date(),hadError=s.flow!.attempts.some(a=>a.wordId===w.id&&!a.correct),actualRating:ReviewRating=correct?(hadError||s.mode!=='flash'&&(s.hinted||s.revealed)?2:rating??3):1
+  const now=new Date(),hadError=s.flow!.attempts.some(a=>a.wordId===w.id&&!a.correct),actualRating:ReviewRating=correct?(hadError||s.mode!=='flash'&&(s.hinted||s.revealed||s.inputAssistance==='tiles')?2:rating??3):1
   const source=step==='consolidate'&&correct?(s.wordSources?.[w.id]||'new_word'):'practice'
-  const answer:Answer={id:`${s.id}:${step}:${s.index}:${s.flow!.attempts.length}`,wordId:w.id,courseId:owner,at:now.toISOString(),correct,rating:actualRating,mode:s.mode,source,input:s.input||s.selected}
+  const answer:Answer={id:`${s.id}:${step}:${s.index}:${s.flow!.attempts.length}`,wordId:w.id,courseId:owner,at:now.toISOString(),correct,rating:actualRating,mode:s.mode,source,input:s.input||s.selected,...(s.inputAssistance==='tiles'?{inputAssistance:'tiles' as const,hinted:true}:s.hinted?{hinted:true}:{})}
   return profile.transact(d=>{
    const target=d.courseProgress?.[owner]?.dailyPlan
    if(!target||target.id!==s.id||target.flow?.step!==step||target.index!==s.index||!recordDailyAnswer(target,answer))return
@@ -152,14 +158,14 @@ export const useLearningStore=defineStore('learning',()=>{
   if(isDaily.value){const s=session.value,owner=s.courseId!,step=s.flow!.step,index=s.index;return profile.transact(d=>{
    const p=d.courseProgress![owner],target=p.dailyPlan!
    if(target.id!==s.id||target.flow?.step!==step||target.index!==index||!advanceDailyPlan(target))return
-   if(target.completedAt){const at=target.completedAt;p.fullLearnedWords??={};p.introducedWords??={};for(const id of target.wordIds){p.fullLearnedWords[id]=at;p.introducedWords[id]??=at}const nextId=courseWordPool.value[completedPrefix(d,course.current)]||target.wordIds.at(-1);const nextLesson=course.lessons.find(l=>l.wordIds.includes(nextId!));if(nextLesson)p.currentLessonId=nextLesson.id}
+   if(target.completedAt){const at=target.completedAt;p.fullLearnedWords??={};p.introducedWords??={};for(const id of target.wordIds){p.fullLearnedWords[id]=at;p.introducedWords[id]??=at}const nextId=courseWordPool.value[completedPrefix(d,course.current)]||target.wordIds[target.wordIds.length-1];const nextLesson=course.lessons.find(l=>l.wordIds.includes(nextId!));if(nextLesson)p.currentLessonId=nextLesson.id}
   })}
   return profile.transact(d=>{
    const s=d.session!;
-   if(s.index<s.wordIds.length-1){s.index++;s.input='';s.selected='';s.revealed=false;delete s.hinted}
+   if(s.index<s.wordIds.length-1){s.index++;s.input='';s.selected='';s.revealed=false;delete s.hinted;delete s.letterDraft;delete s.inputAssistance}
    else{
     s.completedAt=new Date().toISOString()
-    if(s.sequenceWordIds?.length){const id=s.courseId||course.currentId,p=d.courseProgress![id],introduced=courseIntroductions(d,id),next=courseWordPool.value.find(wordId=>!(wordId in introduced)),target=course.lessons.find(lesson=>lesson.wordIds.includes(next||s.wordIds.at(-1)!))||lesson.value;p.currentLessonId=target.id;p.lastLessonAccuracy=s.answers.filter(answer=>answer.correct).length/s.answers.length;if(id==='starter'){d.lastLessonAccuracy=p.lastLessonAccuracy;d.lessonIndex=Math.max(0,lessons.findIndex(lesson=>lesson.id===target.id))}return}
+    if(s.sequenceWordIds?.length){const id=s.courseId||course.currentId,p=d.courseProgress![id],introduced=courseIntroductions(d,id),next=courseWordPool.value.find(wordId=>!(wordId in introduced)),target=course.lessons.find(lesson=>lesson.wordIds.includes(next||s.wordIds[s.wordIds.length-1]!))||lesson.value;p.currentLessonId=target.id;p.lastLessonAccuracy=s.answers.filter(answer=>answer.correct).length/s.answers.length;if(id==='starter'){d.lastLessonAccuracy=p.lastLessonAccuracy;d.lessonIndex=Math.max(0,lessons.findIndex(lesson=>lesson.id===target.id))}return}
     if(s.wordSources&&Object.values(s.wordSources).includes('new_word')){
      const answers=s.answers.filter(a=>s.wordSources![a.wordId]==='new_word'),accuracy=answers.filter(a=>a.correct).length/answers.length,courseId=s.courseId||'starter'
      d.courseProgress??={};d.courseProgress[courseId]??=initialProgress(courseId);d.courseProgress[courseId].lastLessonAccuracy=accuracy

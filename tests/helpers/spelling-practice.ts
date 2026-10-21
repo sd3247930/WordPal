@@ -1,0 +1,12 @@
+import type {Page} from '@playwright/test'
+import {freshDatabase} from '../../src/stores/profile'
+import {wordById} from '../../packages/content_schema'
+import type {Word,LearningMode} from '../../packages/core_learning'
+export async function seedSpellingPractice(page:Page,mode:LearningMode='spell',lemma='doctor',meaning='医生，大夫',ratio=.75){
+ const word:Word={...wordById.cat,id:'easy-word',word:lemma,meaning,audio:'/static/audio/cat.wav',image:'/static/easy-picture.svg',phonics:[],phonemes:[],syllables:[],phonicsData:undefined,ipa:''}
+ const words=[word,wordById.dog,wordById.fish,wordById.cat];word.distractors=words.slice(1).map(w=>w.id)
+ const db={...freshDatabase(),version:2,abilityLevel:'L5',gems:10,currentCourseId:'easy-fixture',courseProgress:{'easy-fixture':{currentLessonId:'l01',completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{}}},auxiliaryRecords:[],session:{id:'easy-session',date:'2026-10-21',startedAt:'2026-10-21T08:00:00Z',kind:'practice',wordIds:[word.id,'dog'],index:0,mode,input:'',selected:'',revealed:false,answers:[],courseId:'easy-fixture',contentVersion:'1.0.0',wordSnapshot:Object.fromEntries(words.map(w=>[w.id,w]))}}
+ const pack={schemaVersion:2,courseId:'easy-fixture',contentVersion:'1.0.0',title:'合成输入练习',route:'theme',abilityLevels:['L5'],sources:[{id:'easy-source',type:'author-created',rightsStatus:'redistribution-approved',attribution:'合成测试',revision:'r1'}],assets:[],units:[{id:'unit-1',title:'Unit 1',lessons:[{id:'l01',title:'合成词',wordIds:words.map(w=>w.id)}]}],vocabulary:words.map(w=>({id:w.id,language:'en',lemma:w.word,meaning:w.meaning,pos:w.pos,sourceId:'easy-source',audio:w.audio,image:w.image}))}
+ await page.route('**/static/easy-picture.svg',route=>route.fulfill({contentType:'image/svg+xml',body:`<svg xmlns="http://www.w3.org/2000/svg" width="${600*ratio}" height="600"><rect width="100%" height="100%" fill="#c4dcbd"/><circle cx="50%" cy="60" r="30" fill="#f2ac91"/></svg>`}))
+ await page.addInitScript(({db,pack})=>{if(localStorage.getItem('wordpal.database.active.v2'))return;const key='wordpal.content.pack.easy-fixture.0123456789abcdef';localStorage.setItem('wordpal.database.v2',JSON.stringify(db));localStorage.setItem('wordpal.database.active.v2',JSON.stringify('v2'));localStorage.setItem(key,JSON.stringify(pack));localStorage.setItem('wordpal.content.catalog.v2',JSON.stringify([{courseId:pack.courseId,key,archived:false,aliases:{}}]))},{db,pack})
+}

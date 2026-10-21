@@ -17,9 +17,9 @@
      <view class="custom-training-main"><view class="custom-training-header"><text class="section-title">{{CUSTOM_MODE_NAMES[custom.mode]}} {{custom.session.results[custom.mode].completedWordIds.length}}/{{custom.progress.total}}</text><text class="small muted">第 {{custom.session.modeIndex+1}} / {{custom.session.modes.length}} 项</text></view><WPProgress :value="custom.session.results[custom.mode].completedWordIds.length" :total="custom.progress.total" :label="CUSTOM_MODE_NAMES[custom.mode]+'练习进度'"/>
       <template v-if="custom.mode==='connect'&&custom.current"><CustomPracticeMatch/><WPAudioButton class="practice-audio match-audio" :icon-src="theme.settings.themeId==='clay'?practiceSpeaker:''" :url="custom.current.audio" text="听发音" label="播放当前练习单词的发音" @click="play"/></template>
       <template v-else-if="custom.current">
-       <WPWordCard :practice="theme.settings.themeId==='clay'" :mode="custom.mode" :word="custom.current" :heading="CUSTOM_MODE_NAMES[custom.mode]" :variant="custom.mode==='flash'?'flash':'default'" :conceal="['listen','spell','dictation'].includes(custom.mode)&&!custom.session.answer" :show-meaning="custom.session.revealed||!!custom.session.answer" :reveal-meaning="custom.mode==='spell'" :phonics="phonics?.data" :active-chunk-index="activeChunkIndex" :playback-state="playbackState"><WPAudioButton class="practice-audio" :icon-src="theme.settings.themeId==='clay'?practiceSpeaker:''" :url="custom.current.audio" :text="['listen','dictation'].includes(custom.mode)?'再听一次':'听发音'" label="播放当前练习单词的发音" @click="play"/></WPWordCard>
+       <WPWordCard :correct="custom.session.answer?.correct" :practice="theme.settings.themeId==='clay'" :mode="custom.mode" :word="custom.current" :heading="CUSTOM_MODE_NAMES[custom.mode]" :variant="custom.mode==='flash'?'flash':'default'" :conceal="['listen','spell','dictation'].includes(custom.mode)&&!custom.session.answer" :show-meaning="custom.session.revealed||!!custom.session.answer" :reveal-meaning="custom.mode==='spell'" :phonics="phonics?.data" :active-chunk-index="activeChunkIndex" :playback-state="playbackState"><WPAudioButton class="practice-audio" :icon-src="theme.settings.themeId==='clay'?practiceSpeaker:''" :url="custom.current.audio" :text="['listen','dictation'].includes(custom.mode)?'再听一次':'听发音'" label="播放当前练习单词的发音" @click="play"/></WPWordCard>
        <view v-if="custom.mode==='listen'" class="choice-grid" role="group" aria-label="选择听到的单词"><WPActionTile v-for="choice in custom.choices" :key="choice.id" toggle-highlight class="answer-choice" :selected="custom.session.selected===choice.id" :disabled="!!custom.session.answer" :data-word-id="choice.id" @click="custom.patch({selected:choice.id})" @cancel="custom.patch({selected:''})">{{choice.word}}</WPActionTile></view>
-       <WordSlotInput v-if="['spell','dictation'].includes(custom.mode)" :model-value="custom.session.input" :mode="custom.mode" :disabled="!!custom.session.answer" :question-key="custom.token" @update:model-value="custom.patch({input:$event})" @confirm="submit()"/>
+       <LetterBlockInput :word="custom.current" :letter-draft="custom.session.letterDraft" :default-tiles="theme.settings.themeId==='clay'" :correct="custom.session.answer?.correct" v-if="['spell','dictation'].includes(custom.mode)" :model-value="custom.session.input" :mode="custom.mode" :disabled="!!custom.session.answer" :question-key="custom.token" @change="custom.patch($event)" @confirm="submit()"/>
       </template>
       <text v-if="audioError" class="notice error" role="alert">{{audioError}}</text>
       <view v-if="custom.current&&!custom.resumeProblem" class="answer-panel">
@@ -59,7 +59,8 @@ import WPButton from '../wp-button/WPButton.vue'
 import WPCard from '../wp-card/WPCard.vue'
 import WPActionTile from '../button/WPActionTile.vue'
 import WPProgress from '../wp-progress/WPProgress.vue'
-import WordSlotInput from './WordSlotInput.vue'
+import LetterBlockInput from './LetterBlockInput.vue'
+import {spellingInputReady} from '../../../packages/phonics/letter-blocks'
 import {studyInput} from '../../services/study-input'
 import {practiceSpeaker,practiceBadge} from '../../services/study-mode-icons'
 import WPWordCard from '../wp-word-card/WPWordCard.vue'
@@ -82,7 +83,7 @@ watch(()=>[custom.screen,windowLayout.width,windowLayout.height,windowLayout.fon
 onMounted(measureFooter)
 const title=computed(()=>({config:'自定义练习',overview:'连续训练总览',training:CUSTOM_MODE_NAMES[custom.mode]+'练习',paused:'暂停与续练',summary:'练习完成',closed:'自定义练习'}[custom.screen]))
 const elapsed=computed(()=>{const seconds=Math.floor((custom.session?.elapsedMs||0)/1000);return seconds<60?`${seconds} 秒`:`${Math.floor(seconds/60)} 分 ${seconds%60} 秒`})
-const canSubmit=computed(()=>!custom.resumeProblem&&!custom.session?.answer&&(['connect','listen'].includes(custom.mode)?!!custom.session?.selected:!!custom.session?.input.trim())&&(!['listen','dictation'].includes(custom.mode)||custom.heardToken===custom.token))
+const canSubmit=computed(()=>!custom.resumeProblem&&!custom.session?.answer&&(['connect','listen'].includes(custom.mode)?!!custom.session?.selected:!!custom.current&&spellingInputReady(custom.session?.input||'',custom.current,custom.session?.letterDraft))&&(!['listen','dictation'].includes(custom.mode)||custom.heardToken===custom.token))
 function clear(){clearTimeout(timer);timer=undefined;playEpoch++;controller.stop();warmUpcomingAudio([])}
 async function play(){const word=custom.current,token=custom.token,epoch=++playEpoch;if(!word)return;audioError.value='';try{await controller.play(word);if(epoch===playEpoch&&token===custom.token&&custom.screen==='training'&&['playing','ended'].includes(playbackState.value))custom.heardToken=token}catch(error){if(epoch===playEpoch&&token===custom.token)audioError.value=(error as Error).message}}
 function submit(rating?:ReviewRating){if(custom.session?.answer||custom.mode!=='flash'&&!canSubmit.value)return;uni.hideKeyboard?.();custom.submit(rating)}
@@ -109,7 +110,7 @@ function dialogKey(event:KeyboardEvent){
  if(event.key==='Escape'){event.preventDefault();if(custom.confirmation)custom.confirmation='';else custom.back();return}
  if(!custom.confirmation||event.key!=='Tab')return
  const buttons=Array.from(document.querySelectorAll<HTMLElement>('.custom-confirm-dialog button,.custom-confirm-dialog uni-button')).filter(button=>!button.hasAttribute('disabled'))
- const first=buttons[0],last=buttons.at(-1);if(!first||!last)return
+ const first=buttons[0],last=buttons[buttons.length-1];if(!first||!last)return
  if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
 }
 watch(()=>custom.confirmation,async(value,previous)=>{
