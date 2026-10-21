@@ -9,6 +9,15 @@ export function todayCourseWordIds(db:Database,pack:CoursePack,now=new Date()){
  return Object.entries(fullCourseWords(db,pack)).filter(([,at])=>at&&localDate(new Date(at))===date).map(([id])=>id)
 }
 
+export interface HomeLearningData {accuracy:number|null;samples:number;newWords:number;reviewEvents:number;effectiveEvents:number}
+/** Preserve the homepage's saved-answer/event definitions and current-course completion count.
+ * Practice/auxiliary evidence lives elsewhere. This selector never merges it or writes an archive. */
+export function selectHomeLearningData(db:Database,pack:CoursePack,now=new Date()):HomeLearningData|null{
+ if(!Number.isFinite(now.getTime()))return null
+ const day=localDate(now),answers=db.history.filter(answer=>localDate(new Date(answer.at))===day),samples=answers.length
+ return {accuracy:samples?Math.round(answers.filter(answer=>answer.correct).length/samples*100):null,samples,newWords:todayCourseWordIds(db,pack,now).length,reviewEvents:answers.filter(answer=>answer.source==='review_due').length,effectiveEvents:samples}
+}
+
 export interface StudyRoundProgress {status:'ready'|'active'|'completed'|'unavailable';completed:number;total:number}
 /** Read persisted planned steps only. Retries and optional mistake revisits add no steps. */
 export function studyRoundProgress(session:LearningSession|null|undefined):StudyRoundProgress {
