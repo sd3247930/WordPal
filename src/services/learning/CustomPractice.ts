@@ -33,11 +33,17 @@ export function practiceCountError(value:string|number,total:number){
  return ''
 }
 export function defaultPracticeCount(db:Database,total:number){return Math.min(readParentSettings(db).dailyNewWordLimit,total)}
+const meaningKey=(value:string)=>value.normalize('NFC').trim().replace(/\s+/g,' ')
+function meaningAlternatives(word:Word,pool:Word[]){
+ const meanings=new Set([meaningKey(word.meaning)]),choices:Word[]=[]
+ for(const other of pool){const key=meaningKey(other.meaning);if(other.id===word.id||other.word===word.word||!key||meanings.has(key))continue;meanings.add(key);choices.push(other);if(choices.length===3)break}
+ return choices
+}
 export function customModeProblems(courseId:string,ids:string[],sound:boolean){
  const pool=orderedCourseWords(courseRegistry[courseId]||{vocabulary:[],units:[]} as unknown as CoursePack).map(id=>getCourseWord(courseId,id)).filter((word):word is Word=>!!word)
  return Object.fromEntries(CUSTOM_MODES.map(mode=>{
-  const missing=ids.find(id=>{const word=getCourseWord(courseId,id);return !word||!availableModes(word,pool,sound).includes(mode)})
-  const problem=!ids.length?'请先选择有词条的范围。':missing?['listen','dictation'].includes(mode)?!sound?'学习声音已关闭，请先在设置中开启。':'部分词条暂无可用发音，不能完成本项练习。':'部分词条缺少可区分的配对选项，请选择其它模式。':''
+  const missing=ids.find(id=>{const word=getCourseWord(courseId,id);return !word||!availableModes(word,pool,sound).includes(mode)||mode==='connect'&&meaningAlternatives(word,pool).length<3})
+  const problem=!ids.length?'请先选择有词条的范围。':missing?mode==='connect'?'当前教材无法为部分词条组成 4 个不同词义，请选择其它模式。':['listen','dictation'].includes(mode)?!sound?'学习声音已关闭，请先在设置中开启。':'部分词条暂无可用发音，不能完成本项练习。':'部分词条缺少可区分的配对选项，请选择其它模式。':''
   return [mode,problem]
  })) as Record<LearningMode,string>
 }
@@ -52,7 +58,7 @@ export function createCustomPractice(input:{courseId:string;scope:CustomPractice
  for(const mode of input.modes)if(problems[mode])throw Error(CUSTOM_MODE_NAMES[mode]+'：'+problems[mode])
  const words=orderedCourseWords(pack).map(id=>getCourseWord(input.courseId,id)).filter((word):word is Word=>!!word),snapshot:Record<string,Word>={}
  for(const id of chosen){
-  const word=getCourseWord(input.courseId,id)!,alternatives=words.filter(other=>other.id!==id&&other.meaning!==word.meaning&&other.word!==word.word).slice(0,3)
+  const word=getCourseWord(input.courseId,id)!,alternatives=modes.includes('connect')?meaningAlternatives(word,words):words.filter(other=>other.id!==id&&other.meaning!==word.meaning&&other.word!==word.word).slice(0,3)
   snapshot[id]=JSON.parse(JSON.stringify({...word,distractors:alternatives.map(other=>other.id)}))
   for(const other of alternatives)snapshot[other.id]??=JSON.parse(JSON.stringify({...other,distractors:[]}))
  }
@@ -130,9 +136,17 @@ export function customChoices(session:CustomPracticeSession){
 export function customMatchGroup(session:CustomPracticeSession){
  // End a group before a duplicate meaning so two identical labels never produce an ambiguous pair.
  const groups:string[][]=[];let group:string[]=[],meanings=new Set<string>()
- for(const id of session.wordIds){const meaning=session.wordSnapshot[id].meaning;if(group.length===5||meanings.has(meaning)){groups.push(group);group=[];meanings=new Set()}group.push(id);meanings.add(meaning)}
+ for(const id of session.wordIds){const meaning=meaningKey(session.wordSnapshot[id].meaning);if(group.length===4||meanings.has(meaning)){groups.push(group);group=[];meanings=new Set()}group.push(id);meanings.add(meaning)}
  if(group.length)groups.push(group)
- const ids=groups.find(ids=>ids.includes(session.wordIds[session.index]))||[],choices=ids.length===1?customChoices(session):ids.map(id=>session.wordSnapshot[id])
+ const current=session.wordSnapshot[session.wordIds[session.index]],ids=groups.find(ids=>ids.includes(current.id))||[]
+ // Reserve the correct meaning before adding distractors, including short final groups.
+ const choices=[current],seen=new Set([meaningKey(current.meaning)])
+ function fill(pool:Word[]){for(const word of pool){const key=meaningKey(word.meaning);if(choices.length===4)break;if(word.id===current.id||word.word===current.word||!key||seen.has(key))continue;seen.add(key);choices.push(word)}}
+ fill(ids.map(id=>session.wordSnapshot[id]));fill(Object.values(session.wordSnapshot))
+ // Legacy snapshots may contain duplicate distractors. Only the unchanged source course may fill gaps.
+ const pack=courseRegistry[session.courseId]
+ if(choices.length<4&&pack&&isCourseInstalled(session.courseId)&&customFingerprint(pack)===session.contentFingerprint)fill(orderedCourseWords(pack).map(id=>getCourseWord(session.courseId,id)).filter((word):word is Word=>!!word))
+ choices.sort((a,b)=>a.id<b.id?-1:a.id>b.id?1:0)
  let random=(session.seed+session.wordIds.indexOf(ids[0]))>>>0
  for(let i=choices.length-1;i>0;i--){random=(Math.imul(random,1664525)+1013904223)>>>0;const j=random%(i+1);[choices[i],choices[j]]=[choices[j],choices[i]]}
  return {wordIds:ids,choices,groupNumber:groups.indexOf(ids)+1,totalGroups:groups.length}

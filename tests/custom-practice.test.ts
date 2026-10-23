@@ -4,12 +4,12 @@ import {createPinia,setActivePinia} from 'pinia'
 import {freshDatabase,useProfileStore,type Database} from '../src/stores/profile'
 import {useLearningStore} from '../src/stores/learning'
 import {useCustomPracticeStore} from '../src/stores/custom-practice'
-import {loadCourseRegistry,registerCourse,courseRegistry,installationStatus,archiveStatus,wordById} from '../src/services/content/ContentRegistry'
+import {loadCourseRegistry,registerCourse,courseRegistry,installationStatus,archiveStatus,wordById,getCourseWord} from '../src/services/content/ContentRegistry'
 import {installTextCourse} from '../src/services/content/StorageRepository'
 import {validateDatabase,CUSTOM_RECOVERY_KEY} from '../src/services/storage/MigrationV1toV2'
 import {makeLearningBackup,previewLearningBackup} from '../src/services/storage/LearningBackup'
 import {courseRemovalScope,pruneRemovedCourseRecords} from '../src/services/content/CourseRemovalData'
-import {CUSTOM_MODES,createCustomPractice,practiceWordIds,wholeBook,practiceCountError,defaultPracticeCount,runCustom,pauseCustom,endCustom,recordCustomAnswer,advanceCustom,customToken,customProgress,customResults,customMatchGroup,validCustomPractice,customResumeProblem} from '../src/services/learning/CustomPractice'
+import {CUSTOM_MODES,createCustomPractice,practiceWordIds,wholeBook,practiceCountError,defaultPracticeCount,runCustom,pauseCustom,endCustom,recordCustomAnswer,advanceCustom,customToken,customProgress,customResults,customMatchGroup,validCustomPractice,customResumeProblem,customModeProblems} from '../src/services/learning/CustomPractice'
 import {customCourse} from './helpers/custom-course'
 import type {LearningMode} from '../packages/core_learning'
 import {validCustomPracticeCursors} from '../src/services/learning/CustomPracticeSequence'
@@ -21,6 +21,25 @@ function answer(db:Database){const s=db.customPractice!,mode=s.modes[s.modeIndex
 const protectedFields=(db:Database)=>JSON.stringify(Object.fromEntries(Object.entries(db).filter(([key])=>!['customPractice','practiceAnswers','customPracticeCursors'].includes(key))))
 function finishStore(custom:ReturnType<typeof useCustomPracticeStore>){if(custom.screen==='overview')assert(custom.resume());while(custom.session!.status==='running'){const id=custom.session!.wordIds[custom.session!.index];assert(custom.patch({revealed:true,selected:id,input:custom.session!.wordSnapshot[id].word}));custom.heardToken=custom.token;assert(custom.submit(3));assert(custom.next())}}
 
+test('连接词义每题固定四项，五词批次及末尾单词均包含唯一正确词义',()=>{
+ const {db,session}=make(5,['connect'])
+ while(session.status==='running'){const choices=customMatchGroup(session).choices,id=session.wordIds[session.index];assert.equal(choices.length,4);assert.equal(choices.filter(word=>word.id===id).length,1);assert.equal(new Set(choices.map(word=>word.meaning)).size,4);answer(db)}
+})
+test('单词数1至7、指定单元与不同起点始终为四项，正确词义只出现一次且可恢复',()=>{
+ for(const count of [1,2,3,4,5,7])for(const offset of [0,10]){
+  const pack=reset(),session=createCustomPractice({courseId:pack.courseId,scope:wholeBook(),count,offset,modes:['connect'],sound:true}),db={...freshDatabase(),customPractice:session};runCustom(session)
+  while(session.status==='running'){const group=customMatchGroup(session),id=session.wordIds[session.index];assert.equal(group.choices.length,4);assert.equal(group.choices.filter(word=>word.meaning===session.wordSnapshot[id].meaning).length,1);assert(group.choices.some(word=>word.id===id));assert.deepEqual(customMatchGroup(JSON.parse(JSON.stringify(session))).choices.map(word=>word.id),group.choices.map(word=>word.id));answer(db)}
+ }
+ const pack=reset(),session=createCustomPractice({courseId:pack.courseId,scope:{type:'units',unitIds:[pack.courseId+'-u12']},count:3,modes:['connect'],sound:true});assert.equal(session.wordIds.length,3);assert.equal(customMatchGroup(session).choices.length,4)
+})
+test('重复词义去重；旧断点缺少干扰项时仅从原教材补足，不修改会话快照',()=>{
+ reset();const pack=customCourse('custom-duplicate-meanings',8),meanings=['重复',' 重复 ','重复','词义乙','词义丙','词义丁','目标','目标'];pack.vocabulary.forEach((word,index)=>word.meaning=meanings[index]);registerCourse(pack)
+ const session=createCustomPractice({courseId:pack.courseId,scope:wholeBook(),count:1,offset:6,modes:['connect'],sound:true}),id=session.wordIds[0];assert.equal(new Set(session.wordSnapshot[id].distractors.map(other=>session.wordSnapshot[other].meaning.trim())).size,3)
+ const oldIds=[pack.vocabulary[0].id,pack.vocabulary[1].id,pack.vocabulary[3].id];session.wordSnapshot={[id]:{...session.wordSnapshot[id],distractors:oldIds},...Object.fromEntries(oldIds.map(other=>[other,{...getCourseWord(pack.courseId,other)!,distractors:[]}]))};assert(validCustomPractice(session));const before=JSON.stringify(session),choices=customMatchGroup(session).choices;assert.equal(choices.length,4);assert.equal(new Set(choices.map(word=>word.meaning.trim())).size,4);assert(choices.some(word=>word.id===id));assert(choices.every(word=>word.id.startsWith(pack.courseId+'-')));assert.equal(JSON.stringify(session),before)
+})
+test('不足四种可区分词义时明确阻止连接，不借用其他教材或影响闪现',()=>{
+ const pack=reset(),tiny=customCourse('custom-three-meanings',3);registerCourse(tiny);const ids=practiceWordIds(tiny.courseId,wholeBook());assert.match(customModeProblems(tiny.courseId,ids,true).connect,/4 个不同词义/);assert.throws(()=>createCustomPractice({courseId:tiny.courseId,scope:wholeBook(),count:3,modes:['connect'],sound:true}),/4 个不同词义/);assert(createCustomPractice({courseId:tiny.courseId,scope:wholeBook(),count:3,modes:['flash'],sound:true}));assert.equal(practiceWordIds(pack.courseId,wholeBook()).length,113)
+})
 test('回归：完成两词自定义练习后，新一轮应从第三词继续而非首词',async()=>{
  reset();const custom=useCustomPracticeStore();await installTextCourse(customCourse());custom.openConfig();custom.chooseCourse('custom-fixture');custom.count='2';custom.singleMode='flash';assert.equal(custom.start(),'started');assert.equal(custom.session!.courseId,'custom-fixture');const first=[...custom.session!.wordIds]
  while(custom.session!.status==='running'){assert(custom.patch({revealed:true}));assert(custom.submit(3));assert(custom.next())}
@@ -132,12 +151,12 @@ test('多选、再次取消和一键全选保持同一选择状态，空选不�
  custom.toggleMode('dictation');custom.toggleMode('listen');assert.deepEqual(custom.selectedModes,['listen','dictation']);custom.continuous=true;assert.deepEqual(custom.selectedModes,CUSTOM_MODES);custom.continuous=false;assert.deepEqual(custom.selectedModes,['listen','dictation']);custom.continuous=true;custom.toggleMode('connect');assert.equal(custom.continuous,false);assert.deepEqual(custom.selectedModes,['flash','listen','spell','dictation'])
  custom.singleMode='spell';custom.toggleMode('dictation');custom.count='2';const before=protectedFields(profile.db);assert.equal(custom.start(),'started');assert.equal(custom.screen,'overview');assert.deepEqual(custom.session!.modes,['spell','dictation']);assert(custom.resume());custom.patch({input:'draft'});assert(custom.pause());const id=custom.session!.id;setActivePinia(createPinia());const restored=useCustomPracticeStore();assert.equal(restored.session!.id,id);assert.deepEqual(restored.session!.modes,['spell','dictation']);assert(restored.resume());assert.equal(restored.session!.input,'draft');assert.equal(protectedFields(useProfileStore().db),before)
 })
-test('连接按最多5词分组且覆盖113词，稳定打散词义列，重复词义分开处理',()=>{
+test('连接按最多4词分组且覆盖113词，稳定打散词义列，重复词义分开处理',()=>{
  const {session,db}=make(113,['connect']),seen:string[]=[],batches=new Map<string,string[]>()
  while(session.status==='running'){
-  const group=customMatchGroup(session);assert(group.wordIds.length<=5);assert(group.wordIds.includes(session.wordIds[session.index]));batches.set(group.wordIds.join(','),group.wordIds);assert.deepEqual(customMatchGroup(session).choices.map(word=>word.id),group.choices.map(word=>word.id));seen.push(session.wordIds[session.index]);answer(db)
+  const group=customMatchGroup(session);assert(group.wordIds.length<=4);assert(group.wordIds.includes(session.wordIds[session.index]));batches.set(group.wordIds.join(','),group.wordIds);assert.deepEqual(customMatchGroup(session).choices.map(word=>word.id),group.choices.map(word=>word.id));seen.push(session.wordIds[session.index]);answer(db)
  }
- assert.equal(batches.size,23);assert.deepEqual(seen,session.wordIds);assert.equal(new Set(seen).size,113)
+ assert.equal(batches.size,29);assert.deepEqual(seen,session.wordIds);assert.equal(new Set(seen).size,113)
 })
 test('五模式在开始、中途、末尾可持久化恢复，取消结束保持原快照，ended不可误作completed',()=>{
  for(const mode of CUSTOM_MODES)for(const position of [0,2,4]){
