@@ -1,15 +1,15 @@
 <template>
  <view class="custom-practice-workspace study-space" :class="{'custom-training-focus':custom.screen==='training'}" :data-custom-screen="custom.screen" :style="{'--custom-action-space':studyInput.keyboardRaised?'24px':footerHeight+'px',paddingBottom:studyInput.overlap?studyInput.overlap+110+'px':undefined}">
   <StudySessionHeading v-if="custom.screen==='training'&&custom.session&&custom.progress" :title="CUSTOM_MODE_NAMES[custom.mode]" :mode="custom.mode" :index="custom.session.index+1" :total="custom.progress.total" :value="custom.session.results[custom.mode].completedWordIds.length" :caption="'额外练习 · 第 '+(custom.session.modeIndex+1)+'/'+custom.session.modes.length+' 项'" @custom="custom.openConfig()"><template #back><WPButton kind="quiet" label="返回学习或暂停自定义练习" @click="custom.back()">‹ 返回</WPButton></template></StudySessionHeading>
-  <view v-else class="custom-heading"><WPButton kind="quiet" label="返回学习或暂停自定义练习" @click="custom.back()">‹ 返回</WPButton><view><text class="page-title"><image class="easy-practice-badge" :src="custom.screen==='config'?customPracticeArtwork.title:practiceBadge" mode="aspectFit" aria-hidden="true"/>{{title}}</text><text class="small muted block">额外练习 · 不计今日任务</text></view></view>
+  <view v-else class="custom-heading"><WPButton kind="quiet" label="返回学习或暂停自定义练习" @click="custom.back()">‹ 返回</WPButton><view><text class="page-title"><image class="easy-practice-badge" :src="custom.screen==='config'?customPracticeArtwork.title:customResultArtwork.heading" mode="aspectFit" aria-hidden="true"/>{{title}}</text><text class="small muted block">{{custom.screen==='summary'?'额外练习已保存 · 不计今日任务':'额外练习 · 不计今日任务'}}</text></view></view>
   <text v-if="custom.error" class="notice error" role="alert">{{custom.error}}</text>
   <template v-if="custom.screen==='config'">
    <CustomPracticeConfig/>
   </template>
   <template v-else-if="custom.session&&custom.progress">
-   <view v-if="custom.screen!=='training'" class="custom-session-summary"><text class="strong block">{{custom.session.courseTitle}}</text><text class="small muted block">{{custom.session.scopeLabel}} · {{custom.progress.total}} 个不同词条 · {{custom.session.modes.length>1?custom.session.modes.map(mode=>CUSTOM_MODE_NAMES[mode]).join('→'):CUSTOM_MODE_NAMES[custom.mode]+'单项练习'}}</text></view>
+   <view v-if="custom.screen!=='training'" class="custom-session-summary"><image :src="customResultArtwork.course" mode="aspectFit" aria-hidden="true"/><view><text class="strong block">{{custom.session.courseTitle}}</text><text class="small muted block">{{custom.session.scopeLabel}} · {{custom.progress.total}} 词 · {{custom.session.modes.length}} 项模式</text></view></view>
    <template v-if="custom.screen==='overview'">
-    <view class="custom-overview"><WPCard class="custom-overview-intro"><WPPetAvatar :element="pet.current.element" :size="72"/><text class="section-title">准备好，一起出发！</text><text class="muted block">同一组 {{custom.progress.total}} 个词，按所选 {{custom.session.modes.length}} 种方式依次练习。随时暂停，下次继续。</text></WPCard><CustomPracticeRoute :session="custom.session"/></view>
+    <WPCard class="custom-plan-card"><view class="custom-plan-status"><image :src="customResultArtwork.overview" mode="aspectFit" aria-hidden="true"/><view><text class="strong block">同一组 {{custom.progress.total}} 词，按顺序练习</text><text class="small muted block">随时暂停，下次继续</text></view></view><view class="custom-section-heading"><text class="section-title">训练步骤</text><text class="small muted">完成 {{custom.progress.completedModes}}/{{custom.session.modes.length}}</text></view><CustomPracticeRoute :session="custom.session"/></WPCard>
    </template>
    <template v-else-if="custom.screen==='training'">
     <text v-if="custom.resumeProblem" class="notice error" role="alert">{{custom.resumeProblem}}</text>
@@ -29,18 +29,18 @@
     </view>
    </template>
    <template v-else-if="custom.screen==='paused'">
-    <WPCard class="custom-paused-card"><WPPetAvatar :element="pet.current.element" :size="64"/><text class="section-title">练习进度已保存，休息一下吧</text><text class="strong block">已完成 {{custom.progress.completedModes}} / {{custom.session.modes.length}} 项模式</text><text class="muted block">当前：{{CUSTOM_MODE_NAMES[custom.mode]}} {{custom.session.results[custom.mode].completedWordIds.length}}/{{custom.progress.total}}</text><WPProgress :value="custom.progress.steps" :total="custom.progress.totalSteps" label="整体训练步骤"/><text class="small muted block">总训练步数 {{custom.progress.steps}} / {{custom.progress.totalSteps}}（{{custom.progress.percent}}%）</text><text v-if="custom.resumeProblem" class="notice error" role="alert">{{custom.resumeProblem}}</text></WPCard><CustomPracticeRoute :session="custom.session"/>
+    <WPCard class="custom-plan-card custom-paused-card"><view class="custom-section-heading"><text class="section-title">进度已保存</text><text class="small muted">完成 {{custom.progress.completedModes}}/{{custom.session.modes.length}}</text></view><WPProgress :value="custom.progress.steps" :total="custom.progress.totalSteps" label="整体训练步骤"/><text class="small muted block custom-paused-progress">训练步骤 {{custom.progress.steps}}/{{custom.progress.totalSteps}} · {{custom.progress.percent}}%</text><CustomPracticeRoute :session="custom.session"/><text v-if="custom.resumeProblem" class="notice error" role="alert">{{custom.resumeProblem}}</text></WPCard>
    </template>
    <template v-else-if="custom.screen==='summary'">
-    <WPCard class="custom-complete-card"><WPPetAvatar :element="pet.current.element" :size="80"/><text class="page-title">本次自定义练习完成！</text><text class="strong block">已覆盖 {{custom.progress.total}} 个不同词条 · {{custom.progress.completedModes}}/{{custom.session.modes.length}} 模式</text><text class="small muted block">用时 {{elapsed}} · 练习记录已保存</text><text class="small muted block">重新设置后可以再练一次，正式学习任务保持原样。</text></WPCard><CustomPracticeRoute :session="custom.session"/>
+    <WPCard v-if="results" class="custom-complete-card"><view class="custom-result-heading"><image class="custom-result-art" :src="customResultArtwork.complete" mode="aspectFit" aria-hidden="true"/><view><text class="section-title">完成 {{results.completedWordCount}} 个词</text><text class="small muted block">已完成 {{results.completedModes}}/{{results.selectedModeCount}} 项 · 用时 {{elapsed}}</text></view></view><view class="custom-result-stats"><view class="custom-result-stat"><image :src="customResultArtwork.completed" mode="aspectFit" aria-hidden="true"/><view><text class="strong block">{{results.completedWordCount}}/{{results.selectedWordCount}}</text><text class="small muted block">已完成词条</text></view></view><view class="custom-result-stat"><image :src="results.accuracy===null?customResultArtwork.completed:customResultArtwork.accuracy" mode="aspectFit" aria-hidden="true"/><view><text class="strong block">{{results.accuracy===null?results.completionRate:results.accuracy}}%</text><text class="small muted block">{{results.accuracy===null?'完成率':'正确率'}}</text></view></view></view><text v-if="results.gradedAnswered" class="small muted block custom-score-caption">可评分作答 {{results.gradedCorrect}}/{{results.gradedAnswered}} 次 · 含重试</text><view class="custom-section-heading"><text class="section-title">本次练习</text><text class="small muted">{{results.selectedModeCount}} 项模式</text></view><CustomPracticeRoute :session="custom.session"/></WPCard>
    </template>
   </template>
   <view v-show="!studyInput.keyboardRaised" class="custom-action-bar"><view class="custom-action-inner">
-   <template v-if="custom.screen==='config'"><WPButton :disabled="!!custom.startProblem" @click="start()">开始练习</WPButton></template>
+   <template v-if="custom.screen==='config'"><WPButton :disabled="!!custom.startProblem" @click="start()">{{custom.selectedModes.length>1?'开始连续训练':'开始练习'}}</WPButton></template>
    <template v-else-if="custom.screen==='overview'"><WPButton :disabled="!!custom.resumeProblem" @click="custom.resume()">开始连续训练</WPButton></template>
    <template v-else-if="custom.screen==='training'"><WPButton kind="secondary" @click="pause()">暂停练习</WPButton><WPButton kind="quiet" @click="requestEnd()">结束练习</WPButton></template>
    <template v-else-if="custom.screen==='paused'"><WPButton :disabled="!!custom.resumeProblem" @click="custom.resume()">继续练习</WPButton><WPButton kind="secondary" @click="requestEnd()">结束本次练习</WPButton></template>
-   <template v-else-if="custom.screen==='summary'"><WPButton @click="custom.openConfig()">再练一次</WPButton><WPButton kind="secondary" @click="custom.leave()">返回学习页</WPButton></template>
+   <template v-else-if="custom.screen==='summary'"><WPButton @click="custom.openConfig()"><image class="custom-repeat-icon" :src="customResultArtwork.repeat" mode="aspectFit" aria-hidden="true"/>再练一次</WPButton><WPButton kind="secondary" @click="custom.leave()">返回学习页</WPButton></template>
   </view></view>
   <view v-if="custom.confirmation" class="custom-confirm-backdrop" @click="cancelConfirmation"><view class="custom-confirm-dialog" role="dialog" aria-modal="true" :aria-label="custom.confirmation==='end'?'结束本次自定义练习':'重新开始自定义练习'" @click.stop><text class="section-title">{{custom.confirmation==='end'?'要结束本次练习吗？':'已有一份待续练习'}}</text><text class="muted block">{{custom.confirmation==='end'?'已作答记录会保留，当前练习将结束，之后不能继续此断点。':'重新开始会替换上次断点。已作答记录和正式学习任务都会保留。'}}</text><view class="button-row"><WPButton kind="secondary" @click="cancelConfirmation">{{custom.confirmation==='end'?'继续当前练习':'保留上次练习'}}</WPButton><WPButton @click="confirm()">{{custom.confirmation==='end'?'确认结束':'重新开始'}}</WPButton></view></view></view>
  </view>
@@ -50,8 +50,7 @@ import StudySessionHeading from './StudySessionHeading.vue'
 import {computed,watch,onMounted,onUnmounted,nextTick,getCurrentInstance} from 'vue'
 import {onHide,onShow} from '@dcloudio/uni-app'
 import {useCustomPracticeStore} from '../../stores/custom-practice'
-import {usePetStore} from '../../stores/pet'
-import {CUSTOM_MODE_NAMES} from '../../services/learning/CustomPractice'
+import {CUSTOM_MODE_NAMES,customResults} from '../../services/learning/CustomPractice'
 import {childRatings} from '../../services/study-presentation'
 import {PhonicsPlaybackController} from '../../services/audio/PhonicsPlaybackController'
 import {audioPlayback} from '../../services/audio'
@@ -63,10 +62,9 @@ import WPProgress from '../wp-progress/WPProgress.vue'
 import LetterBlockInput from './LetterBlockInput.vue'
 import {spellingInputReady} from '../../../packages/phonics/letter-blocks'
 import {studyInput} from '../../services/study-input'
-import {practiceSpeaker,practiceBadge} from '../../services/study-mode-icons'
-import {customPracticeArtwork} from '../../services/custom-practice-artwork'
+import {practiceSpeaker} from '../../services/study-mode-icons'
+import {customPracticeArtwork,customResultArtwork} from '../../services/custom-practice-artwork'
 import WPWordCard from '../wp-word-card/WPWordCard.vue'
-import WPPetAvatar from '../wp-pet-avatar/WPPetAvatar.vue'
 import WPAudioButton from '../button/WPAudioButton.vue'
 import CustomPracticeConfig from './CustomPracticeConfig.vue'
 import CustomPracticeRoute from './CustomPracticeRoute.vue'
@@ -76,7 +74,8 @@ import {windowLayout} from '../../services/window'
 import {useThemeStore} from '../../stores/theme'
 import {ref} from 'vue'
 import {useChoiceGuard} from '../../composables/useChoiceGuard'
-const custom=useCustomPracticeStore(),pet=usePetStore(),audioMessage=ref(''),controller=new PhonicsPlaybackController()
+const custom=useCustomPracticeStore(),audioMessage=ref(''),controller=new PhonicsPlaybackController()
+const results=computed(()=>custom.session?customResults(custom.session):null)
 const audioError=computed(()=>audioMessage.value||(custom.screen==='training'&&audioPlayback.currentUrl.value===custom.current?.audio?audioPlayback.error.value?.message||'':''))
 const footerHeight=ref(112),instance=getCurrentInstance(),theme=useThemeStore()
 const {phonics,activeChunkIndex,playbackState}=controller

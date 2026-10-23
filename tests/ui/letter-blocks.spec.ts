@@ -37,7 +37,7 @@ test('特殊字符键盘回退不丢字符',async({page})=>{
 })
 
 test('奶油主题自定义五模式连续训练完成，积木草稿暂停刷新恢复且正式档案不变',async({page})=>{
- await setAppearance(page,'clay','light');await go(page,'home');await page.locator('.hero-cta').click();const before=formal(await database(page));await page.getByRole('button',{name:'自定义练习，不计今日任务',exact:true}).first().click();await page.locator('.custom-count-input input').fill('1');await page.getByRole('button',{name:/^五项连续练习/}).click();await page.getByRole('button',{name:'开始练习',exact:true}).click();await page.getByRole('button',{name:'开始连续训练',exact:true}).click();const initial=(await database(page)).customPractice,word=initial.wordSnapshot[initial.wordIds[0]].word
+ await setAppearance(page,'clay','light');await go(page,'home');await page.locator('.hero-cta').click();const before=formal(await database(page));await page.getByRole('button',{name:'自定义练习，不计今日任务',exact:true}).first().click();await page.locator('.custom-count-input input').fill('1');await page.getByRole('button',{name:'全选五项',exact:true}).click();await page.getByRole('button',{name:'开始连续训练',exact:true}).click();await page.getByRole('button',{name:'开始连续训练',exact:true}).click();const initial=(await database(page)).customPractice,word=initial.wordSnapshot[initial.wordIds[0]].word
  for(const mode of ['flash','connect','listen','spell','dictation']){
   await expect.poll(async()=>{const session=(await database(page)).customPractice;return session.modes[session.modeIndex]}).toBe(mode)
   if(mode==='flash'){await page.getByRole('button',{name:'开始自评',exact:true}).click();await page.locator('.rating-grid').getByRole('button').nth(2).click()}

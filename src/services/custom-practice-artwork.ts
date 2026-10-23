@@ -1,5 +1,12 @@
 import type {LearningMode} from '../../packages/core_learning'
 
+const resultRoot='/static/icons/custom-practice/results/'
+export const customResultArtwork={
+ heading:resultRoot+'heading.png',course:resultRoot+'course.png',complete:resultRoot+'complete.png',overview:resultRoot+'overview.png',
+ completed:resultRoot+'completed.png',accuracy:resultRoot+'accuracy.png',repeat:resultRoot+'repeat.png',
+ modes:Object.fromEntries(['flash','connect','listen','spell','dictation'].map(mode=>[mode,resultRoot+mode+'.png'])) as Record<LearningMode,string>
+}
+
 // User-provided artwork, re-encoded without source metadata. Existing mode assets remain available.
 export const customPracticeArtwork={
  title:'/static/icons/custom-practice/title.png',

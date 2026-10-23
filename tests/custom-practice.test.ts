@@ -9,7 +9,7 @@ import {installTextCourse} from '../src/services/content/StorageRepository'
 import {validateDatabase,CUSTOM_RECOVERY_KEY} from '../src/services/storage/MigrationV1toV2'
 import {makeLearningBackup,previewLearningBackup} from '../src/services/storage/LearningBackup'
 import {courseRemovalScope,pruneRemovedCourseRecords} from '../src/services/content/CourseRemovalData'
-import {CUSTOM_MODES,createCustomPractice,practiceWordIds,wholeBook,practiceCountError,defaultPracticeCount,runCustom,pauseCustom,endCustom,recordCustomAnswer,advanceCustom,customToken,customProgress,customMatchGroup,validCustomPractice,customResumeProblem} from '../src/services/learning/CustomPractice'
+import {CUSTOM_MODES,createCustomPractice,practiceWordIds,wholeBook,practiceCountError,defaultPracticeCount,runCustom,pauseCustom,endCustom,recordCustomAnswer,advanceCustom,customToken,customProgress,customResults,customMatchGroup,validCustomPractice,customResumeProblem} from '../src/services/learning/CustomPractice'
 import {customCourse} from './helpers/custom-course'
 import type {LearningMode} from '../packages/core_learning'
 const storage=new Map<string,string>();let fail=false
@@ -18,6 +18,28 @@ function reset(){storage.clear();fail=false;loadCourseRegistry();setActivePinia(
 function make(count=113,modes:LearningMode[]=[...CUSTOM_MODES]){const pack=reset(),session=createCustomPractice({courseId:pack.courseId,scope:wholeBook(),count,modes,sound:true,id:'custom-fixture-session'});const db={...freshDatabase(),customPractice:session};runCustom(session);return {pack,session,db}}
 function answer(db:Database){const s=db.customPractice!,mode=s.modes[s.modeIndex],id=s.wordIds[s.index];s.revealed=true;s.selected=id;s.input=s.wordSnapshot[id].word;assert(recordCustomAnswer(db,customToken(s),3,true));assert(validCustomPractice(s));assert(advanceCustom(s,customToken(s)));assert(validCustomPractice(s))}
 const protectedFields=(db:Database)=>JSON.stringify(Object.fromEntries(Object.entries(db).filter(([key])=>!['customPractice','practiceAnswers'].includes(key))))
+
+test('31种组合完成结果只统计所选模式和不同词条，闪现不伪造答题正确率',()=>{
+ for(let mask=1;mask<32;mask++){
+  const modes=CUSTOM_MODES.filter((_,index)=>mask&(1<<index)),{db,session}=make(2,[...modes])
+  assert.equal(customResults(session).accuracy,null)
+  while(session.status==='running')answer(db)
+  const result=customResults(session);assert.equal(result.selectedWordCount,2);assert.equal(result.completedWordCount,2);assert.equal(result.completedModes,modes.length);assert.equal(result.totalSteps,2*modes.length)
+  assert.equal(result.gradedAnswered,2*modes.filter(mode=>mode!=='flash').length);assert.equal(result.accuracy,modes.some(mode=>mode!=='flash')?100:null);assert.equal(result.completionRate,100)
+ }
+})
+test('正确率保留错答与重试，暂停不伪造成完成，活跃用时排除暂停时间',()=>{
+ const {session,db}=make(1,['spell','dictation']);session.activeSince='2026-10-23T00:00:00.000Z';const now=new Date('2026-10-23T00:00:02.000Z'),token=customToken(session)
+ session.input='wrong';assert(recordCustomAnswer(db,token,undefined,true,now));assert(advanceCustom(session,token,now));assert(pauseCustom(session,now));assert.equal(session.elapsedMs,2000)
+ const partial=customResults(session);assert.equal(partial.completedWordCount,0);assert.equal(partial.completedModes,0);assert.equal(partial.accuracy,0)
+ assert(runCustom(session,new Date('2026-10-23T00:05:00.000Z')));answer(db);answer(db)
+ const result=customResults(session);assert.equal(result.gradedCorrect,2);assert.equal(result.gradedAnswered,3);assert.equal(result.accuracy,67);assert.equal(result.completedWordCount,1)
+})
+test('同教材恢复模式选择，存储失败不提前进入完成页，重试只完成一次',()=>{
+ reset();const custom=useCustomPracticeStore(),profile=useProfileStore();custom.openConfig();custom.singleMode='spell';custom.toggleMode('dictation');custom.count='1';assert.equal(custom.start(),'started');assert(custom.resume())
+ assert(profile.transact(db=>{answer(db)}));custom.heardToken=custom.token;custom.patch({input:custom.current!.word});assert(custom.submit());fail=true;assert.equal(custom.next(),false);assert.equal(custom.screen,'training');assert.equal(custom.session!.status,'running');assert(custom.error);fail=false;assert(custom.next());assert.equal(custom.screen,'summary');assert.equal(custom.session!.status,'completed');const id=custom.session!.id
+ assert(custom.openConfig());assert.deepEqual(custom.selectedModes,['spell','dictation']);assert.equal(custom.start(),'started');assert.notEqual(custom.session!.id,id);assert.equal(custom.progress!.steps,0);assert(custom.resume());assert(custom.end());registerCourse(customCourse('custom-other',3));custom.chooseCourse('custom-other');assert.deepEqual(custom.selectedModes,['flash'])
+})
 
 test('按真实 Unit 数字序和词条顺序去重，整书与指定单元边界动态计算',()=>{
  const pack=reset(),expected=pack.vocabulary.map(word=>word.id)

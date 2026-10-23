@@ -111,6 +111,15 @@ export function customProgress(session:CustomPracticeSession){
  const total=session.wordIds.length,steps=session.modes.reduce((sum,mode)=>sum+session.results[mode].completedWordIds.length,0)
  return {total,steps,totalSteps:total*session.modes.length,completedModes:session.modes.filter(mode=>session.results[mode].completedWordIds.length===total).length,percent:Math.floor(steps/(total*session.modes.length)*100)}
 }
+// Self-ratings are completion evidence, not graded answers. Retries remain in the denominator.
+export function customResults(session:CustomPracticeSession){
+ const ids=new Set(session.wordIds),covered=new Set(session.modes.flatMap(mode=>session.results[mode].completedWordIds).filter(id=>ids.has(id)))
+ const graded=session.modes.filter(mode=>mode!=='flash').flatMap(mode=>session.results[mode].attempts)
+ const gradedCorrect=graded.filter(answer=>answer.correct).length
+ return {selectedWordCount:ids.size,completedWordCount:covered.size,selectedModeCount:session.modes.length,
+  gradedAnswered:graded.length,gradedCorrect,accuracy:graded.length?Math.round(gradedCorrect/graded.length*100):null,
+  completionRate:Math.floor(covered.size/Math.max(1,ids.size)*100),...customProgress(session)}
+}
 export function customChoices(session:CustomPracticeSession){
  const id=session.wordIds[session.index],word=session.wordSnapshot[id],pool=[word,...(word?.distractors||[]).map(id=>session.wordSnapshot[id])].filter(Boolean)
  const offset=(session.seed+session.index)%Math.max(1,pool.length);return [...pool.slice(offset),...pool.slice(0,offset)]

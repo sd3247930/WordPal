@@ -43,10 +43,15 @@ export const useCustomPracticeStore=defineStore('custom-practice',()=>{
  function openConfig(){
   if(!pause())return false
   courseId.value=installed.value.some(pack=>pack.courseId===courses.currentId)?courses.currentId:installed.value[0]?.courseId||''
-  scope.value=wholeBook();count.value=String(defaultPracticeCount(profile.db,practiceWordIds(courseId.value,scope.value).length));singleMode.value='flash';notice.value='';error.value='';screen.value='config';return true
+  scope.value=wholeBook();count.value=String(defaultPracticeCount(profile.db,practiceWordIds(courseId.value,scope.value).length));restoreModes();notice.value='';error.value='';screen.value='config';return true
+ }
+ function restoreModes(){
+  const saved=session.value
+  const modes=saved?.courseId===courseId.value&&!customResumeProblem(saved)?saved.modes.filter(mode=>!problems.value[mode]):[]
+  modeSelection.value=modes.length?[...modes]:['flash'];lastPartialSelection=modeSelection.value.length<5?[...modeSelection.value]:['flash']
  }
  function clamp(){if(!countError.value)return;const value=Number(count.value);if(Number.isSafeInteger(value)&&value>total.value){count.value=String(total.value);notice.value=`范围已变化，本次调整为 ${total.value} 词。`}}
- function chooseCourse(id:string){if(!isCourseInstalled(id))return;courseId.value=id;scope.value=wholeBook();if(!Number.isSafeInteger(Number(count.value))||Number(count.value)<1)count.value=String(defaultPracticeCount(profile.db,total.value));clamp();error.value=''}
+ function chooseCourse(id:string){if(!isCourseInstalled(id))return;courseId.value=id;scope.value=wholeBook();if(!Number.isSafeInteger(Number(count.value))||Number(count.value)<1)count.value=String(defaultPracticeCount(profile.db,total.value));clamp();restoreModes();error.value=''}
  function chooseScope(type:CustomPracticeScope['type']){scope.value=type==='whole-book'?wholeBook():{type:'units',unitIds:units.value.slice(0,1).map(unit=>unit.id)};clamp()}
  function toggleUnit(id:string){const selected=scope.value.unitIds;scope.value={type:'units',unitIds:selected.includes(id)?selected.filter(item=>item!==id):[...selected,id]};clamp()}
  function step(amount:number){const value=Number(count.value);count.value=String(Math.min(total.value,Math.max(1,(Number.isSafeInteger(value)?value:1)+amount)));notice.value=''}
