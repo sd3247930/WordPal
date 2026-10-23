@@ -1,10 +1,9 @@
 <template>
  <view class="custom-practice-workspace study-space" :class="{'custom-training-focus':custom.screen==='training'}" :data-custom-screen="custom.screen" :style="{'--custom-action-space':studyInput.keyboardRaised?'24px':footerHeight+'px',paddingBottom:studyInput.overlap?studyInput.overlap+110+'px':undefined}">
   <StudySessionHeading v-if="custom.screen==='training'&&custom.session&&custom.progress" :title="CUSTOM_MODE_NAMES[custom.mode]" :mode="custom.mode" :index="custom.session.index+1" :total="custom.progress.total" :value="custom.session.results[custom.mode].completedWordIds.length" :caption="'额外练习 · 第 '+(custom.session.modeIndex+1)+'/'+custom.session.modes.length+' 项'" @custom="custom.openConfig()"><template #back><WPButton kind="quiet" label="返回学习或暂停自定义练习" @click="custom.back()">‹ 返回</WPButton></template></StudySessionHeading>
-  <view v-else class="custom-heading"><WPButton kind="quiet" label="返回学习或暂停自定义练习" @click="custom.back()">‹ 返回</WPButton><view><text class="page-title"><image v-if="theme.settings.themeId==='clay'" class="easy-practice-badge" :src="practiceBadge" mode="aspectFit" aria-hidden="true"/>{{title}}</text><text class="small muted block">本次是额外练习，不改变每天的正式学习任务</text></view></view>
+  <view v-else class="custom-heading"><WPButton kind="quiet" label="返回学习或暂停自定义练习" @click="custom.back()">‹ 返回</WPButton><view><text class="page-title"><image class="easy-practice-badge" :src="custom.screen==='config'?customPracticeArtwork.title:practiceBadge" mode="aspectFit" aria-hidden="true"/>{{title}}</text><text class="small muted block">额外练习 · 不计今日任务</text></view></view>
   <text v-if="custom.error" class="notice error" role="alert">{{custom.error}}</text>
   <template v-if="custom.screen==='config'">
-   <WPCard v-if="custom.recoverable&&custom.session" class="custom-recovery-entry"><view><text class="strong block">继续上次自定义练习</text><text class="small muted block">{{custom.session.courseTitle}} · {{CUSTOM_MODE_NAMES[custom.mode]}} {{custom.session.results[custom.mode].completedWordIds.length}}/{{custom.session.wordIds.length}}</text></view><WPButton kind="secondary" @click="custom.showPaused()">查看已保存进度</WPButton></WPCard>
    <CustomPracticeConfig/>
   </template>
   <template v-else-if="custom.session&&custom.progress">
@@ -37,7 +36,7 @@
    </template>
   </template>
   <view v-show="!studyInput.keyboardRaised" class="custom-action-bar"><view class="custom-action-inner">
-   <template v-if="custom.screen==='config'"><WPButton :disabled="!!custom.startProblem" @click="start()">{{custom.continuous?'查看连续训练总览':'开始练习'}}</WPButton></template>
+   <template v-if="custom.screen==='config'"><WPButton :disabled="!!custom.startProblem" @click="start()">开始练习</WPButton></template>
    <template v-else-if="custom.screen==='overview'"><WPButton :disabled="!!custom.resumeProblem" @click="custom.resume()">开始连续训练</WPButton></template>
    <template v-else-if="custom.screen==='training'"><WPButton kind="secondary" @click="pause()">暂停练习</WPButton><WPButton kind="quiet" @click="requestEnd()">结束练习</WPButton></template>
    <template v-else-if="custom.screen==='paused'"><WPButton :disabled="!!custom.resumeProblem" @click="custom.resume()">继续练习</WPButton><WPButton kind="secondary" @click="requestEnd()">结束本次练习</WPButton></template>
@@ -49,7 +48,7 @@
 <script setup lang="ts">
 import StudySessionHeading from './StudySessionHeading.vue'
 import {computed,watch,onMounted,onUnmounted,nextTick,getCurrentInstance} from 'vue'
-import {onHide} from '@dcloudio/uni-app'
+import {onHide,onShow} from '@dcloudio/uni-app'
 import {useCustomPracticeStore} from '../../stores/custom-practice'
 import {usePetStore} from '../../stores/pet'
 import {CUSTOM_MODE_NAMES} from '../../services/learning/CustomPractice'
@@ -64,6 +63,7 @@ import LetterBlockInput from './LetterBlockInput.vue'
 import {spellingInputReady} from '../../../packages/phonics/letter-blocks'
 import {studyInput} from '../../services/study-input'
 import {practiceSpeaker,practiceBadge} from '../../services/study-mode-icons'
+import {customPracticeArtwork} from '../../services/custom-practice-artwork'
 import WPWordCard from '../wp-word-card/WPWordCard.vue'
 import WPPetAvatar from '../wp-pet-avatar/WPPetAvatar.vue'
 import WPAudioButton from '../button/WPAudioButton.vue'
@@ -80,8 +80,8 @@ const footerHeight=ref(112),instance=getCurrentInstance(),theme=useThemeStore()
 const {phonics,activeChunkIndex,playbackState}=controller
 const {locked:choiceLocked,choose:guardChoice}=useChoiceGuard(()=>custom.token)
 let timer:ReturnType<typeof setTimeout>|undefined,playEpoch=0
-let measureTimer:ReturnType<typeof setTimeout>|undefined
-function measureFooter(){clearTimeout(measureTimer);measureTimer=setTimeout(()=>{void nextTick(()=>{if(!instance?.proxy)return;uni.createSelectorQuery().in(instance.proxy).select('.custom-action-bar').boundingClientRect(rect=>{if(rect&&!Array.isArray(rect)&&typeof rect.height==='number'&&rect.height>0)footerHeight.value=Math.ceil(rect.height)+20}).exec()})},80)}
+let measureTimer:ReturnType<typeof setTimeout>|undefined,footerPageVisible=true,footerDisposed=false
+function measureFooter(){clearTimeout(measureTimer);if(!footerPageVisible||footerDisposed)return;measureTimer=setTimeout(()=>{void nextTick(()=>{if(!footerPageVisible||footerDisposed||!instance?.proxy)return;uni.createSelectorQuery().in(instance.proxy).select('.custom-action-bar').boundingClientRect(rect=>{if(footerPageVisible&&!footerDisposed&&rect&&!Array.isArray(rect)&&typeof rect.height==='number'&&rect.height>0)footerHeight.value=Math.ceil(rect.height)+20}).exec()})},80)}
 watch(()=>[custom.screen,windowLayout.width,windowLayout.height,windowLayout.fontScale,theme.settings.largeText],measureFooter)
 onMounted(measureFooter)
 const title=computed(()=>({config:'自定义练习',overview:'连续训练总览',training:CUSTOM_MODE_NAMES[custom.mode]+'练习',paused:'暂停与续练',summary:'练习完成',closed:'自定义练习'}[custom.screen]))
@@ -105,7 +105,9 @@ watch(()=>[custom.session?.answer?.id,custom.confirmation].join(':'),()=>{
  const token=custom.token;timer=setTimeout(()=>{if(custom.screen==='training'&&!custom.confirmation&&custom.token===token)custom.next()},700)
 },{immediate:true})
 watch(()=>custom.resumeProblem,problem=>{if(problem&&custom.screen==='training'){clear();if(custom.pause())custom.showPaused()}})
-onHide(clear);onUnmounted(()=>{clear();clearTimeout(measureTimer);controller.dispose()})
+onShow(()=>{footerPageVisible=true;measureFooter()})
+onHide(()=>{footerPageVisible=false;clearTimeout(measureTimer);clear()})
+onUnmounted(()=>{footerDisposed=true;clear();clearTimeout(measureTimer);controller.dispose()})
 // #ifdef H5
 let previousOverflow='',confirmationFocus:HTMLElement|null=null,dialogLocked=false
 function dialogKey(event:KeyboardEvent){

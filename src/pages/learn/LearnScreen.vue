@@ -212,10 +212,11 @@ watch(()=>view.current,word=>{phonicsController.setWord(word)},{immediate:true})
 watch([()=>learning.session?.id,()=>view.current?.id,()=>view.index,()=>view.mode],()=>{exploreOpen.value=false})
 watch(()=>[view.current?.audio,learning.session?.index].join('\u001f'),()=>{const session=learning.session,id=session?.wordIds[(session.index||0)+1],next=id?resolveFrozenWord(session?.wordSnapshot?.[id],session?.courseId,session?.contentVersion):undefined;warmUpcomingAudio([view.current?.audio||'',next?.audio||''])},{immediate:true})
 watch(()=>[learning.session?.id,view.index,view.current?.id,view.current?.audio,view.mode].join('\u001f'),()=>{stopQuestionAudio();audioError.value='';if(pageActive.value&&!custom.isOpen&&['listen','dictation'].includes(view.mode)&&!view.answer)void play()})
+// onShow may run immediately during setup when arriving from the pet practice link.
+let playEpoch=0
 onShow(()=>{pageActive.value=true;learning.prepareDaily();if(practiceEntry&&!practiceEntryHandled){practiceEntryHandled=true;independentPractice()}view.sync()})
 onHide(()=>{pageActive.value=false;stopQuestionAudio();activities.pauseTimer();custom.leave()})
 watch(()=>view.answer,answer=>{if(answer?.correct)successHaptic(theme.reduced)})
-let playEpoch=0
 const questionAudioKey=()=>[learning.session?.id,view.current?.id,view.mode,view.index].join(':')
 function stopQuestionAudio(){playEpoch++;phonicsController.stop();stopAudio()}
 async function play(){const word=view.current,key=questionAudioKey(),epoch=++playEpoch;if(!word||custom.isOpen||!pageActive.value)return;audioError.value='';try{await phonicsController.play(word)}catch(error){if(epoch===playEpoch&&key===questionAudioKey()&&!custom.isOpen&&pageActive.value)audioError.value=(error as Error).message}}

@@ -1,8 +1,8 @@
 <template>
  <view class="study-mode-control" :class="{'compact-mode-control':compact}">
  <view class="study-mode-selector" role="group" aria-label="选择学习方式">
-  <WPActionTile v-for="option in options" :key="option.id" toggle-highlight class="mode-button study-mode-tile" :class="{selected:selectedModes?selectedModes.includes(option.id):modelValue===option.id}" :data-mode="option.id" :selected="selectedModes?selectedModes.includes(option.id):modelValue===option.id" :disabled="disabled||option.disabled" :aria-label="option.name+'，'+option.description+(disabled?'，'+lockedReason:option.disabled?'，当前条件暂不可用':'')" @click="$emit('update:modelValue',option.id)" @cancel="$emit('clear',option.id)">
-   <view class="study-mode-art" aria-hidden="true"><image v-if="!failed.has(option.id)" class="study-mode-image" :src="studyModeIcons[option.id].src" mode="aspectFit" @error="failed.add(option.id)"/><text v-else class="study-mode-fallback">{{studyModeIcons[option.id].fallback}}</text></view>
+  <WPActionTile v-for="option in options" :key="option.id+(selectedModes?'-group':'-single')" toggle-highlight class="mode-button study-mode-tile" :class="{selected:selectedModes?selectedModes.includes(option.id):modelValue===option.id}" :data-mode="option.id" :selected="selectedModes?selectedModes.includes(option.id):modelValue===option.id" :disabled="disabled||option.disabled" :aria-label="option.name+'，'+option.description+(disabled?'，'+lockedReason:option.disabled?'，当前条件暂不可用':'')" @click="$emit('update:modelValue',option.id)" @cancel="$emit('clear',option.id)">
+   <view class="study-mode-art" aria-hidden="true"><image v-if="!failed.has(option.id)" class="study-mode-image" :src="iconSources?.[option.id]||studyModeIcons[option.id].src" mode="aspectFit" @error="failed.add(option.id)"/><text v-else class="study-mode-fallback">{{studyModeIcons[option.id].fallback}}</text></view>
    <text class="study-mode-title">{{option.name}}</text>
   </WPActionTile>
  </view>
@@ -14,7 +14,7 @@ import {computed,ref} from 'vue'
 import type {LearningMode} from '../../../packages/core_learning'
 import WPActionTile from '../button/WPActionTile.vue'
 import {studyModeIcons} from '../../services/study-mode-icons'
-const props=withDefaults(defineProps<{compact?:boolean;modelValue?:LearningMode;selectedModes?:readonly LearningMode[];options:readonly {id:LearningMode;name:string;description:string;disabled?:boolean}[];disabled?:boolean;lockedReason?:string}>(),{disabled:false,lockedReason:'进入下一词后可切换'})
+const props=withDefaults(defineProps<{compact?:boolean;modelValue?:LearningMode;selectedModes?:readonly LearningMode[];iconSources?:Partial<Record<LearningMode,string>>;options:readonly {id:LearningMode;name:string;description:string;disabled?:boolean}[];disabled?:boolean;lockedReason?:string}>(),{disabled:false,lockedReason:'进入下一词后可切换'})
 defineEmits<{'update:modelValue':[value:LearningMode];clear:[value:LearningMode]}>()
 const failed=ref(new Set<LearningMode>())
 const unavailableNames=computed(()=>props.options.filter(option=>option.disabled).map(option=>option.name).join('、'))
