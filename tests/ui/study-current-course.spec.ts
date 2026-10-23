@@ -70,9 +70,9 @@ test('空词表边界没有假百分比、除零或旧计数；不持久化测�
  await expect(card(page).locator('.course-progress-label')).toHaveText('暂无教材单词');await expect(card(page).locator('.course-completion-count')).toHaveText('0 / 0');await expect(card(page).locator('.course-completion-percent,[role=progressbar]')).toHaveCount(0);await expect(card(page)).not.toContainText(/NaN|Infinity/);expect(await database(page)).toEqual(before);expect(errors).toEqual([])
 })
 
-test('图标离线失败降级现有书本矢量，文字、进度和选择入口保持可用',async({page,context})=>{
- await page.route('**/static/icons/study-course/*.png*',route=>route.request().resourceType()==='image'?route.abort():route.continue());await prepare(page,{learned:55});const before=await database(page)
- for(const image of await card(page).locator('.course-art-image img').all())await expect(image).toHaveAttribute('src',/book[.]svg/);await expect(card(page).locator('.course-completion-count')).toHaveText('55 / 111');await context.setOffline(true);await card(page).locator('.current-course-name').click();expect(await database(page)).toEqual(before);await context.setOffline(false);await card(page).getByRole('button',{name:'选择教材',exact:true}).click();await expect(page.locator('.course-gallery-heading')).toBeVisible()
+test('图标离线失败降级现有高清书本位图，文字、进度和选择入口保持可用',async({page,context})=>{
+ for(const pattern of ['**/static/icons/study-course/*.png*','**/static/icons/study-compact/current-cover.png*'])await page.route(pattern,route=>route.request().resourceType()==='image'?route.abort():route.continue());await prepare(page,{learned:55});const before=await database(page)
+ for(const image of await card(page).locator('.course-art-image img').all())await expect(image).toHaveAttribute('src',/hd-book[.]png/);await expect(card(page).locator('.course-completion-count')).toHaveText('55 / 111');await context.setOffline(true);await card(page).locator('.current-course-name').click();expect(await database(page)).toEqual(before);await context.setOffline(false);await card(page).getByRole('button',{name:'选择教材',exact:true}).click();await expect(page.locator('.course-gallery-heading')).toBeVisible()
 })
 
 test('损坏档案显示未知与恢复提示，不冒充启蒙教材与零进度',async({page})=>{

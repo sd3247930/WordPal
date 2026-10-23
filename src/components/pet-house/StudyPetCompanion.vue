@@ -19,7 +19,7 @@
 </template>
 <script setup lang="ts">
 import {computed,ref,watch,onMounted,onUnmounted,nextTick,getCurrentInstance} from 'vue'
-import {onShow} from '@dcloudio/uni-app'
+import {onShow,onHide} from '@dcloudio/uni-app'
 import {petInfo,type PetState} from '../../../packages/pet_engine'
 import {petStages} from '../../services/pet-growth'
 import {windowLayout} from '../../services/window'
@@ -36,10 +36,11 @@ const level=computed(()=>props.pet&&Number.isFinite(props.pet.level)&&props.pet.
 const portraitFailed=ref(false),width=ref(340),instance=getCurrentInstance(),cardRef=ref<InstanceType<typeof WPCard>>()
 // Measure the actual card column: a tablet can still give this card a narrow split pane.
 const stacked=computed(()=>width.value<270||Math.max(windowLayout.fontScale,theme.settings.largeText?1.25:1)>=1.4)
-function measure(){void nextTick(()=>{if(instance?.proxy)uni.createSelectorQuery().in(instance.proxy).select('.study-companion-card').boundingClientRect(rect=>{if(rect&&!Array.isArray(rect)&&rect.width)width.value=rect.width}).exec()})}
+let pageVisible=false,disposed=false
+function measure(){if(!pageVisible||disposed)return;void nextTick(()=>{if(pageVisible&&!disposed&&instance?.proxy)uni.createSelectorQuery().in(instance.proxy).select('.study-companion-card').boundingClientRect(rect=>{if(pageVisible&&!disposed&&rect&&!Array.isArray(rect)&&rect.width)width.value=rect.width}).exec()})}
 watch(()=>[props.pet?.element,form.value,props.unavailable],()=>portraitFailed.value=false)
 watch(()=>[windowLayout.width,windowLayout.height,windowLayout.fontScale,theme.settings.largeText,theme.settings.themeId],measure)
-onMounted(measure);onShow(measure)
+onMounted(measure);onShow(()=>{pageVisible=true;measure()});onHide(()=>{pageVisible=false});onUnmounted(()=>{disposed=true})
 // #ifdef H5
 let observer:ResizeObserver|undefined
 watch(cardRef,card=>{observer?.disconnect();const element=card?.$el as HTMLElement|undefined;if(element?.nodeType===1&&typeof ResizeObserver!=='undefined'){observer=new ResizeObserver(measure);observer.observe(element)}},{flush:'post'})

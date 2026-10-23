@@ -1,13 +1,22 @@
 <template>
  <WPCard v-if="!activity.state" class="activity-menu">
-  <text class="section-title">轻松练习</text><text class="small muted block">练习只保存活动进度，不改变复习日期或重复发奖。</text>
-<view class="activity-grid"><view v-for="item in activities" :key="item.id" class="activity-cell"><WPButton kind="secondary" :disabled="item.disabled" @click="start(item.id)">{{item.name}}</WPButton><text v-if="item.disabled&&item.reason" class="small muted block activity-reason">{{item.reason}}</text></view></view>
+  <view class="activity-menu-heading"><image class="activity-heading-icon" :src="compactStudyIcons.practice" mode="aspectFit" aria-hidden="true"/><text class="section-title">轻松练习</text></view>
+  <text class="activity-menu-note">只记练习进度，不影响复习与奖励</text>
+  <view class="activity-grid">
+   <view v-for="item in activities" :key="item.id" class="activity-cell" :data-activity="item.id">
+    <WPButton kind="secondary" class="activity-tile" :class="{'activity-locked':item.disabled}" :label="item.name" :disabled="item.disabled||opening" :aria-describedby="item.disabled?'activity-reason-'+item.id:undefined" @click="start(item.id)">
+     <image v-if="!failedIcons.has(iconFor(item.id,item.disabled))" class="activity-menu-icon" :src="iconFor(item.id,item.disabled)" mode="aspectFit" aria-hidden="true" @error="failedIcons.add(iconFor(item.id,item.disabled))"/>
+     <view class="activity-menu-copy"><text class="activity-menu-name">{{item.name}}</text><text v-if="item.disabled" :id="'activity-reason-'+item.id" class="activity-reason">{{item.reason}}</text></view>
+     <text class="activity-menu-arrow" aria-hidden="true">›</text>
+    </WPButton>
+   </view>
+  </view>
   <text v-if="activity.error" class="notice warning" role="status">⚠️ {{activity.error}}</text>
  </WPCard>
  <WPCard v-else class="activity-workspace">
-  <view class="section-heading"><text class="section-title">{{title}}</text><WPButton kind="quiet" @click="activity.close();stopAudio()">收起练习</WPButton></view>
+  <view class="section-heading"><text class="section-title">{{title}}</text><WPButton kind="quiet" @click="closePractice">收起练习</WPButton></view>
   <text class="small muted block">{{courseRegistry[activity.state.courseId]?.title}} · 已保存 {{activity.state.contentVersion}} 内容</text>
-  <template v-if="activity.state.completed"><text class="page-title">练习完成啦！</text><text class="block">{{correct}} / {{activity.total}} 个回答正确</text><text v-if="activity.state.kind==='check'" class="notice">{{correct/activity.total>=.8?'整课检查通过，可学习下一课。':'再熟悉一下，整课检查达到 80% 后通过。'}}</text><text class="small muted block">{{activity.state.recorded?'活动记录已保存。':'记录尚未保存，请重试。'}}复习日期与灵石保持。</text><view class="button-row"><WPButton v-if="!activity.state.recorded" @click="activity.record()">重试保存记录</WPButton><WPButton kind="secondary" @click="activity.close()">回到学习</WPButton></view></template>
+  <template v-if="activity.state.completed"><text class="page-title">练习完成啦！</text><text class="block">{{correct}} / {{activity.total}} 个回答正确</text><text v-if="activity.state.kind==='check'" class="notice">{{correct/activity.total>=.8?'整课检查通过，可学习下一课。':'再熟悉一下，整课检查达到 80% 后通过。'}}</text><text class="small muted block">{{activity.state.recorded?'活动记录已保存。':'记录尚未保存，请重试。'}}复习日期与灵石保持。</text><view class="button-row"><WPButton v-if="!activity.state.recorded" @click="activity.record()">重试保存记录</WPButton><WPButton kind="secondary" @click="closePractice">回到学习</WPButton></view></template>
   <template v-else-if="activity.current">
    <WPProgress :value="activity.state.index" :total="activity.total" label="独立活动进度"/>
    <text class="small muted block">{{activity.state.index+1}} / {{activity.total}}</text>
@@ -40,7 +49,9 @@
  </WPCard>
 </template>
 <script setup lang="ts">
-import {computed,ref,watch,onMounted,onUnmounted} from 'vue'
+import {computed,ref,watch,onMounted,onUnmounted,nextTick} from 'vue'
+import {activityAvailability,activityNames} from '../../services/course/ActivityAvailability'
+import {compactStudyIcons,activityMenuIcons} from '../../services/study-compact-icons'
 import {useActivitiesStore,type ActivityKind} from '../../stores/activities'
 import {useCourseStore} from '../../stores/course'
 import {useProfileStore} from '../../stores/profile'
@@ -59,20 +70,14 @@ import WPProgress from '../wp-progress/WPProgress.vue'
 import WPPronunciationPractice from '../WPPronunciationPractice.vue'
 const activity=useActivitiesStore(),course=useCourseStore(),lookup=ref(''),theme=useThemeStore(),letterReady=ref(false)
 const profile=useProfileStore(),review=useReviewStore()
-/** Unavailable practice items stay visible, but say why (see 练习菜单原因映射). */
-const practiceReasons:Partial<Record<ActivityKind,string>>={check:'本课还有未学词，先完成新词学习',story:'本课暂无已审核故事',picture:'本课暂无已审核词图','listen-picture':'本课暂无已审核词图或音频',phonics:'本课暂无已审核拼读规则'}
-/** A whole course without any image asset is still being prepared, not simply missing this lesson's art. */
-const courseHasImages=computed(()=>course.current.vocabulary.some(entry=>!!entry.assetRefs?.image||!!entry.image))
-const names:Record<ActivityKind,string>={check:'整课检查',pair:'词义配对',letters:'字母拼装',sentence:'句子排序',cloze:'句子填空',story:'故事阅读',picture:'看图选词','listen-picture':'听音选图',phonics:'自然拼读与跟读',challenge:'连胜挑战',speed:'闪电判断'}
-const activities=computed(()=>Object.entries(names).map(([id,name])=>{
- const kind=id as ActivityKind
- const available=kind==='check'
-  ?!review.due.some(card=>course.wordIds.includes(card.wordId))&&course.lesson.wordIds.every(wordId=>!!profile.db.cards[wordId])
-  :course.lesson.wordIds.some(wordId=>{const w=getCourseWord(course.currentId,wordId);if(!w)return false;const example=course.lesson.examples?.[wordId]||w.example;return id==='picture'?!!w.image:id==='listen-picture'?!!w.image&&!!w.audio:id==='phonics'?!!w.audio&&!!w.phonics.length:id==='cloze'?example.toLowerCase().split(/[^a-z'-]+/).includes(w.word.toLowerCase()):id==='sentence'?!!example:id==='story'?!!course.lesson.storyId:true})
- const base=practiceReasons[kind]||''
- const reason=!courseHasImages.value&&(kind==='picture'||kind==='listen-picture')?'本册资源正在准备中':base
- return {id:kind,name,disabled:!available,reason:available?'':reason}
-}))
+const names=activityNames,failedIcons=ref(new Set<string>()),opening=ref(false)
+const activities=computed(()=>{
+ const pool=course.wordIds.flatMap(id=>{const word=getCourseWord(course.currentId,id);return word?[word]:[]}),dueIds=review.due.filter(card=>course.wordIds.includes(card.wordId)).map(card=>card.wordId)
+ return Object.entries(names).map(([id,name])=>{const kind=id as ActivityKind,availability=activityAvailability(kind,course.current,course.lesson,pool,profile.db.cards,dueIds);return {id:kind,name,disabled:!availability.available,reason:availability.reason}})
+})
+function iconFor(kind:ActivityKind,disabled:boolean){const icon=activityMenuIcons[kind];return disabled&&icon.locked?icon.locked:icon.src}
+let menuScroll=0
+watch(()=>activity.state?.id,()=>{opening.value=false})
 const title=computed(()=>activity.state?names[activity.state.kind]:''),answer=computed(()=>activity.state?.retrying?activity.state.retryAnswer:activity.state?.answers[activity.state.index]),correct=computed(()=>activity.state?.answers.filter(a=>a.correct).length||0),question=computed(()=>activity.state?.storySnapshot?.questions?.[activity.state.index])
 const rules=computed(()=>{const state=activity.state;if(!state)return [];const pack=courseSnapshot(state.courseId,state.contentVersion),lesson=pack?.units.flatMap(unit=>unit.lessons).find(item=>item.id===state.lessonId);return pack?.phonicsRules?.filter(rule=>lesson?.phonicsRuleIds?.includes(rule.id))||[]})
 const canSubmit=computed(()=>!!activity.state&&(activity.state.kind!=='speed'||activity.state.timer?.runningSince!==null)&&(activity.state.kind==='letters'?letterReady.value:activity.state.kind==='phonics'?true:activity.state.kind==='story'?!question.value||!!activity.state.selected:['check','pair','picture','listen-picture','challenge','speed'].includes(activity.state.kind)?!!activity.state.selected:!!activity.state.input.trim()))
@@ -88,7 +93,43 @@ function addToken(id:number){const token=tokens.value.find(t=>t.id===id);if(toke
 function undo(){if(activity.state)activity.input(activity.state.kind==='sentence'?activity.state.input.split(' ').slice(0,-1).join(' '):activity.state.input.slice(0,-1))}
 const cloze=computed(()=>{const w=activity.current;if(!w)return '';return w.example.replace(new RegExp(w.word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i'),'_____')})
 function storyParts(sentence:string){return sentence.split(/(\s+|[.,!?;:])/).map(text=>({text,word:Object.values(activity.state?.words||{}).find(w=>w.word.toLowerCase()===text.toLowerCase())}))}
-function start(kind:ActivityKind){stopAudio();activity.start(kind)}
+function start(kind:ActivityKind){
+ if(activity.state||opening.value||activities.value.find(item=>item.id===kind)?.disabled)return
+ opening.value=true;stopAudio()
+ uni.createSelectorQuery().selectViewport().scrollOffset(()=>{}).exec(result=>{menuScroll=result[0]?.scrollTop||0;if(!activity.start(kind))opening.value=false})
+}
+function closePractice(){
+ stopAudio()
+ if(activity.close())void nextTick(()=>{
+  // App renders across a native bridge; measure the restored menu before moving the viewport.
+  uni.createSelectorQuery().select('.activity-menu').boundingClientRect(()=>{}).exec(()=>uni.pageScrollTo?.({scrollTop:menuScroll,duration:0}))
+ })
+}
 function next(){stopAudio();lookup.value='';activity.next()}
 watch(()=>[activity.state?.id,activity.state?.index].join('\u001f'),()=>{stopAudio();if(activity.state?.kind==='listen-picture'&&activity.current)playWord(activity.current)})
 </script>
+
+<style scoped>
+.activity-menu.wp-card{display:flex;gap:0;min-width:0;padding:16px;margin-top:16px;border:1px solid var(--wp-border);background:var(--wp-surface);container-type:inline-size}
+.activity-menu-heading{display:flex;align-items:center;gap:8px;min-width:0}
+.activity-heading-icon{flex:0 0 40px;width:40px;height:40px}
+.activity-menu-heading .section-title{font-size:var(--wp-font-section);line-height:1.4}
+.activity-menu-note{display:block;margin:4px 0 12px;font-size:var(--wp-font-caption);line-height:1.5;color:var(--wp-muted-foreground);overflow-wrap:anywhere}
+.activity-menu .activity-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;min-width:0}
+.activity-menu .activity-cell{min-width:0}
+.activity-menu .activity-tile.wp-button.secondary{display:grid;grid-template-columns:40px minmax(0,1fr) 10px;align-items:center;gap:5px;width:100%;min-width:0;min-height:92px;height:100%;margin:0;padding:8px;border:1px solid var(--wp-border);border-radius:var(--wp-radius-sm);color:var(--wp-foreground);background:var(--wp-surface-raised);text-align:left;line-height:1.4;white-space:normal;box-shadow:var(--wp-elevation)}
+.activity-menu-icon{display:block;width:40px;height:44px;min-width:0}
+.activity-menu-copy{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}
+.activity-menu-name{display:block;min-width:0;max-width:100%;font-size:var(--wp-font-small);font-weight:600;line-height:1.45;overflow-wrap:anywhere}
+.activity-menu-arrow{color:var(--wp-primary);font-size:24px;line-height:1}
+.activity-menu .activity-tile.wp-button[disabled]{opacity:1;color:var(--wp-muted-foreground);background:var(--wp-surface-soft);box-shadow:none}
+.activity-locked .activity-menu-icon{filter:grayscale(.45);opacity:.8}
+.activity-locked .activity-menu-arrow{color:var(--wp-muted-foreground)}
+.activity-menu .activity-reason{display:block;max-width:100%;padding:2px 5px;border-radius:var(--wp-radius-chip);background:var(--wp-secondary);color:var(--wp-muted-foreground);font-size:var(--wp-font-caption);font-weight:400;line-height:1.5;overflow-wrap:anywhere}
+.theme-clay .activity-menu .activity-tile.wp-button:not([disabled]){background:var(--wp-clay-task)}
+.activity-menu .activity-tile.wp-button:not([disabled]):active{transform:translateY(1px)}
+.high-contrast .activity-menu .activity-tile.wp-button{border-width:2px;box-shadow:none}
+.reduce-motion .activity-menu .activity-tile.wp-button:not([disabled]):active{transform:none}
+@container(max-width:280px){.activity-menu .activity-tile.wp-button.secondary{grid-template-columns:40px minmax(0,1fr);row-gap:4px;min-height:104px}.activity-menu-copy{grid-row:2;grid-column:1/-1}.activity-menu-arrow{grid-column:2;grid-row:1;justify-self:end}.activity-menu-icon{height:36px}}
+@media(max-width:359px){.activity-menu .activity-tile.wp-button.secondary{grid-template-columns:40px minmax(0,1fr);row-gap:4px;min-height:104px}.activity-menu-copy{grid-row:2;grid-column:1/-1}.activity-menu-arrow{grid-column:2;grid-row:1;justify-self:end}.activity-menu-icon{height:36px}}
+</style>

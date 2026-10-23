@@ -31,7 +31,7 @@ for(const theme of ['swiss','clay'])for(const mode of ['light','dark'])test(`${t
  await prepare(page,theme,mode,completed());const before=await database(page)
  for(const width of [320,390,834,1280]){await page.setViewportSize({width,height:900});expect(await style(page,'继续学习')).toEqual(await style(page,'查看今日成果'));expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)}
  await page.setViewportSize({width:390,height:844});await continueButton(page).scrollIntoViewIfNeeded();await page.screenshot({path:test.info().outputPath(`${theme}-${mode}-completed.png`),fullPage:true})
- const homeStyle=await style(page,'继续学习');await resultButton(page).click();await expect(page.locator('.study-completion')).toBeVisible();expect(await style(page,'继续学习')).toEqual(homeStyle)
+ await resultButton(page).click();await expect(page.locator('.study-completion')).toBeVisible();await expect(continueButton(page)).toHaveCount(0);await page.locator('.study-completion').getByRole('button',{name:'回到今日任务',exact:true}).click();await expect(continueButton(page)).toBeVisible()
  await go(page,'home');await continueButton(page).evaluate(node=>{for(let i=0;i<20;i++)(node as HTMLElement).click()});await expect(page.locator('.daily-step.active')).toContainText('闪现')
  const after=await database(page),plan=after.courseProgress.starter.dailyPlan
  expect(plan.wordIds).toEqual(ids.slice(5,10));expect(plan.index).toBe(0);expect(plan.id).not.toBe(before.courseProgress.starter.dailyPlan.id);expect(after.courseProgress.starter.completedDailyPlans).toHaveLength(1)

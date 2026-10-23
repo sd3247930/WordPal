@@ -9,6 +9,7 @@ import {initialProgress} from '../services/storage/MigrationV1toV2'
 import {isCorrectSpelling,normalizeSpelling} from '../../packages/phonics'
 import {spellingInputReady,type LetterBlockDraft,type SpellingInputChange} from '../../packages/phonics/letter-blocks'
 import type {Word} from '../../packages/core_learning'
+import {activityAvailability} from '../services/course/ActivityAvailability'
 export type ActivityKind='check'|'pair'|'letters'|'sentence'|'cloze'|'story'|'picture'|'listen-picture'|'phonics'|'challenge'|'speed'
 export interface ActivityState {id:string;courseId:string;contentVersion:string;lessonId:string;kind:ActivityKind;wordIds:string[];words:Record<string,Word>;index:number;input:string;selected:string;answers:{wordId:string;correct:boolean}[];completed:boolean;recorded:boolean;storyId?:string;storySnapshot?:{title:string;sentences:string[];questions?:{question:string;options:string[];answer:number}[]};revealed:boolean;hinted:boolean;timer?:{remainingMs:number;runningSince:number|null};letterDraft?:LetterBlockDraft;inputAssistance?:'tiles';retrying?:boolean;retryAnswer?:{wordId:string;correct:boolean}|null;retryAttempts?:{wordId:string;correct:boolean;input:string}[]}
 import {ACTIVITY_KEY as key,hasCourseMemory} from '../services/learning/CourseProgressMemory'
@@ -37,14 +38,12 @@ export const useActivitiesStore=defineStore('activities',()=>{
  function start(kind:ActivityKind){
   const lesson=course.lesson,pack=course.current
   if(!lesson)return false
-  if(kind==='check'){review.refresh();const allowed=new Set(course.wordIds);if(review.due.some(card=>allowed.has(card.wordId))||lesson.wordIds.some(id=>!profile.db.cards[id])){error.value='先完成到期复习与本课未学词，再进行整课检查。';return false}}
+  if(kind==='check')review.refresh()
   const pool=course.wordIds.flatMap(id=>{const word=getCourseWord(course.currentId,id);return word?[word]:[]})
-  if(kind==='listen-picture'&&pool.filter(w=>!!w.image).length<2){error.value='本课没有足够的不同词图，可选择文字练习。';return false}
-  if(['check','pair','challenge','speed'].includes(kind)&&pool.filter((w,i)=>pool.findIndex(other=>other.meaning===w.meaning)===i).length<2){error.value='词表不足以形成客观选择题，可先浏览或拼装单词。';return false}
-  const eligible=lesson.wordIds.filter(id=>{const w=getCourseWord(course.currentId,id);if(!w)return false;const example=lesson.examples?.[id]||w.example;return kind==='cloze'?example.toLowerCase().split(/[^a-z'-]+/).includes(w.word.toLowerCase()):kind==='sentence'?!!example:kind==='picture'||kind==='listen-picture'?!!w.image&&(kind!=='listen-picture'||!!w.audio):kind==='phonics'?!!w.phonics.length&&w.phonics.length===w.phonemes.length&&!!w.audio:true})
-  if(!eligible.length){error.value='本课缺少该活动所需资源，请选择文字练习。';return false}
+  const availability=activityAvailability(kind,pack,lesson,pool,profile.db.cards,review.due.filter(card=>course.wordIds.includes(card.wordId)).map(card=>card.wordId))
+  if(!availability.available){error.value=availability.message;return false}
+  const eligible=availability.wordIds
   const story=pack.stories?.find(s=>s.id===lesson.storyId)
-  if(kind==='story'&&!story){error.value='本课暂无已审核故事，请选择其他练习。';return false}
   const targets=kind==='check'?[...new Set(lesson.wordIds)]:eligible,needed=new Set([...targets,...(story?.targetWordIds||[])])
   // Freeze target words and a bounded distractor pool instead of copying a whole course.
   const frozen=[...pool.filter(w=>needed.has(w.id)),...pool.filter(w=>!needed.has(w.id)&&(kind!=='listen-picture'||!!w.image)).slice(0,4)].map(w=>({...w,example:lesson.examples?.[w.id]||w.example}))
