@@ -44,6 +44,24 @@ test('113词连续五模式覆盖同一个快照，不把565步骤当成565个�
  for(const mode of CUSTOM_MODES){assert.equal(session.modes[session.modeIndex],mode);for(const id of ids){assert.equal(session.wordIds[session.index],id);answer(db)}assert.deepEqual(session.results[mode].completedWordIds,ids)}
  assert.equal(session.status,'completed');assert.deepEqual(customProgress(session),{total:113,steps:565,totalSteps:565,completedModes:5,percent:100});assert.equal(db.practiceAnswers!.length,565);assert.equal(protectedFields(db),before);assert.equal(JSON.stringify(session.wordSnapshot),snapshot)
 })
+
+test('全部31种非空模式组合按固定模式顺序执行同一词组，保存/备份校验兼容旧单项和五项',()=>{
+ for(let mask=1;mask<32;mask++){
+  const modes=CUSTOM_MODES.filter((_,index)=>mask&(1<<index)),{session,db}=make(2,[...modes].reverse()),before=protectedFields(db)
+  assert.deepEqual(session.modes,modes);assert(validCustomPractice(session));assert(validateDatabase(db));assert.deepEqual(previewLearningBackup(makeLearningBackup(db)).customPractice!.modes,modes)
+  for(const mode of modes){assert.equal(session.modes[session.modeIndex],mode);for(const id of session.wordIds){assert.equal(session.wordIds[session.index],id);answer(db)}}
+  assert.equal(session.status,'completed');assert.equal(customProgress(session).totalSteps,2*modes.length);assert.equal(customProgress(session).percent,100);assert.equal(protectedFields(db),before)
+ }
+ const pack=reset()
+ for(const modes of [[],['spell','spell'],['unknown']])assert.throws(()=>createCustomPractice({courseId:pack.courseId,scope:wholeBook(),count:1,modes:modes as LearningMode[],sound:true}))
+ for(const modes of [[],['spell','spell'],['dictation','spell'],['unknown']]){const {session}=make(2,['spell','dictation']);session.modes=modes as LearningMode[];assert(!validCustomPractice(session))}
+})
+
+test('多选、再次取消和一键全选保持同一选择状态，空选不能开始，部分组合冷恢复不串正式进度',()=>{
+ reset();const custom=useCustomPracticeStore(),profile=useProfileStore();custom.openConfig();custom.toggleMode('spell');assert.deepEqual(custom.selectedModes,['flash','spell']);custom.toggleMode('flash');assert.deepEqual(custom.selectedModes,['spell']);custom.toggleMode('spell');assert.deepEqual(custom.selectedModes,[]);assert.equal(custom.start(),'failed')
+ custom.toggleMode('dictation');custom.toggleMode('listen');assert.deepEqual(custom.selectedModes,['listen','dictation']);custom.continuous=true;assert.deepEqual(custom.selectedModes,CUSTOM_MODES);custom.continuous=false;assert.deepEqual(custom.selectedModes,['listen','dictation']);custom.continuous=true;custom.toggleMode('connect');assert.equal(custom.continuous,false);assert.deepEqual(custom.selectedModes,['flash','listen','spell','dictation'])
+ custom.singleMode='spell';custom.toggleMode('dictation');custom.count='2';const before=protectedFields(profile.db);assert.equal(custom.start(),'started');assert.equal(custom.screen,'overview');assert.deepEqual(custom.session!.modes,['spell','dictation']);assert(custom.resume());custom.patch({input:'draft'});assert(custom.pause());const id=custom.session!.id;setActivePinia(createPinia());const restored=useCustomPracticeStore();assert.equal(restored.session!.id,id);assert.deepEqual(restored.session!.modes,['spell','dictation']);assert(restored.resume());assert.equal(restored.session!.input,'draft');assert.equal(protectedFields(useProfileStore().db),before)
+})
 test('连接按最多5词分组且覆盖113词，稳定打散词义列，重复词义分开处理',()=>{
  const {session,db}=make(113,['connect']),seen:string[]=[],batches=new Map<string,string[]>()
  while(session.status==='running'){

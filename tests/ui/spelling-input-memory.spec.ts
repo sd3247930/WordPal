@@ -1,5 +1,5 @@
 import {test,expect,type Page} from '@playwright/test'
-import {go,setAppearance,database} from './helpers'
+import {selectCustomModes,go,setAppearance,database} from './helpers'
 import {seedSpellingPractice} from '../helpers/spelling-practice'
 import {freshDatabase,type Database} from '../../src/stores/profile'
 import {initialProgress} from '../../src/services/storage/MigrationV1toV2'
@@ -33,7 +33,7 @@ async function submit(page:Page){const replay=page.locator('.practice-audio');if
 async function next(page:Page){await page.locator('.answer-feedback').getByRole('button').last().click()}
 async function open(page:Page,entry:Entry,mode:Mode){
  if(entry==='custom'){
-  await seedSpellingPractice(page,mode);await go(page,'learn');await page.locator('.study-practice-entry-button').click();await page.locator('.custom-count-input input').fill('3');const option=page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:new RegExp('^'+names[mode]+'，')});if(await option.getAttribute('aria-pressed')!=='true')await option.click();await page.getByRole('button',{name:'开始练习',exact:true}).click()
+  await seedSpellingPractice(page,mode);await go(page,'learn');await page.locator('.study-practice-entry-button').click();await page.locator('.custom-count-input input').fill('3');await selectCustomModes(page,[mode]);await page.getByRole('button',{name:'开始练习',exact:true}).click()
  }else{await seedDaily(page,mode);await go(page,'learn');if(entry==='overview')await page.locator('.study-overview-toggle').click()}
  await expect(input(page)).toBeVisible()
 }
@@ -59,7 +59,7 @@ test('今日拼写完整一环后自动进入听写，继续沿用积木，再�
 
 test('键盘偏好跨入口与刷新保留，自定义暂停恢复保持当前草稿',async({page})=>{
  await setAppearance(page,'clay','light');await seedSpellingPractice(page,'spell');await go(page,'learn');await choose(page,'keyboard');await page.locator('.slot-native input').fill('doc');await page.reload();await expect(input(page)).toHaveAttribute('data-block-mode','keyboard');await expect(page.locator('.slot-native input')).toHaveValue('doc')
- await page.locator('.study-practice-entry-button').click();await page.locator('.custom-count-input input').fill('2');await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^听写，/}).click();await page.getByRole('button',{name:'开始练习',exact:true}).click();await expect(input(page)).toHaveAttribute('data-block-mode','keyboard')
+ await page.locator('.study-practice-entry-button').click();await page.locator('.custom-count-input input').fill('2');await selectCustomModes(page,['dictation']);await page.getByRole('button',{name:'开始练习',exact:true}).click();await expect(input(page)).toHaveAttribute('data-block-mode','keyboard')
  await choose(page,'tiles');await page.locator('.letter-tile').first().click();const draft=(await database(page)).customPractice.letterDraft;await page.getByRole('button',{name:'暂停练习',exact:true}).click();await page.reload();await expect(page.locator('.study-custom-resume')).toHaveCount(0);await page.locator('.study-practice-entry-button').click();await page.getByRole('button',{name:'继续上次自定义练习',exact:true}).click();await expect(input(page)).toHaveAttribute('data-block-mode','tiles');expect((await database(page)).customPractice.letterDraft).toEqual(draft)
 })
 

@@ -1,5 +1,5 @@
 <template>
- <view class="custom-route" :class="{'custom-route-compact':compact}" role="list" aria-label="本次练习模式进度">
+ <view class="custom-route" :class="{'custom-route-compact':compact}" :style="compact?{gridTemplateColumns:'repeat('+session.modes.length+',minmax(0,1fr))'}:undefined" role="list" aria-label="本次练习模式进度">
   <view v-for="(mode,index) in session.modes" :key="mode" role="listitem" class="custom-route-step" :class="{current:session.status!=='completed'&&session.modeIndex===index,done:session.results[mode].completedWordIds.length===session.wordIds.length}">
    <text class="custom-route-number">{{index+1}}</text>
    <image v-if="!failed.has(mode)" class="custom-route-icon" :src="studyModeIcons[mode].src" mode="aspectFit" aria-hidden="true" @error="failed.add(mode)"/><text v-else aria-hidden="true">{{studyModeIcons[mode].fallback}}</text>

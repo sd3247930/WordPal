@@ -1,5 +1,5 @@
 import {test,expect,type Page} from '@playwright/test'
-import {go,database,seedDatabase,setAppearance,waitForArtwork} from './helpers'
+import {selectCustomModes,go,database,seedDatabase,setAppearance,waitForArtwork} from './helpers'
 import {freshDatabase} from '../../src/stores/profile'
 import {customCourse} from '../helpers/custom-course'
 import {CUSTOM_MODES,CUSTOM_MODE_NAMES} from '../../src/services/learning/CustomPractice'
@@ -51,7 +51,7 @@ test('完整五模式用相同快照自动衔接，重复发音有效且正式�
 })
 
 test('暂停保留草稿与模式，刷新后独立恢复，结束可取消且新建词数恢复家长默认',async({page})=>{
- await go(page,'learn');await openConfig(page);await count(page,'5');await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^拼写，/}).click();await page.getByRole('button',{name:'开始练习',exact:true}).click();await page.locator('.spelling-input input').fill('ca');const token=(await database(page)).customPractice.id;await page.getByRole('button',{name:'暂停练习',exact:true}).click();await expect(page.locator('[data-custom-screen="paused"]')).toBeVisible();await waitForArtwork(page);await page.screenshot({path:test.info().outputPath('custom-paused-phone.png'),fullPage:true});await page.reload();await expect(page.locator('.study-custom-resume')).toHaveCount(0);await page.locator('.study-practice-entry-button').click();await page.getByRole('button',{name:'继续上次自定义练习',exact:true}).click();await expect(page.locator('.spelling-input input')).toHaveValue('ca');expect((await database(page)).customPractice.id).toBe(token)
+ await go(page,'learn');await openConfig(page);await count(page,'5');await selectCustomModes(page,['spell']);await page.getByRole('button',{name:'开始练习',exact:true}).click();await page.locator('.spelling-input input').fill('ca');const token=(await database(page)).customPractice.id;await page.getByRole('button',{name:'暂停练习',exact:true}).click();await expect(page.locator('[data-custom-screen="paused"]')).toBeVisible();await waitForArtwork(page);await page.screenshot({path:test.info().outputPath('custom-paused-phone.png'),fullPage:true});await page.reload();await expect(page.locator('.study-custom-resume')).toHaveCount(0);await page.locator('.study-practice-entry-button').click();await page.getByRole('button',{name:'继续上次自定义练习',exact:true}).click();await expect(page.locator('.spelling-input input')).toHaveValue('ca');expect((await database(page)).customPractice.id).toBe(token)
  await page.getByRole('button',{name:'结束练习',exact:true}).click();await page.getByRole('button',{name:'继续当前练习',exact:true}).click();await expect(page.locator('.spelling-input input')).toHaveValue('ca');await page.getByRole('button',{name:'结束练习',exact:true}).click();await page.getByRole('button',{name:'确认结束',exact:true}).click();await expect(page.locator('.custom-practice-workspace')).toHaveCount(0);expect((await database(page)).customPractice.status).toBe('ended');await openConfig(page);await expect(page.locator('.custom-count-input input')).toHaveValue('10')
 })
 

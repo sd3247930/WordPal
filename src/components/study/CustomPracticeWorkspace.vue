@@ -7,9 +7,9 @@
    <CustomPracticeConfig/>
   </template>
   <template v-else-if="custom.session&&custom.progress">
-   <view v-if="custom.screen!=='training'" class="custom-session-summary"><text class="strong block">{{custom.session.courseTitle}}</text><text class="small muted block">{{custom.session.scopeLabel}} · {{custom.progress.total}} 个不同词条 · {{custom.session.modes.length===5?'五项连续练习':CUSTOM_MODE_NAMES[custom.mode]+'单项练习'}}</text></view>
+   <view v-if="custom.screen!=='training'" class="custom-session-summary"><text class="strong block">{{custom.session.courseTitle}}</text><text class="small muted block">{{custom.session.scopeLabel}} · {{custom.progress.total}} 个不同词条 · {{custom.session.modes.length>1?custom.session.modes.map(mode=>CUSTOM_MODE_NAMES[mode]).join('→'):CUSTOM_MODE_NAMES[custom.mode]+'单项练习'}}</text></view>
    <template v-if="custom.screen==='overview'">
-    <view class="custom-overview"><WPCard class="custom-overview-intro"><WPPetAvatar :element="pet.current.element" :size="72"/><text class="section-title">准备好，一起出发！</text><text class="muted block">同一组 {{custom.progress.total}} 个词，按五种方式依次练习。随时暂停，下次继续。</text></WPCard><CustomPracticeRoute :session="custom.session"/></view>
+    <view class="custom-overview"><WPCard class="custom-overview-intro"><WPPetAvatar :element="pet.current.element" :size="72"/><text class="section-title">准备好，一起出发！</text><text class="muted block">同一组 {{custom.progress.total}} 个词，按所选 {{custom.session.modes.length}} 种方式依次练习。随时暂停，下次继续。</text></WPCard><CustomPracticeRoute :session="custom.session"/></view>
    </template>
    <template v-else-if="custom.screen==='training'">
     <text v-if="custom.resumeProblem" class="notice error" role="alert">{{custom.resumeProblem}}</text>
@@ -54,6 +54,7 @@ import {usePetStore} from '../../stores/pet'
 import {CUSTOM_MODE_NAMES} from '../../services/learning/CustomPractice'
 import {childRatings} from '../../services/study-presentation'
 import {PhonicsPlaybackController} from '../../services/audio/PhonicsPlaybackController'
+import {audioPlayback} from '../../services/audio'
 import {warmUpcomingAudio} from '../../services/audio/AudioPreload'
 import WPButton from '../wp-button/WPButton.vue'
 import WPCard from '../wp-card/WPCard.vue'
@@ -75,7 +76,8 @@ import {windowLayout} from '../../services/window'
 import {useThemeStore} from '../../stores/theme'
 import {ref} from 'vue'
 import {useChoiceGuard} from '../../composables/useChoiceGuard'
-const custom=useCustomPracticeStore(),pet=usePetStore(),audioError=ref(''),controller=new PhonicsPlaybackController()
+const custom=useCustomPracticeStore(),pet=usePetStore(),audioMessage=ref(''),controller=new PhonicsPlaybackController()
+const audioError=computed(()=>audioMessage.value||(custom.screen==='training'&&audioPlayback.currentUrl.value===custom.current?.audio?audioPlayback.error.value?.message||'':''))
 const footerHeight=ref(112),instance=getCurrentInstance(),theme=useThemeStore()
 const {phonics,activeChunkIndex,playbackState}=controller
 const {locked:choiceLocked,choose:guardChoice}=useChoiceGuard(()=>custom.token)
@@ -86,19 +88,21 @@ watch(()=>[custom.screen,windowLayout.width,windowLayout.height,windowLayout.fon
 onMounted(measureFooter)
 const title=computed(()=>({config:'自定义练习',overview:'连续训练总览',training:CUSTOM_MODE_NAMES[custom.mode]+'练习',paused:'暂停与续练',summary:'练习完成',closed:'自定义练习'}[custom.screen]))
 const elapsed=computed(()=>{const seconds=Math.floor((custom.session?.elapsedMs||0)/1000);return seconds<60?`${seconds} 秒`:`${Math.floor(seconds/60)} 分 ${seconds%60} 秒`})
-const canSubmit=computed(()=>!custom.resumeProblem&&!custom.session?.answer&&(['connect','listen'].includes(custom.mode)?!!custom.session?.selected:!!custom.current&&spellingInputReady(custom.session?.input||'',custom.current,custom.session?.letterDraft))&&(!['listen','dictation'].includes(custom.mode)||custom.heardToken===custom.token))
+const canSubmit=computed(()=>!custom.resumeProblem&&!custom.session?.answer&&(['connect','listen'].includes(custom.mode)?!!custom.session?.selected:!!custom.current&&spellingInputReady(custom.session?.input||'',custom.current,custom.session?.letterDraft))&&(!['listen','dictation'].includes(custom.mode)||!audioError.value&&custom.heardToken===custom.token))
 function clear(){clearTimeout(timer);timer=undefined;playEpoch++;controller.stop();warmUpcomingAudio([])}
-async function play(){const word=custom.current,token=custom.token,epoch=++playEpoch;if(!word)return;audioError.value='';try{await controller.play(word);if(epoch===playEpoch&&token===custom.token&&custom.screen==='training'&&['playing','ended'].includes(playbackState.value))custom.heardToken=token}catch(error){if(epoch===playEpoch&&token===custom.token)audioError.value=(error as Error).message}}
+async function play(){const word=custom.current,token=custom.token,epoch=++playEpoch;if(!word)return;audioMessage.value='';try{await controller.play(word);if(epoch===playEpoch&&token===custom.token&&custom.screen==='training'&&['playing','ended'].includes(playbackState.value))custom.heardToken=token}catch(error){if(epoch===playEpoch&&token===custom.token)audioMessage.value=(error as Error).message}}
 function submit(rating?:ReviewRating){if(custom.session?.answer||custom.mode!=='flash'&&!canSubmit.value)return;uni.hideKeyboard?.();custom.submit(rating)}
 function start(){if(custom.start()==='confirm')custom.confirmation='replace'}
 function pause(){clear();if(custom.pause())custom.showPaused()}
 function requestEnd(){clearTimeout(timer);timer=undefined;controller.stop();playEpoch++;custom.confirmation='end'}
 function cancelConfirmation(){custom.confirmation=''}
 function confirm(){const action=custom.confirmation;if(action==='end'){if(custom.end())custom.confirmation=''}else if(custom.start(true)==='started')custom.confirmation=''}
-watch(()=>[custom.token,custom.screen].join(':'),()=>{
- clear();audioError.value='';custom.heardToken='';controller.setWord(custom.current)
- if(custom.screen==='training'&&custom.current){const next=custom.session?.wordSnapshot[custom.session.wordIds[custom.session.index+1]];warmUpcomingAudio([custom.current.audio,next?.audio||'']);if(['listen','dictation'].includes(custom.mode)&&!custom.session?.answer)void play()}
+watch(()=>[custom.token,custom.screen].join(':'),async()=>{
+ clear();audioMessage.value='';custom.heardToken='';controller.setWord(custom.current)
+ const token=custom.token
+ if(custom.screen==='training'&&custom.current){const next=custom.session?.wordSnapshot[custom.session.wordIds[custom.session.index+1]];warmUpcomingAudio([custom.current.audio,next?.audio||'']);await nextTick();if(!footerDisposed&&footerPageVisible&&token===custom.token&&custom.screen==='training'&&['listen','dictation'].includes(custom.mode)&&!custom.session?.answer)void play()}
 },{immediate:true})
+watch(()=>audioPlayback.error.value,error=>{if(error&&audioPlayback.currentUrl.value===custom.current?.audio)custom.heardToken=''})
 watch(()=>[custom.session?.answer?.id,custom.confirmation].join(':'),()=>{
  clearTimeout(timer);timer=undefined
  if(custom.screen!=='training'||custom.confirmation||!custom.session?.answer?.correct||custom.mode!=='connect'&&custom.session.index!==custom.session.wordIds.length-1)return

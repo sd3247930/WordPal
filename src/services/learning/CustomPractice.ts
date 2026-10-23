@@ -12,6 +12,7 @@ import {sha256} from '../content/digest'
 
 export const CUSTOM_MODES:readonly LearningMode[]=['flash','connect','listen','spell','dictation']
 export const CUSTOM_MODE_NAMES:Record<LearningMode,string>={flash:'闪现',connect:'连接',listen:'听音',spell:'拼写',dictation:'听写'}
+export function validCustomModes(value:unknown):value is LearningMode[]{return Array.isArray(value)&&value.length>0&&value.length<=CUSTOM_MODES.length&&value.every((mode,index)=>CUSTOM_MODES.includes(mode)&&(!index||CUSTOM_MODES.indexOf(mode)>CUSTOM_MODES.indexOf(value[index-1])))}
 export const wholeBook=():CustomPracticeScope=>({type:'whole-book',unitIds:[]})
 let sessionCounter=0
 export const customFingerprint=(pack:CoursePack)=>sha256(JSON.stringify([pack.contentVersion,pack.units,pack.vocabulary,pack.assets]))
@@ -43,7 +44,8 @@ export function customModeProblems(courseId:string,ids:string[],sound:boolean){
 export function createCustomPractice(input:{courseId:string;scope:CustomPracticeScope;count:string|number;modes:LearningMode[];sound:boolean;now?:Date;id?:string}):CustomPracticeSession{
  const pack=courseRegistry[input.courseId],ids=practiceWordIds(input.courseId,input.scope),error=practiceCountError(input.count,ids.length)
  if(error)throw Error(error)
- if(input.modes.length!==1&&input.modes.join(',')!==CUSTOM_MODES.join(',')||input.modes.some(mode=>!CUSTOM_MODES.includes(mode)))throw Error('请选择单项练习或固定顺序的五项连续练习。')
+ if(!Array.isArray(input.modes)||!input.modes.length||new Set(input.modes).size!==input.modes.length||input.modes.some(mode=>!CUSTOM_MODES.includes(mode)))throw Error('请选择至少一种不重复的练习方式。')
+ const modes=CUSTOM_MODES.filter(mode=>input.modes.includes(mode))
  const chosen=ids.slice(0,Number(input.count)),problems=customModeProblems(input.courseId,chosen,input.sound)
  for(const mode of input.modes)if(problems[mode])throw Error(CUSTOM_MODE_NAMES[mode]+'：'+problems[mode])
  const words=orderedCourseWords(pack).map(id=>getCourseWord(input.courseId,id)).filter((word):word is Word=>!!word),snapshot:Record<string,Word>={}
@@ -55,7 +57,7 @@ export function createCustomPractice(input:{courseId:string;scope:CustomPractice
  const now=(input.now||new Date()).toISOString(),seed=Math.floor(Math.random()*0x7fffffff)
  return {schemaVersion:1,source:'custom',id:input.id||`custom-${Date.now()}-${seed.toString(36)}-${++sessionCounter}`,courseId:pack.courseId,contentVersion:pack.contentVersion,contentFingerprint:customFingerprint(pack),courseTitle:pack.title,
   scope:JSON.parse(JSON.stringify(input.scope)),scopeLabel:input.scope.type==='whole-book'?'整本教材':orderedCourseUnits(pack).filter(unit=>input.scope.unitIds.includes(unit.id)).map(unit=>unit.title).join('、'),
-  wordIds:chosen,wordSnapshot:snapshot,requestedCount:Number(input.count),modes:[...input.modes],modeIndex:0,index:0,
+  wordIds:chosen,wordSnapshot:snapshot,requestedCount:Number(input.count),modes:[...modes],modeIndex:0,index:0,
   results:{flash:{completedWordIds:[],attempts:[]},connect:{completedWordIds:[],attempts:[]},listen:{completedWordIds:[],attempts:[]},spell:{completedWordIds:[],attempts:[]},dictation:{completedWordIds:[],attempts:[]}},input:'',selected:'',revealed:false,answer:null,status:'paused',startedAt:now,updatedAt:now,elapsedMs:0,seed}
 }
 export function customResumeProblem(session:CustomPracticeSession|null|undefined){
@@ -128,7 +130,7 @@ export function validCustomPractice(value:unknown):value is CustomPracticeSessio
  if(!s||s.schemaVersion!==1||s.source!=='custom'||typeof s.id!=='string'||typeof s.courseId!=='string'||typeof s.contentVersion!=='string'||typeof s.courseTitle!=='string'||typeof s.scopeLabel!=='string'||!/^[a-f0-9]{64}$/.test(s.contentFingerprint)||!['running','paused','completed','ended'].includes(s.status)||!Number.isFinite(s.elapsedMs)||s.elapsedMs<0||!Number.isInteger(s.seed)||!Number.isFinite(Date.parse(s.startedAt))||!Number.isFinite(Date.parse(s.updatedAt)))return false
  if(!s.scope||!['whole-book','units'].includes(s.scope.type)||!Array.isArray(s.scope.unitIds)||s.scope.unitIds.some(id=>typeof id!=='string')||new Set(s.scope.unitIds).size!==s.scope.unitIds.length||s.scope.type==='units'&&!s.scope.unitIds.length||s.scope.type==='whole-book'&&s.scope.unitIds.length)return false
  if(!Array.isArray(s.wordIds)||!s.wordIds.length||s.wordIds.some(id=>typeof id!=='string')||new Set(s.wordIds).size!==s.wordIds.length||s.requestedCount!==s.wordIds.length||!s.wordSnapshot||s.wordIds.some(id=>{const w=s.wordSnapshot[id];return !w||w.id!==id||typeof w.word!=='string'||typeof w.meaning!=='string'||typeof w.audio!=='string'||typeof w.image!=='string'||!Array.isArray(w.distractors)}))return false
- if(!Array.isArray(s.modes)||!(s.modes.length===1&&CUSTOM_MODES.includes(s.modes[0])||s.modes.join(',')===CUSTOM_MODES.join(','))||!Number.isInteger(s.modeIndex)||s.modeIndex<0||s.modeIndex>=s.modes.length||!Number.isInteger(s.index)||s.index<0||s.index>=s.wordIds.length||typeof s.input!=='string'||typeof s.selected!=='string'||typeof s.revealed!=='boolean')return false
+ if(!validCustomModes(s.modes)||!Number.isInteger(s.modeIndex)||s.modeIndex<0||s.modeIndex>=s.modes.length||!Number.isInteger(s.index)||s.index<0||s.index>=s.wordIds.length||typeof s.input!=='string'||typeof s.selected!=='string'||typeof s.revealed!=='boolean')return false
  if(s.status==='running'&&!Number.isFinite(Date.parse(s.activeSince||''))||s.status!=='running'&&s.activeSince!==undefined||s.status==='completed'&&!Number.isFinite(Date.parse(s.completedAt||''))||s.status==='ended'&&!Number.isFinite(Date.parse(s.endedAt||'')))return false
  for(const mode of CUSTOM_MODES){
   const result=s.results?.[mode]

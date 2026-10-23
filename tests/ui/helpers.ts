@@ -16,6 +16,9 @@ export async function seedDatabase(page:Page,db:object){
  await page.addInitScript(db=>{if(!localStorage.getItem('wordpal.database.v1'))localStorage.setItem('wordpal.database.v1',JSON.stringify(db))},db)
 }
 export async function database(page:Page){return page.evaluate(()=>{const pointer=JSON.parse(localStorage.getItem('wordpal.database.active.v2')||'null'),key=pointer==='v2'?'wordpal.database.v2':pointer?.version===2?pointer.key:'wordpal.database.v1';return JSON.parse(localStorage.getItem(key)!)} )}
+export async function selectCustomModes(page:Page,modes:readonly string[]){
+ for(const mode of ['flash','connect','listen','spell','dictation']){const tile=page.locator(`.custom-config [data-mode="${mode}"]`);if((await tile.getAttribute('aria-pressed')==='true')!==modes.includes(mode))await tile.click()}
+}
 export async function selectWordbookScope(page:Page,scope:'当前教材'|'全部单词'|'只看已学'){
  const target=page.getByRole('group',{name:'单词本课程范围'}).getByRole('button',{name:scope==='当前教材'?'当前教材':'全部单词',exact:true});if(await target.getAttribute('aria-pressed')!=='true')await target.click()
  if(scope!=='当前教材'){const toggle=page.getByRole('button',{name:'只看已学',exact:true});if((await toggle.getAttribute('aria-pressed')==='true')!==(scope==='只看已学'))await toggle.click()}

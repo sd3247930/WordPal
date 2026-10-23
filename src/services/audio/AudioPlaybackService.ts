@@ -14,6 +14,7 @@ export class AudioPlaybackService {
  private stopTimer?:ReturnType<typeof setTimeout>;private loadingTimer?:ReturnType<typeof setTimeout>;private timeout?:ReturnType<typeof setTimeout>
  private generation=0;private lastRequest=0;private trailing?:ReturnType<typeof setTimeout>
  private activeGeneration=0
+ private backendStopped=true;private stopping=false
  private progressTimer?:ReturnType<typeof setInterval>;private progressListeners=new Set<(progress:AudioProgress)=>void>()
  private progress:AudioProgress={requestId:0,url:null,state:'idle',positionMs:null,durationMs:null,waiting:false}
  constructor(private factory:()=>AudioBackend=()=>uni.createInnerAudioContext() as AudioBackend){}
@@ -35,16 +36,21 @@ export class AudioPlaybackService {
   const html=(audio as AudioBackend&{_audio?:{play:()=>Promise<void>}})._audio
   if(html&&typeof html.play==='function'){
    const play=html.play.bind(html)
-   html.play=()=>{const epoch=this.generation,promise=play();void promise?.catch(error=>{if(error?.name!=='AbortError'&&epoch===this.generation&&this.activeGeneration)this.fail('暂时无法播放，请检查声音设置或重试。')});return promise}
+   html.play=()=>{const epoch=this.generation,promise=play();void promise?.catch(error=>{if(error?.name!=='AbortError'&&this.backend===audio&&epoch===this.generation&&this.activeGeneration)this.fail('暂时无法播放，请检查声音设置或重试。')});return promise}
   }
-  audio.onPlay(()=>{if(!this.activeGeneration||this.activeGeneration!==this.generation)return;this.error.value=null;this.isPlaying.value=true;this.loading.value=false;this.clearLoading();this.publish({state:'playing',waiting:false});this.readProgress();this.clearProgress();this.progressTimer=setInterval(()=>this.readProgress(),60);this.settle?.resolve();this.settle=undefined})
-  audio.onStop(()=>{if(this.pendingStart){const start=this.pendingStart;this.pendingStart=undefined;clearTimeout(this.stopTimer);start()}else if(audio.paused!==false){this.isPlaying.value=false;this.loading.value=false;this.clearLoading();this.clearProgress();this.publish({state:'idle',positionMs:null,waiting:false})}})
-  audio.onEnded(()=>{this.activeGeneration=0;this.isPlaying.value=false;this.loading.value=false;this.clearLoading();this.clearProgress();this.publish({state:'ended',positionMs:null,waiting:false});this.settle?.resolve();this.settle=undefined})
-  audio.onPause(()=>{this.isPlaying.value=false;this.loading.value=false;this.clearLoading();this.clearProgress();this.publish({state:'paused',waiting:false})})
-  audio.onError(()=>{if(this.activeGeneration&&this.activeGeneration===this.generation)this.fail('暂时无法播放，请检查声音设置或重试。')})
-  audio.onWaiting?.(()=>{this.publish({waiting:true});this.loadingTimer=setTimeout(()=>this.loading.value=true,300)})
-  audio.onTimeUpdate?.(()=>{if(this.activeGeneration&&this.activeGeneration===this.generation){this.publish({waiting:false});this.readProgress()}})
-  audio.onCanplay?.(()=>this.readProgress())
+  audio.onPlay(()=>{if(this.backend!==audio||!this.activeGeneration||this.activeGeneration!==this.generation)return;this.backendStopped=false;this.error.value=null;this.isPlaying.value=true;this.loading.value=false;this.clearLoading();this.publish({state:'playing',waiting:false});this.readProgress();this.clearProgress();this.progressTimer=setInterval(()=>this.readProgress(),60);this.settle?.resolve();this.settle=undefined})
+  audio.onStop(()=>{
+   if(this.backend!==audio||!this.stopping)return
+   this.stopping=false
+   if(this.pendingStart){const start=this.pendingStart;this.pendingStart=undefined;this.backendStopped=true;clearTimeout(this.stopTimer);start()}
+   else if(!this.activeGeneration){this.backendStopped=true;this.isPlaying.value=false;this.loading.value=false;this.clearLoading();this.clearProgress();this.publish({state:'idle',positionMs:null,waiting:false})}
+  })
+  audio.onEnded(()=>{if(this.backend!==audio||!this.activeGeneration||this.activeGeneration!==this.generation)return;this.backendStopped=true;this.activeGeneration=0;this.isPlaying.value=false;this.loading.value=false;this.clearLoading();this.clearProgress();this.publish({state:'ended',positionMs:null,waiting:false});this.settle?.resolve();this.settle=undefined})
+  audio.onPause(()=>{if(this.backend!==audio)return;this.isPlaying.value=false;this.loading.value=false;this.clearLoading();this.clearProgress();this.publish({state:'paused',waiting:false})})
+  audio.onError(()=>{if(this.backend===audio&&this.activeGeneration&&this.activeGeneration===this.generation)this.fail('暂时无法播放，请检查声音设置或重试。')})
+  audio.onWaiting?.(()=>{if(this.backend!==audio)return;this.publish({waiting:true});this.loadingTimer=setTimeout(()=>{if(this.backend===audio)this.loading.value=true},300)})
+  audio.onTimeUpdate?.(()=>{if(this.backend===audio&&this.activeGeneration&&this.activeGeneration===this.generation){this.publish({waiting:false});this.readProgress()}})
+  audio.onCanplay?.(()=>{if(this.backend===audio)this.readProgress()})
   this.backend=audio
   return audio
  }
@@ -61,19 +67,23 @@ export class AudioPlaybackService {
  private fail(message:string){this.activeGeneration=0;this.clearLoading();this.clearProgress();this.pendingStart=undefined;clearTimeout(this.stopTimer);this.isPlaying.value=false;this.loading.value=false;this.error.value=new Error(message);this.publish({state:'error',positionMs:null,waiting:false});this.settle?.reject(this.error.value);this.settle=undefined}
  play(url:string):Promise<void>{
   if(!url){this.fail('这个单词暂无离线音频，可以选择文字学习。');return Promise.reject(this.error.value!)}
-  const epoch=++this.generation;this.settle?.resolve();this.settle=undefined;clearTimeout(this.trailing);this.clearLoading();this.clearProgress();this.error.value=null;this.currentUrl.value=url;this.publish({requestId:epoch,url,state:'idle',positionMs:null,durationMs:null,waiting:false})
+  const epoch=++this.generation;this.activeGeneration=0;this.settle?.resolve();this.settle=undefined;clearTimeout(this.trailing);this.clearLoading();this.clearProgress();this.error.value=null;this.currentUrl.value=url;this.publish({requestId:epoch,url,state:'idle',positionMs:null,durationMs:null,waiting:false})
   return new Promise((resolve,reject)=>{
    this.settle={resolve,reject}
    const begin=()=>{
     if(epoch!==this.generation){resolve();return}
     try{
      const fresh=!this.backend,audio=this.context()
-     const start=()=>{if(epoch!==this.generation)return;this.pendingStart=undefined;this.activeGeneration=epoch;const same=audio.src===url;audio.src=url;if(fresh)this.configure(audio);audio.startTime=0;if(this.activeGeneration!==epoch)return;if(same)try{audio.seek(0)}catch{}this.isPlaying.value=false;this.loading.value=false;this.loadingTimer=setTimeout(()=>{if(epoch===this.generation)this.loading.value=true},300);this.timeout=setTimeout(()=>{if(epoch===this.generation)this.fail('播放未能开始，请重试。')},8000);audio.play()}
+     const start=()=>{if(epoch!==this.generation)return;this.pendingStart=undefined;this.stopping=false;this.backendStopped=false;this.activeGeneration=epoch;const same=audio.src===url;audio.src=url;if(fresh)this.configure(audio);audio.startTime=0;if(this.activeGeneration!==epoch)return;if(same)try{audio.seek(0)}catch{}this.isPlaying.value=false;this.loading.value=false;this.loadingTimer=setTimeout(()=>{if(epoch===this.generation)this.loading.value=true},300);this.timeout=setTimeout(()=>{if(epoch===this.generation)this.fail('播放未能开始，请重试。')},8000);audio.play()}
      // A fresh native context has no previous resource to stop.
-     if(fresh){start();return}
-     this.pendingStart=start;audio.stop()
-     // Native bases may dispatch stop asynchronously or omit it when already stopped.
-     if(this.pendingStart)this.stopTimer=setTimeout(()=>{if(this.pendingStart===start){this.pendingStart=undefined;start()}},60)
+     if(fresh||this.backendStopped&&!this.stopping){start();return}
+     this.pendingStart=start
+     // Several view/store cleanups can share one native stop. Queue the next
+     // source behind its acknowledgement instead of releasing it repeatedly.
+     if(!this.stopping){this.stopping=true;audio.stop()}
+     // Without a stop acknowledgement, retire that context before starting a
+     // replacement; late native errors then belong to an obsolete backend.
+     if(this.pendingStart)this.stopTimer=setTimeout(()=>{if(this.pendingStart===start){this.pendingStart=undefined;this.backend=undefined;this.backendStopped=true;this.stopping=false;try{audio.destroy();begin()}catch{this.fail('播放器无法启动，请重试。')}}},60)
     }catch{this.fail('播放器无法启动，请重试。')}
    }
    const now=Date.now(),delay=Math.max(0,120-(now-this.lastRequest));this.lastRequest=now
@@ -81,9 +91,9 @@ export class AudioPlaybackService {
   })
  }
  replay(){return this.currentUrl.value?this.play(this.currentUrl.value):Promise.reject(new Error('还没有选择音频。'))}
- stop(){this.generation++;this.activeGeneration=0;clearTimeout(this.trailing);clearTimeout(this.stopTimer);this.pendingStart=undefined;this.clearLoading();this.clearProgress();this.settle?.resolve();this.settle=undefined;this.isPlaying.value=false;this.loading.value=false;this.error.value=null;this.publish({requestId:this.generation,state:'idle',positionMs:null,waiting:false});this.backend?.stop()}
+ stop(){this.generation++;this.activeGeneration=0;clearTimeout(this.trailing);clearTimeout(this.stopTimer);this.pendingStart=undefined;this.clearLoading();this.clearProgress();this.settle?.resolve();this.settle=undefined;this.isPlaying.value=false;this.loading.value=false;this.error.value=null;this.publish({requestId:this.generation,state:'idle',positionMs:null,waiting:false});if(this.backend&&!this.backendStopped&&!this.stopping){this.stopping=true;this.backend.stop()}}
  pause(){this.clearLoading();this.clearProgress();this.backend?.pause();this.isPlaying.value=false;this.loading.value=false;this.publish({state:'paused',waiting:false})}
  resume(){if(!this.backend||!this.currentUrl.value)return;try{this.backend.play()}catch{this.fail('继续播放失败，请重新播放。')}}
- destroy(){this.stop();this.backend?.destroy();this.backend=undefined;this.currentUrl.value=null}
+ destroy(){this.stop();this.backend?.destroy();this.backend=undefined;this.backendStopped=true;this.stopping=false;this.currentUrl.value=null}
 }
 export const audioPlayback=new AudioPlaybackService()

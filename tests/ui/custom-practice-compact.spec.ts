@@ -1,5 +1,5 @@
 import {test,expect,type Page} from '@playwright/test'
-import {go,database,setAppearance,waitForArtwork} from './helpers'
+import {selectCustomModes,go,database,setAppearance,waitForArtwork} from './helpers'
 import {freshDatabase} from '../../src/stores/profile'
 import {customCourse} from '../helpers/custom-course'
 
@@ -41,12 +41,12 @@ test('范围收敛、空单元阻断、教材选择与连续开关共用真实�
  await page.getByRole('button',{name:'Unit 1',exact:true}).click();await expect(page.getByRole('button',{name:'开始练习',exact:true})).toBeDisabled();await expect(page.locator('.custom-count-section .error')).toContainText('没有可练习')
  await page.getByRole('button',{name:'Unit 2',exact:true}).click();await page.getByRole('button',{name:'全部 10 词',exact:true}).click()
  await page.getByRole('button',{name:/^五项连续练习/}).click();await expect(page.locator('.custom-config .study-mode-tile[aria-pressed=true]')).toHaveCount(5)
- await page.getByRole('button',{name:/^拼写，/}).click();await expect(page.locator('.custom-continuous')).toHaveAttribute('aria-pressed','false');await expect(page.locator('.custom-config .study-mode-tile[aria-pressed=true]')).toHaveCount(1)
+ await page.getByRole('button',{name:/^拼写，/}).click();await expect(page.locator('.custom-continuous')).toHaveAttribute('aria-pressed','false');await expect(page.locator('.custom-config .study-mode-tile[aria-pressed=true]')).toHaveCount(4)
  await page.getByRole('button',{name:'更换教材',exact:true}).click();const books=page.getByRole('group',{name:'选择练习教材'});await expect(books.getByRole('button',{name:/合成三起点/})).toBeVisible();await books.getByRole('button',{name:/WordPal|原创启蒙/}).first().click();await expect(page.locator('.custom-book-copy')).not.toContainText('合成三起点');expect(await database(page)).toEqual(before)
 })
 
 test('新配置不覆盖断点，取消替换后可直接恢复原草稿',async({page})=>{
- await go(page,'learn');await open(page);await page.getByRole('button',{name:/^拼写，/}).click();await page.getByRole('button',{name:'开始练习',exact:true}).click();await page.locator('.spelling-input input').fill('ca');const original=(await database(page)).customPractice
+ await go(page,'learn');await open(page);await selectCustomModes(page,['spell']);await page.getByRole('button',{name:'开始练习',exact:true}).click();await page.locator('.spelling-input input').fill('ca');const original=(await database(page)).customPractice
  await page.getByRole('button',{name:'暂停练习',exact:true}).click();await page.getByRole('button',{name:'返回学习或暂停自定义练习',exact:true}).click();await open(page)
  await expect(page.locator('.custom-recovery-entry')).toContainText('拼写 0/10');await page.getByRole('button',{name:'5 词',exact:true}).click();await page.getByRole('button',{name:'开始练习',exact:true}).click();await expect(page.getByRole('dialog')).toBeVisible();await page.getByRole('button',{name:'保留上次练习',exact:true}).click()
  expect((await database(page)).customPractice.id).toBe(original.id);await page.getByRole('button',{name:'继续上次自定义练习',exact:true}).click();await expect(page.locator('.spelling-input input')).toHaveValue('ca');const recovered=(await database(page)).customPractice;expect(recovered.wordIds).toEqual(original.wordIds);expect(recovered.index).toBe(original.index);expect(recovered.modes).toEqual(original.modes)

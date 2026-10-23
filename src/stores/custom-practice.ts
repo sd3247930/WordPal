@@ -16,15 +16,20 @@ export const useCustomPracticeStore=defineStore('custom-practice',()=>{
  // A persisted running checkpoint belongs to a previous process; its offline interval is not practice time.
  let recoveredRunningId=profile.db.customPractice?.status==='running'?profile.db.customPractice.id:''
  const screen=ref<'closed'|'config'|'overview'|'training'|'paused'|'summary'>('closed'),error=ref(''),notice=ref(''),heardToken=ref(''),confirmation=ref<'end'|'replace'|''>('')
- const courseId=ref(''),scope=ref<CustomPracticeScope>(wholeBook()),count=ref(''),singleMode=ref<LearningMode|undefined>('flash'),continuous=ref(false)
+ const courseId=ref(''),scope=ref<CustomPracticeScope>(wholeBook()),count=ref(''),modeSelection=ref<LearningMode[]>(['flash'])
+ let lastPartialSelection:LearningMode[]=['flash']
  const installed=computed(()=>courses.installed.filter(pack=>isCourseInstalled(pack.courseId)))
  const pack=computed(()=>courseRegistry[courseId.value]),ids=computed(()=>practiceWordIds(courseId.value,scope.value)),total=computed(()=>ids.value.length)
  const units=computed(()=>pack.value?orderedCourseUnits(pack.value):[])
  const countError=computed(()=>practiceCountError(count.value,total.value))
  const candidateIds=computed(()=>countError.value?[]:ids.value.slice(0,Number(count.value)))
  const problems=computed(()=>customModeProblems(courseId.value,candidateIds.value,feedback.settings.sound))
- const selectedModes=computed(()=>continuous.value?[...CUSTOM_MODES]:singleMode.value?[singleMode.value]:[])
- const startProblem=computed(()=>countError.value||(!selectedModes.value.length?'请选择一种练习方式。':selectedModes.value.map(mode=>problems.value[mode]).find(Boolean)||'')||(profile.readOnly?'学习档案暂时只读，无法保存自定义练习。':''))
+ const selectedModes=computed(()=>CUSTOM_MODES.filter(mode=>modeSelection.value.includes(mode)))
+ const continuous=computed({get:()=>selectedModes.value.length===CUSTOM_MODES.length,set:(enabled:boolean)=>{if(enabled){if(!continuous.value)lastPartialSelection=[...selectedModes.value];modeSelection.value=[...CUSTOM_MODES]}else modeSelection.value=[...lastPartialSelection]}})
+ // Legacy single-mode callers share the selection array instead of a parallel draft.
+ const singleMode=computed({get:()=>selectedModes.value.length===1?selectedModes.value[0]:undefined,set:(mode:LearningMode|undefined)=>{modeSelection.value=mode?[mode]:[];lastPartialSelection=[...modeSelection.value]}})
+ function toggleMode(mode:LearningMode){if(!CUSTOM_MODES.includes(mode)||!modeSelection.value.includes(mode)&&problems.value[mode])return;modeSelection.value=modeSelection.value.includes(mode)?modeSelection.value.filter(item=>item!==mode):[...modeSelection.value,mode];if(modeSelection.value.length<CUSTOM_MODES.length)lastPartialSelection=[...modeSelection.value]}
+ const startProblem=computed(()=>countError.value||(!selectedModes.value.length?'请选择至少一种练习方式。':selectedModes.value.map(mode=>problems.value[mode]).find(Boolean)||'')||(profile.readOnly?'学习档案暂时只读，无法保存自定义练习。':''))
  const session=computed(()=>profile.db.customPractice||null),recoverable=computed(()=>!!session.value&&['running','paused'].includes(session.value.status))
  const resumeProblem=computed(()=>customResumeProblem(session.value))
  const mode=computed(()=>session.value?.modes[session.value.modeIndex]||'flash')
@@ -38,7 +43,7 @@ export const useCustomPracticeStore=defineStore('custom-practice',()=>{
  function openConfig(){
   if(!pause())return false
   courseId.value=installed.value.some(pack=>pack.courseId===courses.currentId)?courses.currentId:installed.value[0]?.courseId||''
-  scope.value=wholeBook();count.value=String(defaultPracticeCount(profile.db,practiceWordIds(courseId.value,scope.value).length));singleMode.value='flash';continuous.value=false;notice.value='';error.value='';screen.value='config';return true
+  scope.value=wholeBook();count.value=String(defaultPracticeCount(profile.db,practiceWordIds(courseId.value,scope.value).length));singleMode.value='flash';notice.value='';error.value='';screen.value='config';return true
  }
  function clamp(){if(!countError.value)return;const value=Number(count.value);if(Number.isSafeInteger(value)&&value>total.value){count.value=String(total.value);notice.value=`范围已变化，本次调整为 ${total.value} 词。`}}
  function chooseCourse(id:string){if(!isCourseInstalled(id))return;courseId.value=id;scope.value=wholeBook();if(!Number.isSafeInteger(Number(count.value))||Number(count.value)<1)count.value=String(defaultPracticeCount(profile.db,total.value));clamp();error.value=''}
@@ -51,9 +56,10 @@ export const useCustomPracticeStore=defineStore('custom-practice',()=>{
   if(recoverable.value&&!replace)return 'confirm'
   try{
    const next=createCustomPractice({courseId:courseId.value,scope:scope.value,count:count.value,modes:selectedModes.value,sound:feedback.settings.sound})
-   if(!continuous.value)runCustom(next)
+   const multiple=selectedModes.value.length>1
+   if(!multiple)runCustom(next)
    if(!save(db=>{db.customPractice=next;return true}))return 'failed'
-   recoveredRunningId='';stop();screen.value=continuous.value?'overview':'training';return 'started'
+   recoveredRunningId='';stop();screen.value=multiple?'overview':'training';return 'started'
   }catch(problem){error.value=(problem as Error).message;return 'failed'}
  }
  function showPaused(){stop();screen.value='paused';error.value=''}
@@ -84,5 +90,5 @@ export const useCustomPracticeStore=defineStore('custom-practice',()=>{
  function back(){if(confirmation.value){confirmation.value='';return true}if(screen.value==='closed')return false;if(screen.value==='training'){if(pause())screen.value='paused'}else{if(pause())screen.value='closed'}return true}
  function leave(){if(screen.value==='closed')return true;if(!pause())return false;confirmation.value='';screen.value='closed';return true}
  watch(()=>session.value,session=>{if(!session&&!['closed','config'].includes(screen.value)){stop();screen.value='closed';confirmation.value='';notice.value='原教材已移除，自定义练习已停止。'}})
- return {screen,isOpen:computed(()=>screen.value!=='closed'),error,notice,confirmation,courseId,scope,count,singleMode,continuous,installed,pack,units,total,countError,problems,selectedModes,startProblem,session,recoverable,resumeProblem,mode,current,progress,choices,matchGroup,token,heardToken,openConfig,chooseCourse,chooseScope,toggleUnit,step,start,showPaused,resume,patch,submit,next,pause,end,back,leave}
+ return {screen,isOpen:computed(()=>screen.value!=='closed'),error,notice,confirmation,courseId,scope,count,singleMode,continuous,installed,pack,units,total,countError,problems,selectedModes,startProblem,session,recoverable,resumeProblem,mode,current,progress,choices,matchGroup,token,heardToken,openConfig,chooseCourse,chooseScope,toggleUnit,toggleMode,step,start,showPaused,resume,patch,submit,next,pause,end,back,leave}
 })

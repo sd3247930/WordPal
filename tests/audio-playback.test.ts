@@ -24,6 +24,22 @@ test('停止及切换音源期间的原生错误不冒充当前播放失败，�
  try{await service.play('first.wav');service.stop();assert.equal(service.error.value,null);await service.play('next.wav');assert.equal(service.isPlaying.value,true);assert.equal(service.error.value,null);audio.failNext=true;await assert.rejects(service.play('bad.wav'));assert.ok(service.error.value);await service.replay();assert.equal(service.error.value,null)}finally{service.destroy()}
 })
 
+test('模式切换重复清理只停止一次，异步旧资源错误与停止回执不能打断听写首词',async()=>{
+ const audio=new FakeAudio(),service=new AudioPlaybackService(()=>audio);let stops=0
+ audio.stop=()=>{const index=++stops;audio.paused=true;setTimeout(()=>{audio.callbacks.error?.({errCode:10003,errMsg:'released previous resource'});audio.callbacks.stop?.()},index*20)}
+ try{
+  await service.play('previous.wav');await delay(130);service.stop();service.stop();service.stop();await service.play('dictation-first.wav');await delay(100)
+  assert.equal(service.error.value,null);assert.equal(service.isPlaying.value,true);assert.equal(service.currentUrl.value,'dictation-first.wav');assert.equal(stops,1)
+ }finally{service.destroy();await delay(100)}
+})
+
+test('停止回执超时先释放旧上下文，迟到的原生错误不影响替换后的真实播放',async()=>{
+ const old=new FakeAudio(),replacement=new FakeAudio();let created=0
+ old.stop=()=>{setTimeout(()=>{old.callbacks.error({errCode:10003});old.callbacks.stop()},100)}
+ const service=new AudioPlaybackService(()=>++created===1?old:replacement)
+ try{await service.play('previous.wav');await delay(130);service.stop();await service.play('dictation-first.wav');await delay(120);assert.equal(old.destroyed,true);assert.equal(created,2);assert.equal(service.error.value,null);assert.equal(service.isPlaying.value,true);assert.equal(service.currentUrl.value,'dictation-first.wav')}finally{service.destroy()}
+})
+
 test('首次播放不停止尚未准备资源的原生上下文，结束后仍能重播与切词',async()=>{
  const audio=new FakeAudio(),stop=audio.stop.bind(audio);let unpreparedStops=0
  audio.stop=()=>{if(!audio.src){unpreparedStops++;audio.callbacks.error({errCode:10003,errMsg:'unprepared resource'});return}stop()}

@@ -1,5 +1,5 @@
 import {test,expect,type Page} from '@playwright/test'
-import {go,setAppearance,database} from './helpers'
+import {selectCustomModes,go,setAppearance,database} from './helpers'
 import {seedSpellingPractice} from '../helpers/spelling-practice'
 import {freshDatabase,type Database} from '../../src/stores/profile'
 import {initialProgress} from '../../src/services/storage/MigrationV1toV2'
@@ -15,7 +15,7 @@ async function seedDaily(page:Page){
  await page.addInitScript(db=>{if(localStorage.getItem('wordpal.database.active.v2'))return;localStorage.setItem('wordpal.database.v2',JSON.stringify(db));localStorage.setItem('wordpal.database.active.v2',JSON.stringify('v2'))},db)
 }
 async function open(page:Page,entry:Entry){
- if(entry==='custom'){await seedSpellingPractice(page,'spell');await go(page,'learn');await page.locator('.study-practice-entry-button').click();await page.locator('.custom-count-input input').fill('2');await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^拼写，/}).click();await page.getByRole('button',{name:'开始练习',exact:true}).click()}
+ if(entry==='custom'){await seedSpellingPractice(page,'spell');await go(page,'learn');await page.locator('.study-practice-entry-button').click();await page.locator('.custom-count-input input').fill('2');await selectCustomModes(page,['spell']);await page.getByRole('button',{name:'开始练习',exact:true}).click()}
  else{await seedDaily(page);await go(page,'learn');if(entry==='overview')await page.locator('.study-overview-toggle').click()}
 }
 async function simulateNativeInitialState(page:Page){

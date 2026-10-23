@@ -1,5 +1,5 @@
 import {test,expect,type Page} from '@playwright/test'
-import {go,setAppearance,seedDatabase,database,openCustomPractice,completeDaily} from './helpers'
+import {selectCustomModes,go,setAppearance,seedDatabase,database,openCustomPractice,completeDaily} from './helpers'
 import {freshDatabase} from '../../src/stores/profile'
 const home=(page:Page)=>page.getByRole('group',{name:'家园学习任务',exact:true})
 const practice=(page:Page)=>home(page).getByRole('button',{name:'试一试拼写或听写',exact:true})
@@ -23,11 +23,11 @@ test('两个真实学习入口保留原教材与旧草稿，新配置不覆盖�
 })
 
 test('键盘打开自定义配置，L4默认15词并可开始单项拼写，不改SRS或奖励',async({page})=>{
- const db=freshDatabase();db.abilityLevel='L4';await seedDatabase(page,db);await go(page,'pet');const before=await database(page);await practice(page).focus();await page.keyboard.press('Space');await expect(page.locator('[data-custom-screen="config"]')).toBeVisible();await expect(page.locator('.custom-count-input input')).toHaveValue('15');expect(await database(page)).toEqual(before);await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^拼写，/}).click();await page.getByRole('button',{name:'开始练习',exact:true}).click();await expect(page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true})).toBeVisible();const after=await database(page);expect(after.customPractice.wordIds[0]).toBe('cat');expect(after.customPractice.modes).toEqual(['spell']);expect(after.session).toBeNull();for(const field of ['cards','history','gems','rewardIds'])expect(after[field]).toEqual(before[field])
+ const db=freshDatabase();db.abilityLevel='L4';await seedDatabase(page,db);await go(page,'pet');const before=await database(page);await practice(page).focus();await page.keyboard.press('Space');await expect(page.locator('[data-custom-screen="config"]')).toBeVisible();await expect(page.locator('.custom-count-input input')).toHaveValue('15');expect(await database(page)).toEqual(before);await selectCustomModes(page,['spell']);await page.getByRole('button',{name:'开始练习',exact:true}).click();await expect(page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true})).toBeVisible();const after=await database(page);expect(after.customPractice.wordIds[0]).toBe('cat');expect(after.customPractice.modes).toEqual(['spell']);expect(after.session).toBeNull();for(const field of ['cards','history','gems','rewardIds'])expect(after[field]).toEqual(before[field])
 })
 
 test('额外题型可主动选择，L1默认5词且正式能力设置不会被改写',async({page})=>{
- const db=freshDatabase();db.abilityLevel='L1';await seedDatabase(page,db);await go(page,'pet');await practice(page).click();await expect(page.locator('.custom-count-input input')).toHaveValue('5');const selector=page.getByRole('group',{name:'选择学习方式'});await expect(selector.getByRole('button',{name:/^拼写，/})).toBeEnabled();await expect(selector.getByRole('button',{name:/^听写，/})).toBeEnabled();await selector.getByRole('button',{name:/^拼写，/}).click();await page.getByRole('button',{name:'开始练习',exact:true}).click();const result=await database(page);expect(result.customPractice.modes).toEqual(['spell']);expect(result.abilityLevel).toBe('L1');expect(result.session).toBeNull();expect(result.history).toEqual([])
+ const db=freshDatabase();db.abilityLevel='L1';await seedDatabase(page,db);await go(page,'pet');await practice(page).click();await expect(page.locator('.custom-count-input input')).toHaveValue('5');const selector=page.getByRole('group',{name:'选择学习方式'});await expect(selector.getByRole('button',{name:/^拼写，/})).toBeEnabled();await expect(selector.getByRole('button',{name:/^听写，/})).toBeEnabled();await selectCustomModes(page,['spell']);await page.getByRole('button',{name:'开始练习',exact:true}).click();const result=await database(page);expect(result.customPractice.modes).toEqual(['spell']);expect(result.abilityLevel).toBe('L1');expect(result.session).toBeNull();expect(result.history).toEqual([])
 })
 
 for(const sound of [true,false])test('额外练习遵循声音开关：'+sound,async({page})=>{
