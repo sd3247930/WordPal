@@ -12,3 +12,4 @@ export const studyModeIcons:Record<LearningMode,{src:string;fallback:string}>={
 // User-provided, metadata-free practice artwork; the existing five mode icons stay shared.
 export const practiceSpeaker='/static/icons/easy-practice/speaker.png'
 export const practiceBadge='/static/icons/easy-practice/sprout-book.png'
+export const customPracticeIcon='/static/icons/easy-practice/custom-practice.png'

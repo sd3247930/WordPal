@@ -10,6 +10,10 @@ async function firstScreen(page:Page,mode:LearningMode){
  expect(bounds!.y).toBeGreaterThan(0);expect(bounds!.y+bounds!.height).toBeLessThanOrEqual((nav?.y??page.viewportSize()!.height)+1)
  expect(await page.evaluate(()=>scrollY)).toBe(0)
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)
+ const entry=page.locator('.study-session-heading .study-practice-entry-button'),meta=page.locator('.study-session-meta')
+ const entryBox=await entry.boundingBox(),metaBox=await meta.boundingBox();expect(entryBox!.height).toBeGreaterThanOrEqual(48);expect(metaBox!.y-entryBox!.y-entryBox!.height).toBeGreaterThanOrEqual(5)
+ const padding=await entry.evaluate(node=>{const style=getComputedStyle(node);return {inline:parseFloat(style.paddingLeft),block:parseFloat(style.paddingTop)}});expect(padding.inline).toBeLessThanOrEqual(8);expect(padding.block).toBeLessThanOrEqual(4)
+ const icon=entry.locator('.custom-practice-entry-icon'),label=entry.locator('.custom-practice-entry-label');await expect(icon.locator('img')).toHaveJSProperty('naturalWidth',256);const iconBox=await icon.boundingBox(),labelBox=await label.boundingBox();expect(iconBox!.x+iconBox!.width).toBeLessThanOrEqual(labelBox!.x);expect(labelBox!.x+labelBox!.width).toBeLessThanOrEqual(entryBox!.x+entryBox!.width)
 }
 for(const width of [360,375,414,430])for(const mode of ['flash','listen','spell','dictation'] as LearningMode[])test(`常见手机五模式首屏 ${width} ${mode}`,async({page})=>{
  await page.setViewportSize({width,height:844});await setAppearance(page,'clay','light');await seedSpellingPractice(page,mode);await go(page,'learn');await firstScreen(page,mode)
