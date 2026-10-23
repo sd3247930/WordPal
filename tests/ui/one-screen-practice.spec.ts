@@ -26,7 +26,7 @@ for(const theme of ['swiss','clay'])for(const mode of modes)test(`顶部唯一�
 for(const width of [320,360,375,414,430,768,1024,1280])test(`安全区及图像完整显示 ${width}`,async({page})=>{
  await page.setViewportSize({width,height:width>=1024?800:844});await setAppearance(page,'clay','light');await seedSpellingPractice(page,'connect','doctor','医生，大夫',.35);await go(page,'learn')
  const picture=page.locator('.word-picture');await expect(picture.locator('div').first()).toHaveCSS('background-size','contain');await expect(page.locator('.word-picture-extension')).toHaveCount(0)
- const stage=await page.locator('.word-picture-stage').boundingBox(),bounds=await picture.boundingBox();expect(bounds!.x).toBeGreaterThan(stage!.x);expect(bounds!.y).toBeGreaterThan(stage!.y);expect(bounds!.width).toBeLessThan(stage!.width);expect(bounds!.height).toBeLessThan(stage!.height)
+ const stage=await page.locator('.word-picture-stage').boundingBox(),bounds=await picture.boundingBox();expect(bounds).toEqual(stage);expect(stage!.height).toBeGreaterThanOrEqual(160)
  await firstScreen(page,'connect');await page.screenshot({path:test.info().outputPath(`screen-${width}.png`),fullPage:true})
 })
 test('长选项与大字自然展开，不隐藏词义或遮挡可达提交',async({page})=>{

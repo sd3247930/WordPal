@@ -22,7 +22,8 @@ const protectedState=(db:any)=>({history:db.history,cards:db.cards,gems:db.gems,
 for(const mode of ['light','dark'])test(`医生图片满框、中文放大与原生输入编辑、清空和重复提交 ${mode}`,async({page})=>{
  await page.setViewportSize({width:390,height:844});await setAppearance(page,'clay',mode);await seed(page);await go(page,'learn');const before=protectedState(await database(page))
  await expect(page.locator('.word-core .word')).toHaveText('···');await expect(page.locator('.meaning')).toHaveText('医生，大夫');await expect(submit(page)).toBeDisabled()
- await expect.poll(()=>page.locator('.word-picture-stage').evaluate(node=>node.getBoundingClientRect().width/node.getBoundingClientRect().height)).toBeCloseTo(1,1)
+ expect((await page.locator('.word-picture-stage').boundingBox())!.height).toBeGreaterThanOrEqual(160)
+ expect(await page.locator('.word-picture').boundingBox()).toEqual(await page.locator('.word-picture-stage').boundingBox())
  expect(await page.locator('.word-picture-stage').evaluate(node=>node.getBoundingClientRect().width/node.closest('.word-meaning-card')!.getBoundingClientRect().width)).toBeGreaterThan(.35)
  expect(await page.locator('.meaning').evaluate(node=>parseFloat(getComputedStyle(node).fontSize))).toBeGreaterThanOrEqual(20)
  await input(page).fill('doctr');await input(page).press('ArrowLeft');await input(page).press('o');await expect(input(page)).toHaveValue('doctor')

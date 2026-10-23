@@ -44,8 +44,10 @@ watch(()=>[props.word.id,props.word.image].join('\u001f'),()=>{imageFailed.value
 .word-card-stack{width:100%;min-width:0;max-width:100%;overflow-anchor:none}
 .word-card-stack .word-info-card.wp-card{padding:12px;border:1px solid var(--wp-border);border-radius:var(--wp-radius);box-shadow:var(--wp-elevation);min-width:0;background:var(--wp-surface);box-sizing:border-box}
 .word-meaning-layout{display:grid;grid-template-columns:minmax(0,42fr) minmax(0,58fr);align-items:center;gap:12px;min-width:0;min-height:160px}
-.word-picture-stage{width:100%;aspect-ratio:1;min-width:0;position:relative;border-radius:var(--wp-radius-sm);overflow:hidden;background:var(--wp-surface-tonal)}
-.word-picture{display:block;width:calc(100% - 8px);height:calc(100% - 8px);position:absolute;inset:4px;object-fit:contain}
+.word-picture-stage{width:100%;height:clamp(160px,46vw,190px);min-width:0;position:relative;background:transparent}
+/* Reserve the full height before loading: portrait artwork can use the whole
+   left column without clipping its sides or moving the answer controls. */
+.word-picture{display:block;width:100%;height:100%;position:absolute;inset:0;object-fit:contain}
 .word-picture-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;padding:8px;text-align:center;color:var(--wp-muted-foreground);font-size:var(--wp-font-caption)}.word-picture-fallback>image{width:64px;height:64px;max-width:72%;max-height:65%}
 .word-picture-fallback.has-image-retry{padding:4px}.has-image-retry>image{width:36px;height:36px;max-height:36%}.word-picture-fallback .word-picture-retry{min-height:48px;min-width:48px;width:100%;margin:0;padding:2px!important;font-size:var(--wp-font-caption);line-height:1.3;white-space:normal}
 .word-content{display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:6px;min-width:0;text-align:left}.word-core{min-width:0;max-width:100%}.word-title-slot{min-height:42px;display:flex;align-items:center;min-width:0}
@@ -56,7 +58,7 @@ watch(()=>[props.word.id,props.word.image].join('\u001f'),()=>{imageFailed.value
 .word-extra{min-height:48px;min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:4px}.word-extra :deep(.practice-audio.wp-button){min-height:48px!important;height:48px;padding:0 8px!important;width:100%;max-width:180px;white-space:nowrap;font-size:var(--wp-font-small);gap:6px}.word-extra :deep(.audio-control-icon){width:32px!important;height:32px!important}
 .dictation-hero{min-height:160px;display:flex;align-items:center;justify-content:center;gap:18px}.dictation-hero .word-extra{min-width:120px}.dictation-hero .word-extra :deep(.practice-audio.wp-button){min-height:104px!important;height:104px;width:150px;max-width:100%;flex-direction:column;gap:6px}.dictation-hero .word-extra :deep(.audio-control-icon){width:58px!important;height:58px!important}
 .listening-wave{display:flex;gap:5px;align-items:center;justify-content:center;min-height:48px;color:var(--wp-muted-foreground)}.listening-wave>view{width:4px;border-radius:8px;background:currentColor}.listening-wave.wave-playing{color:var(--wp-primary)}.wave-playing>view:nth-child(even){transform:scaleY(.7)}
-@media(min-width:600px){.word-picture-stage{max-width:220px;justify-self:center}.word-meaning-layout,.dictation-hero{min-height:164px}.word-info-card{max-width:760px;margin-inline:auto}.word-content{gap:8px}}
+@media(min-width:600px){.word-picture-stage{max-width:220px;height:220px;justify-self:center}.word-meaning-layout,.dictation-hero{min-height:164px}.word-info-card{max-width:760px;margin-inline:auto}.word-content{gap:8px}}
 @media(max-width:359px){.word-card-stack .word-info-card.wp-card{padding:10px}.word-meaning-layout{gap:10px}.word-core .word{font-size:32px}.word-extra :deep(.practice-audio.wp-button){font-size:var(--wp-font-caption)}}
 .large-text .meaning,.scaled-text .meaning{font-size:var(--wp-font-section)}.large-text .word-core .word,.scaled-text .word-core .word{font-size:var(--wp-study-word-size)}
 .large-text .word-extra :deep(.practice-audio.wp-button),.scaled-text .word-extra :deep(.practice-audio.wp-button){height:104px;min-height:104px!important;white-space:normal;font-size:var(--wp-font-caption)}
