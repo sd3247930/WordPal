@@ -28,7 +28,7 @@ export class AudioPlaybackService {
  }
  private context(){
   if(this.backend)return this.backend
-  const audio=this.factory();audio.autoplay=false;audio.startTime=0
+  const audio=this.factory()
   // uni-app H5 discards HTMLMediaElement.play()'s promise. Rapid step changes
   // intentionally stop playback; consume its AbortError instead of leaking an
   // unhandled rejection. Native contexts do not expose this HTML audio handle.
@@ -37,20 +37,25 @@ export class AudioPlaybackService {
    const play=html.play.bind(html)
    html.play=()=>{const epoch=this.generation,promise=play();void promise?.catch(error=>{if(error?.name!=='AbortError'&&epoch===this.generation&&this.activeGeneration)this.fail('暂时无法播放，请检查声音设置或重试。')});return promise}
   }
-  // App exposes obeyMuteSwitch as a getter; supported mini programs allow a setter.
-  const muteProperty=Object.getOwnPropertyDescriptor(audio,'obeyMuteSwitch')
-  if(!muteProperty||muteProperty.set||muteProperty.writable)try{audio.obeyMuteSwitch=false}catch{}
-  try{audio.sessionCategory='playback'}catch{}
-  audio.onPlay(()=>{if(!this.activeGeneration||this.activeGeneration!==this.generation)return;this.isPlaying.value=true;this.loading.value=false;this.clearLoading();this.publish({state:'playing',waiting:false});this.readProgress();this.clearProgress();this.progressTimer=setInterval(()=>this.readProgress(),60);this.settle?.resolve();this.settle=undefined})
+  audio.onPlay(()=>{if(!this.activeGeneration||this.activeGeneration!==this.generation)return;this.error.value=null;this.isPlaying.value=true;this.loading.value=false;this.clearLoading();this.publish({state:'playing',waiting:false});this.readProgress();this.clearProgress();this.progressTimer=setInterval(()=>this.readProgress(),60);this.settle?.resolve();this.settle=undefined})
   audio.onStop(()=>{if(this.pendingStart){const start=this.pendingStart;this.pendingStart=undefined;clearTimeout(this.stopTimer);start()}else if(audio.paused!==false){this.isPlaying.value=false;this.loading.value=false;this.clearLoading();this.clearProgress();this.publish({state:'idle',positionMs:null,waiting:false})}})
   audio.onEnded(()=>{this.activeGeneration=0;this.isPlaying.value=false;this.loading.value=false;this.clearLoading();this.clearProgress();this.publish({state:'ended',positionMs:null,waiting:false});this.settle?.resolve();this.settle=undefined})
   audio.onPause(()=>{this.isPlaying.value=false;this.loading.value=false;this.clearLoading();this.clearProgress();this.publish({state:'paused',waiting:false})})
-  audio.onError(()=>this.fail('暂时无法播放，请检查声音设置或重试。'))
+  audio.onError(()=>{if(this.activeGeneration&&this.activeGeneration===this.generation)this.fail('暂时无法播放，请检查声音设置或重试。')})
   audio.onWaiting?.(()=>{this.publish({waiting:true});this.loadingTimer=setTimeout(()=>this.loading.value=true,300)})
   audio.onTimeUpdate?.(()=>{if(this.activeGeneration&&this.activeGeneration===this.generation){this.publish({waiting:false});this.readProgress()}})
   audio.onCanplay?.(()=>this.readProgress())
   this.backend=audio
   return audio
+ }
+ private configure(audio:AudioBackend){
+  // App setters flush native state immediately. Bind a valid src first, so
+  // first-use settings never prepare an empty resource and report MediaError.
+  audio.autoplay=false
+  // App exposes obeyMuteSwitch as a getter; supported mini programs allow a setter.
+  const muteProperty=Object.getOwnPropertyDescriptor(audio,'obeyMuteSwitch')
+  if(!muteProperty||muteProperty.set||muteProperty.writable)try{audio.obeyMuteSwitch=false}catch{}
+  try{audio.sessionCategory='playback'}catch{}
  }
  private clearLoading(){clearTimeout(this.loadingTimer);clearTimeout(this.timeout)}
  private fail(message:string){this.activeGeneration=0;this.clearLoading();this.clearProgress();this.pendingStart=undefined;clearTimeout(this.stopTimer);this.isPlaying.value=false;this.loading.value=false;this.error.value=new Error(message);this.publish({state:'error',positionMs:null,waiting:false});this.settle?.reject(this.error.value);this.settle=undefined}
@@ -63,7 +68,7 @@ export class AudioPlaybackService {
     if(epoch!==this.generation){resolve();return}
     try{
      const fresh=!this.backend,audio=this.context()
-     const start=()=>{if(epoch!==this.generation)return;this.pendingStart=undefined;this.activeGeneration=epoch;const same=audio.src===url;audio.src=url;audio.startTime=0;if(same)try{audio.seek(0)}catch{}this.isPlaying.value=false;this.loading.value=false;this.loadingTimer=setTimeout(()=>{if(epoch===this.generation)this.loading.value=true},300);this.timeout=setTimeout(()=>{if(epoch===this.generation)this.fail('播放未能开始，请重试。')},8000);audio.play()}
+     const start=()=>{if(epoch!==this.generation)return;this.pendingStart=undefined;this.activeGeneration=epoch;const same=audio.src===url;audio.src=url;if(fresh)this.configure(audio);audio.startTime=0;if(this.activeGeneration!==epoch)return;if(same)try{audio.seek(0)}catch{}this.isPlaying.value=false;this.loading.value=false;this.loadingTimer=setTimeout(()=>{if(epoch===this.generation)this.loading.value=true},300);this.timeout=setTimeout(()=>{if(epoch===this.generation)this.fail('播放未能开始，请重试。')},8000);audio.play()}
      // A fresh native context has no previous resource to stop.
      if(fresh){start();return}
      this.pendingStart=start;audio.stop()
@@ -76,7 +81,7 @@ export class AudioPlaybackService {
   })
  }
  replay(){return this.currentUrl.value?this.play(this.currentUrl.value):Promise.reject(new Error('还没有选择音频。'))}
- stop(){this.generation++;this.activeGeneration=0;clearTimeout(this.trailing);clearTimeout(this.stopTimer);this.pendingStart=undefined;this.clearLoading();this.clearProgress();this.settle?.resolve();this.settle=undefined;this.isPlaying.value=false;this.loading.value=false;this.publish({requestId:this.generation,state:'idle',positionMs:null,waiting:false});this.backend?.stop()}
+ stop(){this.generation++;this.activeGeneration=0;clearTimeout(this.trailing);clearTimeout(this.stopTimer);this.pendingStart=undefined;this.clearLoading();this.clearProgress();this.settle?.resolve();this.settle=undefined;this.isPlaying.value=false;this.loading.value=false;this.error.value=null;this.publish({requestId:this.generation,state:'idle',positionMs:null,waiting:false});this.backend?.stop()}
  pause(){this.clearLoading();this.clearProgress();this.backend?.pause();this.isPlaying.value=false;this.loading.value=false;this.publish({state:'paused',waiting:false})}
  resume(){if(!this.backend||!this.currentUrl.value)return;try{this.backend.play()}catch{this.fail('继续播放失败，请重新播放。')}}
  destroy(){this.stop();this.backend?.destroy();this.backend=undefined;this.currentUrl.value=null}

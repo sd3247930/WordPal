@@ -2,7 +2,7 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import {AudioPlaybackService,type AudioBackend} from '../src/services/audio/AudioPlaybackService'
 class FakeAudio implements AudioBackend{
- src='';startTime=9;autoplay=true;obeyMuteSwitch=true;paused=true;plays:string[]=[];seeks:number[]=[];listeners=0;destroyed=false;stopDelay=0;silentStop=false;failNext=false;startDelay=0
+ src='';startTime=9;autoplay=true;obeyMuteSwitch=true;sessionCategory?:string;paused=true;plays:string[]=[];seeks:number[]=[];listeners=0;destroyed=false;stopDelay=0;silentStop=false;failNext=false;startDelay=0
  callbacks:Record<string,Function>={}
  onPlay(cb:()=>void){this.callbacks.play=cb;this.listeners++}onStop(cb:()=>void){this.callbacks.stop=cb;this.listeners++}onEnded(cb:()=>void){this.callbacks.ended=cb;this.listeners++}onPause(cb:()=>void){this.callbacks.pause=cb;this.listeners++}onError(cb:Function){this.callbacks.error=cb;this.listeners++}onWaiting(cb:()=>void){this.callbacks.wait=cb;this.listeners++}
  play(){this.plays.push(this.src);if(this.failNext){this.failNext=false;this.paused=true;this.callbacks.error({});return}this.paused=false;if(this.startDelay)setTimeout(()=>this.callbacks.play(),this.startDelay);else this.callbacks.play()}
@@ -10,6 +10,19 @@ class FakeAudio implements AudioBackend{
  pause(){this.paused=true;this.callbacks.pause()}seek(n:number){this.seeks.push(n)}destroy(){this.destroyed=true}end(){this.paused=true;this.callbacks.ended()}
 }
 const delay=(ms:number)=>new Promise(resolve=>setTimeout(resolve,ms))
+
+test('首次绑定有效音源后才设置原生参数，不把空音源初始化报错带入第一词',async()=>{
+ const audio=new FakeAudio();audio.startDelay=20;let unprepared=0
+ for(const key of ['autoplay','startTime','sessionCategory'] as const){let value=audio[key];Object.defineProperty(audio,key,{get:()=>value,set:next=>{value=next;if(!audio.src){unprepared++;queueMicrotask(()=>audio.callbacks.error?.({errCode:10003,errMsg:'empty source'}))}}})}
+ const service=new AudioPlaybackService(()=>audio)
+ try{await service.play('first.wav');await delay(30);assert.equal(unprepared,0);assert.equal(service.error.value,null);assert.equal(service.isPlaying.value,true);audio.end();await service.play('next.wav');assert.equal(service.error.value,null)}finally{service.destroy()}
+})
+
+test('停止及切换音源期间的原生错误不冒充当前播放失败，真实播放失败仍可重试',async()=>{
+ const audio=new FakeAudio(),stop=audio.stop.bind(audio),service=new AudioPlaybackService(()=>audio)
+ audio.stop=()=>{audio.callbacks.error?.({errCode:10003,errMsg:'stopped resource'});stop()}
+ try{await service.play('first.wav');service.stop();assert.equal(service.error.value,null);await service.play('next.wav');assert.equal(service.isPlaying.value,true);assert.equal(service.error.value,null);audio.failNext=true;await assert.rejects(service.play('bad.wav'));assert.ok(service.error.value);await service.replay();assert.equal(service.error.value,null)}finally{service.destroy()}
+})
 
 test('首次播放不停止尚未准备资源的原生上下文，结束后仍能重播与切词',async()=>{
  const audio=new FakeAudio(),stop=audio.stop.bind(audio);let unpreparedStops=0
