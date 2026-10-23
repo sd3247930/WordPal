@@ -4,7 +4,7 @@ import {freshDatabase} from '../../src/stores/profile'
 import {customCourse} from '../helpers/custom-course'
 import {CUSTOM_MODES,CUSTOM_MODE_NAMES} from '../../src/services/learning/CustomPractice'
 
-async function openConfig(page:Page){await page.getByRole('button',{name:'自定义练习 · 不计今日任务',exact:true}).first().click();await expect(page.locator('[data-custom-screen="config"]')).toBeVisible()}
+async function openConfig(page:Page){await page.getByRole('button',{name:'自定义练习，不计今日任务',exact:true}).first().click();await expect(page.locator('[data-custom-screen="config"]')).toBeVisible()}
 async function count(page:Page,value:string){await page.locator('.custom-count-input input').fill(value)}
 async function fakeAudio(page:Page){await page.addInitScript(()=>{
  const paused=new WeakMap<HTMLMediaElement,boolean>();(window as any).customAudioPlays=0
@@ -34,7 +34,7 @@ test('完整五模式用相同快照自动衔接，重复发音有效且正式�
  await fakeAudio(page);await go(page,'home');await page.locator('.hero-cta').click();const before=protectedFields(await database(page));await openConfig(page);await count(page,'1');await page.getByRole('button',{name:/^五项连续练习/}).click();await page.getByRole('button',{name:'查看连续训练总览',exact:true}).click();await expect(page.locator('[data-custom-screen="overview"]')).toBeVisible();await expect(page.locator('.custom-route-number').first()).toBeVisible();await waitForArtwork(page);await page.screenshot({path:test.info().outputPath('custom-overview-phone.png'),fullPage:true});const initial=(await database(page)).customPractice;await page.getByRole('button',{name:'开始连续训练',exact:true}).click()
  await waitForArtwork(page)
  for(const mode of CUSTOM_MODES){
-  await expect(page.locator('.custom-training-header')).toContainText(CUSTOM_MODE_NAMES[mode]);expect((await database(page)).customPractice.wordIds).toEqual(initial.wordIds)
+  await expect(page.locator('.study-session-heading')).toContainText(CUSTOM_MODE_NAMES[mode]);expect((await database(page)).customPractice.wordIds).toEqual(initial.wordIds)
   await waitForArtwork(page);await page.screenshot({path:test.info().outputPath(`custom-training-${mode}-phone.png`),fullPage:true})
   if(mode==='flash'){
    // Rapid clicks are deliberately coalesced by audio; verify each independent replay actually starts.

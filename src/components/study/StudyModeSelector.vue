@@ -1,5 +1,5 @@
 <template>
- <view class="study-mode-control">
+ <view class="study-mode-control" :class="{'compact-mode-control':compact}">
  <view class="study-mode-selector" role="group" aria-label="选择学习方式">
   <WPActionTile v-for="option in options" :key="option.id" toggle-highlight class="mode-button study-mode-tile" :class="{selected:selectedModes?selectedModes.includes(option.id):modelValue===option.id}" :data-mode="option.id" :selected="selectedModes?selectedModes.includes(option.id):modelValue===option.id" :disabled="disabled||option.disabled" :aria-label="option.name+'，'+option.description+(disabled?'，'+lockedReason:option.disabled?'，当前条件暂不可用':'')" @click="$emit('update:modelValue',option.id)" @cancel="$emit('clear',option.id)">
    <view class="study-mode-art" aria-hidden="true"><image v-if="!failed.has(option.id)" class="study-mode-image" :src="studyModeIcons[option.id].src" mode="aspectFit" @error="failed.add(option.id)"/><text v-else class="study-mode-fallback">{{studyModeIcons[option.id].fallback}}</text></view>
@@ -14,7 +14,7 @@ import {computed,ref} from 'vue'
 import type {LearningMode} from '../../../packages/core_learning'
 import WPActionTile from '../button/WPActionTile.vue'
 import {studyModeIcons} from '../../services/study-mode-icons'
-const props=withDefaults(defineProps<{modelValue?:LearningMode;selectedModes?:readonly LearningMode[];options:readonly {id:LearningMode;name:string;description:string;disabled?:boolean}[];disabled?:boolean;lockedReason?:string}>(),{disabled:false,lockedReason:'进入下一词后可切换'})
+const props=withDefaults(defineProps<{compact?:boolean;modelValue?:LearningMode;selectedModes?:readonly LearningMode[];options:readonly {id:LearningMode;name:string;description:string;disabled?:boolean}[];disabled?:boolean;lockedReason?:string}>(),{disabled:false,lockedReason:'进入下一词后可切换'})
 defineEmits<{'update:modelValue':[value:LearningMode];clear:[value:LearningMode]}>()
 const failed=ref(new Set<LearningMode>())
 const unavailableNames=computed(()=>props.options.filter(option=>option.disabled).map(option=>option.name).join('、'))
@@ -35,4 +35,7 @@ const unavailableNames=computed(()=>props.options.filter(option=>option.disabled
 .wp-app.high-contrast .study-space .study-mode-tile:not(.selected){border-color:var(--wp-border)}
 .wp-app.reduce-motion .study-space .study-mode-tile{transition:none;transform:none}
 @media(prefers-reduced-motion:reduce){.wp-app .study-space .study-mode-tile{transition:none}.wp-app .study-space .study-mode-tile:not([disabled]):active{transform:none}}
+.wp-app .study-space .compact-mode-control .study-mode-selector{--study-mode-art-size:26px;padding:4px;box-shadow:none}
+.wp-app .study-space .compact-mode-control .study-mode-tile{min-height:64px;gap:2px;padding:4px 0}
+.compact-mode-control .study-mode-title{font-size:var(--wp-font-small);line-height:1.3}
 </style>

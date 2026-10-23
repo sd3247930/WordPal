@@ -1,6 +1,6 @@
 <template>
- <view class="letter-block-input" :class="{answered:disabled,'blocks-correct':correct===true,'blocks-incorrect':correct===false}" :data-block-mode="inputMode">
-  <view class="block-input-heading"><text class="strong">{{mode==='dictation'?'听一听，用字母写下来':'看中文，用字母拼出来'}}</text><text v-if="inputMode==='tiles'" class="block-aid-label">字母积木辅助</text></view>
+ <view class="letter-block-input" :class="{answered:disabled,'blocks-correct':correct===true,'blocks-incorrect':correct===false,'compact-blocks':compact}" :data-block-mode="inputMode">
+  <view class="block-input-heading"><text class="strong">{{mode==='dictation'?'听音写词':'看中文，拼单词'}}</text><text v-if="inputMode==='tiles'" class="block-aid-label">字母积木辅助</text></view>
   <template v-if="inputMode==='tiles'&&challenge.supported">
    <view class="block-groups" role="group" aria-label="分组字母槽位">
     <view v-for="group in groups" :key="group.id" class="block-word-group" :class="{'hyphen-group':group.hyphen}">
@@ -12,7 +12,7 @@
    <view class="letter-bank" :class="{'short-bank':visibleTiles.length<=6}" role="group" aria-label="可选择的字母积木"><WPButton v-for="(tile,index) in visibleTiles" :key="tile.id" kind="secondary" class="letter-tile" :class="'tile-color-'+index%6" :data-tile-id="tile.id" :data-letter="tile.char" :disabled="disabled||draft.assignments.includes(tile.id)" :label="'选择字母 '+tile.char+'，第 '+(challenge.tiles.indexOf(tile)+1)+' 块'" @click="add(tile.id)">{{tile.char}}</WPButton></view>
    <text v-if="challenge.tiles.length>24" class="small muted block">长短语分组拼装，当前字母池对应第 {{activeGroup+1}} 组。</text>
    <view class="block-edit-tools"><WPButton kind="quiet" :disabled="disabled||!draft.history.length" @click="undo">退一格</WPButton><WPButton kind="quiet" :disabled="disabled||!draft.assignments.some(Boolean)" @click="clear">重新拼</WPButton><WPButton kind="quiet" :disabled="disabled" @click="switchInput('keyboard')">键盘输入</WPButton></view>
-   <text class="block-help">空格与标点会自动处理，点已填字母可以退回。</text>
+   <text v-if="!compact||challenge.units.some(unit=>unit.kind!=='letter')" class="block-help">空格与标点会自动处理，点已填字母可以退回。</text>
    <text v-if="conversionNotice" class="notice" role="status">{{conversionNotice}}</text>
   </template>
   <template v-else>
@@ -27,7 +27,7 @@ import {computed,getCurrentInstance,ref,watch} from 'vue'
 import {normalizeSpellingWord,makeBlockDraft,validBlockDraft,placeLetter,removeLetter,composeBlockAnswer,blocksComplete,type LetterBlockDraft,type SpellingInputChange} from '../../../packages/phonics/letter-blocks'
 import WordSlotInput from './WordSlotInput.vue'
 import WPButton from '../wp-button/WPButton.vue'
-const props=withDefaults(defineProps<{word:{id:string;word:string};modelValue:string;mode:string;questionKey:string;letterDraft?:LetterBlockDraft;defaultTiles?:boolean;disabled?:boolean;correct?:boolean}>(),{defaultTiles:false,disabled:false,correct:undefined})
+const props=withDefaults(defineProps<{word:{id:string;word:string};modelValue:string;mode:string;questionKey:string;letterDraft?:LetterBlockDraft;compact?:boolean;defaultTiles?:boolean;disabled?:boolean;correct?:boolean}>(),{defaultTiles:false,disabled:false,correct:undefined})
 const emit=defineEmits<{(event:'change',value:SpellingInputChange):void;(event:'ready',value:boolean):void;(event:'confirm'):void}>()
 const challenge=computed(()=>normalizeSpellingWord(props.word.word,props.questionKey)),local=ref<LetterBlockDraft>(),conversionNotice=ref(''),uid=getCurrentInstance()!.uid
 const draft=computed(()=>local.value||makeBlockDraft(challenge.value,props.word.id,props.questionKey,props.modelValue,props.defaultTiles?'tiles':'keyboard'))
@@ -75,4 +75,13 @@ watch(()=>[inputMode.value,props.modelValue,draft.value,props.disabled],()=>emit
 .theme-clay .tile-color-0{background:linear-gradient(145deg,#ffe8ef,#f5aac5);color:#633441}.theme-clay .tile-color-1{background:linear-gradient(145deg,#fff6c9,#f5d56c);color:#61471d}.theme-clay .tile-color-2{background:linear-gradient(145deg,#def5ff,#93d2ef);color:#27465c}.theme-clay .tile-color-3{background:linear-gradient(145deg,#e3f7d8,#a5d991);color:#315137}.theme-clay .tile-color-4{background:linear-gradient(145deg,#f3e6ff,#c7a4e9);color:#50345f}.theme-clay .tile-color-5{background:linear-gradient(145deg,#ffe8d9,#f5b38c);color:#633c2c}
 @media(prefers-reduced-motion:no-preference){.wp-app:not(.reduce-motion) .block-slot.filled{animation:block-place 180ms ease-out}@keyframes block-place{from{transform:translateY(3px) scale(.96)}to{transform:translateY(0) scale(1)}}}
 @media(max-width:359px){.letter-bank{gap:8px;padding:12px 8px}.block-groups{gap:14px}.block-slot.wp-button{min-height:54px}.block-input-heading{gap:6px}}
+.compact-blocks.letter-block-input{margin-top:0}
+.compact-blocks .block-input-heading{margin-bottom:6px;gap:4px 8px}.compact-blocks .block-aid-label{padding:1px 6px}
+.compact-blocks .block-groups{gap:6px 12px;margin-bottom:6px}.compact-blocks .block-slot.wp-button{min-height:52px}
+.compact-blocks .letter-bank{gap:6px;padding:8px 6px;border-radius:var(--wp-radius)}.compact-blocks .letter-tile.wp-button{min-height:52px}
+.compact-blocks .letter-bank.short-bank{grid-template-columns:repeat(6,minmax(48px,1fr));gap:4px;padding:6px 4px}
+@container(max-width:317px){.compact-blocks .letter-bank.short-bank{grid-template-columns:repeat(3,minmax(48px,1fr))}}
+.compact-blocks .block-edit-tools{margin-top:6px;gap:4px}.compact-blocks .block-edit-tools>.wp-button{flex:1;padding:6px!important;min-height:48px;white-space:normal}
+.compact-blocks .block-help{margin-top:4px;font-size:var(--wp-font-caption);line-height:1.4;text-align:left}
+.compact-blocks :deep(.word-slot-input){margin-top:0}.compact-blocks :deep(.slot-help){margin-top:4px;font-size:var(--wp-font-caption)}
 </style>

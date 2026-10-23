@@ -25,20 +25,45 @@
 .study-typing .study-modes{margin-top:12px}
 .wp-app.theme-clay .study-space .wp-word-card.easy-practice-card{background:transparent;box-shadow:none}
 
-.block-practice-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}.block-practice-heading>view{min-width:0;flex:1}.block-practice-heading>.wp-button{min-height:48px;flex-shrink:0;font-size:var(--wp-font-small);padding:8px 10px}.block-practice-heading .page-title{font-size:var(--wp-font-title);font-weight:750;line-height:1.4}.block-practice-heading .page-subtitle{display:block;font-size:var(--wp-font-body);line-height:1.6;margin-top:6px}
-.study-space.learn-workspace.study-focus-workspace{max-width:1360px}.study-focus-workspace .practice-round-card{padding:16px 18px;margin-bottom:18px;border:1px solid var(--wp-border);border-radius:24px;background:var(--wp-surface);box-shadow:var(--wp-elevation)}.study-focus-workspace .practice-round-card .session-header{margin-bottom:10px}.study-focus-workspace .study-word-position{margin-bottom:10px}
-@media(max-width:479px){.block-practice-heading{flex-wrap:wrap}.block-practice-heading>view{min-width:200px}.block-practice-heading>.wp-button{margin-left:auto}.study-focus-workspace .practice-round-card{padding:14px}}
-
-/* Stable question geometry shared by both themes and all five modes. */
-.block-practice-heading{display:block;margin-bottom:8px;padding:0}.compact-round-title{display:flex;align-items:center;gap:10px;min-height:48px}.compact-round-title .page-title{font-size:var(--wp-font-section);line-height:1.3}.compact-round-title>.small{margin-left:auto;white-space:nowrap}.compact-round-title>.wp-button{min-height:48px;padding:0 10px;font-size:var(--wp-font-caption);margin:0}.block-practice-heading .study-word-position{font-size:var(--wp-font-caption);line-height:1.4;margin:2px 0 5px}
-.study-focus-workspace{overflow-anchor:none}.study-focus-workspace .study-main{gap:10px}.study-focus-workspace .daily-step-list{display:flex;gap:5px;margin-bottom:0;overflow-x:auto;flex-wrap:nowrap}.study-focus-workspace .daily-step{flex:1;min-width:0;padding:4px;font-size:var(--wp-font-caption);line-height:1.3;gap:2px;flex-direction:column;text-align:center;white-space:nowrap}.study-focus-workspace .daily-step.active{outline-offset:-1px}
-.study-space .study-choice-options,.compact-custom-main .study-choice-options{display:flex;flex-direction:column;gap:12px}.study-choice-options>.answer-choice{width:100%;min-width:0;min-height:48px!important;box-sizing:border-box;padding:8px 12px!important;margin:0;font-weight:600!important;border-width:1px;justify-content:flex-start;line-height:1.35}.study-choice-options.choice-locked{pointer-events:none}.study-choice-options.choice-locked>.answer-choice[disabled]{opacity:1}.study-choice-options>.answer-choice.selected{border-width:1px}
-.study-focus-workspace .answer-panel{gap:10px}.study-focus-workspace .answer-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;min-height:64px}.study-focus-workspace .answer-actions>.wp-button{width:100%;min-height:48px;padding:8px!important}.study-focus-workspace .answer-actions>.recall-action,.study-focus-workspace .answer-actions>.rating-grid{grid-column:1/-1;min-height:64px}.study-focus-workspace .recall-action{display:flex}.study-focus-workspace .recall-action>.wp-button{width:100%;min-height:64px}.study-focus-workspace .rating-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.study-focus-workspace .rating-grid>.wp-button{min-height:64px;padding:6px!important}
-.study-focus-workspace .answer-feedback{padding:10px 12px;gap:8px;min-height:108px;box-sizing:border-box;overflow-anchor:none}.study-focus-workspace .answer-feedback>.strong{font-size:var(--wp-font-body)}.study-focus-workspace .answer-feedback>.wp-button{min-height:48px}.study-focus-workspace .study-hint{margin:0}.study-focus-workspace .letter-block-input,.compact-custom-main .letter-block-input{margin-top:2px}.study-focus-workspace .letter-block-input .block-input-heading,.compact-custom-main .letter-block-input .block-input-heading{margin-bottom:10px}.study-focus-workspace .letter-block-input .block-groups,.compact-custom-main .letter-block-input .block-groups{margin-bottom:12px}
-.compact-custom-main .choice-grid{margin-top:12px}.compact-custom-main .answer-actions{margin-top:10px}.compact-match-grid{display:flex;flex-direction:column;gap:10px}.compact-match-queue{display:flex;flex-direction:row;gap:6px;flex-wrap:wrap}.compact-match-queue .custom-match-word{min-height:0;padding:4px 7px;flex:0 1 auto;font-size:var(--wp-font-caption);gap:0}.compact-match-queue .custom-match-word>.small{display:none}.compact-match-queue .custom-match-word:not(.current){opacity:.65}.compact-custom-main .custom-match{margin-top:12px}
-.wp-app .study-space.study-focus-workspace .study-choice-options,.wp-app .custom-training-main.compact-custom-main .study-choice-options{gap:12px}
-.compact-round-title{flex-wrap:wrap}.compact-round-title>.wp-button{min-width:0;max-width:100%;white-space:normal}
-
-.block-practice-heading{max-width:760px;margin-inline:auto}.wp-app .study-space.study-focus-workspace>.study-main,.wp-app .study-space.study-focus-workspace>.study-modes,.wp-app .study-space.study-focus-workspace>.study-context{max-width:760px;margin-inline:auto}.study-space.study-focus-workspace.has-study-context{grid-template-columns:minmax(0,1fr);grid-template-areas:"main" "modes" "context"}
-
+/* One question shell: compact spacing, full-size touch targets, natural overflow. */
+.study-space.learn-workspace.study-focus-workspace{max-width:1360px;gap:8px;overflow-anchor:none}
+.study-focus-workspace .study-main{gap:8px}
+.study-focus-workspace .daily-step-list{display:flex;gap:5px;margin:0;overflow-x:auto;flex-wrap:nowrap}
+.study-focus-workspace .daily-step{flex:1;min-width:0;padding:4px;font-size:var(--wp-font-caption);line-height:1.3;gap:2px;flex-direction:column;text-align:center;white-space:nowrap}
+.study-focus-workspace .daily-step.active{outline-offset:-1px}
+.wp-app .study-space .study-choice-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;min-width:0}
+.wp-app .study-space .study-choice-options.long-choices,.wp-app.large-text .study-space .study-choice-options,.wp-app.scaled-text .study-space .study-choice-options{grid-template-columns:minmax(0,1fr)}
+.study-choice-options>.answer-choice{width:100%;min-width:0;min-height:48px!important;box-sizing:border-box;padding:8px 10px!important;margin:0;font-weight:600!important;border-width:1px;justify-content:flex-start;line-height:1.4;white-space:normal;overflow-wrap:anywhere}
+.study-choice-options.choice-locked{pointer-events:none}.study-choice-options.choice-locked>.answer-choice[disabled]{opacity:1}
+.study-choice-options>.answer-choice.selected{border-width:1px;outline:2px solid var(--wp-primary);outline-offset:-3px}
+.choice-index{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border-radius:var(--wp-radius-chip);background:var(--wp-surface-tonal);flex-shrink:0}
+.study-focus-workspace .answer-panel{gap:8px}
+.study-focus-workspace .answer-actions{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.study-focus-workspace .answer-actions>.wp-button{width:100%;min-height:48px;padding:6px!important;white-space:normal;font-size:var(--wp-font-small)}
+.study-focus-workspace .answer-actions>.recall-action,.study-focus-workspace .answer-actions>.rating-grid{grid-column:1/-1;min-height:48px}
+.study-focus-workspace .recall-action{display:flex}.study-focus-workspace .recall-action>.wp-button{width:100%;min-height:48px}
+.study-focus-workspace .rating-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.study-focus-workspace .rating-grid>.wp-button{min-height:48px;padding:6px!important;white-space:normal}
+.study-focus-workspace .answer-feedback{padding:10px 12px;gap:8px;min-height:108px;box-sizing:border-box;overflow-anchor:none}
+.study-focus-workspace .answer-feedback>.strong{font-size:var(--wp-font-body)}.study-focus-workspace .answer-feedback>.wp-button{min-height:48px}
+.study-focus-workspace .study-hint{margin:0}
+.wp-app .study-space>.study-modes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;align-items:start}
+.study-space>.study-modes>.wp-button{margin:0;min-height:48px;padding:6px 8px;font-size:var(--wp-font-small);white-space:normal;align-self:stretch;width:100%}
+.study-space .study-modes>.custom-practice{grid-column:1/-1;padding:8px;gap:6px;background:var(--wp-surface);box-sizing:border-box}
+.study-space .compact-mode-settings .auto-mode-button{min-height:48px;padding:6px 10px;font-size:var(--wp-font-small);width:auto;align-self:flex-start;margin:0}
+.study-space .compact-mode-settings>.study-practice-return{min-height:48px;padding:6px 10px;font-size:var(--wp-font-small);width:auto;align-self:flex-end}
+.wp-app .study-space.study-focus-workspace>.study-main,.wp-app .study-space.study-focus-workspace>.study-modes,.wp-app .study-space.study-focus-workspace>.study-context{max-width:760px;margin-inline:auto}
+.study-space.study-focus-workspace.has-study-context{grid-template-columns:minmax(0,1fr);grid-template-areas:"main" "modes" "context"}
+.compact-custom-main .choice-grid,.compact-custom-main .custom-match{margin-top:8px}
+.compact-custom-main .answer-actions{margin-top:8px}
+.compact-match-grid{display:flex;flex-direction:column;gap:6px}
+.compact-match-queue{display:flex;flex-direction:row;gap:6px;flex-wrap:wrap}
+.compact-match-queue .custom-match-word{min-height:0;padding:3px 6px;flex:0 1 auto;font-size:var(--wp-font-caption);gap:0}
+.compact-match-queue .custom-match-word>.small{display:none}.compact-match-queue .custom-match-word:not(.current){opacity:.65}
+.custom-training-focus .custom-training-layout{gap:8px;max-width:760px;margin:auto;display:flex;flex-direction:column}
+.custom-training-focus .compact-custom-main{width:100%;max-width:760px}
+.custom-training-focus .custom-training-layout>.custom-route{margin:0;order:1}
 .wp-app.large-text .study-choice-options>.answer-choice{min-height:56px!important}
+.study-heading>.study-practice-entry-button{margin-left:auto;min-height:48px;font-size:var(--wp-font-small)}
+.wp-app:has(.study-focus-workspace) .app-footer{display:none}
+.wp-app:has(.study-focus-workspace) .main-content{padding-top:12px;padding-bottom:calc(var(--wp-bottom-nav-space,0px) + env(safe-area-inset-bottom,0px) + 20px)}

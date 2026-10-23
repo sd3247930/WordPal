@@ -27,7 +27,7 @@ export async function openCustomPractice(page:Page){
  if(!await current.count()&&!await toggle.count()){const begin=page.getByRole('button',{name:'开始今日学习',exact:true});if(await begin.count())await begin.click()}
  if(await current.count()){await current.click();return}
  if(await toggle.count()){if(await toggle.getAttribute('aria-expanded')!=='true')await toggle.click();return}
- await page.getByRole('button',{name:'自定义练习 · 不计今日任务',exact:true}).first().click()
+ await page.getByRole('button',{name:'自定义练习，不计今日任务',exact:true}).first().click()
 }
 export async function openExploration(page:Page){const button=page.getByRole('button',{name:'展开自然拼读与例句',exact:true});if(await button.count())await button.click()}
 /** Required navigation actions may already be selected after returning to the pet page. */

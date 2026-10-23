@@ -40,7 +40,7 @@ test('手机完整六环节自动衔接、答案隐藏、首页四项统一5/5�
 test('20词连接持续覆盖全部词，拼写错三次后答对只完成一个，刷新恢复草稿',async({page})=>{
  test.setTimeout(90000)
  await seed(page,5,'connect');await go(page,'learn');const ids=(await database(page)).courseProgress.starter.dailyPlan.wordIds
- for(let i=0;i<20;i++){await expect(page.locator('.study-word-position')).toHaveText(`教材词序：第 ${i+1} / 20 词`);await answer(page)}
+ for(let i=0;i<20;i++){await expect(page.locator('.study-word-position')).toHaveText(`教材第 ${i+1} / 20 词`);await answer(page)}
  expect((await database(page)).courseProgress.starter.dailyPlan.flow.completed.connect).toEqual(ids)
  for(let i=0;i<20;i++)await answer(page)
  for(let i=0;i<3;i++){await page.locator('.spelling-input input').fill('wrong');await page.getByRole('button',{name:'确认答案 →',exact:true}).click();await page.getByRole('button',{name:'再试一次 →',exact:true}).click()}

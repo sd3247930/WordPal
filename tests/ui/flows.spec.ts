@@ -30,9 +30,9 @@ test('独立错题保留练习证据，提示不产生负灵石或正式学习�
  await go(page,'home');await page.locator('.hero-cta').click()
  for(let i=0;i<5;i++){
   await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'拼写'}).click();await page.locator('.spelling-input input').fill('wrong')
-  await page.locator('.answer-actions [role=button]').filter({hasText:'查看提示'}).click()
+  await page.locator('.answer-actions [role=button]').filter({hasText:/提示/}).click()
   await page.locator('.answer-actions [role=button]').filter({hasText:'确认答案'}).click();await expect(page.locator('.answer-feedback')).toContainText('一起再认识它')
-  await page.locator('.answer-feedback [role=button]').click()
+  await page.locator('.answer-feedback [role=button]').last().click()
  }
   const db=await database(page);expect(db.gems).toBe(0);expect(db.lessonIndex).toBe(0);expect(db.lastLessonAccuracy).toBeNull();expect(db.history).toHaveLength(0);expect(db.practiceAnswers.filter((a:any)=>!a.correct)).toHaveLength(5)
  await go(page,'review');await page.locator('.mode-button').filter({hasText:'错词本'}).click();await expect(page.locator('.review-row')).toHaveCount(0)
