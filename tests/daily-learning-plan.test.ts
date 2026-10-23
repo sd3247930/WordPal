@@ -7,7 +7,7 @@ import {useCourseStore} from '../src/stores/course'
 import {useStudyPresentation} from '../src/stores/study-presentation'
 import {loadCourseRegistry,courseRegistry} from '../src/services/content/ContentRegistry'
 import {installTextCourse} from '../src/services/content/StorageRepository'
-import {STUDY_STEPS,completedPrefix,selectDailyPlan,fullCourseWords} from '../src/services/learning/DailyLearningPlan'
+import {STUDY_STEPS,completedPrefix,selectDailyPlan,continueDailyPlan,fullCourseWords} from '../src/services/learning/DailyLearningPlan'
 import {orderedCourseWords} from '../src/services/learning/CourseStudySequence'
 import {validateDatabase} from '../src/services/storage/MigrationV1toV2'
 import {migrateParentSettings,readParentSettings,type EntryLevel} from '../packages/parent_settings'
@@ -94,4 +94,44 @@ test('课程外部删除只移除本册计划，内容改版缺词时保留旧�
 
 test('七词末批四组与六环节一致且全书100%，新日保留前日任务完成归档',async context=>{
  context.mock.timers.enable({apis:['Date'],now:new Date('2040-01-01T12:00:00Z')});const {profile,learning,course}=reset(5);await installTextCourse(synthetic('tail-seven',27));course.choose('tail-seven');learning.start();finishDaily(learning);const previous=JSON.parse(JSON.stringify(learning.session));context.mock.timers.tick(86400000);learning.start();assert.equal(learning.session!.wordIds.length,7);assert(learning.tasks.every(task=>task.total===7));assert.equal(profile.db.courseProgress!['tail-seven'].completedDailyPlans![0].id,previous.id);finishDaily(learning);assert.equal(learning.textbookProgress.percent,100)
+})
+
+for(const [level,count] of [[1,5],[2,5],[3,10],[4,15],[5,20]] as const)test(`L${level} 主动继续下一批仍固定${count}词，六环节同序且不重复结算`,async()=>{
+ const {profile,learning,course}=reset(level),pack=synthetic('extra-batch',47);await installTextCourse(pack);course.choose(pack.courseId)
+ assert.equal(learning.continueLearning(),false);learning.start();assert.equal(learning.continueLearning(),false);finishDaily(learning)
+ const first=JSON.parse(JSON.stringify(learning.session)),before={history:profile.db.history.length,gems:profile.db.gems,pets:JSON.stringify(profile.db.pets)}
+ assert(learning.canContinue);assert(learning.continueLearning());const next=learning.session!
+ assert.notEqual(next.id,first.id);assert.equal(next.date,first.date);assert.equal(next.flow!.step,'flash');assert.equal(next.index,0)
+ assert.deepEqual(next.wordIds,orderedCourseWords(pack).slice(count,count*2));assert.equal(next.wordIds.length,count);assert.deepEqual(learning.todayTaskWordIds,next.wordIds)
+ assert.equal(profile.db.history.length,before.history);assert.equal(profile.db.gems,before.gems);assert.equal(JSON.stringify(profile.db.pets),before.pets)
+ assert.deepEqual(profile.db.courseProgress![pack.courseId].completedDailyPlans![0].completed,first.flow.completed)
+ const unchanged=JSON.stringify(profile.db);assert.equal(learning.continueLearning(),false);assert.equal(JSON.stringify(profile.db),unchanged)
+ for(const step of STUDY_STEPS){assert.equal(learning.session!.flow!.step,step);assert.deepEqual(learning.session!.wordIds,next.wordIds);for(const id of next.wordIds){assert.equal(learning.current!.id,id);answerDailyWord(learning)}}
+ assert.equal(learning.newToday,count*2);assert.equal(learning.todayTaskWordIds.length,count);assert.equal(profile.db.history.length,count*2);assert.equal(new Set(profile.db.history.map(answer=>answer.id)).size,count*2);assert.equal(learning.textbookProgress.prefix,count*2);assert(validateDatabase(profile.db))
+})
+
+test('提前开始第二批，半词输入重启与跨午夜原位恢复；完成后明日从第三批按词序顺延',async context=>{
+ context.mock.timers.enable({apis:['Date'],now:new Date('2040-01-01T12:00:00Z')});let {profile,learning,course}=reset(1)
+ const pack=synthetic('resume-extra',27);await installTextCourse(pack);course.choose(pack.courseId);learning.start();finishDaily(learning);assert(learning.continueLearning())
+ for(let i=0;i<15;i++)answerDailyWord(learning);assert.equal(learning.session!.flow!.step,'spell');learning.patch({input:'wor'})
+ const saved=JSON.stringify(learning.session),ids=learning.session!.wordIds;context.mock.timers.tick(86400000)
+ setActivePinia(createPinia());learning=useLearningStore();profile=useProfileStore();course=useCourseStore();learning.refreshDay();assert.equal(JSON.stringify(learning.session),saved);assert.deepEqual(learning.todayPlan!.wordIds,ids)
+ finishDaily(learning);assert.equal(learning.newToday,5);assert.equal(learning.textbookProgress.prefix,10);assert.equal(learning.todayTaskWordIds.length,5)
+ context.mock.timers.tick(86400000);assert(learning.start());assert.deepEqual(learning.session!.wordIds,orderedCourseWords(pack).slice(10,15));assert.equal(learning.currentPosition!.index,11);assert.equal(profile.db.courseProgress![pack.courseId].completedDailyPlans!.length,2);assert(validateDatabase(profile.db))
+})
+
+test('继续学习写入失败保留成果与游标，旧批次重复请求无效；多批末尾不足目标后停止',async context=>{
+ context.mock.timers.enable({apis:['Date'],now:new Date('2040-01-01T12:00:00Z')});const {profile,learning,course}=reset(5),pack=synthetic('extra-tail',47);await installTextCourse(pack);course.choose(pack.courseId);learning.start();finishDaily(learning)
+ const oldId=learning.session!.id,before=JSON.stringify(profile.db);fail=true;assert.equal(learning.continueLearning(),false);assert.equal(JSON.stringify(profile.db),before);fail=false
+ assert(learning.continueLearning());finishDaily(learning);const ready=JSON.stringify(profile.db);assert.equal(continueDailyPlan(profile.db,pack,oldId),null);assert.equal(JSON.stringify(profile.db),ready)
+ assert(learning.continueLearning());assert.equal(learning.session!.wordIds.length,7);assert.deepEqual(learning.session!.wordIds,orderedCourseWords(pack).slice(40));assert(learning.tasks.every(task=>task.total===7));finishDaily(learning)
+ const progress=profile.db.courseProgress![pack.courseId];assert.equal(progress.completedDailyPlans!.length,2);assert.equal(new Set([...progress.completedDailyPlans!.map(plan=>plan.id),progress.dailyPlan!.id]).size,3);assert.equal(learning.textbookProgress.percent,100);assert.equal(learning.canContinue,false)
+ const done=JSON.stringify(profile.db);assert.equal(learning.continueLearning(),false);assert.equal(JSON.stringify(profile.db),done);context.mock.timers.tick(86400000);learning.refreshDay();assert.equal(learning.todayPlan,null);assert.equal(learning.start(),false);assert(validateDatabase(profile.db))
+})
+
+test('新等级在下一批生效，当前词单不变；独立练习与其他教材进度不被继续学习覆盖',async()=>{
+ const {profile,learning,course}=reset(1),a=synthetic('extra-a'),b=synthetic('extra-b');await installTextCourse(a);await installTextCourse(b)
+ course.choose(b.courseId);learning.start();answerDailyWord(learning);const other=JSON.stringify(course.progress)
+ course.choose(a.courseId);learning.start();const first=[...learning.session!.wordIds];profile.transact(d=>{d.abilityLevel='L4'});assert.deepEqual(learning.todayTaskWordIds,first);finishDaily(learning)
+ assert(learning.startPractice());const independent=JSON.stringify(profile.db.session);assert(learning.continueLearning());assert.equal(learning.isDaily,true);assert.equal(learning.session!.wordIds.length,15);assert.deepEqual(learning.session!.wordIds,orderedCourseWords(a).slice(5,20));assert.equal(JSON.stringify(profile.db.session),independent);assert.equal(JSON.stringify(profile.db.courseProgress![b.courseId]),other)
 })

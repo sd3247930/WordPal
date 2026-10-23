@@ -20,24 +20,37 @@ export function fullCourseWords(db:Database,pack:CoursePack){
  return result
 }
 export function completedPrefix(db:Database,pack:CoursePack){const ids=orderedCourseWords(pack),done=fullCourseWords(db,pack);const first=ids.findIndex(id=>!(id in done));return first<0?ids.length:first}
+function createDailyPlan(db:Database,pack:CoursePack,now:Date,extraBatch=false):LearningSession|null{
+ if(isUserDeleted(pack.courseId))return null
+ const date=localDate(now),prefix=completedPrefix(db,pack),level=entryLevel(db.abilityLevel),target=LEVEL_WORD_COUNTS[level],ids=orderedCourseWords(pack).slice(prefix,prefix+target)
+ if(!ids.length)return null
+ return {id:`daily:${pack.courseId}:${date}${extraBatch?`:from-${prefix}`:''}`,courseId:pack.courseId,contentVersion:pack.contentVersion,date,startedAt:now.toISOString(),kind:'new_word',wordIds:ids,sequenceWordIds:ids,index:0,mode:'flash',input:'',selected:'',revealed:false,answers:[],intent:'course',plannerConfig:{entryLevel:level,dailyNewWordLimit:target},flow:{schemaVersion:1,step:'flash',entryLevel:level,target,completed:{flash:[],connect:[],listen:[],spell:[],dictation:[],consolidate:[]},attempts:[]}} satisfies LearningSession
+}
 export function selectDailyPlan(db:Database,pack:CoursePack,now=new Date()){
  if(isUserDeleted(pack.courseId))return null
  const old=db.courseProgress?.[pack.courseId]?.dailyPlan,date=localDate(now)
  if(old?.flow&&(!old.completedAt||old.date>=date||(old.flow.finishedDate||old.date)>=date))return old
- const level=entryLevel(db.abilityLevel),target=LEVEL_WORD_COUNTS[level],ids=orderedCourseWords(pack).slice(completedPrefix(db,pack),completedPrefix(db,pack)+target)
- if(!ids.length)return null
- return {id:`daily:${pack.courseId}:${date}`,courseId:pack.courseId,contentVersion:pack.contentVersion,date,startedAt:now.toISOString(),kind:'new_word',wordIds:ids,sequenceWordIds:ids,index:0,mode:'flash',input:'',selected:'',revealed:false,answers:[],intent:'course',plannerConfig:{entryLevel:level,dailyNewWordLimit:target},flow:{schemaVersion:1,step:'flash',entryLevel:level,target,completed:{flash:[],connect:[],listen:[],spell:[],dictation:[],consolidate:[]},attempts:[]}} satisfies LearningSession
+ return createDailyPlan(db,pack,now)
+}
+function saveDailyPlan(db:Database,pack:CoursePack,plan:LearningSession){
+ const progress=db.courseProgress![pack.courseId],old=progress.dailyPlan
+ if(old?.completedAt&&old.flow){progress.completedDailyPlans??=[];if(!progress.completedDailyPlans.some(p=>p.id===old.id))progress.completedDailyPlans.push({id:old.id,courseId:pack.courseId,date:old.date,completedAt:old.completedAt,finishedDate:old.flow.finishedDate||old.date,entryLevel:old.flow.entryLevel,target:old.flow.target,wordIds:[...old.wordIds],contentVersion:old.contentVersion,completed:JSON.parse(JSON.stringify(old.flow.completed))})}
+ progress.dailyPlan=plan
+ return plan
+}
+/** Explicit opt-in only: archive the completed batch and freeze the next ordered slice atomically. */
+export function continueDailyPlan(db:Database,pack:CoursePack,expectedId:string,now=new Date()){
+ const old=db.courseProgress?.[pack.courseId]?.dailyPlan
+ if(!old?.completedAt||old.id!==expectedId||!validDailyPlan(old,pack.courseId))return null
+ const plan=createDailyPlan(db,pack,now,true)
+ return plan?saveDailyPlan(db,pack,plan):null
 }
 export function ensureDailyPlan(db:Database,pack:CoursePack,now=new Date()){
  db.courseProgress??={};const progress=db.courseProgress[pack.courseId]??=initialProgress(pack.courseId)
  if(!progress.curriculumSchema){progress.fullLearnedWords=fullCourseWords(db,pack);progress.curriculumSchema=1}
  const plan=selectDailyPlan(db,pack,now)
  if(!plan)return null
- if(progress.dailyPlan!==plan){
-  const old=progress.dailyPlan
-  if(old?.completedAt&&old.flow){progress.completedDailyPlans??=[];if(!progress.completedDailyPlans.some(p=>p.id===old.id))progress.completedDailyPlans.push({id:old.id,courseId:pack.courseId,date:old.date,completedAt:old.completedAt,finishedDate:old.flow.finishedDate||old.date,entryLevel:old.flow.entryLevel,target:old.flow.target,wordIds:[...old.wordIds],contentVersion:old.contentVersion,completed:JSON.parse(JSON.stringify(old.flow.completed))})}
-  progress.dailyPlan=plan
- }
+ if(progress.dailyPlan!==plan)saveDailyPlan(db,pack,plan)
  return progress.dailyPlan
 }
 /** Unstarted assignments may change; a begun assignment is immutable, including across midnight. */

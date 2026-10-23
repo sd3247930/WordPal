@@ -39,7 +39,7 @@ test('从首页完成今日六环节，首页任务全满且返回不重复结�
   else{if(!current.revealed)await page.getByRole('button',{name:'开始自评',exact:true}).click();await page.locator('.rating-grid').getByRole('button').nth(2).click()}
   if(i<plan.wordIds.length-1)await page.locator('.answer-feedback').getByRole('button').last().click();else await expect.poll(async()=>{const p=(await database(page)).courseProgress.starter.dailyPlan;return p.completedAt?'done':p.flow.step}).not.toBe(step)
  }}
- await expect(page.locator('.study-completion')).toBeVisible();const before=await database(page);expect(before.history).toHaveLength(5);await go(page,'home');for(const task of await page.locator('.home-today .task').all())await expect(task).toContainText('5 / 5');await page.locator('.hero-cta').click();await expect(page.locator('.study-completion')).toBeVisible();const after=await database(page);for(const field of ['history','cards','pets','gems','rewardIds'])expect(after[field]).toEqual(before[field])
+ await expect(page.locator('.study-completion')).toBeVisible();const before=await database(page);expect(before.history).toHaveLength(5);await go(page,'home');for(const task of await page.locator('.home-today .task').all())await expect(task).toContainText('5 / 5');await page.getByRole('button',{name:'查看今日成果',exact:true}).click();await expect(page.locator('.study-completion')).toBeVisible();const after=await database(page);for(const field of ['history','cards','pets','gems','rewardIds'])expect(after[field]).toEqual(before[field])
 })
 
 for(const width of [320,360,428,768,1280])test(`小屏大字左右布局和确认可触达 ${width}`,async({page})=>{

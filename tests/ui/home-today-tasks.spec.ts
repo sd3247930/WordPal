@@ -72,8 +72,8 @@ test('五个入口保持同一正式任务，快速重复点击只启动和导�
 
 test('正式六环节完成后首页四项真实5/5，查看成果不重复奖励',async({page})=>{
  test.setTimeout(90000);await prepare(page);await card(page).locator('.hero-cta').click();await completeDaily(page);const before=await database(page);await go(page,'home')
- await expect(card(page).locator('.task-count')).toHaveText('4 / 4');await expect(card(page).locator('.task-value')).toHaveText(['5 / 5','5 / 5','5 / 5','5 / 5']);await expect(card(page).locator('.task-done')).toHaveText(['已完成','已完成','已完成','已完成']);await expect(card(page).locator('.task-action')).toHaveCount(0);await expect(card(page).locator('.hero-cta')).toHaveText('查看今日成果');await inspect(page)
- await card(page).locator('.hero-cta').click();await expect(page.locator('.study-completion')).toBeVisible();const after=await database(page);for(const field of ['cards','history','pets','gems','rewardIds'])expect(after[field]).toEqual(before[field])
+ await expect(card(page).locator('.task-count')).toHaveText('4 / 4');await expect(card(page).locator('.task-value')).toHaveText(['5 / 5','5 / 5','5 / 5','5 / 5']);await expect(card(page).locator('.task-done')).toHaveText(['已完成','已完成','已完成','已完成']);await expect(card(page).locator('.task-action')).toHaveCount(0);await expect(card(page).getByRole('button',{name:'查看今日成果',exact:true})).toBeVisible();await inspect(page)
+ await card(page).getByRole('button',{name:'查看今日成果',exact:true}).click();await expect(page.locator('.study-completion')).toBeVisible();const after=await database(page);for(const field of ['cards','history','pets','gems','rewardIds'])expect(after[field]).toEqual(before[field])
 })
 
 test('听音辨义按连接与听音的共同完成词数统计，入口保留真实听音断点',async({page})=>{
@@ -84,7 +84,7 @@ test('听音辨义按连接与听音的共同完成词数统计，入口保留�
 })
 
 test('家长等级更新只影响未开始任务，已开始后的目标和自定义草稿保持',async({page})=>{
- test.setTimeout(60000);await prepare(page);await unlockParent(page);await page.getByRole('radio',{name:/L4/}).click();await go(page,'home');await expect(card(page).locator('.task-value')).toHaveText(Array(4).fill('0 / 15'));await card(page).locator('.hero-cta').click();await openCustomPractice(page);await page.getByRole('group',{name:'选择学习方式'}).locator('[data-mode="spell"]').click();await page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true}).fill('ca');const saved=await database(page)
+ test.setTimeout(60000);await prepare(page);await unlockParent(page);await page.getByRole('radio',{name:/L4/}).click();await go(page,'home');await expect(card(page).locator('.task-value')).toHaveText(Array(4).fill('0 / 15'));await card(page).locator('.hero-cta').click();await openCustomPractice(page);await page.getByRole('group',{name:'选择学习方式'}).locator('[data-mode="spell"]').click();await page.getByRole('button',{name:'键盘输入',exact:true}).click();await page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true}).fill('ca');const saved=await database(page)
  await unlockParent(page);await page.getByRole('radio',{name:/L5/}).click();await go(page,'home');await expect(card(page).locator('.task-value')).toHaveText(Array(4).fill('0 / 15'));await card(page).locator('.hero-cta').click();await openCustomPractice(page);await expect(page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true})).toHaveValue('ca');const after=await database(page);expect(after.session).toEqual(saved.session);for(const field of ['history','cards','pets','gems'])expect(after[field]).toEqual(saved[field])
 })
 

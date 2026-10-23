@@ -48,10 +48,10 @@ const props=defineProps<{today:string}>(),course=useCourseStore(),learning=useLe
 const speakerIcon=computed(()=>theme.mode==='dark'?speakerDark:speakerLight)
 interface HomeWordRow {key:string;word:Word;unitId:string;unitTitle:string}
 const unavailable=computed(()=>profile.readOnly||!!profile.bootError||!!learning.planProblem)
-const rows=computed<HomeWordRow[]>(()=>unavailable.value?[]:(learning.todayPlan?.wordIds||[]).flatMap(id=>{const word=getCourseWord(course.currentId,id);if(!word)return [];const unit=orderedCourseUnits(course.current).find(unit=>unit.lessons.some(lesson=>lesson.wordIds.includes(id)));return [{key:course.currentId+':'+course.current.contentVersion+':'+id,word,unitId:unit?.id||'',unitTitle:unit?.title||'未分单元'}]}))
+const rows=computed<HomeWordRow[]>(()=>unavailable.value?[]:learning.todayTaskWordIds.flatMap(id=>{const word=getCourseWord(course.currentId,id);if(!word)return [];const unit=orderedCourseUnits(course.current).find(unit=>unit.lessons.some(lesson=>lesson.wordIds.includes(id)));return [{key:course.currentId+':'+course.current.contentVersion+':'+id,word,unitId:unit?.id||'',unitTitle:unit?.title||'未分单元'}]}))
 const units=computed(()=>Array.from(new Map(rows.value.map(row=>[row.unitId,row.unitTitle])).values())),unitCount=computed(()=>units.value.length),unitLabel=computed(()=>unitCount.value>1?'多个单元':units.value[0]||'本日词单')
 const pending=computed(()=>!!learning.todayPlan&&learning.todayPlan.date!==props.today),title=computed(()=>pending.value?'待续学的单词':'今天认识的单词')
-const sourceLabel=computed(()=>unavailable.value?'请恢复资料后再查看词单。':pending.value?'待续学 · '+learning.todayPlan!.date+' 的固定词单。':learning.todayPlan?.completedAt?'今日六环节词单已完成，可再次听发音。':'今日任务词单，浏览和听发音不计入已学。')
+const sourceLabel=computed(()=>unavailable.value?'请恢复资料后再查看词单。':pending.value?'待续学 · '+learning.todayPlan!.date+' 的固定词单。':learning.todayPlan?.completedAt?'本批六环节词单已完成，可再次听发音。':'当前批次的固定词单，浏览和听发音不计入已学。')
 const width=ref(300),instance=getCurrentInstance(),failedImages=ref(new Set<string>()),imageRatios=ref<Record<string,number>>({}),playingKey=ref(''),audioError=ref('')
 const playbackError=computed(()=>audioError.value||(playingKey.value&&audioPlayback.error.value?audioPlayback.error.value.message:''))
 const columns=computed(()=>Math.max(layout.fontScale,theme.settings.largeText?1.25:1)>=1.2||width.value<256?1:2)

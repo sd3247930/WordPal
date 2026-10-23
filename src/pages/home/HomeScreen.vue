@@ -23,11 +23,12 @@
     </view>
    </view>
   </WPCard>
-  <HomeTodayTasks v-if="theme.settings.themeId==='clay'" :tasks="tasks" :note="taskNote" :action-label="taskActionLabel" :unavailable="taskUnavailable" :unreadable="profile.readOnly||!!profile.bootError" :busy="taskOpening" @start="begin"/>
+  <HomeTodayTasks v-if="theme.settings.themeId==='clay'" :tasks="tasks" :note="taskNote" :action-label="taskActionLabel" :unavailable="taskUnavailable" :unreadable="profile.readOnly||!!profile.bootError" :busy="taskOpening" :can-continue="learning.canContinue&&!!learning.todayPlan?.completedAt" @start="begin" @continue="continueStudy"/>
   <WPCard v-else class="home-today task-list-card"><view class="section-heading"><text>今日任务</text><WPChip>{{completedTasks}} / 4</WPChip></view>
-   <WPButton class="hero-cta" :spread="true" @click="begin">{{learning.session&&!learning.session.completedAt?'继续今日学习':'开始今日学习'}} <text aria-hidden="true">→</text></WPButton>
+   <DailyTaskAction :disabled="taskOpening||!!taskUnavailable" :loading="taskOpening" @click="begin">{{taskActionLabel}}</DailyTaskAction>
+   <DailyTaskAction v-if="learning.canContinue&&learning.todayPlan?.completedAt" class="continue-learning" :disabled="taskOpening||!!taskUnavailable" :loading="taskOpening" @click="continueStudy">继续学习</DailyTaskAction>
    <WPTaskCard v-for="task in tasks" :key="task.title" :icon="task.icon" :title="task.title" :value="task.value" :element="task.element" :completed="task.done" action="去学习" @click="beginMode(task.mode)"/>
-   <text class="small muted block">{{learning.todayPlan?.completedAt?'今天的六环节已完成，下一学习日继续下一批。':learning.todayPlan&&learning.todayPlan.date!==localDate()?'待续学：先完成上次的固定词表。':'按教材顺序完成六环节，每一步都算数。'}}</text>
+   <text class="small muted block">{{taskNote}}</text>
   </WPCard>
   <HomeWordList v-if="theme.settings.themeId==='clay'" :today="localDate(new Date(now))"/>
   <WPCard v-else class="home-word-list"><view class="section-heading"><text>今天认识的单词</text><WPChip :element="pet.current.element">{{learning.lesson.name}}</WPChip></view><view class="today-words"><WPActionTile role="button" tabindex="0" v-for="word in todayWords" :key="word.id" toggle-highlight class="today-word" :aria-label="word.audio?'听'+word.word+'的发音':word.word+'暂无音频'" :disabled="!word.audio" @click="listen(word)" @cancel="stopAudio()"><text class="word-mini">{{word.word}}</text><text class="small muted">{{word.meaning}}</text><WPControlIcon v-if="word.audio"/><text v-else class="small muted">暂无音频</text></WPActionTile></view><text class="small muted block">{{learning.needsConsolidation?'这课再熟悉一下，下次会更有把握。':'点一点，听听标准发音。'}}</text></WPCard>
@@ -43,6 +44,7 @@ import HomeLearningData from '../../components/home/HomeLearningData.vue'
 import {selectHomeLearningData} from '../../services/learning/StudyStats'
 import HomeStatsRow from '../../components/home/HomeStatsRow.vue'
 import HomePetCompanionCard from '../../components/home/HomePetCompanionCard.vue'
+import DailyTaskAction from '../../components/study/DailyTaskAction.vue'
 import HomeTodayTasks from '../../components/home/HomeTodayTasks.vue'
 import HomeReviewPriority from '../../components/home/HomeReviewPriority.vue'
 import {useWordbookStore} from '../../stores/wordbook'
@@ -97,7 +99,7 @@ function foregroundStats(){if(!visible)return;if(document.visibilityState==='hid
 onMounted(()=>{document.addEventListener('visibilitychange',foregroundStats);window.addEventListener('focus',foregroundStats)})
 onUnmounted(()=>{document.removeEventListener('visibilitychange',foregroundStats);window.removeEventListener('focus',foregroundStats)})
 // #endif
-const todayWords=computed(()=>(learning.todayPlan?.wordIds||learning.lesson.wordIds).flatMap(id=>{const word=getCourseWord(course.currentId,id);return word?[word]:[]}))
+const todayWords=computed(()=>learning.todayTaskWordIds.flatMap(id=>{const word=getCourseWord(course.currentId,id);return word?[word]:[]}))
 const homeLearningData=computed(()=>selectHomeLearningData(profile.db,course.current,new Date(now.value)))
 const reviewsToday=computed(()=>homeLearningData.value?.reviewEvents||0)
 const accuracy=computed(()=>profile.readOnly||profile.bootError?null:homeLearningData.value?.accuracy??null)
@@ -108,13 +110,14 @@ const tasks=computed(()=>[
  {title:'复习巩固',icon:'review',element:'water',mode:'flash'}
 ].map((task,index)=>({...task,icon:task.icon as TaskIconName,element:task.element as Element,mode:task.mode as LearningMode,value:learning.tasks[index].done+' / '+learning.tasks[index].total,done:learning.tasks[index].complete})))
 const completedTasks=computed(()=>tasks.value.filter(t=>t.done).length)
-const taskNote=computed(()=>learning.todayPlan?.completedAt?'今天的六环节已完成，下一学习日继续下一批。':learning.todayPlan&&learning.todayPlan.date!==localDate()?'待续学：先完成上次的固定词表。':'按教材顺序完成六环节，每一步都算数。')
+const taskNote=computed(()=>learning.todayPlan?.completedAt?(learning.canContinue?'本批六环节已完成，可继续学习下一批；进度会自动保存。':'本册六环节已全部完成，可查看今日成果。'):learning.todayPlan&&learning.todayPlan.date!==localDate()?'待续学：先完成上次的固定词表。':'按教材顺序完成六环节，每一步都算数。')
 const taskActionLabel=computed(()=>learning.todayPlan?.completedAt?'查看今日成果':learning.todayPlan?.flow?.begunAt?'继续今日学习':'开始今日学习')
 const taskUnavailable=computed(()=>profile.readOnly||profile.bootError?'学习档案暂不可用，请先在设置中恢复档案。':course.pendingCourse?'':learning.planProblem||(!learning.todayPlan?.wordIds.length?'当前教材暂无今日任务，可前往学习页查看课程。':''))
 const taskOpening=ref(false)
 let taskReleaseTimer:ReturnType<typeof setTimeout>|undefined
 onShow(()=>taskOpening.value=false);onUnmounted(()=>clearTimeout(taskReleaseTimer))
-function begin(){if(theme.settings.themeId==='clay'){if(taskOpening.value||taskUnavailable.value)return;taskOpening.value=true;taskReleaseTimer=setTimeout(()=>taskOpening.value=false,650)}course.applyPending();if(learning.start())navigate('learn');else if(learning.planProblem)uni.showToast?.({title:learning.planProblem,icon:'none'});else navigate('learn')}
+function begin(){if(taskOpening.value||taskUnavailable.value)return;taskOpening.value=true;taskReleaseTimer=setTimeout(()=>taskOpening.value=false,650);course.applyPending();if(learning.start())navigate('learn');else if(learning.planProblem)uni.showToast?.({title:learning.planProblem,icon:'none'});else navigate('learn')}
+function continueStudy(){if(taskOpening.value||taskUnavailable.value||!learning.canContinue)return;taskOpening.value=true;taskReleaseTimer=setTimeout(()=>taskOpening.value=false,650);if(learning.continueLearning())navigate('learn');else taskOpening.value=false}
 function beginMode(_mode:LearningMode){begin()}
 function listen(word:Word){audioError.value='';playWord(word,m=>audioError.value=m)}
 onUnmounted(stopAudio)

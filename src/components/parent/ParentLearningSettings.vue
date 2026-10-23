@@ -1,14 +1,14 @@
 <template>
  <view class="parent-learning-settings">
-  <view class="level-heading"><text class="section-title">学习等级</text><text class="small muted block">选择适合孩子的每日学习节奏</text></view>
+  <view class="level-heading"><text class="section-title">学习等级</text><text class="small muted block">选择适合孩子的每批学习节奏</text></view>
   <view class="level-options" role="radiogroup" aria-label="学习等级">
    <WPActionTile v-for="level in ABILITY_LEVELS" :key="level.level" role="radio" :aria-checked="parent.settings.entryLevel===level.level" class="level-option" :class="{chosen:parent.settings.entryLevel===level.level}" @click="saveLevel(level.level)">
     <view class="level-art"><LearningLevelIcon :level="level.level"/></view>
-    <view class="level-copy"><view class="level-title"><text class="level-code">L{{level.level}}</text><text class="level-name">{{level.title}}</text></view><text class="level-count">每日 {{levelWordCount(level.level)}} 词</text></view>
+    <view class="level-copy"><view class="level-title"><text class="level-code">L{{level.level}}</text><text class="level-name">{{level.title}}</text></view><text class="level-count">每批 {{levelWordCount(level.level)}} 词</text></view>
     <text class="level-check" aria-hidden="true">{{parent.settings.entryLevel===level.level?'✓':'○'}}</text>
    </WPActionTile>
   </view>
-  <view class="level-effective" role="status" aria-live="polite"><text class="strong">当前选择：L{{meta.level}} · {{meta.title}} · 每日{{parent.settings.dailyNewWordLimit}}词</text><text class="small muted block">{{parent.difficultyPending?'已保存，新等级将于下一学习日的新任务生效；未完成任务继续原计划。':'已保存。尚未开始的任务立即使用此等级，开始后当天词表固定。'}}</text></view>
+  <view class="level-effective" role="status" aria-live="polite"><text class="strong">当前选择：L{{meta.level}} · {{meta.title}} · 每批{{parent.settings.dailyNewWordLimit}}词</text><text class="small muted block">{{parent.difficultyPending?'已保存，新等级将于下一批新任务生效；未完成任务继续原计划。':'已保存。尚未开始的任务立即使用此等级，开始后本批词表固定；完成六环节后可继续下一批。'}}</text></view>
   <text v-if="parent.error||!parent.persisted" class="notice error" role="alert">{{parent.error||'等级设置尚未保存，请释放设备空间后重试。'}}</text>
  </view>
 </template>

@@ -35,7 +35,7 @@ test('手机完整六环节自动衔接、答案隐藏、首页四项统一5/5�
  for(const step of STUDY_STEPS){await expect(page.locator('.daily-step.active')).toContainText(step==='consolidate'?'复习巩固':({flash:'闪现',connect:'连接',listen:'听音',spell:'拼写',dictation:'听写'} as const)[step]);for(let i=0;i<5;i++){if(['listen','spell','dictation'].includes(step)){await expect(page.locator('.word-core .ipa')).toHaveCount(0);if(step==='dictation')await expect(page.locator('.word-core .word')).toHaveCount(0);else await expect(page.locator('.word-core .word')).toHaveText('···')}await answer(page)}}
  await expect(page.locator('.study-completion')).toContainText('今日六环节');const before=await database(page);expect(before.history).toHaveLength(5);expect(before.pets.water.exp).toBe(70)
  await go(page,'home');for(const task of await page.locator('.home-today .task').all())await expect(task).toContainText('5 / 5')
- await page.getByRole('button',{name:/今日学习/}).first().click();await expect(page.locator('.study-completion')).toBeVisible();const after=await database(page);expect(after.history).toEqual(before.history);expect(after.pets).toEqual(before.pets);expect(errors).toEqual([])
+ await page.getByRole('button',{name:'查看今日成果',exact:true}).click();await expect(page.locator('.study-completion')).toBeVisible();const after=await database(page);expect(after.history).toEqual(before.history);expect(after.pets).toEqual(before.pets);expect(errors).toEqual([])
 })
 test('20词连接持续覆盖全部词，拼写错三次后答对只完成一个，刷新恢复草稿',async({page})=>{
  test.setTimeout(90000)
@@ -48,6 +48,6 @@ test('20词连接持续覆盖全部词，拼写错三次后答对只完成一个
 })
 for(const [width,height,large] of [[320,740,false],[390,844,true],[834,1112,false],[1280,800,false]] as const)for(const mode of ['light','dark'])test(`${width} ${mode} 大字${large} 家长设置和卡片无横向溢出`,async({page})=>{
  await page.setViewportSize({width,height});await seed(page,3);await setAppearance(page,'swiss',mode,{largeText:large});await go(page,'learn');await expect(page.locator('.word-core .ipa')).toBeVisible();await page.screenshot({path:`test-results/daily-study-${width}-${mode}.png`,fullPage:true});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)
- await unlockParent(page);await expect(page.getByRole('radiogroup',{name:'学习等级'}).getByRole('radio')).toHaveCount(5);await expect(page.getByText('每日新词上限',{exact:true})).toHaveCount(0);await page.getByRole('radio',{name:/L5/}).click();await expect(page.locator('.level-effective')).toContainText('下一学习日');await page.screenshot({path:`test-results/daily-parent-${width}-${mode}.png`,fullPage:true});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);expect((await database(page)).courseProgress.starter.dailyPlan.wordIds).toHaveLength(10)
+ await unlockParent(page);await expect(page.getByRole('radiogroup',{name:'学习等级'}).getByRole('radio')).toHaveCount(5);await expect(page.getByText('每日新词上限',{exact:true})).toHaveCount(0);await page.getByRole('radio',{name:/L5/}).click();await expect(page.locator('.level-effective')).toContainText('下一批');await page.screenshot({path:`test-results/daily-parent-${width}-${mode}.png`,fullPage:true});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);expect((await database(page)).courseProgress.starter.dailyPlan.wordIds).toHaveLength(10)
 })
 

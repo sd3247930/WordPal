@@ -15,7 +15,7 @@ import {initialProgress} from '../services/storage/MigrationV1toV2'
 import {getCourseWord,resolveFrozenWord} from '../services/content/ContentRegistry'
 import {useParentSettingsStore} from './parent-settings'
 import {orderedCourseWords,courseIntroductions,sessionInCourse} from '../services/learning/CourseStudySequence'
-import {selectDailyPlan,ensureDailyPlan,dailyTasks,advanceDailyPlan,recordDailyAnswer,fullCourseWords,completedPrefix,STEP_TITLES} from '../services/learning/DailyLearningPlan'
+import {selectDailyPlan,ensureDailyPlan,continueDailyPlan,dailyTasks,advanceDailyPlan,recordDailyAnswer,fullCourseWords,completedPrefix,STEP_TITLES} from '../services/learning/DailyLearningPlan'
 import {todayCourseWordIds} from '../services/learning/StudyStats'
 export const modes:{id:LearningMode;name:string;description:string}[]=[{id:'flash',name:'闪现',description:'看看单词，回想它的意思'},{id:'connect',name:'连接',description:'为单词找到正确的中文意思'},{id:'listen',name:'听音',description:'听发音，选出对应的单词'},{id:'spell',name:'拼写',description:'看中文，用字母拼出单词'},{id:'dictation',name:'听写',description:'听发音，写出这个单词'}]
 export const useLearningStore=defineStore('learning',()=>{
@@ -25,6 +25,7 @@ export const useLearningStore=defineStore('learning',()=>{
  const isDaily=computed(()=>course.progress.studyActivity==='daily'&&!!course.progress.dailyPlan?.flow?.begunAt)
  const session=computed(()=>isDaily.value?course.progress.dailyPlan!:profile.db.session&&sessionInCourse(profile.db.session,course.currentId)?profile.db.session:null)
  const tasks=computed(()=>dailyTasks(todayPlan.value))
+ const todayTaskWordIds=computed(()=>(todayPlan.value?.wordIds||[]).slice(0,todayPlan.value?.flow?.target??parent.settings.dailyNewWordLimit))
  const planProblem=computed(()=>todayPlan.value?.wordIds.some(id=>!allowedIds.value.has(id))?'教材内容已变更，原任务已保留。请在家长区恢复对应教材版本后继续。':'')
  const current=computed(()=>session.value ? resolveFrozenWord(session.value.wordSnapshot?.[session.value.wordIds[session.value.index]]||wordById[session.value.wordIds[session.value.index]],session.value.courseId,session.value.contentVersion):undefined)
  const todayAnswers=computed(()=>profile.db.history.filter(a=>localDate(new Date(a.at))===localDate()))
@@ -40,6 +41,7 @@ export const useLearningStore=defineStore('learning',()=>{
  const needsConsolidation=computed(()=>course.currentId==='starter'&&profile.db.lastLessonAccuracy!==null && profile.db.lastLessonAccuracy<.8)
  const dailyPlan=computed(()=>({wordIds:todayPlan.value?.wordIds||[],newIds:todayPlan.value?.wordIds||[],dueIds:[] as string[],weakIds:[] as string[],sequenceIds:todayPlan.value?.wordIds||[],wordSources:todayPlan.value?.wordSources||{}}))
  const textbookProgress=computed(()=>{const ids=courseWordPool.value,learned=Object.keys(fullCourseWords(profile.db,course.current)).length,prefix=completedPrefix(profile.db,course.current);return {total:ids.length,learned,prefix,percent:ids.length?Math.floor(learned/ids.length*100):0}})
+ const canContinue=computed(()=>!profile.readOnly&&!profile.bootError&&!planProblem.value&&!!course.progress.dailyPlan?.completedAt&&textbookProgress.value.prefix<textbookProgress.value.total)
  const currentSource=computed(()=>session.value?.wordSources?.[current.value?.id||'']||session.value?.kind||'practice')
  const choices=computed(()=>{
   if(!current.value)return []
@@ -91,6 +93,19 @@ export const useLearningStore=defineStore('learning',()=>{
    }
    plan.flow!.begunAt??=new Date(clock.value).toISOString();if(plan.mode==='flash'&&!plan.answers[plan.index])plan.revealed=true
   })
+ }
+ function continueLearning(){
+  refreshDay();if(!canContinue.value)return false
+  const owner=course.currentId,pack=course.current,expectedId=course.progress.dailyPlan!.id
+  let continued=false
+  const saved=profile.transact(d=>{
+   const plan=continueDailyPlan(d,pack,expectedId,new Date(clock.value));if(!plan)return
+   plan.wordSnapshot=freezeWords(plan.wordIds)
+   plan.wordSources=Object.fromEntries(plan.wordIds.map(id=>[id,d.cards[id]?(Date.parse(d.cards[id].due)<=clock.value?'review_due':'practice'):'new_word']))
+   plan.flow!.begunAt=new Date(clock.value).toISOString();plan.revealed=true
+   d.courseProgress![owner].studyActivity='daily';continued=true
+  })
+  return saved&&continued
  }
  function activeDraft(d:typeof profile.db){return isDaily.value?d.courseProgress?.[course.currentId]?.dailyPlan:d.session}
  function patch(change:Partial<LearningSession>){return profile.transact(d=>{const target=activeDraft(d);if(target&&!target.completedAt){if(target.flow){for(const field of ['input','selected','revealed','letterDraft','inputAssistance'] as const)if(change[field]!==undefined)(target as any)[field]=change[field]}else Object.assign(target,change)}})}
@@ -189,5 +204,5 @@ export const useLearningStore=defineStore('learning',()=>{
  const remainingCount=computed(()=>course.wordIds.filter(id=>!profile.db.cards[id]).length)
  const positionFor=(id?:string)=>{const index=courseWordPool.value.indexOf(id||'');return index<0?null:{index:index+1,total:courseWordPool.value.length}}
  const currentPosition=computed(()=>positionFor(current.value?.id))
- return {session,current,currentSource,choices,todayAnswers,newToday,newTodayWordIds,newWords,studyWords,due,dailyPlan,todayPlan,tasks,isDaily,planProblem,textbookProgress,prepareDaily,refreshDay,startPractice:()=>startIndependent(todayPlan.value?.wordIds||lesson.value.wordIds,false,undefined,true),stepTitles:STEP_TITLES,lesson,needsConsolidation,learnedCount,remainingCount,currentPosition,positionFor,start,startSelected:(unitId?:string,wordId?:string)=>start(undefined,false,{unitId,wordId}),startDue:(ids:string[])=>start(ids,true),patch,setMode,reveal,hint,submit,next,previous}
+ return {session,current,currentSource,choices,todayAnswers,newToday,newTodayWordIds,newWords,studyWords,due,dailyPlan,todayPlan,todayTaskWordIds,tasks,isDaily,planProblem,textbookProgress,canContinue,continueLearning,prepareDaily,refreshDay,startPractice:()=>startIndependent(todayPlan.value?.wordIds||lesson.value.wordIds,false,undefined,true),stepTitles:STEP_TITLES,lesson,needsConsolidation,learnedCount,remainingCount,currentPosition,positionFor,start,startSelected:(unitId?:string,wordId?:string)=>start(undefined,false,{unitId,wordId}),startDue:(ids:string[])=>start(ids,true),patch,setMode,reveal,hint,submit,next,previous}
 })
