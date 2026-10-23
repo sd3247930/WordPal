@@ -1,5 +1,5 @@
 import {test,expect,type Page} from '@playwright/test'
-import {go,setAppearance,database,completeDaily} from './helpers'
+import {go,setAppearance,database,completeDaily,selectCustomModes} from './helpers'
 import {freshDatabase,type Database} from '../../src/stores/profile'
 import {initialProgress} from '../../src/services/storage/MigrationV1toV2'
 import {contrast} from '../../src/styles/themes'
@@ -78,6 +78,6 @@ test('当前教材只改变新学数，全局答题和主题切换保持原统�
 })
 test('正式六环节结算后自动刷新，真实自定义答题和听音浏览不会并入正式记录',async({page})=>{
  test.setTimeout(90000);const db=fixture([]);db.courseProgress!.starter=initialProgress('starter');db.practiceAnswers=[];await prepare(page,'light',false,db);await expect(values(page)).toHaveText(['0','0','0']);await page.locator('.home-today-clay .hero-cta').click();await completeDaily(page);await go(page,'home');await expect(values(page)).toHaveText(['5','0','5']);await expect(card(page).locator('.learning-rate-number')).toHaveText('100');const formal=await database(page)
- await go(page,'pet');await page.getByRole('button',{name:'试一试拼写或听写',exact:true}).click();await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^拼写，/}).click();await page.getByRole('button',{name:'开始练习',exact:true}).click();await page.locator('.spelling-input input').fill('cat');await page.getByRole('button',{name:'确认答案 →',exact:true}).click();const practiced=await database(page);expect(practiced.practiceAnswers.length).toBe(formal.practiceAnswers.length+1);expect(practiced.history).toEqual(formal.history)
+ await go(page,'pet');await page.getByRole('button',{name:'试一试拼写或听写',exact:true}).click();await selectCustomModes(page,['spell']);await page.getByRole('button',{name:'开始练习',exact:true}).click();await page.locator('.spelling-input input').fill('cat');await page.getByRole('button',{name:'确认答案 →',exact:true}).click();const practiced=await database(page);expect(practiced.practiceAnswers.length).toBe(formal.practiceAnswers.length+1);expect(practiced.history).toEqual(formal.history)
  await go(page,'home');await expect(values(page)).toHaveText(['5','0','5']);await expect(card(page).locator('.learning-rate-number')).toHaveText('100');await page.locator('.home-word-actions .wp-button').first().click();await go(page,'settings');await go(page,'home');const after=await database(page);for(const key of ['history','cards','gems','rewardIds','pets','courseProgress'])expect(after[key]).toEqual(practiced[key])
 })

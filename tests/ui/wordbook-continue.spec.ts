@@ -69,7 +69,7 @@ test('已保存的错词回看从任意 Scope 继续，不覆盖完成的正式 
  await seed(page,db,presentation);await go(page,'review');const before=await database(page)
  for(const scope of scopes){
   await selectWordbookScope(page,scope);await page.getByRole('button',{name:'继续当前学习',exact:true}).click()
-  await expect(page.locator('.session-header')).toContainText('错词回看');await expect(page.locator('.spelling-input input')).toHaveValue('ca');expect(await database(page)).toEqual(before)
+  await expect(page.locator('.study-session-heading')).toContainText('错词回看');await expect(page.locator('.spelling-input input')).toHaveValue('ca');expect(await database(page)).toEqual(before)
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('wordpal.study.presentation.v1')!))).toEqual(presentation);await go(page,'review')
  }
 })
