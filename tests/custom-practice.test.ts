@@ -12,12 +12,60 @@ import {courseRemovalScope,pruneRemovedCourseRecords} from '../src/services/cont
 import {CUSTOM_MODES,createCustomPractice,practiceWordIds,wholeBook,practiceCountError,defaultPracticeCount,runCustom,pauseCustom,endCustom,recordCustomAnswer,advanceCustom,customToken,customProgress,customResults,customMatchGroup,validCustomPractice,customResumeProblem} from '../src/services/learning/CustomPractice'
 import {customCourse} from './helpers/custom-course'
 import type {LearningMode} from '../packages/core_learning'
+import {validCustomPracticeCursors} from '../src/services/learning/CustomPracticeSequence'
 const storage=new Map<string,string>();let fail=false
 ;(globalThis as any).uni={getStorageSync:(key:string)=>storage.get(key)||'',setStorageSync:(key:string,value:string)=>{if(fail)throw Error('Quota');storage.set(key,value)},removeStorageSync:(key:string)=>storage.delete(key)}
 function reset(){storage.clear();fail=false;loadCourseRegistry();setActivePinia(createPinia());const pack=customCourse();registerCourse(pack);return pack}
 function make(count=113,modes:LearningMode[]=[...CUSTOM_MODES]){const pack=reset(),session=createCustomPractice({courseId:pack.courseId,scope:wholeBook(),count,modes,sound:true,id:'custom-fixture-session'});const db={...freshDatabase(),customPractice:session};runCustom(session);return {pack,session,db}}
 function answer(db:Database){const s=db.customPractice!,mode=s.modes[s.modeIndex],id=s.wordIds[s.index];s.revealed=true;s.selected=id;s.input=s.wordSnapshot[id].word;assert(recordCustomAnswer(db,customToken(s),3,true));assert(validCustomPractice(s));assert(advanceCustom(s,customToken(s)));assert(validCustomPractice(s))}
-const protectedFields=(db:Database)=>JSON.stringify(Object.fromEntries(Object.entries(db).filter(([key])=>!['customPractice','practiceAnswers'].includes(key))))
+const protectedFields=(db:Database)=>JSON.stringify(Object.fromEntries(Object.entries(db).filter(([key])=>!['customPractice','practiceAnswers','customPracticeCursors'].includes(key))))
+function finishStore(custom:ReturnType<typeof useCustomPracticeStore>){if(custom.screen==='overview')assert(custom.resume());while(custom.session!.status==='running'){const id=custom.session!.wordIds[custom.session!.index];assert(custom.patch({revealed:true,selected:id,input:custom.session!.wordSnapshot[id].word}));custom.heardToken=custom.token;assert(custom.submit(3));assert(custom.next())}}
+
+test('回归：完成两词自定义练习后，新一轮应从第三词继续而非首词',async()=>{
+ reset();const custom=useCustomPracticeStore();await installTextCourse(customCourse());custom.openConfig();custom.chooseCourse('custom-fixture');custom.count='2';custom.singleMode='flash';assert.equal(custom.start(),'started');assert.equal(custom.session!.courseId,'custom-fixture');const first=[...custom.session!.wordIds]
+ while(custom.session!.status==='running'){assert(custom.patch({revealed:true}));assert(custom.submit(3));assert(custom.next())}
+ assert(custom.openConfig());custom.chooseCourse('custom-fixture');custom.count='2';assert.equal(custom.start(),'started');assert.equal(custom.session!.wordIds[0],'custom-fixture-w003');assert(!custom.session!.wordIds.some(id=>first.includes(id)))
+})
+
+test('31种模式组合连续换批不重复词；只有所有已选阶段完成才顺延，重启保持游标',async()=>{
+ reset();const custom=useCustomPracticeStore(),profile=useProfileStore();await installTextCourse(customCourse());const before=protectedFields(profile.db)
+ for(let mask=1;mask<32;mask++){
+  assert(custom.openConfig());custom.chooseCourse('custom-fixture');custom.count='1';custom.singleMode=undefined;for(const mode of CUSTOM_MODES.filter((_,index)=>mask&(1<<index)))custom.toggleMode(mode)
+  assert.equal(custom.start(),'started');assert.equal(custom.session!.wordIds[0],`custom-fixture-w${String(mask).padStart(3,'0')}`);const cursorBefore=profile.db.customPracticeCursors?.[0]?.nextOffset||0
+  if(custom.screen==='overview'){assert(custom.resume());const id=custom.session!.wordIds[0];assert(custom.patch({revealed:true,selected:id,input:custom.current!.word}));custom.heardToken=custom.token;assert(custom.submit(3));assert(custom.next());assert.equal(profile.db.customPracticeCursors?.[0]?.nextOffset||0,cursorBefore)}
+  finishStore(custom);assert.equal(profile.db.customPracticeCursors![0].nextOffset,mask);assert.equal(protectedFields(profile.db),before)
+ }
+ setActivePinia(createPinia());const restored=useCustomPracticeStore();assert(restored.openConfig());restored.chooseCourse('custom-fixture');restored.count='1';restored.singleMode='flash';assert.equal(restored.start(),'started');assert.equal(restored.session!.wordIds[0],'custom-fixture-w032')
+})
+test('教材与单元范围各自顺延；单元选择顺序、模式和词数变化不重置同一范围',async()=>{
+ reset();const custom=useCustomPracticeStore(),profile=useProfileStore();await installTextCourse(customCourse());await installTextCourse(customCourse('custom-other',23))
+ function start(course:string,count:number,units:string[]=[]){assert(custom.openConfig());custom.chooseCourse(course);if(units.length){custom.chooseScope('units');for(const id of [...custom.scope.unitIds])custom.toggleUnit(id);for(const id of units)custom.toggleUnit(id)}custom.count=String(count);custom.singleMode='flash';assert.equal(custom.start(),'started')}
+ start('custom-fixture',2);finishStore(custom);start('custom-other',1);finishStore(custom);start('custom-fixture',1);assert.equal(custom.current!.id,'custom-fixture-w003');finishStore(custom)
+ const units=['custom-fixture-u2','custom-fixture-u1'];start('custom-fixture',2,units);assert.equal(custom.current!.id,'custom-fixture-w001');finishStore(custom);assert(custom.openConfig());assert.deepEqual(custom.scope.unitIds,units)
+ custom.chooseScope('whole-book');custom.count='1';assert.equal(custom.start(),'started');assert.equal(custom.current!.id,'custom-fixture-w004');finishStore(custom);start('custom-fixture',1,[...units].reverse());assert.equal(custom.current!.id,'custom-fixture-w003');finishStore(custom)
+ assert.equal(profile.db.customPracticeCursors!.length,3);assert(validCustomPracticeCursors(profile.db.customPracticeCursors));assert.equal(previewLearningBackup(makeLearningBackup(profile.db)).customPracticeCursors!.length,3)
+ const removal=courseRemovalScope('custom-other',profile.db);assert(profile.transact(db=>{pruneRemovedCourseRecords(db,removal)}));assert(profile.db.customPracticeCursors!.every(item=>item.courseId!=='custom-other'));assert.equal(profile.db.customPracticeCursors!.filter(item=>item.courseId==='custom-fixture').length,2)
+})
+test('末批仅取剩余词，练完整范围后提示新一轮；教材版本改变不沿用旧偏移',async()=>{
+ reset();const custom=useCustomPracticeStore();await installTextCourse(customCourse('custom-tail',13));custom.openConfig();custom.chooseCourse('custom-tail');custom.count='10';custom.singleMode='flash';assert.equal(custom.start(),'started');finishStore(custom)
+ assert(custom.openConfig());assert.equal(custom.total,3);assert.equal(custom.count,'3');assert.match(custom.sequenceHint,/第 11 词/);assert.equal(custom.start(),'started');assert.deepEqual(custom.session!.wordIds,['custom-tail-w011','custom-tail-w012','custom-tail-w013']);finishStore(custom)
+ assert(custom.openConfig());assert.match(custom.sequenceHint,/新一轮/);assert.equal(custom.total,13);custom.count='1';assert.equal(custom.start(),'started');assert.equal(custom.current!.id,'custom-tail-w001');finishStore(custom)
+ registerCourse({...courseRegistry['custom-tail'],contentVersion:'1.0.1'});assert(custom.openConfig());custom.chooseCourse('custom-tail');custom.count='1';assert.equal(custom.start(),'started');assert.equal(custom.current!.id,'custom-tail-w001')
+})
+test('暂停和终止不跳过当前批，保存失败不推进游标，双击完成不会推进两次',async()=>{
+ reset();const custom=useCustomPracticeStore(),profile=useProfileStore();await installTextCourse(customCourse());custom.openConfig();custom.chooseCourse('custom-fixture');custom.singleMode='flash';custom.count='2';assert.equal(custom.start(),'started');assert(custom.patch({revealed:true}));assert(custom.submit(3));assert(custom.next());assert(custom.pause());assert.equal(profile.db.customPracticeCursors,undefined);assert(custom.resume());assert(custom.end())
+ assert(custom.openConfig());custom.chooseCourse('custom-fixture');custom.count='1';custom.singleMode='flash';assert.equal(custom.start(),'started');assert.equal(custom.current!.id,'custom-fixture-w001');assert(custom.patch({revealed:true}));assert(custom.submit(3));const before=JSON.stringify(profile.db);fail=true;assert.equal(custom.next(),false);assert.equal(JSON.stringify(profile.db),before);fail=false;assert(custom.next());assert.equal(profile.db.customPracticeCursors![0].nextOffset,1);assert.equal(custom.next(),false);assert.equal(profile.db.customPracticeCursors![0].nextOffset,1)
+})
+test('旧已完成会话无需重练即可衔接，替换或终止后仍保留已迁移位置',async()=>{
+ reset();const profile=useProfileStore();await installTextCourse(customCourse());const session=createCustomPractice({courseId:'custom-fixture',scope:wholeBook(),count:2,modes:['flash'],sound:true});delete session.sequenceStart;const db={...profile.db,customPractice:session};runCustom(session);while(session.status==='running')answer(db);assert(profile.transact(next=>{next.customPractice=session}));assert.equal(profile.db.customPracticeCursors,undefined)
+ setActivePinia(createPinia());const custom=useCustomPracticeStore();assert(custom.openConfig());assert.match(custom.sequenceHint,/第 3 词/);custom.count='1';assert.equal(custom.start(),'started');assert.equal(custom.current!.id,'custom-fixture-w003');assert.equal(useProfileStore().db.customPracticeCursors![0].nextOffset,2);assert(custom.end());assert(custom.openConfig());custom.chooseCourse('custom-fixture');custom.count='1';custom.singleMode='flash';assert.equal(custom.start(),'started');assert.equal(custom.current!.id,'custom-fixture-w003')
+})
+test('损坏的顺延数据被单独保护，正式档案仍可用；非法偏移不能创建或恢复',async()=>{
+ reset();const custom=useCustomPracticeStore(),profile=useProfileStore();custom.openConfig();custom.count='1'
+ assert.equal(custom.start(),'started');finishStore(custom);const before=protectedFields(profile.db),broken=JSON.parse(JSON.stringify(profile.db));broken.customPracticeCursors[0].nextOffset=-1;storage.set('wordpal.database.v2',JSON.stringify(broken));setActivePinia(createPinia());const restored=useProfileStore();assert.equal(restored.readOnly,false);assert.equal(protectedFields(restored.db),before);assert.deepEqual(restored.db.customPracticeCursors,[]);assert.equal(JSON.parse(storage.get(CUSTOM_RECOVERY_KEY)!).customPracticeCursors[0].nextOffset,-1)
+ for(const offset of [-1,1.5,999])assert.throws(()=>createCustomPractice({courseId:'starter',scope:wholeBook(),count:1,modes:['flash'],sound:true,offset}))
+ const s=JSON.parse(JSON.stringify(restored.db.customPractice));s.sequenceStart=999;assert(customResumeProblem(s));s.sequenceStart=-1;assert(!validCustomPractice(s));assert(!validCustomPracticeCursors([{}]))
+})
 
 test('31种组合完成结果只统计所选模式和不同词条，闪现不伪造答题正确率',()=>{
  for(let mask=1;mask<32;mask++){

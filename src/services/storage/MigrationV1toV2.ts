@@ -5,6 +5,7 @@ import {writeStorage} from './index'
 import {validParentSettings,DAILY_NEW_WORD_LIMITS} from '../../../packages/parent_settings'
 import {validDailyPlan} from '../learning/DailyLearningPlan'
 import {validCustomPractice} from '../learning/CustomPractice'
+import {validCustomPracticeCursors} from '../learning/CustomPracticeSequence'
 export const V1_KEY='wordpal.database.v1',V2_KEY='wordpal.database.v2',POINTER_KEY='wordpal.database.active.v2'
 export const MIGRATION_BACKUP_KEY='wordpal.migration.backup.v1'
 export const CUSTOM_RECOVERY_KEY='wordpal.custom-practice.recovery.v1'
@@ -18,6 +19,7 @@ export function validateDatabase(value:unknown){
  if(d.practiceAnswers!==undefined&&(!Array.isArray(d.practiceAnswers)||d.practiceAnswers.some(a=>!a||a.source!=='practice'||typeof a.wordId!=='string'||typeof a.id!=='string'||!Number.isFinite(Date.parse(a.at))||![1,2,3,4].includes(a.rating)||typeof a.correct!=='boolean')))return false
  if(d.courseSessions!==undefined&&(!d.courseSessions||typeof d.courseSessions!=='object'||Array.isArray(d.courseSessions)))return false
  if(d.customPractice!=null&&!validCustomPractice(d.customPractice))return false
+ if(d.customPracticeCursors!==undefined&&!validCustomPracticeCursors(d.customPracticeCursors))return false
  if(Object.entries(d.courseSessions||{}).some(([id,s])=>!s||s.courseId&&s.courseId!==id))return false
  for(const s of [d.session,...Object.values(d.courseSessions||{})]){
  if(s&&(!Array.isArray(s.wordIds)||!s.wordIds.length||s.wordIds.some(id=>typeof id!=='string')||new Set(s.wordIds).size!==s.wordIds.length||!Number.isInteger(s.index)||s.index<0||s.index>=s.wordIds.length||!Array.isArray(s.answers)||s.answers.length>s.wordIds.length||typeof s.input!=='string'||typeof s.selected!=='string'||!['flash','connect','listen','spell','dictation'].includes(s.mode)))return false
@@ -46,15 +48,16 @@ export function loadDatabase(fresh:()=>Database):{database:Database;key:string;e
   try{
    const db=JSON.parse(uni.getStorageSync(activeKey))
    if(db.version!==2)throw new Error()
-   if(db.customPractice!=null&&!validCustomPractice(db.customPractice)){
-    const candidate={...db,customPractice:null}
+   const invalidPractice=db.customPractice!=null&&!validCustomPractice(db.customPractice),invalidCursors=db.customPracticeCursors!==undefined&&!validCustomPracticeCursors(db.customPracticeCursors)
+   if(invalidPractice||invalidCursors){
+    const candidate={...db,...(invalidPractice?{customPractice:null}:{}),...(invalidCursors?{customPracticeCursors:[]}: {})}
     if(!validateDatabase(candidate))throw new Error()
-    const recovery={version:1,at:new Date().toISOString(),customPractice:db.customPractice}
+    const recovery={version:1,at:new Date().toISOString(),...(invalidPractice?{customPractice:db.customPractice}:{}),...(invalidCursors?{customPracticeCursors:db.customPracticeCursors}:{})}
     writeStorage(CUSTOM_RECOVERY_KEY,recovery)
     if(uni.getStorageSync(CUSTOM_RECOVERY_KEY)!==JSON.stringify(recovery))throw new Error()
     writeStorage(activeKey,candidate)
     if(uni.getStorageSync(activeKey)!==JSON.stringify(candidate))throw new Error()
-    return {database:candidate,key:activeKey,error:'上次自定义练习断点无法校验，已单独备份。正式学习档案仍可用。',readOnly:false}
+    return {database:candidate,key:activeKey,error:'上次自定义练习进度无法校验，已单独备份。正式学习档案仍可用。',readOnly:false}
    }
    if(!validateDatabase(db))throw new Error()
    return {database:db,key:activeKey,error:'',readOnly:false}

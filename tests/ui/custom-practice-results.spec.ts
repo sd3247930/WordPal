@@ -3,7 +3,7 @@ import {go,database,setAppearance,selectCustomModes,waitForArtwork} from './help
 import {freshDatabase} from '../../src/stores/profile'
 import {customCourse} from '../helpers/custom-course'
 const all=['flash','connect','listen','spell','dictation']
-const formal=(db:any)=>Object.fromEntries(Object.entries(db).filter(([key])=>!['customPractice','practiceAnswers'].includes(key)))
+const formal=(db:any)=>Object.fromEntries(Object.entries(db).filter(([key])=>!['customPractice','practiceAnswers','customPracticeCursors'].includes(key)))
 async function open(page:Page,modes:string[]){await go(page,'learn');await page.locator('.study-practice-entry-button').click();await page.locator('.custom-count-input input').fill('1');await selectCustomModes(page,modes);await page.locator('.custom-action-bar').getByRole('button').click();if(modes.length>1){await expect(page.locator('[data-custom-screen=overview]')).toBeVisible();expect(await page.locator('.custom-route-step').evaluateAll(rows=>rows.map(row=>row.getAttribute('data-mode')))).toEqual(modes);await expect(page.locator('.custom-practice-workspace .avatar')).toHaveCount(0);await page.getByRole('button',{name:'开始连续训练',exact:true}).click()}}
 async function complete(page:Page){
  for(let guard=0;guard<6;guard++){

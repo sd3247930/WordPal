@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { Answer, LearningSession, MemoryCard } from '../../packages/core_learning'
-import type {CustomPracticeSession} from '../../packages/core_learning/custom-practice'
+import type {CustomPracticeSession,CustomPracticeCursor} from '../../packages/core_learning/custom-practice'
 import { readStorage, writeStorage } from '../services/storage'
 import {createPet,elements,type PetState} from '../../packages/pet_engine'
 import {loadCourseRegistry} from '../services/content/ContentRegistry'
@@ -22,6 +22,7 @@ export interface Database {
   currentCourseId?:string;pendingCourseId?:string;courseProgress?:Record<string,CourseProgress>;auxiliaryRecords?:AuxiliaryRecord[];abilityLevel?:AbilityLevelId
   courseSessions?:Record<string,LearningSession>
   customPractice?:CustomPracticeSession|null
+  customPracticeCursors?:CustomPracticeCursor[]
   parentSettingsVersion?:2|3;parentSettingsUpdatedAt?:number
 }
 export const DATABASE_KEY = 'wordpal.database.v1'

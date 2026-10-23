@@ -41,12 +41,14 @@ export function customModeProblems(courseId:string,ids:string[],sound:boolean){
   return [mode,problem]
  })) as Record<LearningMode,string>
 }
-export function createCustomPractice(input:{courseId:string;scope:CustomPracticeScope;count:string|number;modes:LearningMode[];sound:boolean;now?:Date;id?:string}):CustomPracticeSession{
- const pack=courseRegistry[input.courseId],ids=practiceWordIds(input.courseId,input.scope),error=practiceCountError(input.count,ids.length)
+export function createCustomPractice(input:{courseId:string;scope:CustomPracticeScope;count:string|number;modes:LearningMode[];sound:boolean;offset?:number;now?:Date;id?:string}):CustomPracticeSession{
+ const pack=courseRegistry[input.courseId],ids=practiceWordIds(input.courseId,input.scope),offset=input.offset??0
+ if(!Number.isSafeInteger(offset)||offset<0||ids.length>0&&offset>=ids.length)throw Error('练习起点无效，请重新选择范围。')
+ const error=practiceCountError(input.count,ids.length-offset)
  if(error)throw Error(error)
  if(!Array.isArray(input.modes)||!input.modes.length||new Set(input.modes).size!==input.modes.length||input.modes.some(mode=>!CUSTOM_MODES.includes(mode)))throw Error('请选择至少一种不重复的练习方式。')
  const modes=CUSTOM_MODES.filter(mode=>input.modes.includes(mode))
- const chosen=ids.slice(0,Number(input.count)),problems=customModeProblems(input.courseId,chosen,input.sound)
+ const chosen=ids.slice(offset,offset+Number(input.count)),problems=customModeProblems(input.courseId,chosen,input.sound)
  for(const mode of input.modes)if(problems[mode])throw Error(CUSTOM_MODE_NAMES[mode]+'：'+problems[mode])
  const words=orderedCourseWords(pack).map(id=>getCourseWord(input.courseId,id)).filter((word):word is Word=>!!word),snapshot:Record<string,Word>={}
  for(const id of chosen){
@@ -57,7 +59,7 @@ export function createCustomPractice(input:{courseId:string;scope:CustomPractice
  const now=(input.now||new Date()).toISOString(),seed=Math.floor(Math.random()*0x7fffffff)
  return {schemaVersion:1,source:'custom',id:input.id||`custom-${Date.now()}-${seed.toString(36)}-${++sessionCounter}`,courseId:pack.courseId,contentVersion:pack.contentVersion,contentFingerprint:customFingerprint(pack),courseTitle:pack.title,
   scope:JSON.parse(JSON.stringify(input.scope)),scopeLabel:input.scope.type==='whole-book'?'整本教材':orderedCourseUnits(pack).filter(unit=>input.scope.unitIds.includes(unit.id)).map(unit=>unit.title).join('、'),
-  wordIds:chosen,wordSnapshot:snapshot,requestedCount:Number(input.count),modes:[...modes],modeIndex:0,index:0,
+  wordIds:chosen,wordSnapshot:snapshot,requestedCount:Number(input.count),sequenceStart:offset,modes:[...modes],modeIndex:0,index:0,
   results:{flash:{completedWordIds:[],attempts:[]},connect:{completedWordIds:[],attempts:[]},listen:{completedWordIds:[],attempts:[]},spell:{completedWordIds:[],attempts:[]},dictation:{completedWordIds:[],attempts:[]}},input:'',selected:'',revealed:false,answer:null,status:'paused',startedAt:now,updatedAt:now,elapsedMs:0,seed}
 }
 export function customResumeProblem(session:CustomPracticeSession|null|undefined){
@@ -65,7 +67,8 @@ export function customResumeProblem(session:CustomPracticeSession|null|undefined
  const pack=courseRegistry[session.courseId]
  if(!pack||!isCourseInstalled(session.courseId))return '原教材已移除或不可用，不能继续本次练习。可以结束后重新选择教材。'
  if(pack.contentVersion!==session.contentVersion||customFingerprint(pack)!==session.contentFingerprint)return '教材内容版本已变更，原断点已保留。请结束后按新版本重新练习。'
- const allowed=new Set(practiceWordIds(session.courseId,session.scope))
+ const ordered=practiceWordIds(session.courseId,session.scope),allowed=new Set(ordered)
+ if(session.sequenceStart!==undefined&&session.wordIds.some((id,index)=>id!==ordered[session.sequenceStart!+index]))return '练习顺序已失效，原断点已保留，请重新选择范围。'
  if(session.wordIds.some(id=>!allowed.has(id)||!resolveFrozenWord(session.wordSnapshot[id],session.courseId,session.contentVersion)))return '原练习词条已不可用，不能从其它教材继续。'
  return ''
 }
@@ -137,6 +140,7 @@ export function customMatchGroup(session:CustomPracticeSession){
 export function validCustomPractice(value:unknown):value is CustomPracticeSession{
  const s=value as CustomPracticeSession
  if(!s||s.schemaVersion!==1||s.source!=='custom'||typeof s.id!=='string'||typeof s.courseId!=='string'||typeof s.contentVersion!=='string'||typeof s.courseTitle!=='string'||typeof s.scopeLabel!=='string'||!/^[a-f0-9]{64}$/.test(s.contentFingerprint)||!['running','paused','completed','ended'].includes(s.status)||!Number.isFinite(s.elapsedMs)||s.elapsedMs<0||!Number.isInteger(s.seed)||!Number.isFinite(Date.parse(s.startedAt))||!Number.isFinite(Date.parse(s.updatedAt)))return false
+ if(s.sequenceStart!==undefined&&(!Number.isSafeInteger(s.sequenceStart)||s.sequenceStart<0))return false
  if(!s.scope||!['whole-book','units'].includes(s.scope.type)||!Array.isArray(s.scope.unitIds)||s.scope.unitIds.some(id=>typeof id!=='string')||new Set(s.scope.unitIds).size!==s.scope.unitIds.length||s.scope.type==='units'&&!s.scope.unitIds.length||s.scope.type==='whole-book'&&s.scope.unitIds.length)return false
  if(!Array.isArray(s.wordIds)||!s.wordIds.length||s.wordIds.some(id=>typeof id!=='string')||new Set(s.wordIds).size!==s.wordIds.length||s.requestedCount!==s.wordIds.length||!s.wordSnapshot||s.wordIds.some(id=>{const w=s.wordSnapshot[id];return !w||w.id!==id||typeof w.word!=='string'||typeof w.meaning!=='string'||typeof w.audio!=='string'||typeof w.image!=='string'||!Array.isArray(w.distractors)}))return false
  if(!validCustomModes(s.modes)||!Number.isInteger(s.modeIndex)||s.modeIndex<0||s.modeIndex>=s.modes.length||!Number.isInteger(s.index)||s.index<0||s.index>=s.wordIds.length||typeof s.input!=='string'||typeof s.selected!=='string'||typeof s.revealed!=='boolean')return false

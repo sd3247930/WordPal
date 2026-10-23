@@ -16,7 +16,7 @@ async function seedFullBook(page:Page){const pack=customCourse();await page.addI
  const key='wordpal.content.pack.custom-fixture.0123456789abcdef'
  localStorage.setItem(key,JSON.stringify(pack));localStorage.setItem('wordpal.content.catalog.v2',JSON.stringify([{courseId:pack.courseId,key,archived:false,aliases:{}}]))
 },pack);await page.addInitScript(db=>{if(!localStorage.getItem('wordpal.database.active.v2')){localStorage.setItem('wordpal.database.v2',JSON.stringify(db));localStorage.setItem('wordpal.database.active.v2',JSON.stringify('v2'))}},{...freshDatabase(),version:2,currentCourseId:pack.courseId,courseProgress:{[pack.courseId]:{currentLessonId:pack.courseId+'-l1',completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{}}},auxiliaryRecords:[]})}
-const protectedFields=(db:any)=>Object.fromEntries(Object.entries(db).filter(([key])=>!['customPractice','practiceAnswers'].includes(key)))
+const protectedFields=(db:any)=>Object.fromEntries(Object.entries(db).filter(([key])=>!['customPractice','practiceAnswers','customPracticeCursors'].includes(key)))
 
 test('全书真实上限、任意整数、快捷数量和单元范围都在原入口配置',async({page})=>{
  await seedFullBook(page);await go(page,'learn');const before=await database(page);await openConfig(page)

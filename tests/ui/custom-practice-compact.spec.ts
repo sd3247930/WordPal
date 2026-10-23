@@ -5,7 +5,7 @@ import {customCourse} from '../helpers/custom-course'
 
 async function seed(page:Page){const pack=customCourse();pack.title='合成三起点 五年级上册';const db={...freshDatabase(),version:2,abilityLevel:'L4',currentCourseId:pack.courseId,courseProgress:{[pack.courseId]:{currentLessonId:pack.courseId+'-l1',completedLessons:[],lastLessonAccuracy:null,checkAccuracy:{},checkAttempts:{}}},auxiliaryRecords:[]};await page.addInitScript(({pack,db})=>{const key='wordpal.content.pack.custom-fixture.0123456789abcdef';localStorage.setItem(key,JSON.stringify(pack));localStorage.setItem('wordpal.content.catalog.v2',JSON.stringify([{courseId:pack.courseId,key,archived:false,aliases:{}}]));if(!localStorage.getItem('wordpal.database.active.v2')){localStorage.setItem('wordpal.database.v2',JSON.stringify(db));localStorage.setItem('wordpal.database.active.v2',JSON.stringify('v2'))}},{pack,db})}
 async function open(page:Page){await page.locator('.study-practice-entry-button').click();await expect(page.locator('[data-custom-screen=config]')).toBeVisible()}
-const formal=(db:any)=>Object.fromEntries(Object.entries(db).filter(([key])=>!['customPractice','practiceAnswers'].includes(key)))
+const formal=(db:any)=>Object.fromEntries(Object.entries(db).filter(([key])=>!['customPractice','practiceAnswers','customPracticeCursors'].includes(key)))
 
 for(const theme of ['clay','swiss'])for(const mode of ['light','dark'])test(`紧凑面板 ${theme} ${mode}：真实统计、图标、窄屏、安全区与大字体`,async({page})=>{
  await page.setViewportSize({width:390,height:844});await setAppearance(page,theme,mode);await seed(page);await go(page,'learn');await open(page)

@@ -2,7 +2,7 @@ import {test,expect,type Page} from '@playwright/test'
 import {go,database,setAppearance,selectCustomModes} from './helpers'
 async function open(page:Page,modes:string[],count=2){await go(page,'learn');await page.locator('.study-practice-entry-button').click();await page.locator('.custom-count-input input').fill(String(count));await selectCustomModes(page,modes)}
 async function session(page:Page){return (await database(page)).customPractice}
-const formal=(db:any)=>Object.fromEntries(Object.entries(db).filter(([key])=>!['customPractice','practiceAnswers'].includes(key)))
+const formal=(db:any)=>Object.fromEntries(Object.entries(db).filter(([key])=>!['customPractice','practiceAnswers','customPracticeCursors'].includes(key)))
 async function answer(page:Page){const s=await session(page),word=s.wordSnapshot[s.wordIds[s.index]],keyboard=page.getByRole('button',{name:'键盘输入',exact:true});if(await keyboard.count())await keyboard.click();await page.locator('.slot-native input').fill(word.word);await page.getByRole('button',{name:'确认答案 →',exact:true}).click()}
 
 for(const theme of ['clay','swiss'])test(`单项听写冷启动首词与第二词自动播放不误报 ${theme}`,async({page})=>{
