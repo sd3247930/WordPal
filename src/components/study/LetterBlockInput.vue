@@ -20,6 +20,7 @@
    <WordSlotInput :model-value="modelValue" :mode="mode" :disabled="disabled" :question-key="questionKey" :show-instruction="false" @update:model-value="typed" @confirm="$emit('confirm')"/>
    <WPButton v-if="challenge.supported" kind="quiet" :disabled="disabled" @click="switchInput('tiles')">用字母积木辅助</WPButton>
   </template>
+  <text v-if="inputPreference.storageError" class="small muted block" role="status">{{inputPreference.storageError}}</text>
  </view>
 </template>
 <script setup lang="ts">
@@ -27,10 +28,12 @@ import {computed,getCurrentInstance,ref,watch} from 'vue'
 import {normalizeSpellingWord,makeBlockDraft,validBlockDraft,placeLetter,removeLetter,composeBlockAnswer,blocksComplete,type LetterBlockDraft,type SpellingInputChange} from '../../../packages/phonics/letter-blocks'
 import WordSlotInput from './WordSlotInput.vue'
 import WPButton from '../wp-button/WPButton.vue'
+import {useSpellingInputStore} from '../../stores/spelling-input'
 const props=withDefaults(defineProps<{word:{id:string;word:string};modelValue:string;mode:string;questionKey:string;letterDraft?:LetterBlockDraft;compact?:boolean;defaultTiles?:boolean;disabled?:boolean;correct?:boolean}>(),{defaultTiles:false,disabled:false,correct:undefined})
 const emit=defineEmits<{(event:'change',value:SpellingInputChange):void;(event:'ready',value:boolean):void;(event:'confirm'):void}>()
+const inputPreference=useSpellingInputStore()
 const challenge=computed(()=>normalizeSpellingWord(props.word.word,props.questionKey)),local=ref<LetterBlockDraft>(),conversionNotice=ref(''),uid=getCurrentInstance()!.uid
-const draft=computed(()=>local.value||makeBlockDraft(challenge.value,props.word.id,props.questionKey,props.modelValue,props.defaultTiles?'tiles':'keyboard'))
+const draft=computed(()=>local.value||makeBlockDraft(challenge.value,props.word.id,props.questionKey,props.modelValue,inputPreference.preferred(props.defaultTiles)))
 const inputMode=computed(()=>challenge.value.supported?draft.value.inputMode:'keyboard'),firstEmpty=computed(()=>draft.value.assignments.indexOf(null)),slotId=(index:number)=>'letter-slot-'+uid+'-'+index,activeSlotId=computed(()=>firstEmpty.value<0?'':slotId(firstEmpty.value))
 const activeGroup=computed(()=>(firstEmpty.value<0?challenge.value.slots[challenge.value.slots.length-1]:challenge.value.slots[firstEmpty.value])?.group||0)
 const groups=computed(()=>[...new Set(challenge.value.units.filter(unit=>unit.kind!=='space').map(unit=>unit.group))].map(id=>({id,units:challenge.value.units.filter(unit=>unit.group===id&&unit.kind!=='space'),active:activeGroup.value===id,hyphen:id>0&&challenge.value.units.some(unit=>unit.group===id-1&&/[-‐‑]/u.test(unit.char))})))
@@ -38,20 +41,22 @@ const visibleTiles=computed(()=>challenge.value.tiles.filter(tile=>challenge.val
 const letters=computed(()=>new Map(challenge.value.tiles.map(tile=>[tile.id,tile.char])))
 function letterAt(index:number){return letters.value.get(draft.value.assignments[index]||'')||''}
 function send(next:LetterBlockDraft,input=composeBlockAnswer(challenge.value,next)){local.value=next;emit('change',{input,letterDraft:next,...(next.inputMode==='tiles'?{inputAssistance:'tiles' as const}:{})})}
-function add(id:string){if(props.disabled)return;const next=placeLetter(challenge.value,draft.value,id);if(next!==draft.value){conversionNotice.value='';send(next)}}
+function add(id:string){if(props.disabled)return;const next=placeLetter(challenge.value,draft.value,id);if(next!==draft.value){inputPreference.select('tiles');conversionNotice.value='';send(next)}}
 function remove(index:number){if(!props.disabled)send(removeLetter(draft.value,index))}
 function undo(){const index=draft.value.history[draft.value.history.length-1];if(index!==undefined)remove(index)}
 function clear(){send(makeBlockDraft(challenge.value,props.word.id,props.questionKey,'','tiles'))}
-function typed(input:string){send({...draft.value,inputMode:'keyboard'},input)}
+function typed(input:string){if(props.disabled)return;if(challenge.value.supported)inputPreference.select('keyboard');send({...draft.value,inputMode:'keyboard'},input)}
 function switchInput(mode:'tiles'|'keyboard'){
  if(props.disabled)return
+ inputPreference.select(mode)
  if(mode==='keyboard'){send({...draft.value,inputMode:mode},props.modelValue);return}
  const next=makeBlockDraft(challenge.value,props.word.id,props.questionKey,props.modelValue,mode)
  if(props.modelValue&&composeBlockAnswer(challenge.value,next)!==props.modelValue.toLowerCase())conversionNotice.value='可继续拼装；原有文字也可以切回键盘编辑。'
  send(next,props.modelValue)
 }
 watch(()=>props.questionKey+'\u001f'+props.word.id+'\u001f'+props.word.word,()=>{
- const restored=validBlockDraft(challenge.value,props.letterDraft,props.word.id,props.questionKey)?props.letterDraft:makeBlockDraft(challenge.value,props.word.id,props.questionKey,props.modelValue,props.defaultTiles?'tiles':'keyboard')
+ if(!inputPreference.mode&&validBlockDraft(challenge.value,props.letterDraft,props.word.id,props.questionKey))inputPreference.select(props.letterDraft.inputMode)
+ const restored=validBlockDraft(challenge.value,props.letterDraft,props.word.id,props.questionKey)?props.letterDraft:makeBlockDraft(challenge.value,props.word.id,props.questionKey,props.modelValue,inputPreference.preferred(props.defaultTiles))
  local.value={...restored,assignments:[...restored.assignments],history:[...restored.history]};conversionNotice.value=''
  // Seeing the letter pool counts as assistance even when the child later uses a keyboard.
  if(inputMode.value==='tiles'&&!props.disabled)emit('change',{input:props.modelValue,letterDraft:local.value,inputAssistance:'tiles'})
