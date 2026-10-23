@@ -1,15 +1,15 @@
-import {openCustomPractice,selectWordbookScope} from './helpers'
+import {openCustomPractice,selectWordbookScope,openCourseGallery} from './helpers'
 import {test,expect,type Page} from '@playwright/test'
 import {go,database,seedDatabase,setAppearance} from './helpers'
 import {freshDatabase} from '../../src/stores/profile'
 const ids=['g3a','g3b','g4a','g4b','g5a','g5b']
 async function setup(page:Page){await page.addInitScript(()=>localStorage.setItem('wordpal.test.textbook-series','1'));await page.setViewportSize({width:390,height:844});await go(page,'learn')}
-async function choose(page:Page,key:string){await page.getByRole('button',{name:'选择教材',exact:true}).click();const grade=key[1],term=key.endsWith('a')?'上册':'下册';await page.locator('.course-gallery-card').filter({hasText:grade+'年级'+term}).click();await expect(page.locator('.current-course-card')).toBeVisible()}
+async function choose(page:Page,key:string){await openCourseGallery(page);const grade=key[1],term=key.endsWith('a')?'上册':'下册';await page.locator('.course-gallery-card').filter({hasText:grade+'年级'+term}).click();await expect(page.locator('.current-course-card')).toBeVisible()}
 
 test('默认 CI 六册合成课程：点击立即使用，不显示待核对，逐册切换不改学习记录',async({page})=>{
  await setup(page);const before=await database(page)
  for(const key of ids){
-  await page.getByRole('button',{name:'选择教材',exact:true}).click()
+  await openCourseGallery(page)
   await expect(page.locator('.course-gallery-card').filter({hasText:'合成系列'})).toHaveCount(6)
   await page.locator('.course-gallery-card').filter({hasText:key[1]+'年级'+(key.endsWith('a')?'上册':'下册')}).click()
   await expect(page.locator('.current-course-card')).toBeVisible()
@@ -17,7 +17,7 @@ test('默认 CI 六册合成课程：点击立即使用，不显示待核对，�
   const saved=await database(page)
   expect(saved.currentCourseId).toBe('fltrp-3start-'+key)
   expect({cards:saved.cards,history:saved.history,pets:saved.pets,gems:saved.gems}).toEqual({cards:before.cards,history:before.history,pets:before.pets,gems:before.gems})
-  await expect(page.locator('.current-course-card')).toContainText('10 词 · 1 单元')
+  await expect(page.locator('.current-course-meta')).toContainText('10 词');await expect(page.locator('.current-course-meta')).toContainText('1 单元')
  }
 })
 
@@ -49,5 +49,5 @@ test('默认 CI 瑞士主题明暗课程、单词本、宠物页无水平溢出�
 })
 
 test('默认 CI 单元入口确认后直接进入所选教材的实际 Study Session',async({page})=>{
- await setup(page);await choose(page,'g4a');await page.getByRole('button',{name:'选择教材',exact:true}).click();await page.getByRole('button',{name:'从这一单元开始',exact:true}).click();await expect(page.locator('.learn-workspace')).toBeVisible();const db=await database(page);expect(db.courseProgress['fltrp-3start-g4a'].dailyPlan.courseId).toBe('fltrp-3start-g4a');expect(db.courseProgress['fltrp-3start-g4a'].dailyPlan.flow.step).toBe('flash');expect(db.history).toHaveLength(0)
+ await setup(page);await choose(page,'g4a');await openCourseGallery(page);await page.getByRole('button',{name:'从这一单元开始',exact:true}).click();await expect(page.locator('.learn-workspace')).toBeVisible();const db=await database(page);expect(db.courseProgress['fltrp-3start-g4a'].dailyPlan.courseId).toBe('fltrp-3start-g4a');expect(db.courseProgress['fltrp-3start-g4a'].dailyPlan.flow.step).toBe('flash');expect(db.history).toHaveLength(0)
 })

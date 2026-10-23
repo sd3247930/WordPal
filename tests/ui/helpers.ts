@@ -69,3 +69,7 @@ export async function completeDaily(page:Page){
  }
  throw Error('Daily UI flow exceeded six steps of 20 words')
 }
+
+/** Focused practice keeps contextual cards behind the explicit overview action. */
+export async function openStudyOverview(page:Page){const button=page.getByRole('button',{name:'查看学习概览',exact:true});if(await button.count())await button.click()}
+export async function openCourseGallery(page:Page){await openStudyOverview(page);await page.getByRole('button',{name:'选择教材',exact:true}).click()}

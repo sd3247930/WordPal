@@ -1,7 +1,7 @@
 import {test,expect,type Page} from '@playwright/test'
 import sharp from 'sharp'
 import {seedSpellingPractice} from '../helpers/spelling-practice'
-import {go,setAppearance,database} from './helpers'
+import {go,setAppearance,database,selectCustomModes} from './helpers'
 import {freshDatabase,type Database} from '../../src/stores/profile'
 import {initialProgress} from '../../src/services/storage/MigrationV1toV2'
 import {selectDailyPlan,STUDY_STEPS} from '../../src/services/learning/DailyLearningPlan'
@@ -39,7 +39,7 @@ for(const theme of ['swiss','clay'])for(const mode of modes)test(`今日六环�
 })
 for(const mode of modes)test(`自定义练习复用完整原图 ${mode}`,async({page})=>{
  await page.setViewportSize({width:390,height:844});await setAppearance(page,'clay','light');await seedSpellingPractice(page,mode);await page.route('**/static/easy-picture.svg',r=>r.fulfill({contentType:'image/svg+xml',body:svg}));await go(page,'learn')
- await page.locator('.study-practice-entry-button').click();await page.locator('.custom-count-input input').fill('1');const button=page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:new RegExp('^'+names[mode]+'，')});if(await button.getAttribute('aria-pressed')!=='true')await button.click();await page.getByRole('button',{name:'开始练习',exact:true}).click();await expect(page.locator('[data-custom-screen="training"]')).toBeVisible()
+ await page.locator('.study-practice-entry-button').click();await page.locator('.custom-count-input input').fill('1');await selectCustomModes(page,[mode]);await page.getByRole('button',{name:'开始练习',exact:true}).click();await expect(page.locator('[data-custom-screen="training"]')).toBeVisible()
  if(mode==='dictation')await expect(page.locator('.word-picture-stage')).toHaveCount(0);else await completeImage(page)
  const db=await database(page);expect(db.history).toHaveLength(0);expect(db.gems).toBe(10);expect(db.practiceAnswers||[]).toHaveLength(0)
 })

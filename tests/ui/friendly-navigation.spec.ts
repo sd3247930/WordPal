@@ -1,5 +1,5 @@
 import {test,expect} from '@playwright/test'
-import {go,app,setAppearance,seedDatabase,database,openCustomPractice} from './helpers'
+import {go,app,setAppearance,seedDatabase,database,openCustomPractice,openCourseGallery} from './helpers'
 import {goldenDatabase} from './fixtures'
 const destinations=[['home','首页'],['learn','学习'],['pet','宠物屋'],['review','单词本'],['settings','设置']]
 
@@ -42,7 +42,7 @@ test('常规字体适度增大，课程页隐藏底栏，刷新与横竖屏不�
  const before=await database(page);await page.locator('.bottom-nav').getByRole('button',{name:'设置',exact:true}).click();await page.locator('.bottom-nav').getByRole('button',{name:'学习',exact:true}).click()
  for(const size of [{width:844,height:390},{width:390,height:844}]){await page.setViewportSize(size);await expect(page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true})).toHaveValue('ca')}
  await page.reload();await expect(page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true})).toHaveValue('ca');expect(await database(page)).toEqual(before)
- await page.getByRole('button',{name:'选择教材',exact:true}).click();await expect(page.locator('.bottom-nav')).toHaveCount(0);await expect(page.locator('.wp-app')).toHaveCSS('--wp-bottom-nav-space','0px')
+ await openCourseGallery(page);await expect(page.locator('.bottom-nav')).toHaveCount(0);await expect(page.locator('.wp-app')).toHaveCSS('--wp-bottom-nav-space','0px')
 })
 
 test('高清图标异常时使用本地备用图，全部图片失败仍可切换五个入口',async({page})=>{

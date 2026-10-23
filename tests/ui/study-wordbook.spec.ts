@@ -41,7 +41,7 @@ for(const theme of ['swiss'])for(const size of windows)test(`${theme} ${size.nam
  await page.locator('.wordbook-search input').fill('cat');await page.locator('.review-row .wordbook-open').click();await expect(page.locator('.detail-word')).toHaveText('cat');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBeTruthy()
  // Full-page baselines start at the same document and panel scroll positions after click-to-focus.
  await waitForArtwork(page)
- await page.evaluate(()=>{window.scrollTo(0,0);document.querySelectorAll('.word-detail-panel,.sidebar').forEach(e=>e.scrollTop=0)})
+ await page.evaluate(()=>new Promise<void>(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve()))));await page.evaluate(()=>{if(document.activeElement instanceof HTMLElement)document.activeElement.blur();window.scrollTo(0,0);document.querySelectorAll('.word-detail-panel,.sidebar').forEach(e=>e.scrollTop=0)})
  await expect.poll(()=>page.evaluate(()=>[scrollY,...Array.from(document.querySelectorAll('.word-detail-panel,.sidebar'),e=>e.scrollTop)].every(top=>top===0))).toBe(true)
  await expect(page).toHaveScreenshot(`wordbook-detail-${theme}-${size.name}.png`,{fullPage:true,animations:'disabled'})
 })

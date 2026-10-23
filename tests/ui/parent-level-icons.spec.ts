@@ -12,7 +12,7 @@ test('五档高清图标完整加载，整行选择保存且重新进入恢复',
   const row=group.getByRole('radio',{name:new RegExp(`L${level}`)})
   await row.click({position:{x:42,y:40}})
   await expect(row).toHaveAttribute('aria-checked','true')
-  await expect(page.locator('.level-effective')).toContainText(`每日${count}词`)
+  await expect(page.locator('.level-effective')).toContainText(`每批${count}词`)
   expect((await database(page)).abilityLevel).toBe(`L${level}`)
  }
  await page.reload();await unlockParent(page)

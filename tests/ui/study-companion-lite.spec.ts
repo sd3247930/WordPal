@@ -1,5 +1,5 @@
 import {test,expect,type Page} from '@playwright/test'
-import {go,setAppearance,database,seedDatabase,openPetAction} from './helpers'
+import {go,setAppearance,database,seedDatabase,openPetAction,openStudyOverview} from './helpers'
 import {goldenDatabase} from './fixtures'
 import {elements,petInfo} from '../../packages/pet_engine'
 import {starterPack} from '../../src/services/content/ContentRegistry'
@@ -13,6 +13,7 @@ async function fixture(page:Page,options:{complete?:boolean;ready?:boolean;level
  await page.addInitScript(db=>{if(!localStorage.getItem('wordpal.database.active.v2')){localStorage.setItem('wordpal.database.v2',JSON.stringify(db));localStorage.setItem('wordpal.database.active.v2',JSON.stringify('v2'))}},db)
 }
 async function inspect(page:Page){
+ await openStudyOverview(page)
  const card=page.locator('.study-companion-card');await expect(card).toBeVisible()
  const image=card.locator('.pet-cutout-image img');await expect(image).toHaveJSProperty('naturalWidth',960)
  const result=await card.evaluate(node=>{
@@ -26,7 +27,7 @@ async function inspect(page:Page){
 }
 
 for(const mode of ['light','dark'])for(const largeText of [false,true])test(`clay ${mode} 大字=${largeText} 手机平板横竖屏与窄容器完整展示`,async({page})=>{
- test.setTimeout(90000);await fixture(page);await setAppearance(page,'clay',mode,{largeText,highContrast:largeText});await go(page,'learn');const before=await database(page)
+ test.setTimeout(90000);await fixture(page);await setAppearance(page,'clay',mode,{largeText,highContrast:largeText});await go(page,'learn');await openStudyOverview(page);const before=await database(page)
  for(const viewport of [{width:320,height:568},{width:375,height:667},{width:390,height:844},{width:412,height:915},{width:844,height:390},{width:600,height:900},{width:768,height:1024},{width:834,height:1194},{width:1024,height:768},{width:1280,height:800}]){await page.setViewportSize(viewport);await inspect(page);if(viewport.width===390||viewport.width===834)await page.locator('.study-pet-companion').screenshot({path:test.info().outputPath(`clay-${mode}-${largeText?'large':'normal'}-${viewport.width}.png`)})}
  await page.setViewportSize({width:1280,height:900});await page.locator('.study-pet-companion').evaluate(node=>(node as HTMLElement).style.width='250px');await expect(page.locator('.study-pet-companion')).toHaveClass(/study-companion-stacked/);expect((await inspect(page)).stacked).toBe(true)
  await page.locator('.study-pet-companion').evaluate(node=>(node as HTMLElement).style.removeProperty('width'));await expect(page.locator('.study-pet-companion')).not.toHaveClass(/study-companion-stacked/)
@@ -36,27 +37,27 @@ for(const mode of ['light','dark'])for(const largeText of [false,true])test(`cla
 })
 
 for(const mode of ['light','dark'])test(`clay ${mode} 四元素四形态切换，等级与已选择阶段来自真实状态`,async({page})=>{
- test.setTimeout(120000);await fixture(page,{complete:true,level:8});await setAppearance(page,'clay',mode);await page.setViewportSize({width:390,height:900});await go(page,'learn');const before=await database(page)
+ test.setTimeout(120000);await fixture(page,{complete:true,level:8});await setAppearance(page,'clay',mode);await page.setViewportSize({width:390,height:900});await go(page,'learn');await openStudyOverview(page);const before=await database(page)
  for(const element of elements){
   await go(page,'pet');await page.locator('.pet-choice').filter({hasText:petInfo[element].name}).click()
   for(const [index,file]of ['juvenile','growing','evolved','unknown'].entries()){
-   await openPetAction(page,'成长');await page.locator('.pet-growth-panel .pet-form-card').nth(index).click();await page.locator('.pet-study-link').click()
+   await openPetAction(page,'成长');await page.locator('.pet-growth-panel .pet-form-card').nth(index).click();await page.locator('.pet-study-link').click();await openStudyOverview(page)
    const card=page.locator('.study-pet-companion');await expect(card).toHaveAttribute('data-element',element);await expect(card).toHaveAttribute('data-form',String(index+1));await expect(card.locator('.companion-card-title')).toHaveText(petInfo[element].name+'陪你一起学习');await expect(card.locator('.companion-card-status')).toContainText(petInfo[element].elementName+'精灵 · Lv.8');await expect(card.locator('img')).toHaveAttribute('src',new RegExp(element+'-'+file+'[.]png$'));await inspect(page)
    const current=await database(page);expect({...current,companion:before.companion}).toEqual(before);await go(page,'pet')
   }
  }
- await go(page,'learn');await page.locator('.study-pet-companion').screenshot({path:test.info().outputPath(`clay-${mode}-wind.png`)})
+ await go(page,'learn');await openStudyOverview(page);await page.locator('.study-pet-companion').screenshot({path:test.info().outputPath(`clay-${mode}-wind.png`)})
 })
 
 test('Lv.5 不硬编码成年期；已有复习答题升级后卡片立即刷新且不重复发奖',async({page})=>{
  const db=goldenDatabase();db.pets.water.level=5;db.pets.water.exp=499;await page.setViewportSize({width:390,height:900})
- await setAppearance(page,'clay','light');await seedDatabase(page,db);await go(page,'learn');await expect(page.locator('.companion-form-label')).toHaveText('幼年期');await expect(page.locator('.companion-card-status')).toContainText('Lv.5')
- const before=await database(page);await page.locator('.answer-choice').filter({hasText:'dog'}).click();await page.getByRole('button',{name:'确认答案 →',exact:true}).click();await expect(page.locator('.companion-card-status')).toContainText('Lv.6');const after=await database(page);expect(after.history).toHaveLength(before.history.length+1);expect(after.pets.water.exp).toBe(before.pets.water.exp+12)
+ await setAppearance(page,'clay','light');await seedDatabase(page,db);await go(page,'learn');await openStudyOverview(page);await expect(page.locator('.companion-form-label')).toHaveText('幼年期');await expect(page.locator('.companion-card-status')).toContainText('Lv.5')
+ const before=await database(page);await page.locator('.answer-choice').filter({hasText:'狗'}).click();await page.getByRole('button',{name:'确认答案 →',exact:true}).click();await expect(page.locator('.companion-card-status')).toContainText('Lv.6');const after=await database(page);expect(after.history).toHaveLength(before.history.length+1);expect(after.pets.water.exp).toBe(before.pets.water.exp+12)
  await page.locator('.companion-card-title').click();await page.locator('.companion-form-label').click();await page.getByRole('navigation',{name:'底部导航'}).getByRole('button',{name:'首页',exact:true}).click();await page.getByRole('navigation',{name:'底部导航'}).getByRole('button',{name:'学习',exact:true}).click();await expect(page.locator('.companion-card-status')).toContainText('Lv.6');expect(await database(page)).toEqual(after)
 })
 
 for(const complete of [false,true])test(`原有${complete?'整课检查':'开始今日学习'}入口分离保留`,async({page})=>{
- await fixture(page,{ready:true,complete});await setAppearance(page,'clay','light');await go(page,'learn');const before=await database(page)
+ await fixture(page,{ready:true,complete});await setAppearance(page,'clay','light');await go(page,'learn');await openStudyOverview(page);const before=await database(page)
  await expect(page.locator('.study-companion-card').getByRole('button')).toHaveCount(0);const actions=page.locator('.study-companion-ready');await expect(actions).toBeVisible()
  await actions.getByRole('button',{name:complete?'整课检查':'开始今日学习',exact:true}).click()
  if(complete){await expect(page.locator('.activity-workspace')).toBeVisible();expect(await database(page)).toEqual(before);await page.getByRole('button',{name:'收起练习',exact:true}).click();await expect(actions).toBeVisible()}
@@ -64,11 +65,11 @@ for(const complete of [false,true])test(`原有${complete?'整课检查':'开始
 })
 
 test('配图失败保留文字与尺寸，切换伙伴会重新载入；装饰不产生额外焦点',async({page})=>{
- await fixture(page);await page.setViewportSize({width:390,height:900});await setAppearance(page,'clay','light');await page.route('**/static/pet-house/growth/water-*.png',route=>route.abort());await go(page,'learn');const before=await database(page),card=page.locator('.study-companion-card'),height=(await card.boundingBox())!.height
+ await fixture(page);await page.setViewportSize({width:390,height:900});await setAppearance(page,'clay','light');await page.route('**/static/pet-house/growth/water-*.png',route=>route.abort());await go(page,'learn');await openStudyOverview(page);const before=await database(page),card=page.locator('.study-companion-card'),height=(await card.boundingBox())!.height
  await expect(card.locator('.study-companion-placeholder')).toHaveText('伙伴配图暂不可用');await expect(card.locator('.companion-card-title')).toHaveText('玄冥陪你一起学习');expect((await card.boundingBox())!.height).toBe(height);await expect(card.locator('[tabindex],button,[role=button]')).toHaveCount(0);await expect(card.locator('.companion-portrait')).toHaveAttribute('aria-hidden','true')
  await card.locator('.companion-form-label').click();expect(await database(page)).toEqual(before);await go(page,'pet');await page.locator('.pet-choice').filter({hasText:'祝融'}).click();await page.locator('.bottom-nav').getByRole('button',{name:'学习',exact:true}).click();await inspect(page);await expect(card.locator('.companion-card-title')).toHaveText('祝融陪你一起学习')
 })
 
 test('异常档案不展示默认玄冥且不覆盖原始档案',async({page})=>{
- await setAppearance(page,'clay','light');await page.addInitScript(()=>{localStorage.setItem('wordpal.database.active.v2',JSON.stringify('v2'));localStorage.setItem('wordpal.database.v2','unreadable-study-fixture')});await go(page,'learn');const card=page.locator('.study-companion-card');await expect(card.locator('.companion-card-title')).toHaveText('伙伴资料暂不可用');await expect(card.locator('.companion-card-status')).toHaveCount(0);await expect(card.locator('img')).toHaveCount(0);expect(await page.evaluate(()=>localStorage.getItem('wordpal.database.v2'))).toBe('unreadable-study-fixture')
+ await setAppearance(page,'clay','light');await page.addInitScript(()=>{localStorage.setItem('wordpal.database.active.v2',JSON.stringify('v2'));localStorage.setItem('wordpal.database.v2','unreadable-study-fixture')});await go(page,'learn');await openStudyOverview(page);const card=page.locator('.study-companion-card');await expect(card.locator('.companion-card-title')).toHaveText('伙伴资料暂不可用');await expect(card.locator('.companion-card-status')).toHaveCount(0);await expect(card.locator('img')).toHaveCount(0);expect(await page.evaluate(()=>localStorage.getItem('wordpal.database.v2'))).toBe('unreadable-study-fixture')
 })
