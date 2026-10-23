@@ -1,3 +1,4 @@
+export function audioPreloadUrl(url:string,baseUrl:string){return url.startsWith('/static/')?baseUrl.replace(/\/$/,'')+url:url}
 const warming=new Map<string,Promise<void>>()
 // Keep only the current word and one lookahead; never create a second player.
 export function warmUpcomingAudio(urls:string[]){
@@ -7,7 +8,7 @@ export function warmUpcomingAudio(urls:string[]){
 }
 async function warm(url:string):Promise<void>{
  // #ifdef H5
- if(typeof document!=='undefined'){const response=await fetch(url,{cache:'force-cache'});if(!response.ok)throw new Error('Audio unavailable');await response.arrayBuffer();return}
+ if(typeof document!=='undefined'){const response=await fetch(audioPreloadUrl(url,import.meta.env.BASE_URL),{cache:'force-cache'});if(!response.ok)throw new Error('Audio unavailable');await response.arrayBuffer();return}
  // #endif
  // #ifndef H5
  if(typeof plus!=='undefined')return await new Promise<void>((resolve,reject)=>plus.io.resolveLocalFileSystemURL(url.startsWith('/static/')?'_www'+url:url,(entry:any)=>entry.file((file:any)=>{if(file.size>5*1024*1024){reject(new Error('Audio too large'));return}const reader=new plus.io.FileReader();reader.onloadend=()=>resolve();reader.onerror=reject;reader.readAsDataURL(file)},reject),reject))
