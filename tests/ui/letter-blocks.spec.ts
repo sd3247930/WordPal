@@ -44,7 +44,7 @@ test('奶油主题自定义五模式连续训练完成，积木草稿暂停刷�
   else if(mode==='connect'||mode==='listen'){await page.locator(`.answer-choice[data-word-id="${initial.wordIds[0]}"]`).click();await confirm(page).click()}
   else{
    const chars=normalizeSpellingWord(word).slots.map(s=>s.char.toLowerCase());await(await tile(page,chars[0])).click()
-   if(mode==='spell'){const draft=(await database(page)).customPractice.letterDraft;await page.getByRole('button',{name:'暂停练习',exact:true}).click();await page.reload();await page.getByRole('button',{name:'继续上次自定义练习',exact:true}).click();await page.getByRole('button',{name:'继续练习',exact:true}).click();expect((await database(page)).customPractice.letterDraft).toEqual(draft);await expect(page.locator('.block-slot.filled')).toHaveCount(1)}
+   if(mode==='spell'){const draft=(await database(page)).customPractice.letterDraft;await page.getByRole('button',{name:'暂停练习',exact:true}).click();await page.reload();await expect(page.locator('.study-custom-resume')).toHaveCount(0);await page.locator('.study-overview-toggle').click();await expect(page.getByText('上次自定义练习已保存',{exact:true})).toHaveCount(0);await expect(page.locator('.study-custom-resume')).toHaveCount(0);await page.locator('.study-practice-entry-button').click();await page.getByRole('button',{name:'查看已保存进度',exact:true}).click();await page.getByRole('button',{name:'继续练习',exact:true}).click();expect((await database(page)).customPractice.letterDraft).toEqual(draft);await expect(page.locator('.block-slot.filled')).toHaveCount(1)}
    for(const char of chars.slice(1))await(await tile(page,char)).click();await confirm(page).click()
   }
  }
