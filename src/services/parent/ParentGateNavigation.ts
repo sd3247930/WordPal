@@ -8,6 +8,6 @@ export function registerParentNavigationBlocker(blocked:()=>boolean){navigationB
 /** Invalidate the visit before native navigation, including direct calls and back-stack operations. */
 export function installParentGateNavigation(){
  for(const method of ['navigateTo','redirectTo','reLaunch','switchTab','navigateBack'] as const){
-  uni.addInterceptor(method,{invoke(options?:{from?:string}){const gate=useParentGateStore();if(gate.canAccess()){if([...navigationBlockers].some(blocked=>blocked()))return false;if(method==='navigateBack'&&options?.from==='backbutton'&&handleParentBack())return false}gate.leaveVisit()}})
+  uni.addInterceptor(method,{invoke(options?:{from?:string}){if([...navigationBlockers].some(blocked=>blocked()))return false;const gate=useParentGateStore();if(gate.canAccess()&&method==='navigateBack'&&options?.from==='backbutton'&&handleParentBack())return false;gate.leaveVisit()}})
  }
 }

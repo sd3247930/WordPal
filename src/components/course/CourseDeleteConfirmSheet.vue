@@ -32,7 +32,7 @@ import CourseToolsArtwork from './CourseToolsArtwork.vue'
 import type {CoursePack} from '../../../packages/content_schema/course'
 import {registerParentBackHandler,registerParentNavigationBlocker} from '../../services/parent/ParentGateNavigation'
 const props=withDefaults(defineProps<{
- open:boolean;busy?:boolean;courseId?:string;title?:string;wordCount?:number;mediaCount?:number
+ open:boolean;busy?:boolean;courseId:string|undefined;title?:string;wordCount?:number;mediaCount?:number
  bundled:boolean;candidates?:CoursePack[];needsReplacement:boolean;blockedReason?:string;error?:string;resetKey?:number
 }>(),{candidates:()=>[],blockedReason:'',error:''})
 const emit=defineEmits<{cancel:[];confirm:[replacementId:string]}>()

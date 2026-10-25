@@ -19,7 +19,7 @@ async function completeImage(page:Page){
  if(page.viewportSize()!.width<=430)expect(visible).toBeGreaterThan((b.width-8)*.75*1.25)
  await expect(pic.locator('div').first()).toHaveCSS('background-size','contain')
  // Both side markers must survive the actual rendered image, not just its box.
- const {data,info}=await sharp(await pic.screenshot()).removeAlpha().raw().toBuffer({resolveWithObject:true})
+ const {data,info}=await sharp(await pic.screenshot({animations:'disabled'})).removeAlpha().raw().toBuffer({resolveWithObject:true})
  const colors=new Set<string>();for(let x=0;x<info.width;x++){const i=(Math.floor(info.height/2)*info.width+x)*info.channels;colors.add([data[i],data[i+1],data[i+2]].join(','))}
  expect(colors.has('255,0,0')).toBe(true);expect(colors.has('0,0,255')).toBe(true)
  expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)

@@ -38,8 +38,8 @@ test('学习模式一行排列，词卡与主动作可滚动完整显示',async(
  // Custom flash practice keeps the primary action and word card deterministic.
  await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'闪现'}).click()
  await expect(page.locator('.study-mode-selector .mode-button')).toHaveCount(5)
- const boxes=await page.locator('.study-mode-selector .mode-button').evaluateAll(items=>items.map(i=>i.getBoundingClientRect().top))
- expect(new Set(boxes).size).toBe(1)
+ // Press feedback temporarily translates the clicked tile; compare the settled row.
+ await expect.poll(()=>page.locator('.study-mode-selector .mode-button').evaluateAll(items=>new Set(items.map(i=>Math.round(i.getBoundingClientRect().top))).size)).toBe(1)
  await page.getByRole('button',{name:'开始自评',exact:true}).scrollIntoViewIfNeeded()
  const nav=(await page.locator('.bottom-nav').boundingBox())!,action=(await page.getByRole('button',{name:'开始自评',exact:true}).boundingBox())!
  expect(action.y+action.height).toBeLessThan(nav.y)

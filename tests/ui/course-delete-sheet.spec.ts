@@ -1,11 +1,26 @@
 import {test,expect,type Page} from '@playwright/test'
-import {unlockParent,database,setAppearance} from './helpers'
+import {unlockParent,database,setAppearance,go} from './helpers'
 import {lifecyclePack} from '../helpers/lifecycle-fixture'
 const A='delete-dialog-a',B='delete-dialog-b'
 const row=(page:Page,id=A)=>page.locator('.course-item[data-course="'+id+'"]')
 const sheet=(page:Page)=>page.locator('.course-delete-sheet')
 async function openFixture(page:Page,title?:string){await unlockParent(page);const packs=[lifecyclePack(A),lifecyclePack(B)];if(title)packs[0].title=title;await page.evaluate(async packs=>{const repo=await import('/src/services/content/StorageRepository.ts' as string);for(const pack of packs)await repo.installTextCourse(pack)},packs)}
 async function openDelete(page:Page,id=A){await row(page,id).getByRole('button',{name:'删除',exact:true}).click();await expect(sheet(page)).toBeVisible()}
+async function galleryDelete(page:Page){await page.evaluate(async id=>{const {useCourseStore}=await import('/src/stores/course.ts' as string);useCourseStore().applyCourseSelection(id)},A);await go(page,'course');await page.getByRole('button',{name:'管理下载 · 删除教材',exact:true}).click();await expect(sheet(page)).toBeVisible()}
+
+test('教材选择页共用快照，真实移除后保留标题与数量，执行中拦截非家长页导航',async({page})=>{
+ await openFixture(page);const source=await row(page).locator('img').getAttribute('src');await galleryDelete(page);await expect(sheet(page).locator('.course-delete-heading img')).toHaveAttribute('src',source!);await expect(sheet(page).locator('.course-delete-counts')).toContainText('2 词条');await expect(sheet(page).locator('.course-delete-counts')).toContainText('0 媒体')
+ const before=await database(page);await page.evaluate(async()=>{const {useCourseStore}=await import('/src/stores/course.ts' as string),course=useCourseStore(),original=course.uninstall;(window as any).galleryRemoval={calls:0,resolve:null};course.uninstall=async(...args:Parameters<typeof original>)=>{(window as any).galleryRemoval.calls++;const result=await original(...args);await new Promise<void>(resolve=>(window as any).galleryRemoval.resolve=resolve);return result}})
+ await sheet(page).getByRole('textbox',{name:'删除确认文字'}).fill('删除');await sheet(page).getByRole('button',{name:'确认删除',exact:true}).click();await expect(page.locator('.course-gallery-card').filter({hasText:A})).toHaveCount(0);await expect(sheet(page).locator('.course-delete-title')).toContainText(A);await expect(sheet(page).locator('.course-delete-counts')).toContainText('2 词条');await expect(sheet(page).getByRole('button',{name:'取消',exact:true})).toBeDisabled()
+ await page.keyboard.press('Escape');await page.evaluate(()=>uni.redirectTo({url:'/pages/settings/index',fail:()=>{}}));await expect(sheet(page)).toBeVisible();await expect(page.locator('.course-gallery')).toBeVisible();expect(await page.evaluate(()=>(window as any).galleryRemoval.calls)).toBe(1);await page.evaluate(()=>(window as any).galleryRemoval.resolve());await expect(sheet(page)).toHaveCount(0)
+ const after=await database(page);expect(after.currentCourseId).toBe('starter');for(const key of ['gems','pets','rewardIds','cards','history'] as const)expect(after[key]).toEqual(before[key])
+})
+
+test('教材选择页备份失败保留目标与错误，重新确认后可安全重试',async({page})=>{
+ await openFixture(page);await galleryDelete(page);const before=await database(page);await page.evaluate(id=>{const original=Storage.prototype.setItem;(window as any).failGalleryBackup=true;Storage.prototype.setItem=function(key,value){if((window as any).failGalleryBackup&&key==='wordpal.content.removal.backup.'+id)throw Error('Synthetic full disk');return original.call(this,key,value)}},A)
+ await sheet(page).getByRole('textbox',{name:'删除确认文字'}).fill('删除');await sheet(page).getByRole('button',{name:'确认删除',exact:true}).click();await expect(sheet(page).getByRole('alert')).toContainText('无法备份');await expect(sheet(page).locator('.course-delete-title')).toContainText(A);await expect(sheet(page).getByRole('textbox',{name:'删除确认文字'})).toHaveValue('');expect(await database(page)).toEqual(before)
+ await page.evaluate(()=>(window as any).failGalleryBackup=false);await sheet(page).getByRole('textbox',{name:'删除确认文字'}).fill('删除');await sheet(page).getByRole('button',{name:'确认删除',exact:true}).click();await expect(sheet(page)).toHaveCount(0);await expect(page.locator('.course-gallery-card').filter({hasText:A})).toHaveCount(0)
+})
 
 test('紧凑摘要使用对应的三枚3D图，封面同源且确认和关闭均不修改数据',async({page})=>{
  await page.setViewportSize({width:390,height:844});await openFixture(page);const before=await database(page),sources:Record<string,string|null>={}

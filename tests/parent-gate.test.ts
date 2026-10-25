@@ -68,3 +68,8 @@ test('删除抽屉优先处理返回，关闭后恢复工具返回；不可取�
  let busy=true;const release=registerParentNavigationBlocker(()=>busy)
  try{for(const method of ['navigateTo','redirectTo','reLaunch','switchTab','navigateBack']){assert.equal(interceptors.get(method)!(),false);assert.equal(gate.canAccess(),true)}busy=false;interceptors.get('redirectTo')!();assert.equal(gate.unlocked,false)}finally{release()}
 })
+
+test('教材选择页的删除任务不依赖家长访问状态，执行期间仍阻止导航',()=>{
+ const gate=fresh();route='pages/course/index';installParentGateNavigation();let busy=true;const release=registerParentNavigationBlocker(()=>busy)
+ try{assert.equal(gate.canAccess(),false);for(const method of ['navigateTo','redirectTo','reLaunch','switchTab','navigateBack'])assert.equal(interceptors.get(method)!(),false);busy=false;assert.notEqual(interceptors.get('redirectTo')!(),false)}finally{release()}
+})
