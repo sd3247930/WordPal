@@ -13,9 +13,9 @@ test('四宠正式插画和选择卡接入真实成长，点心外观不改变�
  await expect(page.locator('.notice')).toContainText('风之羽已分享')
 })
 test('学习以单词为焦点，宠物只在正确反馈出现，跟读不评分',async({page})=>{
- await go(page,'home');await page.locator('.hero-cta').click();await openCustomPractice(page);await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^闪现，/}).click();await expect(page.locator('.learning-pet-feedback')).toHaveCount(0);await expect(page.locator('.word-picture-fallback')).toBeVisible()
+ await go(page,'home');await page.locator('.hero-cta').click();await openCustomPractice(page);await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^闪现，/}).click();await expect(page.locator('.learning-pet-feedback')).toHaveCount(0);await expect(page.locator('.word-picture img')).toHaveJSProperty('naturalWidth',512);await expect(page.locator('.word-picture-fallback')).toHaveCount(0)
  await expect(page.locator('.pronunciation-practice')).toHaveCount(0)
- await page.locator('.answer-actions .wp-button').filter({hasText:'开始自评'}).click();await expect(page.locator('.word-picture-fallback')).toBeVisible()
+ await page.locator('.answer-actions .wp-button').filter({hasText:'开始自评'}).click();await expect(page.locator('.word-picture img')).toHaveJSProperty('naturalWidth',512)
  await openExploration(page);await expect(page.locator('.pronunciation-practice')).toContainText('录音仅本地临时播放')
  await page.locator('.rating-grid .wp-button').filter({hasText:'记住了'}).click();await expect(page.locator('.learning-pet-feedback')).toBeVisible()
  await page.locator('.answer-feedback .wp-button').click();await expect(page.locator('.learning-pet-feedback')).toHaveCount(0)

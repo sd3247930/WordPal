@@ -2,7 +2,9 @@ import {test,expect,type Page,type Locator} from '@playwright/test'
 import {go,database,setAppearance,openCustomPractice} from './helpers'
 
 async function press(page:Page,tile:Locator){
- await tile.scrollIntoViewIfNeeded();const rect=(await tile.boundingBox())!;await page.mouse.move(rect.x+rect.width/2,rect.y+rect.height/2);await page.mouse.down()
+ await tile.evaluate(node=>node.scrollIntoView({block:'center',inline:'nearest'}));const rect=(await tile.boundingBox())!,point={x:rect.x+rect.width/2,y:rect.y+rect.height/2}
+ expect(await tile.evaluate((node,point)=>node.contains(document.elementFromPoint(point.x,point.y)),point)).toBe(true)
+ await page.mouse.move(point.x,point.y);await page.mouse.down()
 }
 async function cancelPress(page:Page){await page.mouse.move(1,1);await page.mouse.up()}
 const appearance=(tile:Locator)=>tile.evaluate(e=>{const s=getComputedStyle(e);return {background:s.backgroundColor,transform:s.transform,shadow:s.boxShadow}})
