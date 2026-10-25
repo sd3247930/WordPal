@@ -26,6 +26,14 @@ test('公开词库 Git SHA 豁免仅限审核过的整行，邻行同一数字�
  assert.equal(scanBytes(name,Buffer.from(line+'\naccount = '+digits)).filter((h:any)=>h.category==='identity/account digits').length,1)
  assert.ok(scanBytes('other.ts',Buffer.from(line)).some((h:any)=>h.category==='identity/account digits'))
 })
+
+test('内置音频 SHA 仅豁免已核对的清单整行，其他数字及位置仍阻断',()=>{
+ const name='src/content/starter-media.json',manifest=JSON.parse(fs.readFileSync(name,'utf8')),asset=manifest.assets.find((asset:any)=>asset.id==='audio-wind'),line='"sha256": "'+asset.sha256+'",',digits=line.match(/\d{16,19}/)![0]
+ assert.deepEqual(scanBytes(name,Buffer.from(line)),[])
+ assert.equal(scanBytes(name,Buffer.from(line+'\naccount = '+digits)).filter((hit:any)=>hit.category==='identity/account digits').length,1)
+ assert.ok(scanBytes('other.json',Buffer.from(line)).some((hit:any)=>hit.category==='identity/account digits'))
+ assert.ok(scanBytes(name,Buffer.from(line.replace('sha256','account'))).some((hit:any)=>hit.category==='identity/account digits'))
+})
 function fixture(action:(root:string)=>void){
  const parent=fs.realpathSync(os.tmpdir()),root=fs.mkdtempSync(path.join(parent,'wordpal-purity-fixture-'))
  try{action(root)}finally{const resolved=fs.realpathSync(root);assert.equal(path.dirname(resolved),parent);assert.ok(path.basename(resolved).startsWith('wordpal-purity-fixture-'));fs.rmSync(resolved,{recursive:true,force:true})}

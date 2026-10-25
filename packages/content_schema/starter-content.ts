@@ -1,8 +1,10 @@
 import legacy from '../../src/content/starter.json'
+import media from '../../src/content/starter-media.json'
 import type {Word} from '../core_learning'
 import {validateCourse,type CoursePack} from './course'
 
-const base:CoursePack={schemaVersion:2,courseId:'starter',contentVersion:'1.0.0',title:'原创启蒙课程',route:'theme',abilityLevels:['L1','L2'],sources:[{id:'wordpal-original',type:'author-created',rightsStatus:'redistribution-approved',textLicense:legacy.license,attribution:'WordPal 原创教学示例',revision:'starter-1'}],vocabulary:legacy.words.map(w=>({id:w.id,language:'en',lemma:w.word,meaning:w.meaning,pos:w.pos,ipa:w.ipa,phonics:w.phonics,phonemes:w.phonemes,syllables:w.syllables,audio:w.audio,image:w.image,example:w.example,sourceId:'wordpal-original',senseId:w.id})),units:[...new Set(legacy.lessons.map(l=>l.unit))].map((title,i)=>({id:'u0'+(i+1),title,lessons:legacy.lessons.filter(l=>l.unit===title).map(l=>({id:l.id,title:l.name,wordIds:l.wordIds,activities:['flash','connect','listen','spell','dictation']}))})),assets:[]}
+const bundledMedia=media as {contentVersion:string;sources:CoursePack['sources'];vocabulary:{id:string;assetRefs:{audio:string;image:string}}[];assets:CoursePack['assets']}
+const base:CoursePack={schemaVersion:2,courseId:'starter',contentVersion:bundledMedia.contentVersion,title:'原创启蒙课程',route:'theme',abilityLevels:['L1','L2'],sources:[{id:'wordpal-original',type:'author-created',rightsStatus:'redistribution-approved',textLicense:legacy.license,attribution:'WordPal 原创教学示例',revision:'starter-1'},...bundledMedia.sources],vocabulary:legacy.words.map(w=>({id:w.id,language:'en',lemma:w.word,meaning:w.meaning,pos:w.pos,ipa:w.ipa,phonics:w.phonics,phonemes:w.phonemes,syllables:w.syllables,audio:w.audio,image:w.image,assetRefs:bundledMedia.vocabulary.find(entry=>entry.id===w.id)?.assetRefs,example:w.example,sourceId:'wordpal-original',senseId:w.id})),units:[...new Set(legacy.lessons.map(l=>l.unit))].map((title,i)=>({id:'u0'+(i+1),title,lessons:legacy.lessons.filter(l=>l.unit===title).map(l=>({id:l.id,title:l.name,wordIds:l.wordIds,activities:['flash','connect','listen','spell','dictation']}))})),assets:bundledMedia.assets}
 export const starterPack:CoursePack=JSON.parse(JSON.stringify(base))
 const originals=new Map((legacy.words as Word[]).map(word=>[word.id,word]))
 let replacement:CoursePack|null=null
@@ -20,8 +22,9 @@ export function configureStarterCourse(pack:CoursePack|null){
  Object.assign(starterPack,JSON.parse(JSON.stringify(replacement||base)))
 }
 export const localStarterEntry=(id:string)=>replacement?.vocabulary.find(entry=>entry.id===id)
+export const activeStarterEntry=(id:string)=>starterPack.vocabulary.find(entry=>entry.id===id)
 export const originalStarterWord=(id:string)=>originals.get(id)
-export const starterAssetUrl=(id:string)=>{const asset=starterPack.assets.find(asset=>asset.id===id);return asset?'/static/local-starter-media/'+asset.path:''}
+export const starterAssetUrl=(id:string)=>{const asset=starterPack.assets.find(asset=>asset.id===id);return asset?(replacement?'/static/local-starter-media/':'/static/')+asset.path:''}
 
 /** Only the configured starter translation and its previous spelling are equivalent; unrelated senses stay strict. */
 export function wordIdentityMatches(old:Pick<Word,'id'|'word'|'meaning'|'pos'>,next:Pick<Word,'word'|'meaning'|'pos'>){

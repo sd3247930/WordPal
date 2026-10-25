@@ -4,7 +4,7 @@ import type {Word} from '../core_learning'
 import {entryWord,courseLessons,validateCourse,type CoursePack} from './course'
 import {readStorage} from '../local_storage'
 import {withOfflineWordAudio} from './offline-audio'
-import {starterPack,starterAssetUrl,localStarterEntry,originalStarterWord,wordIdentityMatches} from './starter-content'
+import {starterPack,starterAssetUrl,activeStarterEntry,localStarterEntry,originalStarterWord,wordIdentityMatches} from './starter-content'
 import {isUserDeleted,loadCourseLifecycle,assertContentReadable,restoreDeletedCourse} from './course-lifecycle'
 export {isUserDeleted,deletedCourses} from './course-lifecycle'
 export {starterPack,configureStarterCourse,wordIdentityMatches} from './starter-content'
@@ -41,7 +41,7 @@ export function registerCourse(pack:CoursePack,resolver:(id:string)=>string=()=>
  const prepared=copy.vocabulary.map(entry=>entryWord(entry,copy,resolver,firstLessons.get(entry.id)))
  for(const word of prepared){const old=wordById[word.id];if(old&&!wordIdentityMatches(old,word))throw new Error('已有词条 ID 对应其他词义或词性，请保留旧词并使用新 ID。')}
  Object.assign(sourceMappings,mappings)
- for(const word of prepared){const old=wordById[word.id];if(!old){wordById[word.id]=word;words.push(word)}else if(copy.courseId==='starter'&&localStarterEntry(word.id)){const {distractors,difficulty}=old;Object.assign(old,word,{distractors,difficulty,audioUK:word.audio,phoneticUK:word.ipa})}else if(copy.courseId!=='starter'){if(!old.audio&&word.audio)old.audio=word.audio;if(!old.ipa&&word.ipa)old.ipa=word.ipa;if(!old.phonics.length&&word.phonics.length){old.phonics=word.phonics;old.phonemes=word.phonemes}if(word.acceptedSpellings)old.acceptedSpellings=[...new Set([...(old.acceptedSpellings||[]),...word.acceptedSpellings])]}}
+ for(const word of prepared){const old=wordById[word.id];if(!old){wordById[word.id]=word;words.push(word)}else if(copy.courseId==='starter'){const {distractors,difficulty}=old;Object.assign(old,word,{distractors,difficulty,...(localStarterEntry(word.id)?{audioUK:word.audio,phoneticUK:word.ipa}:{})})}else if(copy.courseId!=='starter'){if(!old.audio&&word.audio)old.audio=word.audio;if(!old.ipa&&word.ipa)old.ipa=word.ipa;if(!old.phonics.length&&word.phonics.length){old.phonics=word.phonics;old.phonemes=word.phonemes}if(word.acceptedSpellings)old.acceptedSpellings=[...new Set([...(old.acceptedSpellings||[]),...word.acceptedSpellings])]}}
  versions.set(copy.courseId+'@'+copy.contentVersion,copy);courseRegistry[copy.courseId]=copy
  for(const a of copy.assets)assetUrls.set(copy.courseId+'@'+copy.contentVersion+':'+a.id,resolver(a.id))
 }
@@ -54,11 +54,16 @@ export const courseMemberships=(wordId:string)=>(membershipIndex.value[wordId]||
 export const resolveCourseAsset=(courseId:string,id:string,version=courseRegistry[courseId]?.contentVersion)=>isCourseReadable(courseId)?assetUrls.get(courseId+'@'+version+':'+id)||'':''
 export function resolveFrozenWord(word:Word|undefined,courseId?:string,version?:string):Word|undefined{
  if(courseId&&!isCourseReadable(courseId))return undefined
- const local=word?localStarterEntry(word.id):undefined,original=word?originalStarterWord(word.id):undefined
+ const local=word?activeStarterEntry(word.id):undefined,original=word?originalStarterWord(word.id):undefined
  if(word&&local&&original&&wordIdentityMatches(original,word)&&(courseId==='starter'||word.audio===original.audio)){
   // Rebind the view, including old starter snapshots, without rewriting frozen sessions or SRS records.
-  word={...word,audio:local.assetRefs?.audio?resolveCourseAsset('starter',local.assetRefs.audio):local.audio||word.audio,image:local.assetRefs?.image?resolveCourseAsset('starter',local.assetRefs.image):local.image||word.image,...(courseId==='starter'?{ipa:local.ipa||word.ipa,meaning:local.meaning}:{}),audioUK:local.assetRefs?.audio?resolveCourseAsset('starter',local.assetRefs.audio):local.audioUK}
+  const overridden=!!localStarterEntry(word.id),audio=local.assetRefs?.audio?resolveCourseAsset('starter',local.assetRefs.audio):local.audio||word.audio,image=local.assetRefs?.image?resolveCourseAsset('starter',local.assetRefs.image):local.image||word.image
+  const knownAudio=!word.audio||word.audio===original.audio||word.audio===audio||word.audio.startsWith('/static/local-starter-media/')
+  const knownImage=!word.image||word.image===original.image||word.image.startsWith('/static/starter-media/images/')||word.image.startsWith('/static/local-starter-media/')
+  word={...word,audio:overridden||knownAudio?audio:word.audio,image:overridden||knownImage?image:word.image,...(courseId==='starter'?{ipa:local.ipa||word.ipa,meaning:local.meaning}:{}),audioUK:overridden?audio:local.audioUK}
  }
+ // Bundled starter handles were resolved above; preserve explicitly supplied snapshot media.
+ if(courseId==='starter')return withOfflineWordAudio(word)
  if(!word||!courseId||!version)return withOfflineWordAudio(word)
  const entry=versions.get(courseId+'@'+version)?.vocabulary.find(e=>e.id===word.id)
  if(!entry)return withOfflineWordAudio(word)

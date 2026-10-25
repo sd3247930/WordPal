@@ -1,0 +1,519 @@
+{
+  "contentVersion": "1.2.0",
+  "sources": [
+    {
+      "id": "wordpal-starter-illustrations",
+      "type": "user-provided",
+      "rightsStatus": "redistribution-approved",
+      "attribution": "项目用户提供的原创启蒙课程 20 张插画，逐图核验无个人信息；已清除来源与附加元数据。",
+      "textLicense": "仅媒体来源记录，课程文字沿用 WordPal 原创示例。",
+      "imageLicense": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。",
+      "revision": "starter-illustrations-1",
+      "declaredAt": "2026-10-25"
+    }
+  ],
+  "vocabulary": [
+    {
+      "id": "cat",
+      "assetRefs": {
+        "audio": "audio-cat",
+        "image": "image-cat"
+      }
+    },
+    {
+      "id": "dog",
+      "assetRefs": {
+        "audio": "audio-dog",
+        "image": "image-dog"
+      }
+    },
+    {
+      "id": "fish",
+      "assetRefs": {
+        "audio": "audio-fish",
+        "image": "image-fish"
+      }
+    },
+    {
+      "id": "bird",
+      "assetRefs": {
+        "audio": "audio-bird",
+        "image": "image-bird"
+      }
+    },
+    {
+      "id": "duck",
+      "assetRefs": {
+        "audio": "audio-duck",
+        "image": "image-duck"
+      }
+    },
+    {
+      "id": "apple",
+      "assetRefs": {
+        "audio": "audio-apple",
+        "image": "image-apple"
+      }
+    },
+    {
+      "id": "egg",
+      "assetRefs": {
+        "audio": "audio-egg",
+        "image": "image-egg"
+      }
+    },
+    {
+      "id": "milk",
+      "assetRefs": {
+        "audio": "audio-milk",
+        "image": "image-milk"
+      }
+    },
+    {
+      "id": "bread",
+      "assetRefs": {
+        "audio": "audio-bread",
+        "image": "image-bread"
+      }
+    },
+    {
+      "id": "cake",
+      "assetRefs": {
+        "audio": "audio-cake",
+        "image": "image-cake"
+      }
+    },
+    {
+      "id": "sun",
+      "assetRefs": {
+        "audio": "audio-sun",
+        "image": "image-sun"
+      }
+    },
+    {
+      "id": "rain",
+      "assetRefs": {
+        "audio": "audio-rain",
+        "image": "image-rain"
+      }
+    },
+    {
+      "id": "tree",
+      "assetRefs": {
+        "audio": "audio-tree",
+        "image": "image-tree"
+      }
+    },
+    {
+      "id": "leaf",
+      "assetRefs": {
+        "audio": "audio-leaf",
+        "image": "image-leaf"
+      }
+    },
+    {
+      "id": "wind",
+      "assetRefs": {
+        "audio": "audio-wind",
+        "image": "image-wind"
+      }
+    },
+    {
+      "id": "book",
+      "assetRefs": {
+        "audio": "audio-book",
+        "image": "image-book"
+      }
+    },
+    {
+      "id": "pen",
+      "assetRefs": {
+        "audio": "audio-pen",
+        "image": "image-pen"
+      }
+    },
+    {
+      "id": "bag",
+      "assetRefs": {
+        "audio": "audio-bag",
+        "image": "image-bag"
+      }
+    },
+    {
+      "id": "desk",
+      "assetRefs": {
+        "audio": "audio-desk",
+        "image": "image-desk"
+      }
+    },
+    {
+      "id": "pencil",
+      "assetRefs": {
+        "audio": "audio-pencil",
+        "image": "image-pencil"
+      }
+    }
+  ],
+  "assets": [
+    {
+      "id": "audio-cat",
+      "path": "audio/cat.wav",
+      "mediaType": "audio/wav",
+      "bytes": 68374,
+      "sha256": "a5f67789491ccd4d7e590006c22855f0b8381b5cabd39fd0e8ec7897f253ced2",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-cat",
+      "path": "starter-media/images/cat.webp",
+      "mediaType": "image/webp",
+      "bytes": 35512,
+      "sha256": "676284e2226a7a138d008f47f387c4e3c02bd8be9aeaf278a6d168229cd48cfe",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-dog",
+      "path": "audio/dog.wav",
+      "mediaType": "audio/wav",
+      "bytes": 69036,
+      "sha256": "6901bd2f133f492843b0870a7d10fecb609f273b7d2067c134158ccab01e410c",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-dog",
+      "path": "starter-media/images/dog.webp",
+      "mediaType": "image/webp",
+      "bytes": 35908,
+      "sha256": "2d247644258612e26cab5dbc30083c83679ef080820312cd93ff65110bea1c4b",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-fish",
+      "path": "audio/fish.wav",
+      "mediaType": "audio/wav",
+      "bytes": 75872,
+      "sha256": "a417fee400f20a942f00c04db8193a2152f88f97e1504a895dd095c755dd4f3b",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-fish",
+      "path": "starter-media/images/fish.webp",
+      "mediaType": "image/webp",
+      "bytes": 47950,
+      "sha256": "01a2405690d621771003186de3578ce1c5cefc785e5950726a83ecaa15ec01df",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-bird",
+      "path": "audio/bird.wav",
+      "mediaType": "audio/wav",
+      "bytes": 67270,
+      "sha256": "133ace77c1fb6e3a4645e0a12431ff13bdfdff8f031da6fa2a37fcc9067115ea",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-bird",
+      "path": "starter-media/images/bird.webp",
+      "mediaType": "image/webp",
+      "bytes": 35098,
+      "sha256": "bbb88ab7bcafbdea81b5cd1d2d47ff8b82fbfd8562fab54107b40ba9b4b3ced1",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-duck",
+      "path": "audio/duck.wav",
+      "mediaType": "audio/wav",
+      "bytes": 69036,
+      "sha256": "4c10962cb3faa73467926864c4d0ab7bfaf7685e8eb704854949b12f61333309",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-duck",
+      "path": "starter-media/images/duck.webp",
+      "mediaType": "image/webp",
+      "bytes": 39746,
+      "sha256": "4030bf1e47c82bccb94d1de832fc138643309bdcd5b64eb6d7b18234c19142c7",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-apple",
+      "path": "audio/apple.wav",
+      "mediaType": "audio/wav",
+      "bytes": 68374,
+      "sha256": "92fa225c0180bc953bf953773af8c3f01e4805b7a98d2933773b7d2657657382",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-apple",
+      "path": "starter-media/images/apple.webp",
+      "mediaType": "image/webp",
+      "bytes": 35372,
+      "sha256": "8df2e29cd534e649968f8151bb8d161e5cbe281cda05f08f728cf935d9291a23",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-egg",
+      "path": "audio/egg.wav",
+      "mediaType": "audio/wav",
+      "bytes": 64186,
+      "sha256": "0a1beb8e58d9b7df9e09c9e6a74ccb1c9ef6156dd8377a38476d901a6c8e39d4",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-egg",
+      "path": "starter-media/images/egg.webp",
+      "mediaType": "image/webp",
+      "bytes": 20666,
+      "sha256": "7a6864e183c488750fa0df521927ca89a70f665d348b582cf77b6426b8ba7784",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-milk",
+      "path": "audio/milk.wav",
+      "mediaType": "audio/wav",
+      "bytes": 68152,
+      "sha256": "56a7196e4034ec11cc9a471e22caca1ee369a96370b9157998d163d2a3e836e3",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-milk",
+      "path": "starter-media/images/milk.webp",
+      "mediaType": "image/webp",
+      "bytes": 22754,
+      "sha256": "734535ad46ce52cbb93be1d2d84d27024a7b6779a0f67d245d8e23eceb4a826d",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-bread",
+      "path": "audio/bread.wav",
+      "mediaType": "audio/wav",
+      "bytes": 69476,
+      "sha256": "d3dd15ea2b79a5429ccf4331c4f58a51a4ee62de0016fba5656e5d5f70819ed2",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-bread",
+      "path": "starter-media/images/bread.webp",
+      "mediaType": "image/webp",
+      "bytes": 58242,
+      "sha256": "841c9869c6ee604bd81c14094db74f9848477f9ab900c615cfbf33ef14e4fa3b",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-cake",
+      "path": "audio/cake.wav",
+      "mediaType": "audio/wav",
+      "bytes": 69036,
+      "sha256": "368e97a3a13244e3fb37b31cf184acc7b7d54519a6d72b7577da9338789b2ac6",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-cake",
+      "path": "starter-media/images/cake.webp",
+      "mediaType": "image/webp",
+      "bytes": 41012,
+      "sha256": "c18ad59865e208817c640f2a7619dd6646e213a2c99dec45f6c2a46582c1764b",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-sun",
+      "path": "audio/sun.wav",
+      "mediaType": "audio/wav",
+      "bytes": 73666,
+      "sha256": "38934823e5461d3c4ddedaa49378c4e887a6b30c4a4585e8706ea439213dc75e",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-sun",
+      "path": "starter-media/images/sun.webp",
+      "mediaType": "image/webp",
+      "bytes": 23910,
+      "sha256": "143d05506d5b50cffc332952f218b8eae9f556e06e56414b33e0eeb3b3616405",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-rain",
+      "path": "audio/rain.wav",
+      "mediaType": "audio/wav",
+      "bytes": 71020,
+      "sha256": "263cb516f71b70570bbdf9e79514fc4d8e1fcab9b0e71ce65c654109fef46914",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-rain",
+      "path": "starter-media/images/rain.webp",
+      "mediaType": "image/webp",
+      "bytes": 67396,
+      "sha256": "b905080650a03821870d6ce89bdd394b9bc06c8b742792a02a4a2d599e414bf3",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-tree",
+      "path": "audio/tree.wav",
+      "mediaType": "audio/wav",
+      "bytes": 66610,
+      "sha256": "86cddb17f2c2bbcd4110142c8880e1e61077276e62bcf9d732e3faa4e9f39135",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-tree",
+      "path": "starter-media/images/tree.webp",
+      "mediaType": "image/webp",
+      "bytes": 69120,
+      "sha256": "4c1a3acd3ae2b4510ca970716b6fd7206e4b081c7d831e7b41ef9a05f50b0efb",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-leaf",
+      "path": "audio/leaf.wav",
+      "mediaType": "audio/wav",
+      "bytes": 72784,
+      "sha256": "cbcc0f3e49d729ade4f30364176e0fb9ae6d2e6310ab0681cbf371d45c50a37b",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-leaf",
+      "path": "starter-media/images/leaf.webp",
+      "mediaType": "image/webp",
+      "bytes": 28278,
+      "sha256": "12b55215790884a826626a15a75fd58625528f23abbca648b749d00471e23e09",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-wind",
+      "path": "audio/wind.wav",
+      "mediaType": "audio/wav",
+      "bytes": 71900,
+      "sha256": "4ae0b08b8d27e788f8ee96b148473286542441411eb33e760af1c7413f388e08",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-wind",
+      "path": "starter-media/images/wind.webp",
+      "mediaType": "image/webp",
+      "bytes": 55796,
+      "sha256": "36afef6cc809b5de402aa2e024c465ae1874cce2ea7c600bd6b5b114d406bdf4",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-book",
+      "path": "audio/book.wav",
+      "mediaType": "audio/wav",
+      "bytes": 69036,
+      "sha256": "e713f1d26b44dcb788a39ed0a34fb83a3765487a394e3c20fd81e134ab683e84",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-book",
+      "path": "starter-media/images/book.webp",
+      "mediaType": "image/webp",
+      "bytes": 46512,
+      "sha256": "ab9e97dba42c07c89555c0a26855e4ed829689719b4ac9714739174ff7f7233d",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-pen",
+      "path": "audio/pen.wav",
+      "mediaType": "audio/wav",
+      "bytes": 70800,
+      "sha256": "04b4d0365ceb067c04994a4b3b6b2c6c85debe298e6b156eae0923ad95e4afd4",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-pen",
+      "path": "starter-media/images/pen.webp",
+      "mediaType": "image/webp",
+      "bytes": 15940,
+      "sha256": "a359455ce41c67e30b5b2b5ce53ec201c023b338c1583942d618308030bbd2b0",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-bag",
+      "path": "audio/bag.wav",
+      "mediaType": "audio/wav",
+      "bytes": 69036,
+      "sha256": "848d3ecf2e0075c39a491cc5d89572add179f8898adb61f376206b9198897571",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-bag",
+      "path": "starter-media/images/bag.webp",
+      "mediaType": "image/webp",
+      "bytes": 35578,
+      "sha256": "6e6f3877c2c8b8c1c0e1abb744be544d8290e57a21440fa4db18af9bedb74b32",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-desk",
+      "path": "audio/desk.wav",
+      "mediaType": "audio/wav",
+      "bytes": 78296,
+      "sha256": "a542b12e1d73b3036bc860541d9cab48807c542360decb32476bb367d1d01312",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-desk",
+      "path": "starter-media/images/desk.webp",
+      "mediaType": "image/webp",
+      "bytes": 30988,
+      "sha256": "8c6d749248ac6ab5caa1af3094afe3b3825a49162012b024527eade547af27c7",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    },
+    {
+      "id": "audio-pencil",
+      "path": "audio/pencil.wav",
+      "mediaType": "audio/wav",
+      "bytes": 76088,
+      "sha256": "bf779c4eee81139f63bf9b468588b22ece90a02c2f078d775124acdcd32c8503",
+      "sourceId": "wordpal-original",
+      "license": "原创教学示例；非特定出版社教材，可在本项目中使用。"
+    },
+    {
+      "id": "image-pencil",
+      "path": "starter-media/images/pencil.webp",
+      "mediaType": "image/webp",
+      "bytes": 16852,
+      "sha256": "bbccde51a878a052788a25bc2ae0dbb2e778f788a3bf4fc0e69638f657b80345",
+      "sourceId": "wordpal-starter-illustrations",
+      "license": "项目用户提供并授权随 WordPal 应用及公开仓库发布；不另行授予素材独立使用权。"
+    }
+  ]
+}
