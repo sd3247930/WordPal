@@ -32,3 +32,8 @@ export function wordIdentityMatches(old:Pick<Word,'id'|'word'|'meaning'|'pos'>,n
  const meanings=[original.meaning,entry.meaning]
  return meanings.includes(old.meaning)&&meanings.includes(next.meaning)
 }
+/** Equivalent translations are indexed once during import, preserving starter compatibility. */
+export function wordIdentityMeanings(word:Pick<Word,'id'|'word'|'meaning'|'pos'>){
+ const original=originals.get(word.id),entry=localStarterEntry(word.id)
+ return original&&entry&&word.word===original.word&&word.pos===original.pos&&[original.meaning,entry.meaning].includes(word.meaning)?[original.meaning,entry.meaning]:[word.meaning]
+}

@@ -73,3 +73,8 @@
 .course-consent-dot{display:block;flex:0 0 18px;width:18px;height:18px;margin-top:3px;border:2px solid var(--wp-border);border-radius:50%;box-sizing:border-box}
 .course-consent-dot.checked{border-color:var(--wp-primary);background:var(--wp-primary);box-shadow:inset 0 0 0 3px var(--wp-surface)}
 .course-import-form .import-preview{display:flex;flex-direction:column;gap:8px}.course-item>view:first-child{display:flex;flex-direction:column;gap:5px}
+.course-import-progress,.course-file-summary{display:flex;flex-direction:column;gap:8px;min-width:0;padding:12px;border:1px solid var(--wp-border);border-radius:var(--wp-radius-sm);background:var(--wp-surface-tonal);overflow-wrap:anywhere}
+.course-import-progress-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.course-import-track{height:8px;overflow:hidden;border-radius:8px;background:var(--wp-border)}
+.course-import-track>view{height:100%;border-radius:inherit;background:var(--wp-primary)}
+.course-import-track.indeterminate>view{width:100%!important;opacity:.5;background:repeating-linear-gradient(115deg,var(--wp-primary) 0,var(--wp-primary) 8px,transparent 8px,transparent 14px)}

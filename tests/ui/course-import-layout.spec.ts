@@ -5,7 +5,7 @@ for(const theme of ['swiss','clay'])for(const mode of ['light','dark'])test(`精
  const form=page.locator('.course-import-form'),before=await database(page)
  for(const name of ['导入课程 ID','导入课程名称','导入内容版本','课程来源说明'])await expect(form.getByRole('textbox',{name,exact:true})).toHaveCount(0)
  for(const label of ['课程路线','起点能力'])await expect(form.getByRole('group',{name:label})).toHaveCount(0)
- await expect(page.locator('.course-item').first()).toContainText('仅本机学习使用')
+ await expect(page.locator('.course-item').first()).toContainText('已完整学完')
  await expect(form.locator('.course-mapping')).toHaveCount(0)
  await form.getByRole('textbox',{name:'课程 JSON 或 CSV 文本'}).fill('word,meaning\ncomet,彗星\norbit,轨道')
  await form.getByRole('button',{name:'检查课程内容',exact:true}).click()

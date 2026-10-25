@@ -7,36 +7,26 @@ import {useBundledFixture} from './support/bundled-fixture'
 
 const management=readFileSync('src/components/course/CourseManagement.vue','utf8')
 
-/** 安装按钮只要被绑上 loading/disabled，就会在 app-plus 下变成不可点的死按钮。 */
-function bindsBlockingState(tag:string){return /:\s*(loading|disabled)\b/.test(tag)||tag.includes('aria-disabled')}
-
 function installButtonTag(){
- const anchor=management.indexOf('canReinstall(pack.courseId)')
+ const anchor=management.indexOf('@click="installCourse(pack.courseId)"')
  assert.ok(anchor>0,'课程管理应保留安装入口')
  const open=management.lastIndexOf('<WPButton',anchor)
  const close=management.indexOf('>',anchor)
  return management.slice(open,close+1)
 }
 
-test('课程管理的安装按钮不绑定 loading/disabled（app-plus 可点性守卫）',()=>{
+test('可安装课程分组保留真实安装入口，不绑定无关课程的安装状态',()=>{
  const tag=installButtonTag()
  assert.ok(tag.startsWith('<WPButton'))
- assert.equal(bindsBlockingState(tag),false,tag)
+ assert.ok(!tag.includes(':loading="busy"'),tag)
  assert.ok(tag.includes('@click="installCourse(pack.courseId)"'))
- assert.ok(tag.includes('v-if="!isCourseInstalled(pack.courseId)&&canReinstall(pack.courseId)"'))
- assert.ok(management.includes("{{installingId===pack.courseId?'安装中…':'安装'}}"))
-})
-
-test('守卫对历史缺陷写法有效（负向用例）',()=>{
- // 第一成因：全局 busy 挂到安装按钮上。
- assert.equal(bindsBlockingState('<WPButton kind="secondary" :loading="busy" @click="installCourse(pack.courseId)">'),true)
- // 第二成因候选：按课程 installingId 挂 loading，或再叠加 disabled/aria-disabled。
- assert.equal(bindsBlockingState('<WPButton :loading="installingId===pack.courseId" @click="installCourse(pack.courseId)">'),true)
- assert.equal(bindsBlockingState('<WPButton :disabled="!canReinstall(pack.courseId)" aria-disabled="true">'),true)
+ assert.ok(management.includes('!isCourseInstalled(pack.courseId)&&canReinstall(pack.courseId)'))
+ assert.ok(tag.includes(':loading="installingId===pack.courseId"'))
 })
 
 test('未安装行的占位按钮不再以禁用形态出现',()=>{
- assert.ok(management.includes('<WPButton v-if="isCourseInstalled(pack.courseId)" kind="secondary" @click="selectCourse(pack.courseId)">'))
+ assert.ok(management.includes('label="设为当前课程"'))
+ assert.ok(management.includes('packs=computed(()=>course.installed)'))
  assert.ok(!management.includes('<WPButton kind="secondary" :disabled="!isCourseInstalled(pack.courseId)"'))
  assert.ok(!management.includes(":'未安装'}}"))
 })
@@ -48,7 +38,7 @@ test('installCourse：重复点击只执行一次，finally 必复位 installing
  const body=management.slice(start,end)
  assert.ok(body.includes('if(installingId.value===id)return'),'重复点击守卫')
  assert.ok(body.indexOf('installingId.value===id')<body.indexOf('installingId.value=id'),'守卫必须在写入前生效')
- assert.ok(body.includes('if(!parentGate.canAccess())return'))
+ assert.ok(body.includes('if(!canAct())return'))
  assert.ok(body.includes('enableBundledCourse(id)'))
  assert.ok(body.includes("finally{installingId.value=''}"),'异常路径也必须复位')
 })

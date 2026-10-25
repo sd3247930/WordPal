@@ -72,3 +72,12 @@ test('进度存储写入失败时拒绝删除教材，原学习状态不变',asy
  const {course,learning,profile}=await fresh();course.choose('memory-a');startLegacyRound(learning);course.choose('memory-b');const before=JSON.stringify(profile.db);failKey=V2_KEY
  await assert.rejects(course.uninstall('memory-a',true));failKey='';assert.equal(isCourseInstalled('memory-a'),true);assert.equal(JSON.stringify(profile.db),before)
 })
+test('备份失败回滚精确保留缺失或 null 偏好，释放空间后可重试删除',async()=>{
+ for(const raw of [undefined,'null']){
+  const {course,profile}=await fresh(),key='wordpal.wordbook.preferences.v1'
+  if(raw===undefined)storage.delete(key);else storage.set(key,raw)
+  const before=JSON.stringify(profile.db),ui=[PRESENTATION_KEY,ACTIVITY_KEY,key].map(key=>storage.get(key));failKey='wordpal.content.removal.backup.memory-a'
+  await assert.rejects(course.uninstall('memory-a',true),/无法备份/);assert.equal(isCourseInstalled('memory-a'),true);assert.equal(JSON.stringify(profile.db),before);assert.deepEqual([PRESENTATION_KEY,ACTIVITY_KEY,key].map(key=>storage.get(key)),ui)
+  failKey='';await course.uninstall('memory-a',true);assert.equal(isCourseInstalled('memory-a'),false);assert.equal(isCourseInstalled('memory-b'),true);assert.equal(JSON.stringify(profile.db),before)
+ }
+})

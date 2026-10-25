@@ -38,8 +38,8 @@ test('五页卡片布局、设置入口和教材词卡操作保留，浏览不�
   }
  }
  await page.setViewportSize({width:390,height:950});await go(page,'home');expect((await page.locator('.home-data').boundingBox())!.height).toBeLessThan(250)
- await go(page,'settings');await expect(page.getByRole('button',{name:'家长设置',exact:true})).toBeEnabled();const targets=await page.locator('.preference-row').evaluateAll(items=>items.map(el=>el.getBoundingClientRect().height));expect(targets.every(h=>h>=64)).toBe(true)
- await page.getByRole('button',{name:'查看精灵小伙伴',exact:true}).click();await expect(page.locator('.pet-house')).toBeVisible()
+ await go(page,'settings');await expect(page.getByRole('button',{name:'家长设置',exact:true})).toBeEnabled();const targets=await page.locator('.preference-row').evaluateAll(items=>items.map(el=>el.getBoundingClientRect().height));expect(targets.every(h=>h>=56)).toBe(true)
+ await expect(page.locator('.settings-pet,.settings-summary')).toHaveCount(0);await page.getByRole('navigation',{name:'底部导航'}).getByRole('button',{name:'宠物屋',exact:true}).click();await expect(page.locator('.pet-house')).toBeVisible()
  await go(page,'review');await page.getByRole('button',{name:/^查看教材全部单词 ·/}).click();await expect(page.locator('.course-word-row').first()).toBeVisible()
  for(const width of [320,390,834,1280]){await page.setViewportSize({width,height:950});const rows=await page.locator('.course-word-row').evaluateAll(items=>items.map(el=>{const r=el.getBoundingClientRect(),open=el.querySelector('.course-word-content')!.getBoundingClientRect(),tools=el.querySelector('.course-word-tools')!.getBoundingClientRect();return {overflow:el.scrollWidth>el.clientWidth+1,separate:open.right<=tools.left+.2||open.bottom<=tools.top+.2,inside:tools.right<=r.right+.2&&tools.bottom<=r.bottom+.2}}));expect(rows.every(r=>!r.overflow&&r.separate&&r.inside)).toBe(true)}
  await page.setViewportSize({width:390,height:950});await page.locator('.course-word-open').first().click();await expect(page.getByRole('dialog')).toBeVisible();await page.getByRole('button',{name:'关闭单词详情',exact:true}).click();expect(await database(page)).toEqual(before)

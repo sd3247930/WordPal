@@ -58,18 +58,17 @@ test('宠物主列表使用紧凑头像，点击更新当前伙伴与成长入�
  await expect(page.locator('.current-pet-hero')).toContainText('祝融')
 })
 
-test('零到期词本没有禁用大动作，并能浏览全部单词',async({page})=>{
- await go(page,'review');await expect(page.locator('.review-clear')).toContainText('当前范围没有到期复习')
- await expect(page.getByRole('button',{name:/开始到期复习/})).toHaveCount(0)
- await page.getByRole('button',{name:'浏览全部单词',exact:true}).click()
+test('零到期词本禁用练习动作，分类仍能浏览全部单词',async({page})=>{
+ await go(page,'review');await expect(page.locator('.wordbook-due-action')).toContainText('当前范围没有到期词');await expect(page.locator('.wordbook-due-action')).toBeDisabled()
+ await page.getByRole('group',{name:'单词本筛选'}).getByRole('button',{name:'所有单词',exact:true}).click()
  await expect(page.locator('.review-tabs .selected')).toContainText('所有单词')
  await expect(page.locator('.review-tabs .mode-button')).toHaveCount(4)
 })
 
-test('六个设置区块与声音触感偏好独立保存，不改变学习数据',async({page})=>{
+test('五个设置区块与声音触感偏好独立保存，不改变学习数据',async({page})=>{
  await seedDatabase(page,goldenDatabase());await go(page,'settings');const before=await database(page)
  for(const name of ['外观','学习','声音与触感','数据与隐私','关于 WordPal'])await expect(page.locator('.settings-main').getByText(name,{exact:true}).first()).toBeVisible()
- await expect(page.locator('.settings-pet')).toContainText('宠物 · 当前陪伴');await expect(page.locator('.appearance-theme')).toHaveCount(1);await expect(page.locator('.appearance-theme')).toContainText('瑞士专注主题')
+ await expect(page.locator('.settings-pet,.settings-summary')).toHaveCount(0);await expect(page.locator('.settings-card')).toHaveCount(5);await expect(page.locator('.appearance-theme')).toHaveCount(1);await expect(page.locator('.appearance-theme')).toContainText('瑞士专注主题')
  await page.getByLabel('学习发音',{exact:true}).click();await page.getByLabel('正确回答轻震动',{exact:true}).click()
  await expect(page.getByRole('button',{name:'试听发音',exact:true})).toBeDisabled()
  expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('wordpal.feedback.v1')!))).toEqual({sound:false,haptics:false})

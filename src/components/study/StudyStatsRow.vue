@@ -1,7 +1,7 @@
 <template>
  <view class="study-stats-row" role="group" aria-label="当前教材学习统计">
   <view v-for="item in items" :key="item.id" class="study-stat-card" :class="{'is-highlighted':highlighted===item.id}" :data-stat="item.id">
-   <WPActionTile toggle-highlight :selected="highlighted===item.id" class="study-stat-action" :aria-label="item.label+'，'+item.value+'，'+item.hint" :aria-expanded="item.id==='today'?todayOpen:undefined" @click="activate(item.id)" @cancel="cancel(item.id)">
+   <WPActionTile toggle-highlight :selected="highlighted===item.id" class="study-stat-action study-card-feedback" hover-class="study-card-pressed" :hover-start-time="0" :hover-stay-time="120" :aria-label="item.label+'，'+item.value+'，'+item.hint" :aria-expanded="item.id==='today'?todayOpen:undefined" @click="activate(item.id)" @cancel="cancel(item.id)">
     <view class="study-stat-art" aria-hidden="true"><image v-if="!failed.has(item.id)" class="study-stat-image" :src="item.src" mode="aspectFit" @error="failed.add(item.id)"/><text v-else class="study-stat-fallback">{{item.fallback}}</text></view>
     <view class="study-stat-copy"><text class="study-stat-label">{{item.label}}</text><view class="study-stat-number"><text class="study-stat-value"><template v-if="item.id==='round'&&round.total>0">{{round.completed}}<text class="study-stat-denominator"> / {{round.total}}</text></template><template v-else>{{item.value}}</template></text><text v-if="item.id!=='round'" class="study-stat-unit">词</text></view></view>
    </WPActionTile>

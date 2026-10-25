@@ -5,7 +5,7 @@
    <text class="current-course-label">当前教材</text>
    <text class="current-course-name" :title="ready?pack?.title:undefined">{{ready?pack?.title:unavailable?'教材资料暂不可用':'尚未选择教材'}}</text>
    <view class="current-course-meta"><view><image class="course-meta-icon" :src="compactStudyIcons.words" mode="aspectFit" aria-hidden="true"/><text>{{ready?summary.words:'—'}} 词</text></view><view><image class="course-meta-icon" :src="compactStudyIcons.units" mode="aspectFit" aria-hidden="true"/><text>{{ready?summary.units:'—'}} 单元</text></view><view><image class="course-meta-icon" :src="compactStudyIcons.level" mode="aspectFit" aria-hidden="true"/><text class="course-level-label" :aria-label="ready?'能力起点 '+levelLabel:'能力起点暂不可用'">{{levelLabel}}</text></view></view>
-   <WPButton class="course-choose" :loading="opening" label="选择教材" @click="choose"><text>选择教材</text><view class="course-choose-chevron" aria-hidden="true"/></WPButton>
+   <WPButton class="course-choose study-card-feedback" hover-class="study-card-pressed" :hover-start-time="0" :hover-stay-time="120" :loading="opening" label="选择教材" @click="choose"><text>选择教材</text><view class="course-choose-chevron" aria-hidden="true"/></WPButton>
   </view>
   <view class="course-progress-panel">
    <view class="course-progress-art" :style="{'--course-book-ink':bookInk}" aria-hidden="true"><image class="course-art-image" :src="failed.progress?fallbackIcon:progressIcon" mode="aspectFit" @error="failed.progress=true"/><text v-if="!failed.progress" class="course-level-on-book">{{levelLabel}}</text></view>

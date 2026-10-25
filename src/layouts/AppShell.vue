@@ -29,18 +29,25 @@ import {useReviewStore} from '../stores/review'
 import {useCustomPracticeStore} from '../stores/custom-practice'
 import {navigation,navigate,type PageId} from '../services/navigation'
 import {studyInput} from '../services/study-input'
+import {registerParentBackHandler,handleParentBack} from '../services/parent/ParentGateNavigation'
 import KeyboardBridge from '../components/KeyboardBridge.vue'
 import WPBrandHeader from '../components/brand/WPBrandHeader.vue'
 import WPSidebar from '../components/wp-sidebar/WPSidebar.vue'
 import WPNavIcon from '../components/wp-nav-icon/WPNavIcon.vue'
 import type {NavIconName} from '../services/nav-icons'
 import {friendlyNavStyle} from '../services/friendly-nav-icons'
-const props=defineProps<{page:PageId}>();const theme=useThemeStore(),profile=useProfileStore();const pageSubtitle=computed(()=>navigation.find(n=>n.id===props.page)?.subtitle)
+const props=defineProps<{page:PageId;parentToolsOpen?:boolean}>();const theme=useThemeStore(),profile=useProfileStore();const pageSubtitle=computed(()=>navigation.find(n=>n.id===props.page)?.subtitle)
 const custom=useCustomPracticeStore(),customOpen=computed(()=>props.page==='learn'&&custom.isOpen)
 const brandHeader=ref<InstanceType<typeof WPBrandHeader>>()
+const emit=defineEmits<{'close-parent-tools':[]}>()
+let releaseParentBack:(()=>void)|undefined
+onMounted(()=>{if(props.page==='parent')releaseParentBack=registerParentBackHandler(()=>{if(brandHeader.value?.closePanels())return true;if(props.parentToolsOpen){uni.hideKeyboard();emit('close-parent-tools');return true}return false})})
+onUnmounted(()=>releaseParentBack?.())
 onBackPress(()=>{
+ if(props.page==='parent'&&handleParentBack())return true
  if(brandHeader.value?.closePanels())return true
  if(props.page==='learn'&&custom.back())return true
+ if(props.page==='parent'&&props.parentToolsOpen){emit('close-parent-tools');return true}
  if(props.page==='parent'){navigate('settings');return true}
  return false
 })

@@ -4,7 +4,7 @@
   <text class="activity-menu-note">只记练习进度，不影响复习与奖励</text>
   <view class="activity-grid">
    <view v-for="item in activities" :key="item.id" class="activity-cell" :data-activity="item.id">
-    <WPButton kind="secondary" class="activity-tile" :class="{'activity-locked':item.disabled}" :label="item.name" :disabled="item.disabled||opening" :aria-describedby="item.disabled?'activity-reason-'+item.id:undefined" @click="start(item.id)">
+    <WPButton kind="secondary" class="activity-tile study-card-feedback" hover-class="study-card-pressed" :hover-start-time="0" :hover-stay-time="120" :class="{'activity-locked':item.disabled}" :label="item.name" :disabled="item.disabled||opening" :aria-describedby="item.disabled?'activity-reason-'+item.id:undefined" @click="start(item.id)">
      <image v-if="!failedIcons.has(iconFor(item.id,item.disabled))" class="activity-menu-icon" :src="iconFor(item.id,item.disabled)" mode="aspectFit" aria-hidden="true" @error="failedIcons.add(iconFor(item.id,item.disabled))"/>
      <view class="activity-menu-copy"><text class="activity-menu-name">{{item.name}}</text><text v-if="item.disabled" :id="'activity-reason-'+item.id" class="activity-reason">{{item.reason}}</text></view>
      <text class="activity-menu-arrow" aria-hidden="true">›</text>

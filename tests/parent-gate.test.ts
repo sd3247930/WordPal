@@ -5,9 +5,9 @@ import {createParentMathQuestion,normalizeParentAnswer,parentQuestionKey} from '
 import {useParentGateStore} from '../src/stores/parent-gate'
 import {useParentSettingsStore} from '../src/stores/parent-settings'
 import {useProfileStore} from '../src/stores/profile'
-import {installParentGateNavigation} from '../src/services/parent/ParentGateNavigation'
-const storage=new Map<string,string>(),interceptors=new Map<string,()=>void>()
-;(globalThis as any).uni={getStorageSync:(key:string)=>storage.get(key)||'',setStorageSync:(key:string,value:string)=>storage.set(key,value),removeStorageSync:(key:string)=>storage.delete(key),addInterceptor:(method:string,handler:{invoke:()=>void})=>interceptors.set(method,handler.invoke)}
+import {installParentGateNavigation,registerParentBackHandler,handleParentBack,registerParentNavigationBlocker} from '../src/services/parent/ParentGateNavigation'
+const storage=new Map<string,string>(),interceptors=new Map<string,(options?:{from?:string})=>unknown>()
+;(globalThis as any).uni={getStorageSync:(key:string)=>storage.get(key)||'',setStorageSync:(key:string,value:string)=>storage.set(key,value),removeStorageSync:(key:string)=>storage.delete(key),addInterceptor:(method:string,handler:{invoke:(options?:{from?:string})=>unknown})=>interceptors.set(method,handler.invoke)}
 let route='pages/parent/index'
 ;(globalThis as any).getCurrentPages=()=>[{route}]
 function fresh(){storage.clear();route='pages/parent/index';setActivePinia(createPinia());return useParentGateStore()}
@@ -22,7 +22,7 @@ test('九九范围、边界积和交换顺序去重；常量/异常随机源也�
 })
 test('空答案、字符过滤、错误保留题与输入，三次错误换题清空，正确只解锁本访问',async()=>{
  const gate=fresh(),visit={};assert.equal(gate.active,false);gate.beginVisit(visit);assert.equal(gate.active,true);const first=gate.state.question!
- assert.equal(await gate.verify(),'ignored');assert.equal(normalizeParentAnswer('a1b234'), '12');assert.equal(normalizeParentAnswer(null),'')
+ assert.equal(await gate.verify(),'ignored');assert.equal(normalizeParentAnswer('a1b234'), '');assert.equal(normalizeParentAnswer('123'),'12');assert.equal(normalizeParentAnswer(null),'')
  gate.setInput('0');for(let i=0;i<2;i++){assert.equal(await gate.verify(),'incorrect');assert.equal(gate.state.question!.id,first.id);assert.equal(gate.state.input,'0');assert.equal(gate.unlocked,false)}
  assert.equal(await gate.verify(),'replaced');assert.equal(gate.state.input,'');assert.equal(gate.state.attemptCount,0);assert.notEqual(parentQuestionKey(gate.state.question!.left,gate.state.question!.right),parentQuestionKey(first.left,first.right))
  await unlock(gate);assert.equal(gate.canAccess(),true);gate.resumeVisit(visit);assert.equal(gate.unlocked,true);gate.leaveVisit(visit);assert.equal(gate.unlocked,false);assert.equal(gate.active,false)
@@ -41,4 +41,30 @@ test('仅保存上一题key，重建Store或伪造持久化解锁均须重验；
 test('所有原生导航及返回操作立即撤销本访问授权',async()=>{
  const gate=fresh();installParentGateNavigation()
  for(const method of ['navigateTo','redirectTo','reLaunch','switchTab','navigateBack']){gate.beginVisit({});await unlock(gate);interceptors.get(method)!();assert.equal(gate.unlocked,false);assert.equal(gate.active,false)}
+})
+test('仅已验证家长页的原生返回可关闭本地工具并取消导航，真正离开及普通API返回仍撤销授权',async()=>{
+ const gate=fresh();installParentGateNavigation();gate.beginVisit({});await unlock(gate);let tools=true,calls=0
+ const release=registerParentBackHandler(()=>{calls++;if(!tools)return false;tools=false;return true})
+ try{assert.equal(interceptors.get('navigateBack')!({from:'backbutton'}),false);assert.equal(tools,false);assert.equal(gate.unlocked,true);assert.equal(gate.canAccess(),true);interceptors.get('navigateBack')!({from:'backbutton'});assert.equal(gate.unlocked,false);assert.equal(calls,2);gate.beginVisit({});await unlock(gate);tools=true;interceptors.get('navigateBack')!();assert.equal(gate.unlocked,false);assert.equal(calls,2);gate.beginVisit({});await unlock(gate);route='pages/settings/index';interceptors.get('navigateBack')!({from:'backbutton'});assert.equal(gate.unlocked,false);assert.equal(calls,2)}finally{release()}
+})
+test('手动换题仅当前未解锁访问可用，清空题目暂态；旧题的在途提交不可解锁',async()=>{
+ const gate=fresh(),visit={},other={};assert.equal(gate.changeQuestion(visit),false);gate.beginVisit(visit)
+ const first=gate.state.question!;gate.setInput(first.answer);const pending=gate.verify();assert.equal(gate.state.status,'checking')
+ assert.equal(gate.changeQuestion(other),false);assert.equal(gate.state.question!.id,first.id)
+ assert.equal(gate.changeQuestion(visit),true);assert.equal(gate.state.input,'');assert.equal(gate.state.status,'idle');assert.equal(gate.state.attemptCount,0);assert.notEqual(parentQuestionKey(gate.state.question!.left,gate.state.question!.right),parentQuestionKey(first.left,first.right))
+ assert.equal(await pending,'ignored');assert.equal(gate.unlocked,false);await unlock(gate);assert.equal(gate.changeQuestion(visit),false);assert.equal(gate.canAccess(),true)
+ gate.leaveVisit(visit);assert.equal(gate.changeQuestion(visit),false)
+})
+test('负数、小数、指数及混杂字符不能被改写为正确答案；空值与越界数字不能解锁',async()=>{
+ const gate=fresh();gate.beginVisit({})
+ for(const value of ['',null,undefined,' ','-1','+1','1.0','1e1','a1b','NaN',Infinity]){assert.equal(gate.setInput(value),'');assert.equal(await gate.verify(),'ignored');assert.equal(gate.unlocked,false)}
+ for(const value of ['0','99']){gate.setInput(value);assert.equal(await gate.verify(),'incorrect');assert.equal(gate.unlocked,false)}
+ assert.equal(gate.setInput(' 81 '),'81')
+})
+test('删除抽屉优先处理返回，关闭后恢复工具返回；不可取消任务期间导航不撤销验证',async()=>{
+ const gate=fresh();installParentGateNavigation();gate.beginVisit({});await unlock(gate);const calls:string[]=[]
+ const outer=registerParentBackHandler(()=>{calls.push('tools');return true}),inner=registerParentBackHandler(()=>{calls.push('sheet');return true})
+ try{assert.equal(handleParentBack(),true);assert.deepEqual(calls,['sheet']);inner();assert.equal(handleParentBack(),true);assert.deepEqual(calls,['sheet','tools'])}finally{inner();outer()}
+ let busy=true;const release=registerParentNavigationBlocker(()=>busy)
+ try{for(const method of ['navigateTo','redirectTo','reLaunch','switchTab','navigateBack']){assert.equal(interceptors.get(method)!(),false);assert.equal(gate.canAccess(),true)}busy=false;interceptors.get('redirectTo')!();assert.equal(gate.unlocked,false)}finally{release()}
 })

@@ -68,7 +68,7 @@ test('配图失败可重试，换词不保留旧图，查看与重试不修改�
  await page.route('**/reading-fixture-image.png',route=>fail?route.fulfill({status:404,body:''}):route.fulfill({contentType:'image/png',body:image}))
  await go(page,'review');await all(page);const before=await database(page);await page.locator('.wordbook-open').first().click();await expect(page.getByRole('img',{name:'配图暂时无法显示',exact:true})).toBeVisible()
  fail=false;await page.getByRole('button',{name:'重试配图',exact:true}).click();await expect(page.locator('.detail-picture img')).toHaveJSProperty('naturalWidth',1024)
- await page.locator('.wordbook-open').nth(7).click();await expect(page.locator('.detail-picture')).toHaveCount(0);await expect(page.getByRole('img',{name:'暂无配图',exact:true})).toBeVisible();expect(await database(page)).toEqual(before)
+ await page.locator('.wordbook-open').nth(7).click();await expect(page.locator('.detail-picture')).toHaveCount(0);await expect(page.locator('.word-detail-panel').getByRole('img',{name:'暂无配图',exact:true})).toBeVisible();expect(await database(page)).toEqual(before)
 })
 
 for(const theme of ['swiss','clay'])for(const mode of ['light','dark'])test(`详情阅读 ${theme}/${mode} 手机平板、短词短句、高清图片与200%字体`,async({page})=>{

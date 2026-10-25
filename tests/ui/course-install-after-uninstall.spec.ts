@@ -20,7 +20,7 @@ async function uninstall(page:Page){
 test('明确卸载后立即隐藏且重启不复活，主动重新安装成功才恢复',async({page})=>{
  await seedBundledCourse(page);await unlockParent(page);await expect(row(page)).toContainText('已安装')
  for(let round=0;round<2;round++){
-  await uninstall(page);await expect(row(page)).toHaveCount(0);await page.reload();await answerParentGate(page);await expect(row(page)).toHaveCount(0)
+  await uninstall(page);await expect(row(page)).toHaveCount(0);await page.reload();await answerParentGate(page);await page.getByRole('button',{name:'教材与数据工具',exact:true}).click();await expect(row(page)).toHaveCount(0)
   await page.evaluate(async()=>{const service=await import('/src/services/content/StorageRepository.ts' as string);service.enableBundledCourse('synthetic-classroom')})
   await expect(row(page)).toContainText('已安装')
  }

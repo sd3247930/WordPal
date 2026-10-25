@@ -55,7 +55,7 @@ test('选择入口整块可点，快速三击只推入一页；取消及切书�
 
 test('L1–L5 来自家长生效设置，图标与上下文字同步，词量不写死',async({page})=>{
  test.setTimeout(60000);await prepare(page);const before=await database(page)
- for(const [level,count]of [[1,5],[2,5],[3,10],[4,15],[5,20]]){await unlockParent(page);await page.getByRole('radio',{name:new RegExp('L'+level)}).click();await go(page,'learn');await expect(card(page).locator('.course-level-label,.course-entry-level,.course-level-on-book')).toHaveText(Array(3).fill('L'+level));await expect(card(page).locator('.course-plan-line')).toContainText('今日计划 '+count+' 词')}
+ for(const [level,count]of [[1,5],[2,5],[3,10],[4,15],[5,20]]){await unlockParent(page,false);await page.getByRole('radio',{name:new RegExp('L'+level)}).click();await go(page,'learn');await expect(card(page).locator('.course-level-label,.course-entry-level,.course-level-on-book')).toHaveText(Array(3).fill('L'+level));await expect(card(page).locator('.course-plan-line')).toContainText('今日计划 '+count+' 词')}
  const after=await database(page);for(const field of ['cards','history','pets','gems','rewardIds','currentCourseId'])expect(after[field]).toEqual(before[field])
 })
 

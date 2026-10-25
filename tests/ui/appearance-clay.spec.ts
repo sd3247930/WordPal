@@ -17,12 +17,12 @@ for(const theme of ['swiss','clay'])for(const mode of ['light','dark'])test(`${t
  expect(await database(page)).toEqual(before);expect(errors).toEqual([])
 })
 
-test('双卡独立预览、二十轮切换、反选状态与冷启动持久化',async({page})=>{
+test('双卡独立预览、二十轮切换、当前选择稳定与冷启动持久化',async({page})=>{
  await seedDatabase(page,goldenDatabase());await go(page,'settings');const before=await database(page),swiss=themeButton(page,'swiss'),clay=themeButton(page,'clay')
  await expect(page.locator('.theme-choice')).toHaveCount(2)
  const colors=()=>page.locator('.theme-mini').evaluateAll(nodes=>nodes.map(node=>getComputedStyle(node).backgroundColor));expect(new Set(await colors()).size).toBe(2)
  for(let index=0;index<20;index++){await clay.locator('.theme-mini').click();await expect(app(page)).toHaveAttribute('data-theme','clay');await swiss.click();await expect(app(page)).toHaveAttribute('data-theme','swiss')}
- await clay.click();await expect(clay).toHaveAttribute('aria-current','true');await clay.click();await expect(clay).toHaveAttribute('aria-pressed','false');await expect(clay).toHaveAttribute('aria-current','true');await expect(clay).toContainText('当前使用中');await expect(app(page)).toHaveAttribute('data-theme','clay');expect(new Set(await colors()).size).toBe(2)
+ await clay.click();await expect(clay).toHaveAttribute('aria-current','true');await clay.click();await expect(clay).toHaveAttribute('aria-pressed','true');await expect(clay).toHaveAttribute('aria-current','true');await expect(clay.locator('.settings-theme-selected')).toHaveText('已选');await expect(app(page)).toHaveAttribute('data-theme','clay');expect(new Set(await colors()).size).toBe(2)
  await page.reload();await expect(app(page)).toHaveAttribute('data-theme','clay');await clay.focus();await page.keyboard.press('Space');await expect(clay).toHaveAttribute('aria-current','true');await swiss.focus();await page.keyboard.press('Enter');await expect(app(page)).toHaveAttribute('data-theme','swiss');expect(await database(page)).toEqual(before)
 })
 

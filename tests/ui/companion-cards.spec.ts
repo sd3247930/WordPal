@@ -25,23 +25,23 @@ async function inspect(card:Locator){
  return metrics
 }
 
-for(const mode of ['light','dark'])for(const largeText of [false,true])test(`${mode} 大字与高对比=${largeText}：四元素四阶段在两页完整同步且不改学习档案`,async({page})=>{
+for(const mode of ['light','dark'])for(const largeText of [false,true])test(`${mode} 大字与高对比=${largeText}：学习页四元素四阶段完整同步，设置页无宠物且不改学习档案`,async({page})=>{
  test.setTimeout(240000);await page.setViewportSize({width:390,height:1000});await fixture(page);await setAppearance(page,'swiss',mode,{largeText,highContrast:largeText});await go(page,'pet');const before=learningOnly(await database(page)),errors:string[]=[];page.on('pageerror',e=>errors.push(e.message))
  const washes=[]
  for(const element of elements){
   await go(page,'pet');await page.locator('.pet-choice').filter({hasText:petInfo[element].name}).click()
   for(const [index,stage]of ['juvenile','growing','evolved','unknown'].entries()){
    await openPetAction(page,'成长');await page.locator('.pet-growth-panel .pet-form-card').nth(index).click()
-   for(const [screen,selector]of [['learn','.study-pet-companion'],['settings','.settings-pet']]){
+   for(const [screen,selector]of [['learn','.study-pet-companion']]){
     await overview(page,screen);const card=page.locator(selector);await expect(card).toHaveAttribute('data-element',element);await expect(card).toHaveAttribute('data-form',String(index+1));await expect(card.locator('.companion-card-title')).toContainText(petInfo[element].name);await expect(card.locator('.pet-cutout-image img')).toHaveAttribute('src',new RegExp(element+'-'+stage+'[.]png$'));await inspect(card)
     if(index===0&&screen==='learn')washes.push(await card.evaluate(el=>getComputedStyle(el).getPropertyValue('--companion-wash')))
     expect(learningOnly(await database(page))).toEqual(before)
    }
-   await go(page,'pet')
+   await go(page,'settings');await expect(page.locator('.settings-pet,.settings-summary,.settings-page .pet-cutout-image')).toHaveCount(0);expect(learningOnly(await database(page))).toEqual(before);await go(page,'pet')
   }
  }
  expect(new Set(washes).size).toBe(largeText?1:4);expect(errors).toEqual([])
- await overview(page,'learn');await page.locator('.study-pet-companion').screenshot({path:test.info().outputPath(`learn-${mode}-${largeText?'accessible':'normal'}.png`)});await go(page,'settings');await page.locator('.settings-pet').screenshot({path:test.info().outputPath(`settings-${mode}-${largeText?'accessible':'normal'}.png`)})
+ await overview(page,'learn');await page.locator('.study-pet-companion').screenshot({path:test.info().outputPath(`learn-${mode}-${largeText?'accessible':'normal'}.png`)});await go(page,'settings');await page.screenshot({path:test.info().outputPath(`settings-${mode}-${largeText?'accessible':'normal'}.png`),fullPage:true})
 })
 
 test('手机、平板、横竖屏及200%字体下图片完整，设置导航与学习草稿保持',async({page})=>{
@@ -49,14 +49,13 @@ test('手机、平板、横竖屏及200%字体下图片完整，设置导航与�
  for(const size of [{width:320,height:568},{width:375,height:667},{width:390,height:844},{width:412,height:915},{width:844,height:390},{width:600,height:900},{width:768,height:1024},{width:834,height:1194},{width:1024,height:768},{width:1280,height:800}]){
   await page.setViewportSize(size)
   for(const [screen,selector]of [['learn','.study-pet-companion'],['settings','.settings-pet']]){
-   await overview(page,screen);await inspect(page.locator(selector));expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)
-   if(screen==='settings'){if(size.width>=1200)await inspect(page.locator('.settings-summary'));else await expect(page.locator('.settings-summary')).toBeHidden()}
+   await overview(page,screen);if(screen==='learn')await inspect(page.locator(selector));else await expect(page.locator('.settings-pet,.settings-summary,.settings-page .pet-cutout-image')).toHaveCount(0);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)
   }
  }
- await page.setViewportSize({width:320,height:667});await page.locator('.wp-app').evaluate(el=>{for(const [name,size]of Object.entries({caption:24,small:28,card:34,section:44})) (el as HTMLElement).style.setProperty('--wp-font-'+name,size+'px')});await inspect(page.locator('.settings-pet'))
- await page.getByRole('button',{name:'查看精灵小伙伴',exact:true}).click();await expect(page.locator('.pet-current-hero')).toBeVisible();expect(await database(page)).toEqual(before)
+ await page.setViewportSize({width:320,height:667});await page.locator('.wp-app').evaluate(el=>{for(const [name,size]of Object.entries({caption:24,small:28,card:34,section:44})) (el as HTMLElement).style.setProperty('--wp-font-'+name,size+'px')});await expect(page.locator('.settings-pet,.settings-summary')).toHaveCount(0);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)
+ await page.getByRole('navigation',{name:'底部导航'}).getByRole('button',{name:'宠物屋',exact:true}).click();await expect(page.locator('.pet-current-hero')).toBeVisible();expect(await database(page)).toEqual(before)
  await overview(page,'learn');await expect(page.locator('.study-space')).toBeVisible();expect(await database(page)).toEqual(before)
- await page.setViewportSize({width:1280,height:800});await go(page,'settings');await inspect(page.locator('.settings-summary'));await page.getByRole('button',{name:'回到首页',exact:true}).click();await expect(page.locator('.home-grid')).toBeVisible();expect(await database(page)).toEqual(before)
+ await page.setViewportSize({width:1280,height:800});await go(page,'settings');await expect(page.locator('.settings-summary')).toHaveCount(0);await page.getByRole('navigation',{name:'主要导航'}).getByRole('button',{name:'首页',exact:true}).click();await expect(page.locator('.home-grid')).toBeVisible();expect(await database(page)).toEqual(before)
 })
 
 test('DPR 3手机与DPR 2平板使用同一高清原图，不因重载或尺寸切换跳变',async({browser})=>{

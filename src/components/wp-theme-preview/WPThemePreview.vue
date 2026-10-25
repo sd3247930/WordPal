@@ -1,16 +1,23 @@
 <template>
- <view class="theme-mini" :style="themeStyle" :data-preview="themeId" aria-hidden="true">
+ <view class="theme-mini" :class="{'has-artwork':imageSrc&&failedImage!==imageSrc}" :style="themeStyle" :data-preview="themeId" aria-hidden="true">
+  <image v-if="imageSrc&&failedImage!==imageSrc" class="theme-preview-artwork" :src="imageSrc" mode="aspectFit" @error="failedImage=imageSrc"/>
+  <template v-else>
   <view class="mini-top"><view class="mini-dot"/><text>Aa</text><view class="mini-line"/></view>
   <view class="mini-layout"><view class="mini-feature"><view class="mini-bar"/><view class="mini-bar short"/></view><view class="mini-side"><view class="mini-line"/><view class="mini-line"/></view></view>
   <view class="mini-action">学习 →</view>
+  </template>
  </view>
 </template>
 <script setup lang="ts">
 import type {ThemeId} from '../../styles/themes'
-defineProps<{name:string;themeStyle:string;themeId?:ThemeId}>()
+import {ref} from 'vue'
+defineProps<{name:string;themeStyle:string;themeId?:ThemeId;imageSrc?:string}>()
+const failedImage=ref<string>()
 </script>
 <style scoped>
 .theme-mini{background:var(--wp-background);color:var(--wp-foreground);padding:12px;border-radius:var(--wp-radius);width:100%;height:112px;overflow:hidden}
+.theme-mini.has-artwork{padding:0;border:0;box-shadow:none}
+.theme-preview-artwork{display:block;width:100%;height:100%;object-fit:contain}
 .mini-top{display:flex;gap:6px;font-size:14px;align-items:center;line-height:1.3;font-weight:600}
 .mini-dot{width:6px;height:6px;background:var(--wp-primary);border-radius:50%}
 .mini-layout{display:grid;grid-template-columns:1.3fr 1fr;gap:6px;margin:10px 0 8px}

@@ -4,28 +4,31 @@ import {markCourseDeleted,restoreDeletedCourse,courseGeneration,assertCourseGene
 import {courseRemovalScope} from './CourseRemovalData'
 import {validateCourse,type CoursePack} from '../../../packages/content_schema/course'
 import {readStorage,writeStorage} from '../storage'
-import {sha256} from './digest'
+import {sha256,sha256Async} from './digest'
 import {saveMedia,readMedia,readBundledMedia,mediaUrl,saveManifest,readManifest,removeContentVersion,storedMediaVersions} from './MediaRepository'
 import {assertPublicMedia} from '../course-import/PublicMediaAudit'
+import {assertImportActive,reportImport,importScheduler,type ImportWork} from '../course-import/ImportTask'
 interface CatalogEntry {courseId:string;key:string;previousKey?:string;previousAliases?:Record<string,string>;versions?:{key:string;aliases:Record<string,string>}[];archived:boolean;aliases:Record<string,string>}
 export const CATALOG_KEY='wordpal.content.catalog.v2'
 function validateConflicts(pack:CoursePack,aliases:Record<string,string>){for(const e of pack.vocabulary){const old=wordById[aliases[e.id]||e.id];if(aliases[e.id]&&!old)throw new Error('复用词条不存在。');if(old&&!wordIdentityMatches(old,{word:e.lemma,meaning:e.meaning,pos:e.pos||''}))throw new Error('词条 ID 冲突，不能覆盖已有词义或词性。')}}
-async function commitCourse(pack:CoursePack,aliases:Record<string,string>,mediaReady:boolean,generation:number){
+async function commitCourse(pack:CoursePack,aliases:Record<string,string>,mediaReady:boolean,generation:number,work?:ImportWork){
+ assertImportActive(work)
  if(validateCourse(pack).some(i=>i.severity==='error'))throw new Error('课程校验未通过，请重新预览。')
  if(pack.sources.some(s=>s.rightsStatus==='pending-review'))throw new Error('请先完成本机用途与来源声明。')
  if(pack.assets.length&&!mediaReady)throw new Error('媒体课程需通过 ZIP 导入并校验资源。')
  if(isBundledCourse(pack.courseId)&&!isUserDeleted(pack.courseId))throw new Error('内置课程 ID 保留，请使用新的课程 ID。')
  validateConflicts(pack,aliases)
- const serialized=JSON.stringify(pack),key='wordpal.content.pack.'+pack.courseId+'.'+sha256(serialized).slice(0,16)
- await saveManifest(key,pack)
+ const serialized=JSON.stringify(pack),digest=await sha256Async(serialized,work),key='wordpal.content.pack.'+pack.courseId+'.'+digest.slice(0,16)
+ await saveManifest(key,pack,work)
+ assertImportActive(work)
  assertCourseGeneration(pack.courseId,generation)
  const catalog=readStorage<CatalogEntry[]>(CATALOG_KEY,[]),old=catalog.find(entry=>entry.courseId===pack.courseId)
  if(old&&old.key!==key){const previous=readStorage<CoursePack|null>(old.key,null);if(previous?.contentVersion===pack.contentVersion){const stable=(value:CoursePack)=>JSON.stringify({...value,sources:value.sources.map(({declaredAt,...source})=>source)});if(stable(previous)===stable(pack)&&JSON.stringify(old.aliases)===JSON.stringify(aliases))return old.key;throw new Error('该内容版本已安装且内容不同，请增加 contentVersion 后重新导入。')}}
- writeStorage(key,pack);const readback=uni.getStorageSync(key);if(sha256(readback)!==sha256(serialized))throw new Error('候选课程读回校验失败。')
+ writeStorage(key,pack);const readback=uni.getStorageSync(key);if(await sha256Async(readback,work)!==digest)throw new Error('候选课程读回校验失败。')
  if(old?.key===key&&JSON.stringify(old.aliases)===JSON.stringify(aliases)&&!isUserDeleted(pack.courseId))return key
  const versions=old?[...(old.versions||[]),{key:old.key,aliases:old.aliases}].filter((v,i,a)=>a.findIndex(other=>other.key===v.key)===i):[]
  const next=catalog.filter(entry=>entry.courseId!==pack.courseId);next.push({courseId:pack.courseId,key,previousKey:old?.key,previousAliases:old?.aliases,versions,archived:false,aliases})
- assertCourseGeneration(pack.courseId,generation);validateConflicts(pack,aliases)
+ assertCourseGeneration(pack.courseId,generation);assertImportActive(work);validateConflicts(pack,aliases)
  writeStorage(CATALOG_KEY,next)
  try{restoreDeletedCourse(pack.courseId)}catch(error){writeStorage(CATALOG_KEY,catalog);throw error}
  registerCourse(pack,()=>'',aliases);archiveStatus[pack.courseId]=false;installationStatus[pack.courseId]='installed';return key
@@ -36,23 +39,24 @@ async function discardUnreferencedCandidate(key:string,pack:CoursePack){
  if(catalog.some(entry=>entry.key===key||entry.previousKey===key||entry.versions?.some(version=>version.key===key)))return
  await removeContentVersion(key,pack)
 }
-export async function installTextCourse(pack:CoursePack,aliases:Record<string,string>={}){
+export async function installTextCourse(pack:CoursePack,aliases:Record<string,string>={},work?:ImportWork){
  if(isBundledCourse(pack.courseId)&&!isUserDeleted(pack.courseId))throw new Error('内置课程 ID 保留，请使用新的课程 ID。')
  const generation=courseGeneration(pack.courseId)
  installationStatus[pack.courseId]='installing'
- try{const key=await commitCourse(pack,aliases,false,generation);assertContentReadable(pack.courseId);installationStatus[pack.courseId]='installed';return key}catch(error){installationStatus[pack.courseId]=isUserDeleted(pack.courseId)?'notInstalled':readStorage<CatalogEntry[]>(CATALOG_KEY,[]).some(e=>e.courseId===pack.courseId)?'installed':'failed';try{await discardUnreferencedCandidate(candidateKey(pack),pack)}catch{}throw error}
+ try{reportImport(work,'committing',0,1);await importScheduler(work)(true);const key=await commitCourse(pack,aliases,false,generation,work);assertContentReadable(pack.courseId);installationStatus[pack.courseId]='installed';work?.onProgress?.({phase:'done',completed:1,total:1,unit:'items'});return key}catch(error){installationStatus[pack.courseId]=isUserDeleted(pack.courseId)?'notInstalled':readStorage<CatalogEntry[]>(CATALOG_KEY,[]).some(e=>e.courseId===pack.courseId)?'installed':'failed';try{await discardUnreferencedCandidate(candidateKey(pack),pack)}catch{}throw error}
 }
-export async function installMediaCourse(pack:CoursePack,files:Record<string,Uint8Array>,aliases:Record<string,string>={},progress?:(completed:number,total:number)=>void){
+export async function installMediaCourse(pack:CoursePack,files:Record<string,Uint8Array>,aliases:Record<string,string>={},progress?:(completed:number,total:number)=>void,work?:ImportWork){
+ assertImportActive(work)
  const generation=courseGeneration(pack.courseId)
  const key='wordpal.content.pack.'+pack.courseId+'.'+sha256(JSON.stringify(pack)).slice(0,16)
  if(validateCourse(pack).some(i=>i.severity==='error'))throw new Error('课程校验未通过。');validateConflicts(pack,aliases)
  if(pack.sources.some(s=>s.rightsStatus==='pending-review')||isBundledCourse(pack.courseId)&&!isUserDeleted(pack.courseId))throw new Error('先确认课程来源并使用非内置课程 ID。')
  installationStatus[pack.courseId]='installing'
  try{
-  await saveMedia(key,pack,files,progress);assertCourseGeneration(pack.courseId,generation);await readMedia(key,pack,true);const installedKey=await commitCourse(pack,aliases,true,generation)
+  await saveMedia(key,pack,files,progress,work);assertCourseGeneration(pack.courseId,generation);await readMedia(key,pack,true,{...work,retainFiles:false});reportImport(work,'committing',0,1);await importScheduler(work)(true);const installedKey=await commitCourse(pack,aliases,true,generation,work)
   const committedGeneration=courseGeneration(pack.courseId)
   if(installedKey!==key){await readMedia(installedKey,pack);await discardUnreferencedCandidate(key,pack)}
-  assertCourseGeneration(pack.courseId,committedGeneration);registerCourse(pack,id=>mediaUrl(installedKey,id,pack),aliases);installationStatus[pack.courseId]='installed';return installedKey
+  assertCourseGeneration(pack.courseId,committedGeneration);registerCourse(pack,id=>mediaUrl(installedKey,id,pack),aliases);installationStatus[pack.courseId]='installed';work?.onProgress?.({phase:'done',completed:1,total:1,unit:'items'});return installedKey
  }catch(error){installationStatus[pack.courseId]=isUserDeleted(pack.courseId)?'notInstalled':readStorage<CatalogEntry[]>(CATALOG_KEY,[]).some(e=>e.courseId===pack.courseId)?'installed':'failed';try{await discardUnreferencedCandidate(key,pack)}catch{}throw error}
 }
 export async function hydrateMedia(){for(const entry of readStorage<CatalogEntry[]>(CATALOG_KEY,[])){

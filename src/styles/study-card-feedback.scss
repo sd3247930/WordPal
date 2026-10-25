@@ -1,0 +1,16 @@
+.wp-app{--study-card-press-transform:translateY(1px) scale(.98);--study-card-press-transition:background-color 120ms ease,border-color 120ms ease,box-shadow 120ms ease,transform 100ms ease}
+.wp-app.reduce-motion{--study-card-press-transform:none;--study-card-press-transition:none}
+@media(prefers-reduced-motion:reduce){.wp-app{--study-card-press-transform:none;--study-card-press-transition:none}}
+
+/* Apply feedback to existing actions, preserving their selection and click handlers. */
+.wp-app .study-stats-row .study-stat-action.study-card-feedback:not([disabled]),
+.wp-app .activity-menu .activity-tile.wp-button.study-card-feedback:not([disabled]),
+.wp-app .study-space .study-mode-selector .study-mode-tile.study-card-feedback:not([disabled]),
+.wp-app .study-current-course .course-choose.wp-button.study-card-feedback:not([disabled]),
+.wp-app .study-practice-entry-button.wp-button.study-card-feedback:not([disabled]),
+.wp-app .study-choice-options .answer-choice.study-card-feedback:not([disabled]){
+ transition:var(--study-card-press-transition);
+ &:active,&.study-card-pressed{background:var(--wp-secondary);border-color:var(--wp-primary);box-shadow:inset 0 0 0 2px var(--wp-primary);color:var(--wp-foreground);transform:var(--study-card-press-transform)}
+ &:focus-visible{outline:2px solid var(--wp-focus-ring);outline-offset:2px}
+}
+.wp-app .study-stat-card.is-highlighted{background:var(--wp-secondary);border-color:var(--wp-primary)}

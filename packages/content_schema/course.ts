@@ -76,8 +76,9 @@ export function validateCourse(input:unknown,options:{publicUse?:boolean}={}):Is
  for(const w of Array.isArray(c.vocabulary)?c.vocabulary:[])for(const ref of Object.values(w?.assetRefs||{}))if(!assetIds.has(ref))add('assetRefs','媒体引用不存在。','补充清单或移除该引用。')
  const storyIds=new Set<string>()
  for(const story of c.stories||[]){if(!idPattern.test(story.id)||storyIds.has(story.id)||!story.title||!Array.isArray(story.sentences)||!story.sentences.length||story.targetWordIds.some(id=>!ids.has(id)))add('stories','故事结构或目标词不合法。','补齐文本和有效词条。');storyIds.add(story.id);if(story.questions?.some(q=>!q.question||q.options.length<2||!Number.isInteger(q.answer)||q.answer<0||q.answer>=q.options.length))add('questions','理解题答案不合法。','提供至少两个选项和有效答案下标。')}
- for(const s of c.stories||[])if(s.audioRef&&!c.assets.some(a=>a.id===s.audioRef&&a.mediaType.startsWith('audio/')))add('audioRef','故事音频引用不存在或类型错误。','补齐音频清单。')
- for(const word of c.vocabulary)for(const type of ['audio','image'] as const)if(word.assetRefs?.[type]&&!c.assets.some(a=>a.id===word.assetRefs![type]&&a.mediaType.startsWith(type+'/')))add('assetRefs','词条资源的媒体类型不一致。','将音频与词图引用指向相应类型的资源。')
+ const assetTypes=new Map(c.assets.map(asset=>[asset.id,asset.mediaType]))
+ for(const s of c.stories||[])if(s.audioRef&&!assetTypes.get(s.audioRef)?.startsWith('audio/'))add('audioRef','故事音频引用不存在或类型错误。','补齐音频清单。')
+ for(const word of c.vocabulary)for(const type of ['audio','image'] as const)if(word.assetRefs?.[type]&&!assetTypes.get(word.assetRefs[type]!)?.startsWith(type+'/'))add('assetRefs','词条资源的媒体类型不一致。','将音频与词图引用指向相应类型的资源。')
  const ruleIds=new Set((c.phonicsRules||[]).map(rule=>rule.id))
  if(ruleIds.size!==(c.phonicsRules||[]).length)add('phonicsRules','拼读规则 ID 重复。','使用唯一规则 ID。')
  for(const rule of c.phonicsRules||[])if(!idPattern.test(rule.id)||rule.graphemes.length!==rule.phonemes.length||!rule.graphemes.length||rule.exampleWordIds.some(id=>!ids.has(id))||rule.prerequisites?.some(id=>!ruleIds.has(id)))add('phonicsRules','拼读规则引用不合法。','使用已审核规则和有效前置规则。')

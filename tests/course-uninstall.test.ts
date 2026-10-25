@@ -17,12 +17,12 @@ test('确认面板语义：bundled 说「卸载」、导入课程说「删除」
  assert.ok(sheet.includes("props.bundled?'卸载':'删除'"))
  assert.ok(sheet.includes('输入「{{actionLabel}}」以确认：'))
  assert.ok(sheet.includes('typed.value.trim()===actionLabel.value'))
- assert.ok(sheet.includes('备份本册记录后删除本地教材与专属内容'));assert.ok(sheet.includes('与其他教材共享的词卡、复习排程及全局奖励保留'))
+ assert.ok(sheet.includes('删除本机教材、历史版本及本册记录；记录先备份，之后需重新导入。'));assert.ok(sheet.includes('共享词卡、其他教材与全局奖励保留。'))
  assert.ok(sheet.includes(':aria-label="actionLabel+\'教材确认\'"'))
 })
 
 test('确认面板：当前课程必须先选替代教材，缺替代时给出可读原因',()=>{
- assert.ok(management.includes(':needs-replacement="removeTarget===course.currentId"'))
+ assert.ok(management.includes(':needs-replacement="removeNeedsReplacement"'))
  assert.ok(sheet.includes('至少需要保留一份已安装教材。请先安装其他教材。'))
  assert.ok(sheet.includes('!props.needsReplacement||!!replacementId.value'))
  assert.ok(sheet.includes(':disabled="!canConfirm"'))

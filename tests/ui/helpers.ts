@@ -51,7 +51,7 @@ export async function answerParentGate(page:Page){
  await page.getByRole('button',{name:'验证并打开',exact:true}).click()
  await expect(page.locator('.parent-learning-settings')).toBeVisible()
 }
-export async function unlockParent(page:Page){await go(page,'parent');await answerParentGate(page)}
+export async function unlockParent(page:Page,tools=true){await go(page,'parent');await answerParentGate(page);if(tools){await page.getByRole('button',{name:'教材与数据工具',exact:true}).click();await page.getByRole('button',{name:'导入教材',exact:true}).first().click();await page.getByRole('button',{name:'展开备份与恢复',exact:true}).click();const available=page.getByRole('button',{name:/^其他可安装教材/});if(await available.count())await available.click()}}
 
 /** Drive the visible six-step lesson with the fixture's expected answers. */
 export async function completeDaily(page:Page){

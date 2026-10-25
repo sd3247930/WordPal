@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {readAndroidDocument} from '../src/services/course-import/FilePicker'
+import {readAndroidDocument,readAndroidDocumentAsync} from '../src/services/course-import/FilePicker'
+import {ImportCancelled} from '../src/services/course-import/ImportTask'
 
 function runtime(bytes:Buffer,virtualSize=bytes.length,fail=false){
  let temporary:any
@@ -30,4 +31,10 @@ test('Android 空文件和超出 50 MiB 的内容被拒绝并清理临时文件'
 test('Android 内容提供方读取异常仍会删除本次临时文件',()=>{
  const r=runtime(Buffer.alloc(1),1,true)
  assert.throws(()=>readAndroidDocument(r.activity,r.resolver,'content:synthetic'),/IO error/);r.assertClean()
+})
+test('Android 异步读取 5 MiB 内容保持字节完整并报告分块进度，取消会关闭流及删除暂存',async()=>{
+ const input=Buffer.alloc(5*1024*1024+123,73),r=runtime(input),phases=new Set<string>();let ticks=0
+ const timer=setInterval(()=>ticks++,1)
+ try{assert.deepEqual(Buffer.from(await readAndroidDocumentAsync(r.activity,r.resolver,'content:synthetic',{onProgress:p=>phases.add(p.phase)})),input);assert.ok(ticks>0);assert.deepEqual([...phases],['reading','decoding']);r.assertClean()}finally{clearInterval(timer)}
+ for(const phase of ['reading','decoding']){const cancelledRuntime=runtime(input);let cancelled=false;await assert.rejects(readAndroidDocumentAsync(cancelledRuntime.activity,cancelledRuntime.resolver,'content:synthetic',{cancelled:()=>cancelled,onProgress:p=>{if(p.phase===phase&&p.completed>0)cancelled=true}}),ImportCancelled);cancelledRuntime.assertClean()}
 })

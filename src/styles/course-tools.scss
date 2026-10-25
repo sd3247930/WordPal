@@ -1,0 +1,35 @@
+.wp-app .parent-overview{display:flex;flex-direction:column;gap:12px;min-width:0}
+.wp-app .parent-overview>.parent-overview-card{padding:14px 16px;min-width:0}
+.wp-app .course-tools-artwork{display:flex;align-items:center;justify-content:center;flex:none;width:32px;height:32px}
+.wp-app .course-tools-artwork image{display:block;width:100%;height:100%;object-fit:contain}
+.wp-app .parent-tools-page .parent-heading>.course-tools-artwork{width:42%;max-width:224px;height:auto;aspect-ratio:512/320}
+.wp-app .parent-tools-page .tools-back{align-self:flex-start;min-height:44px;max-width:100%;padding:5px 8px;margin:0;font-size:var(--wp-font-small);line-height:1.4;background:transparent;border-color:var(--wp-border)}
+.wp-app .parent-management-tools,.wp-app .parent-management-tools .course-management{display:flex;flex-direction:column;gap:12px;min-width:0}
+.wp-app .parent-management-tools .wp-card{padding:14px 16px;min-width:0}
+.wp-app .parent-tools-page .course-list,.wp-app .tools-available-courses{display:flex;flex-direction:column;gap:0;min-width:0}
+.wp-app .parent-tools-page .course-item{display:grid;grid-template-columns:48px minmax(0,1fr) 88px;align-items:center;gap:8px;margin:0;padding:12px 0;border:0;border-bottom:1px solid var(--wp-divider);border-radius:0;background:transparent;min-width:0;width:100%}
+.wp-app .parent-tools-page .course-item:last-child{border-bottom:0}
+.wp-app .parent-tools-page .course-item>.course-tools-artwork{width:48px;height:72px}
+.wp-app .tools-course-info{min-width:0;line-height:1.5;overflow-wrap:anywhere}
+.wp-app .tools-course-title{display:block;font-size:var(--wp-font-body);line-height:1.5}
+.wp-app .tools-course-info .small{font-size:var(--wp-font-caption);line-height:1.5}
+.wp-app .parent-tools-page .tools-course-actions{display:flex;flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:6px;width:100%;min-width:0;margin:0}
+.wp-app .tools-course-actions>.wp-button{min-width:0;width:100%;min-height:44px;margin:0;padding:6px 4px;border-radius:var(--wp-radius-sm);font-size:var(--wp-font-small);line-height:1.35}
+.wp-app .tools-current-state{display:block;padding:6px 3px;border-radius:var(--wp-radius-sm);border:1px solid var(--wp-success);color:var(--wp-success);background:var(--wp-surface-tonal);text-align:center;line-height:1.4;font-size:var(--wp-font-small)}
+.wp-app .tools-course-progress{display:flex;align-items:center;gap:6px;min-width:0;margin-top:5px;font-variant-numeric:tabular-nums}
+.wp-app .tools-course-track{flex:1;min-width:0;height:7px;border-radius:var(--wp-radius-chip);background:var(--wp-surface-tonal);overflow:hidden}
+.wp-app .tools-course-track>view{height:100%;border-radius:inherit;background:var(--wp-success)}
+.wp-app .tools-secondary-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.wp-app .tools-secondary-actions>.wp-button{min-height:44px;margin:0;padding:6px 10px;font-size:var(--wp-font-small)}
+.wp-app .tools-transfer-card{display:flex;flex-direction:column;gap:10px}
+.wp-app .tools-transfer-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.wp-app .tools-transfer-actions>.wp-button{display:flex;flex-direction:column;gap:5px;min-width:0;width:100%;min-height:84px;padding:8px 4px;font-size:var(--wp-font-small);line-height:1.4}
+.wp-app .tools-cleanup-scope{padding:10px;border:1px solid var(--wp-success);border-radius:var(--wp-radius-sm);background:var(--wp-surface-tonal);line-height:1.5}
+.wp-app .tools-cleanup-card .parent-data-management>.small{font-size:var(--wp-font-small);line-height:1.6}
+.wp-app .parent-tools-page .sheet-panel{font-size:var(--wp-font-body);line-height:1.6;overflow-wrap:anywhere}
+@media(min-width:680px){.wp-app .parent-tools-page .course-item{grid-template-columns:64px minmax(0,1fr) 148px;gap:12px}.wp-app .parent-tools-page .course-item>.course-tools-artwork{width:64px;height:84px}.wp-app .tools-course-info .small{font-size:var(--wp-font-small)}}
+@media(max-width:359px){.wp-app .parent-management-tools .wp-card,.wp-app .parent-overview>.parent-overview-card{padding:12px}.wp-app .parent-tools-page .course-item{grid-template-columns:42px minmax(0,1fr) 78px;gap:6px}.wp-app .parent-tools-page .course-item>.course-tools-artwork{width:42px;height:64px}}
+.wp-app.large-text .parent-tools-page .course-item,.wp-app.scaled-text .parent-tools-page .course-item{grid-template-columns:48px minmax(0,1fr)}
+.wp-app.large-text .tools-course-actions,.wp-app.scaled-text .tools-course-actions{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.wp-app.large-text .tools-transfer-actions,.wp-app.scaled-text .tools-transfer-actions{grid-template-columns:minmax(0,1fr)}
+.wp-app.large-text .tools-transfer-actions>.wp-button,.wp-app.scaled-text .tools-transfer-actions>.wp-button{flex-direction:row;min-height:54px;padding:8px}

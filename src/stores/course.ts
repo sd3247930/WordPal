@@ -77,20 +77,20 @@ export const useCourseStore=defineStore('course',()=>{
   if(isUserDeleted(id))return uninstallCourseContent(id)
   const scope=courseRemovalScope(id,profile.db)
   const previous=currentId.value,original=JSON.parse(JSON.stringify(profile.db)) as typeof profile.db
-  const uiMemory=[PRESENTATION_KEY,ACTIVITY_KEY,'wordpal.wordbook.preferences.v1'].map(key=>({key,value:readStorage<unknown>(key,null)}))
+  const uiMemory=[PRESENTATION_KEY,ACTIVITY_KEY,'wordpal.wordbook.preferences.v1'].map(key=>({key,value:uni.getStorageSync(key)}))
   stopAudio();warmUpcomingAudio([])
   if(id===previous){if(!replacement||replacement===id||!isCourseInstalled(replacement))throw new Error('请选择另一份已安装教材作为当前课程。');if(!choose(replacement).ok)throw new Error('替代教材未保存，已保留原教材。')}
   try{
    // Persist progress removal before removing content; a full device must not leave revivable cursors.
    if(!profile.removeCourseRecords([scope]))throw new Error('教材记录暂时无法备份和清理，教材已保留，请释放设备存储后重试。')
-   const prefs=readStorage<{favorites:string[];later:string[]}>('wordpal.wordbook.preferences.v1',{favorites:[],later:[]})
+   const prefs=readStorage<{favorites:string[];later:string[]}|null>('wordpal.wordbook.preferences.v1',null)||{favorites:[],later:[]}
    const retained=[...Object.keys(profile.db.cards),...profile.db.history.map(a=>a.wordId),...prefs.favorites,...prefs.later]
    const result=await uninstallCourseContent(id,retained)
    return result
   }catch(error){
    if(hasCourseMemory(id)){
     const restored=profile.transact(draft=>{for(const field of Object.keys(draft))delete (draft as any)[field];Object.assign(draft,original)})
-    try{for(const item of uiMemory)writeStorage(item.key,item.value)}catch{profile.storageError='教材仍保留，但进度恢复未完成，请释放设备存储后重新打开应用。'}
+    try{for(const item of uiMemory){if(item.value===''||item.value===undefined||item.value===null)uni.removeStorageSync(item.key);else uni.setStorageSync(item.key,item.value)}}catch{profile.storageError='教材仍保留，但进度恢复未完成，请释放设备存储后重新打开应用。'}
     profile.courseMemoryRevision++
     if(!restored)throw new Error('教材未删除，原进度恢复未完成，请释放设备存储后重试。')
    }

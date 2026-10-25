@@ -24,7 +24,7 @@ const counts={unseen:total-Object.values(expected).reduce((a,b)=>a+b,0),...expec
 async function verifyCounts(page:Page,values:Record<string,number>){for(const level of levels)await expect(page.locator(`.familiarity-state[data-level="${level}"] .familiarity-state-count`)).toHaveText(String(values[level]))}
 
 for(const mode of ['light','dark'])for(const largeText of [false,true])test(`${mode} 大字${largeText} 熟知度六图标两排三列且统计不变`,async({page})=>{
- await setAppearance(page,'swiss',mode,{largeText,highContrast:largeText,reducedMotion:true});await seedDatabase(page,fixture());await go(page,'review');const before=await database(page)
+ await setAppearance(page,'swiss',mode,{largeText,highContrast:largeText,reducedMotion:true});await seedDatabase(page,fixture());await go(page,'review');const before=await database(page);await page.getByRole('button',{name:/^查看教材全部单词 ·/}).click();await page.getByRole('button',{name:'查看范围熟知度',exact:true}).click()
  const summary=page.locator('.familiarity-summary'),grid=summary.locator('.familiarity-distribution');await verifyCounts(page,counts)
  for(const width of [320,390,600,768,1024,1280]){
   await page.setViewportSize({width,height:1100});await expect(grid.locator('.familiarity-state')).toHaveCount(6)
@@ -53,5 +53,5 @@ test('教材范围统计与现有六状态筛选逐项对应，清除筛选后�
 })
 
 test('图片加载失败保留六状态文字与真实统计，图标选择不改学习记录',async({page})=>{
- await page.route('**/static/icons/familiarity/*_256.png',route=>route.abort());await seedDatabase(page,fixture());await go(page,'review');const before=await database(page);await expect(page.locator('.familiarity-state-fallback')).toHaveCount(6);await verifyCounts(page,counts);await expect(page.locator('.familiarity-distribution').getByRole('button')).toHaveCount(6);expect(await database(page)).toEqual(before)
+ await page.route('**/static/icons/familiarity/*_256.png',route=>route.abort());await seedDatabase(page,fixture());await go(page,'review');const before=await database(page);await page.getByRole('button',{name:/^查看教材全部单词 ·/}).click();await page.getByRole('button',{name:'查看范围熟知度',exact:true}).click();await expect(page.locator('.familiarity-state-fallback')).toHaveCount(6);await verifyCounts(page,counts);await expect(page.locator('.familiarity-distribution').getByRole('button')).toHaveCount(6);expect(await database(page)).toEqual(before)
 })

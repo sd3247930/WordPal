@@ -17,7 +17,7 @@ for(const setup of [{width:390,height:844,largeText:false,mode:'light'},{width:3
  const toggle=page.getByRole('button',{name:'只看已学',exact:true}),indicator=toggle.locator('.wordbook-learned-indicator')
  await expect(indicator).toBeVisible();await expect(toggle.locator('.wordbook-learned-dot')).toHaveCount(0)
  for(let round=0;round<3;round++){
-  await toggle.click();await expect(toggle).toHaveAttribute('aria-pressed','true');await expect(toggle).toHaveClass(/selected/);await expect(toggle.locator('.wordbook-learned-dot')).toBeVisible();expect(await toggle.innerText()).not.toContain('✓');await expect(page.locator('.wordbook-stats>uni-view').last()).toContainText('1')
+  await toggle.click();await expect(toggle).toHaveAttribute('aria-pressed','true');await expect(toggle).toHaveClass(/selected/);await expect(toggle.locator('.wordbook-learned-dot')).toBeVisible();expect(await toggle.innerText()).not.toContain('✓');await expect(page.locator('.wordbook-learning-overview')).toHaveAttribute('data-total','1')
   await toggle.click();await expect(toggle).toHaveAttribute('aria-pressed','false');await expect(toggle).not.toHaveClass(/selected/);await expect(toggle.locator('.wordbook-learned-dot')).toHaveCount(0);expect(Math.abs((await position()).top-initial.top)).toBeLessThanOrEqual(2)
  }
  expect(await database(page)).toEqual(before);await page.locator('.wordbook-scope-control').screenshot({path:test.info().outputPath('scope-selection.png')})

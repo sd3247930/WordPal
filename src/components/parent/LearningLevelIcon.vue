@@ -8,8 +8,8 @@
 import {computed,ref,watch} from 'vue'
 import type {EntryLevel} from '../../../packages/parent_settings'
 import {learningLevelIconSource} from '../../services/learning-level-icons'
-const props=defineProps<{level:EntryLevel}>(),failed=ref(false)
-const source=computed(()=>learningLevelIconSource(props.level))
+const props=defineProps<{level:EntryLevel;imageSrc?:string}>(),failed=ref(false)
+const source=computed(()=>props.imageSrc||learningLevelIconSource(props.level))
 watch(source,()=>{failed.value=false})
 </script>
 <style scoped>

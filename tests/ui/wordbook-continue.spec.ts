@@ -51,7 +51,7 @@ test('Scope 连续20轮、分类与搜索切换后，仍恢复原课程而非待
  await page.locator('.review-tabs').getByRole('button',{name:'所有单词',exact:true}).click();await page.locator('.wordbook-search input').fill('dog')
  for(let i=0;i<20;i++)for(const scope of [...scopes,'当前教材'] as const){
   await selectWordbookScope(page,scope);const button=page.getByRole('button',{name:scope,exact:true});await expect(button).toHaveAttribute('aria-pressed','true')
-  await expect(page.locator('.review-tabs .selected')).toHaveText('所有单词');await expect(page.locator('.wordbook-search input')).toHaveValue('dog')
+  await expect(page.locator('.review-tabs .selected .wordbook-category-title')).toHaveText('所有单词');await expect(page.locator('.wordbook-search input')).toHaveValue('dog')
   await expect(page.locator('.wordbook-course-filters .course-picker')).toHaveCount(scope==='当前教材'?1:0)
  }
  expect(await database(page)).toEqual(before)
@@ -75,7 +75,7 @@ test('已保存的错词回看从任意 Scope 继续，不覆盖完成的正式 
 })
 test('没有未完成 Session 时，单词本仍可新建原有到期复习',async({page})=>{
  const db=savedStudy('review_due',true);db.session=null;db.pendingCourseId=undefined;await seed(page,db);await go(page,'review');const before=await database(page)
- await selectWordbookScope(page,'全部单词');await page.getByRole('button',{name:'开始到期复习 · 1',exact:true}).click();await expect(page.locator('.learn-workspace')).toBeVisible()
+ await selectWordbookScope(page,'全部单词');await page.locator('.wordbook-due-action').click();await expect(page.locator('.learn-workspace')).toBeVisible()
  // 到期复习优先，之后的空余名额才排新词；当前课程的课节已扩展为多词，因此只断言顺序与来源。
  const after=await database(page);expect(after.session.kind).toBe('review_due');expect(after.session.courseId).toBe(before.currentCourseId)
  expect(after.session.wordIds[0]).toBe('cat');expect(after.session.wordSources?.['cat']).toBe('review_due')

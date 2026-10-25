@@ -1,0 +1,108 @@
+.wp-app .wordbook-overview{max-width:1120px;min-width:0;margin-inline:auto;--wordbook-mastered:var(--wp-success);--wordbook-learning:var(--wp-warning);--wordbook-unseen:var(--wp-muted-foreground)}
+.wp-app .wordbook-overview .wordbook-heading{display:grid;grid-template-columns:48px minmax(0,1fr);align-items:center;gap:10px;margin-bottom:12px}
+.wp-app .wordbook-heading>.wordbook-artwork{width:48px;height:48px}
+.wp-app .wordbook-heading .page-subtitle{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--wp-font-small)}
+.wp-app .wordbook-overview .wordbook-course-filters{gap:10px;padding:12px;margin-bottom:12px;border:1px solid var(--wp-border);border-radius:var(--wp-radius-lg);background:var(--wp-surface);box-shadow:var(--wp-elevation)}
+.wp-app .wordbook-overview .wordbook-scope-tile{display:grid;grid-template-columns:40px minmax(0,1fr);column-gap:10px;row-gap:0;min-height:80px;padding:10px 14px;text-align:left;align-content:center;justify-content:stretch;border-radius:18px}
+.wp-app .wordbook-scope-tile .wordbook-scope-art{grid-row:span 2}
+.wp-app .wordbook-overview .wordbook-scope-title{font-size:var(--wp-font-headline);font-weight:700;white-space:normal;line-height:1.4}
+.wp-app .wordbook-overview .wordbook-scope-count{font-size:var(--wp-font-small);color:var(--wp-muted-foreground)}
+.wp-app .wordbook-textbook-row{display:flex;align-items:center;gap:10px;min-width:0;padding:8px 10px;border:1px solid var(--wp-border);border-radius:16px;background:var(--wp-surface-tonal);flex-wrap:wrap}
+.wp-app .wordbook-textbook-info{display:flex;align-items:center;gap:8px;flex:1;min-width:180px}
+.wp-app .wordbook-textbook-info>view:last-child{min-width:0}
+.wp-app .wordbook-textbook-info .wordbook-artwork{width:36px;height:36px}
+.wp-app .wordbook-textbook-title{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:var(--wp-font-body);font-weight:600;line-height:1.45;overflow-wrap:anywhere}
+.wp-app .wordbook-textbook-row>picker,.wp-app .wordbook-textbook-row>uni-picker{min-width:0;max-width:100%}
+.wp-app .wordbook-textbook-row .course-picker{min-height:48px;padding:6px 12px;gap:8px;font-size:var(--wp-font-small);white-space:normal;overflow-wrap:anywhere}
+.wp-app .wordbook-textbook-row .wordbook-change-course{min-height:48px;margin:0;padding:6px 10px;font-size:var(--wp-font-small);white-space:nowrap}
+.wp-app .wordbook-overview .wordbook-due-action{display:flex;align-items:center;justify-content:center;gap:8px;min-height:52px;width:100%;margin:0;padding:8px 14px;font-size:var(--wp-font-body);font-weight:600;line-height:1.5}
+.wp-app .wordbook-due-action .wordbook-artwork{width:30px;height:30px}
+.wp-app .wordbook-due-action>text:last-child{margin-left:auto;font-size:26px;line-height:1}
+.wp-app .wordbook-due-action>text:nth-child(2){flex:1}
+.wp-app .wordbook-learning-overview.wp-card{display:flex;flex-direction:column;padding:14px 18px;margin-bottom:12px;gap:10px}
+.wp-app .wordbook-overview-heading{display:flex;justify-content:space-between;align-items:center;gap:6px 16px;flex-wrap:wrap;min-width:0}
+.wp-app .wordbook-overview-heading>view{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.wp-app .wordbook-overview-heading .wordbook-artwork{width:28px;height:28px}
+.wp-app .wordbook-overview-heading .section-title{font-size:var(--wp-font-headline)}
+.wp-app .wordbook-overview-context{min-width:0;max-width:100%;font-size:var(--wp-font-caption);line-height:1.5;color:var(--wp-muted-foreground);overflow-wrap:anywhere}
+.wp-app .wordbook-progress{display:flex;min-height:12px;width:100%;overflow:hidden;border-radius:6px;background:var(--wp-surface-tonal)}
+.wp-app .wordbook-progress>view{min-width:0}
+.wp-app .progress-mastered{background:var(--wordbook-mastered)}
+.wp-app .progress-learning{background:var(--wordbook-learning)}
+.wp-app .progress-unseen{background:var(--wp-border)}
+.wp-app .progress-unrated{background:var(--wp-muted-foreground)}
+.wp-app .wordbook-learning-metrics.wordbook-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;width:100%;padding:0;margin:0;border:0;border-radius:0;background:transparent}
+.wp-app .wordbook-learning-metrics>view{display:flex;flex-direction:column;align-items:center;gap:0;min-width:0;padding:0 8px;font-size:var(--wp-font-small);line-height:1.6;text-align:center}
+.wp-app .wordbook-learning-metrics>view+view{border-left:1px solid var(--wp-divider)}
+.wp-app .wordbook-learning-metrics>view>.wordbook-metric-number{font-size:calc(var(--wp-font-body)*1.5);font-weight:700;line-height:1.5;font-variant-numeric:tabular-nums}
+.wp-app .metric-mastered{color:var(--wordbook-mastered)}
+.wp-app .metric-learning{color:var(--wordbook-learning)}
+.wp-app .wordbook-unrated-note{font-size:var(--wp-font-caption);color:var(--wp-muted-foreground);line-height:1.5}
+.wp-app .wordbook-overview .wordbook-category-selector{padding:0;background:transparent;gap:8px;margin-bottom:10px}
+.wp-app .wordbook-overview .wordbook-category-tile{display:grid;grid-template-columns:36px minmax(0,1fr);grid-template-rows:auto auto;align-content:center;gap:0 8px;min-height:76px;padding:8px;text-align:left;border-radius:18px}
+.wp-app .wordbook-category-tile .wordbook-category-art{grid-row:span 2;width:36px;height:36px}
+.wp-app .wordbook-overview .wordbook-category-title{font-size:var(--wp-font-small)}
+.wp-app .wordbook-category-count{font-size:var(--wp-font-caption);line-height:1.5;font-variant-numeric:tabular-nums}
+.wp-app .wordbook-overview .wordbook-search{min-height:48px;margin-bottom:8px;padding:0 12px;gap:8px;border-radius:16px}
+.wp-app .wordbook-search>.wp-action-tile{display:flex;align-items:center;justify-content:center;min-width:48px;min-height:48px;font-size:24px}
+.wp-app .wordbook-overview .wordbook-filter-note{font-size:var(--wp-font-caption);line-height:1.5;margin:0 0 8px}
+.wp-app .wordbook-overview .wordbook-workspace{grid-template-columns:minmax(0,1fr);gap:14px}
+.wp-app .wordbook-overview .wordbook-workspace.wordbook-has-detail{grid-template-columns:minmax(0,1.4fr) minmax(250px,1fr)}
+.wp-app .wordbook-overview .review-list{padding:12px;min-width:0}
+.wp-app .wordbook-overview .review-list>.section-heading{margin-bottom:8px;gap:8px;font-size:var(--wp-font-headline);flex-wrap:wrap}
+.wp-app .wordbook-overview .wordbook-row{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:10px;align-items:center;min-height:88px;margin:6px 0;padding:8px;border:1px solid var(--wp-border);border-radius:16px;background:var(--wp-surface)}
+.wp-app .wordbook-word-picture{position:relative;display:flex;align-items:center;justify-content:center;width:64px;height:64px;min-width:0;border-radius:12px;background:var(--wp-surface-tonal);overflow:hidden}
+.wp-app .wordbook-word-picture image{display:block;width:100%;height:100%;object-fit:contain}
+.wp-app .wordbook-picture-fallback{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;padding:4px;font-size:var(--wp-font-caption);line-height:1.4;color:var(--wp-muted-foreground);text-align:center}
+.wp-app .wordbook-picture-fallback>text:first-child{font-size:24px}
+.wp-app .wordbook-overview .wordbook-row .review-word{font-size:calc(var(--wp-font-body)*1.25);font-weight:700;line-height:1.35}
+.wp-app .wordbook-overview .wordbook-source{font-size:var(--wp-font-caption);line-height:1.45}
+.wp-app .wordbook-overview .wordbook-row-memory{width:auto;max-width:none;min-width:64px;align-items:center;gap:6px;text-align:center}
+.wp-app .wordbook-overview .wordbook-row .familiarity-label{display:block;max-width:100%;padding:2px 8px;border-radius:999px;background:var(--wp-surface-tonal);font-size:var(--wp-font-caption);line-height:1.5;overflow-wrap:anywhere}
+.wp-app .wordbook-overview .familiarity-label[data-level=mastered]{background:var(--wp-earth-soft);color:var(--wp-success)}
+.wp-app .wordbook-overview .familiarity-label[data-level=practicing],.wp-app .wordbook-overview .familiarity-label[data-level=familiar],.wp-app .wordbook-overview .familiarity-label[data-level=introduced]{background:var(--wp-fire-soft);color:var(--wp-warning)}
+.wp-app .wordbook-overview .wordbook-more-actions{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px 16px;margin-top:12px}
+.wp-app .wordbook-more-actions .wp-button{margin:0;font-size:var(--wp-font-small);min-height:48px}
+.wp-app .wordbook-more-actions .course-card-entry.wp-button{width:auto;min-height:48px;margin:0}
+.wp-app.theme-clay .wordbook-textbook-row{background:var(--wp-clay-sky)}
+.wp-app.theme-clay .wordbook-overview .wordbook-category-tile.selected{background:var(--wp-primary);color:var(--wp-primary-foreground)}
+.wp-app.high-contrast .wordbook-progress{border:1px solid var(--wp-foreground)}
+.wp-app.high-contrast .wordbook-row .familiarity-label{border:1px solid currentColor}
+@media(max-width:999px){
+ .wp-app .wordbook-overview .wordbook-category-tile{display:flex;flex-direction:column;justify-content:center;gap:2px;padding:8px 2px;text-align:center;min-height:88px}
+ .wp-app .wordbook-has-detail .wordbook-row{grid-template-columns:48px minmax(0,1fr)}
+ .wp-app .wordbook-has-detail .wordbook-word-picture{width:48px;height:48px}
+ .wp-app .wordbook-has-detail .wordbook-row-memory{grid-column:2;flex-direction:row;flex-wrap:wrap;justify-content:space-between;align-items:center;width:100%;text-align:left}
+}
+@media(max-width:599px){
+ .wp-app .wordbook-overview .wordbook-heading{grid-template-columns:42px minmax(0,1fr);gap:8px}
+ .wp-app .wordbook-heading>.wordbook-artwork{width:42px;height:42px}
+ .wp-app .wordbook-overview .wordbook-course-filters{padding:10px;gap:8px}
+ .wp-app .wordbook-overview .wordbook-scope-tile{padding:8px;min-height:76px;column-gap:6px;grid-template-columns:36px minmax(0,1fr)}
+ .wp-app .wordbook-scope-tile .wordbook-scope-art{width:36px;height:36px}
+ .wp-app .wordbook-overview .wordbook-scope-title{font-size:var(--wp-font-body)}
+ .wp-app .wordbook-overview .wordbook-scope-count{font-size:var(--wp-font-caption)}
+ .wp-app .wordbook-textbook-row{gap:6px;padding:8px}
+ .wp-app .wordbook-textbook-info{flex-basis:100%;min-width:0}
+ .wp-app .wordbook-textbook-row>uni-picker,.wp-app .wordbook-textbook-row>picker{flex:1}
+ .wp-app .wordbook-learning-overview.wp-card{padding:12px;gap:8px}
+ .wp-app .wordbook-learning-metrics>view{padding-inline:2px}
+ .wp-app .wordbook-overview .wordbook-category-selector{gap:5px}
+ .wp-app .wordbook-overview .wordbook-category-art{width:32px;height:32px}
+ .wp-app .wordbook-overview .review-list{padding:10px}
+ .wp-app .wordbook-overview .wordbook-workspace.wordbook-has-detail{display:flex}
+ .wp-app .wordbook-overview .wordbook-row{grid-template-columns:56px minmax(0,1fr) 64px;gap:8px;padding:8px 6px}
+ .wp-app .wordbook-overview .wordbook-word-picture{width:56px;height:64px}
+ .wp-app .wordbook-overview .wordbook-row-memory{grid-column:auto;width:auto;flex-direction:column;align-items:center;text-align:center}
+ .wp-app .wordbook-overview .wordbook-open.wp-button{min-width:64px;padding:8px;font-size:var(--wp-font-small)}
+}
+@media(max-width:359px){
+ .wp-app .wordbook-overview .wordbook-row{grid-template-columns:48px minmax(0,1fr);gap:6px 8px}
+ .wp-app .wordbook-overview .wordbook-word-picture{width:48px;height:56px}
+ .wp-app .wordbook-overview .wordbook-row-memory{grid-column:2;flex-direction:row;flex-wrap:wrap;justify-content:space-between;align-items:center;text-align:left}
+}
+.wp-app.large-text .wordbook-textbook-info,.wp-app.scaled-text .wordbook-textbook-info{flex-basis:100%}
+.wp-app.large-text .wordbook-scope-tile,.wp-app.scaled-text .wordbook-scope-tile{grid-template-columns:minmax(0,1fr);text-align:center;justify-items:center}
+.wp-app.large-text .wordbook-scope-tile .wordbook-scope-art,.wp-app.scaled-text .wordbook-scope-tile .wordbook-scope-art{grid-row:auto}
+.wp-app.large-text .wordbook-row,.wp-app.scaled-text .wordbook-row{grid-template-columns:56px minmax(0,1fr)}
+.wp-app.large-text .wordbook-row .wordbook-row-memory,.wp-app.scaled-text .wordbook-row .wordbook-row-memory{grid-column:2;flex-direction:row;justify-content:space-between;align-items:center;width:100%;flex-wrap:wrap}

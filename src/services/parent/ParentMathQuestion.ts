@@ -2,7 +2,7 @@ export interface ParentGateQuestion {id:string;left:number;right:number;answer:n
 export type ParentGateStatus='idle'|'checking'|'correct'|'incorrect'
 export interface ParentGateState {question:ParentGateQuestion|null;input:string;status:ParentGateStatus;attemptCount:number;unlocked:boolean}
 export function parentQuestionKey(left:number,right:number){return `${Math.min(left,right)}x${Math.max(left,right)}`}
-export function normalizeParentAnswer(value:unknown){return String(value??'').replace(/\D/g,'').slice(0,2)}
+export function normalizeParentAnswer(value:unknown){const text=String(value??'').trim();return /^\d+$/.test(text)?text.slice(0,2):''}
 let sequence=0
 /** Choose from a finite set, so even a constant random source cannot loop forever. */
 export function createParentMathQuestion(previousKey='',random= Math.random,now=Date.now()):ParentGateQuestion {

@@ -13,7 +13,7 @@ async function seedLarge(page:Page){const pack=largeCourse(),db={...freshDatabas
 test('整册未学词、十次本地发音重播、红绿蓝音块和返回均不写学习档案',async({page})=>{
  test.setTimeout(45000);await page.setViewportSize({width:390,height:844});await seedDatabase(page,freshDatabase());await openCards(page);const before=await database(page)
  await page.getByRole('textbox',{name:'搜索教材词卡'}).fill('CAT');await expect(page.locator('.course-word-row')).toHaveCount(1);await expect(page.locator('.course-word-row')).toHaveAttribute('data-familiarity','unseen')
- await page.locator('.course-word-open').click();await expect(page.getByRole('dialog')).toBeVisible();await page.getByRole('button',{name:/^为什么是这个状态/}).click();await expect(page.locator('.detail-familiarity')).toContainText('浏览和听发音不计入已学')
+ await page.locator('.course-word-open').click();await expect(page.getByRole('dialog')).toBeVisible();await page.getByRole('button',{name:/^为什么是这个状态/}).click();await expect(page.locator('.detail-status-reason')).toContainText('浏览和听发音不计入已学')
  await page.getByRole('button',{name:/^拼读帮助/}).click();await expect(page.locator('.phonics-breakdown')).toBeVisible()
  const audio=page.getByRole('button',{name:'播放 cat 的标准发音',exact:true});for(let i=0;i<10;i++){await audio.click();await expect(audio).toHaveClass(/playing/);await expect(audio).not.toHaveClass(/playing/)}
  await expect(page.locator('.detail-familiarity')).toContainText('未学');expect(await database(page)).toEqual(before)

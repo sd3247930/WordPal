@@ -15,6 +15,7 @@ export const useParentGateStore=defineStore('parent-gate',()=>{
  }
  function isCurrentVisit(visit:object){return owner.value===visit}
  function beginVisit(visit:object){owner.value=visit;nextQuestion()}
+ function changeQuestion(visit:object){if(!isCurrentVisit(visit)||state.unlocked)return false;nextQuestion();return true}
  function resumeVisit(visit:object){if(!isCurrentVisit(visit))beginVisit(visit)}
  function leaveVisit(visit?:object){if(visit&&!isCurrentVisit(visit))return;owner.value=null;state.question=null;state.input='';state.status='idle';state.attemptCount=0;state.unlocked=false}
  function setInput(value:unknown){state.input=normalizeParentAnswer(value);if(state.status==='incorrect')state.status='idle';return state.input}
@@ -33,5 +34,5 @@ export const useParentGateStore=defineStore('parent-gate',()=>{
   if(typeof getCurrentPages!=='function')return false
   const pages=getCurrentPages();return pages[pages.length-1]?.route==='pages/parent/index'
  }
- return {state,active,unlocked,isCurrentVisit,beginVisit,resumeVisit,leaveVisit,setInput,verify,canAccess}
+ return {state,active,unlocked,isCurrentVisit,beginVisit,changeQuestion,resumeVisit,leaveVisit,setInput,verify,canAccess}
 })
