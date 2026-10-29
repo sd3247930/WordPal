@@ -4,7 +4,7 @@ import {execFileSync} from 'node:child_process'
 import {createHash} from 'node:crypto'
 
 const excluded=new Set(['local-courses','local-master-audio','local-course-media','local-starter-media','local-spirit-stone'])
-const textFiles=/\.(?:ts|vue|js|mjs|json|scss|css|html|svg)$/i
+const textFiles=/\.(?:ts|vue|js|mjs|json|csv|scss|css|html|svg)$/i
 export function createBuildIdentity(root=process.cwd()){
  const pkg=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8')),manifest=JSON.parse(fs.readFileSync(path.join(root,'src/manifest.json'),'utf8'))
  if(pkg.version!==manifest.versionName)throw Error('Package and application versions differ.')

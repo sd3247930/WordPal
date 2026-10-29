@@ -10,8 +10,11 @@ test('构建指纹跨换行一致，代码和图片变化可检出，本机教�
  try{
   fs.mkdirSync(path.join(root,'src/static'),{recursive:true});fs.mkdirSync(path.join(root,'packages'))
   fs.writeFileSync(path.join(root,'package.json'),JSON.stringify({version:'1.2.8'}));fs.writeFileSync(path.join(root,'src/manifest.json'),JSON.stringify({versionName:'1.2.8',versionCode:'128'}))
+  fs.mkdirSync(path.join(root,'src/content/templates'),{recursive:true});const csv=path.join(root,'src/content/templates/course.csv');fs.writeFileSync(csv,'word,meaning\ncat,猫\n')
   const code=path.join(root,'src/main.ts');fs.writeFileSync(code,'export const value=1\n');const first=createBuildIdentity(root)
   fs.writeFileSync(code,'export const value=1\r\n');assert.equal(createBuildIdentity(root).sourceSha256,first.sourceSha256)
+  fs.writeFileSync(csv,'word,meaning\r\ncat,猫\r\n');assert.equal(createBuildIdentity(root).sourceSha256,first.sourceSha256)
+  fs.writeFileSync(csv,'word,meaning\ncat,小猫\n');assert.notEqual(createBuildIdentity(root).sourceSha256,first.sourceSha256);fs.writeFileSync(csv,'word,meaning\ncat,猫\n')
   fs.mkdirSync(path.join(root,'src/content/local-courses'),{recursive:true});fs.writeFileSync(path.join(root,'src/content/local-courses/catalog.json'),'["local-only-fixture"]');fs.writeFileSync(path.join(root,'src/static/build-info.json'),'{}')
   assert.equal(createBuildIdentity(root).sourceSha256,first.sourceSha256)
   fs.writeFileSync(code,'export const value=2\n');const changed=createBuildIdentity(root);assert.notEqual(changed.sourceSha256,first.sourceSha256)
