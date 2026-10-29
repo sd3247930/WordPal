@@ -16,7 +16,7 @@ import {windowLayout} from '../../services/window'
 import {useThemeStore} from '../../stores/theme'
 import {studyInput} from '../../services/study-input'
 const props=withDefaults(defineProps<{modelValue:string;mode:string;disabled?:boolean;questionKey:string;showInstruction?:boolean}>(),{disabled:false,showInstruction:true})
-const emit=defineEmits<{(event:'update:modelValue',value:string):void;(event:'confirm'):void}>()
+const emit=defineEmits<{(event:'update:modelValue',value:string):void;(event:'confirm'):void;(event:'blur'):void}>()
 const theme=useThemeStore(),instance=getCurrentInstance(),focused=ref(false),cursor=ref(0),composing=ref(false),width=ref(240)
 let timer:ReturnType<typeof setTimeout>|undefined,blurTimer:ReturnType<typeof setTimeout>|undefined,focusHeight=0
 const scale=computed(()=>Math.max(windowLayout.fontScale,theme.settings.largeText?1.25:1)),font=computed(()=>24*scale.value),slot=computed(()=>Math.max(32,font.value*.6+14)),step=computed(()=>slot.value+6)
@@ -31,7 +31,7 @@ function input(event:any){const value=String(event.detail?.value??event.target?.
 function focus(event:any){clearTimeout(blurTimer);focused.value=true;focusHeight=uni.getSystemInfoSync().windowHeight;selection(event);measure()}
 function reset(){focused.value=false;studyInput.keyboardRaised=false;studyInput.overlap=0;clearTimeout(timer);clearTimeout(blurTimer)}
 // Let the tap's click finish before changing document height or restoring navigation.
-function blur(){clearTimeout(blurTimer);blurTimer=setTimeout(reset,180)}
+function blur(){emit('blur');clearTimeout(blurTimer);blurTimer=setTimeout(reset,180)}
 function release(){if(focused.value)uni.hideKeyboard?.();reset()}
 function confirm(){if(!composing.value&&!props.disabled&&props.modelValue.trim())emit('confirm')}
 function keyboard(event:{height:number}){

@@ -18,6 +18,12 @@ export function selectHomeLearningData(db:Database,pack:CoursePack,now=new Date(
  return {accuracy:samples?Math.round(answers.filter(answer=>answer.correct).length/samples*100):null,samples,newWords:todayCourseWordIds(db,pack,now).length,reviewEvents:answers.filter(answer=>answer.source==='review_due').length,effectiveEvents:samples}
 }
 
+/** Only new, explicitly tagged first assessments qualify. Legacy history is never guessed. */
+export function selectFirstRecallData(db:Database,now=new Date()){
+ const day=localDate(now),answers=db.history.filter(answer=>localDate(new Date(answer.at))===day&&answer.assessmentVersion===1&&answer.recallAttempt==='first'&&answer.settlement==='settled'&&answer.hintKind!=='answer'&&answer.inputAssistance!=='tiles'&&(!answer.hinted||answer.hintKind==='encouragement'))
+ return {accuracy:answers.length?Math.round(answers.filter(answer=>answer.correct).length/answers.length*100):null,samples:answers.length,scope:'global' as const}
+}
+
 export interface StudyRoundProgress {status:'ready'|'active'|'completed'|'unavailable';completed:number;total:number}
 /** Read persisted planned steps only. Retries and optional mistake revisits add no steps. */
 export function studyRoundProgress(session:LearningSession|null|undefined):StudyRoundProgress {

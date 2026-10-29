@@ -1,0 +1,323 @@
+{
+  "schemaVersion": 1,
+  "designVersion": 1,
+  "status": "ready",
+  "metadataClean": true,
+  "artSource": "image_gen",
+  "review": "agent-visual-review",
+  "inventory": "existing companion-level unlocks",
+  "items": [
+    {
+      "id": "dress-dew-wreath-v1",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceSHA256": "8f2cac281b865dddcb55e13f4c4de89809625e149d41363e19860b901899c7fb",
+      "files": [
+        {
+          "layer": "front",
+          "path": "dew-wreath-front.png",
+          "width": 768,
+          "height": 415,
+          "bytes": 476687,
+          "sha256": "e974ce7c81398185604706d86bec82eec1cbef26294c68eed0e36cacb74fdd62"
+        },
+        {
+          "layer": "icon-256",
+          "path": "dew-wreath-256.png",
+          "width": 256,
+          "height": 256,
+          "bytes": 64880,
+          "sha256": "f57b684def5f1a90ec4e9eb0781206dd21f092935e4145da21bd7d9f7f6e6049"
+        },
+        {
+          "layer": "icon-512",
+          "path": "dew-wreath-512.png",
+          "width": 512,
+          "height": 512,
+          "bytes": 230462,
+          "sha256": "1c2123ab78661ee9076d224b375a9f2429a8f2f823ee4431ace68c1e22078c80"
+        }
+      ]
+    },
+    {
+      "id": "dress-moon-crown-v1",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceSHA256": "0b2069cea1246d0e5d48cb0b73bddd9b6216e6bcafdfd4da3670486c59a64995",
+      "files": [
+        {
+          "layer": "front",
+          "path": "moon-crown-front.png",
+          "width": 768,
+          "height": 284,
+          "bytes": 254139,
+          "sha256": "f15cb4436cce5d256f813b706e05eef594f5164c559a10609ffd6d718b569b09"
+        },
+        {
+          "layer": "icon-256",
+          "path": "moon-crown-256.png",
+          "width": 256,
+          "height": 256,
+          "bytes": 36811,
+          "sha256": "c49dd32e2ce06e985a352f13e0259587815137aea4fa25cd905123108481a60c"
+        },
+        {
+          "layer": "icon-512",
+          "path": "moon-crown-512.png",
+          "width": 512,
+          "height": 512,
+          "bytes": 124979,
+          "sha256": "264f23355f0d38199c7bbf22d406a1f2dbc3f97790b8b515e77fa8bff1e19ea7"
+        }
+      ]
+    },
+    {
+      "id": "dress-cloud-clip-v1",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceSHA256": "31dddc8db4d5a2300296ac4c22f1a68ad0c487f61b8f114477b1e4d9297a57c0",
+      "files": [
+        {
+          "layer": "front",
+          "path": "cloud-clip-front.png",
+          "width": 768,
+          "height": 433,
+          "bytes": 400401,
+          "sha256": "33e7679b959ffacebf4cbf07050e17fbc6fd290e70d8b9aca822ce0d272ca3bc"
+        },
+        {
+          "layer": "icon-256",
+          "path": "cloud-clip-256.png",
+          "width": 256,
+          "height": 256,
+          "bytes": 54441,
+          "sha256": "319619b1443e83fb48e21e8aae43a118d86f870adc6ae4e42eb28b0e470f4212"
+        },
+        {
+          "layer": "icon-512",
+          "path": "cloud-clip-512.png",
+          "width": 512,
+          "height": 512,
+          "bytes": 187224,
+          "sha256": "5d8ecea5df064151338f0dd95799f35964f5cb2acf98fe4043a1f560262ba66a"
+        }
+      ]
+    },
+    {
+      "id": "dress-cloud-scarf-v1",
+      "sourceWidth": 1024,
+      "sourceHeight": 1536,
+      "sourceSHA256": "cbe15c19cb546853f2bf4708a581b564e816bd3a67a882b4566e386919c4e327",
+      "files": [
+        {
+          "layer": "front",
+          "path": "cloud-scarf-front.png",
+          "width": 768,
+          "height": 429,
+          "bytes": 354257,
+          "sha256": "95ddca8020723c6158de751cfdd30548009a7b01a4d2facdb58822d4e0da3016"
+        },
+        {
+          "layer": "back",
+          "path": "cloud-scarf-back.png",
+          "width": 768,
+          "height": 276,
+          "bytes": 255851,
+          "sha256": "1577aa4843f98060c7f362bb4478864918279d042bfd07a6a9bf6ec94795d892"
+        },
+        {
+          "layer": "icon-256",
+          "path": "cloud-scarf-256.png",
+          "width": 256,
+          "height": 256,
+          "bytes": 48447,
+          "sha256": "48c55c0083e1a752783e8e5f9887aa1f9f94d7f73191f21812736edf433bbfb3"
+        },
+        {
+          "layer": "icon-512",
+          "path": "cloud-scarf-512.png",
+          "width": 512,
+          "height": 512,
+          "bytes": 166408,
+          "sha256": "ffa38aee35181e103b09e711ec03fdf36c1321de536f2c24eb025a675d89ffe4"
+        }
+      ]
+    },
+    {
+      "id": "dress-rainbow-cowl-v1",
+      "sourceWidth": 1024,
+      "sourceHeight": 1536,
+      "sourceSHA256": "5f6a32f9c8d64da7ec6e8973941d33c95e76e34341c532b3842de58a1a13966d",
+      "files": [
+        {
+          "layer": "front",
+          "path": "rainbow-cowl-front.png",
+          "width": 768,
+          "height": 386,
+          "bytes": 367952,
+          "sha256": "b65b9b1d25a961decfc13442b45437d6b8be07b073dc2f4aef6d5621cffb3358"
+        },
+        {
+          "layer": "back",
+          "path": "rainbow-cowl-back.png",
+          "width": 768,
+          "height": 312,
+          "bytes": 309292,
+          "sha256": "4b7f72f1124628f52272ba0e283acb9b0d41792dba7181b38eb355d98c955a2a"
+        },
+        {
+          "layer": "icon-256",
+          "path": "rainbow-cowl-256.png",
+          "width": 256,
+          "height": 256,
+          "bytes": 48413,
+          "sha256": "2fc6b229ff363d755eec61dd0bade1d16ab6ac91614957f287cb7441d6e7b0a2"
+        },
+        {
+          "layer": "icon-512",
+          "path": "rainbow-cowl-512.png",
+          "width": 512,
+          "height": 512,
+          "bytes": 169473,
+          "sha256": "952c22bff023045b2f1fd569264207d919a55b6ab780abdd891d39e60cd7a865"
+        }
+      ]
+    },
+    {
+      "id": "dress-wish-bow-v1",
+      "sourceWidth": 1024,
+      "sourceHeight": 1536,
+      "sourceSHA256": "a99ecf9eee297a3a3016989fd1c918c8f44c5e74c18f74029c42564b44084760",
+      "files": [
+        {
+          "layer": "front",
+          "path": "wish-bow-front.png",
+          "width": 768,
+          "height": 452,
+          "bytes": 380132,
+          "sha256": "ff78969e114dbd8a9dc5eaa6d86b9d837716dd6ba73cf50041055e413cabf862"
+        },
+        {
+          "layer": "back",
+          "path": "wish-bow-back.png",
+          "width": 768,
+          "height": 308,
+          "bytes": 202082,
+          "sha256": "a3df87ba9bd0dcd2ed355d543dbb7e0d34cb1443a15a57fb47e1232e0d53a121"
+        },
+        {
+          "layer": "icon-256",
+          "path": "wish-bow-256.png",
+          "width": 256,
+          "height": 256,
+          "bytes": 50893,
+          "sha256": "164019778418de6000c425a6da23fd468ea6214cb45cdd85046cc8ecbf5323c8"
+        },
+        {
+          "layer": "icon-512",
+          "path": "wish-bow-512.png",
+          "width": 512,
+          "height": 512,
+          "bytes": 175994,
+          "sha256": "7b6ba18cb25939562c49e0827e923adff63a639535356bcd6c66122e639a3faa"
+        }
+      ]
+    },
+    {
+      "id": "dress-courage-sun-v1",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceSHA256": "c64c904981833e7e082350cf436a7e10e67273cba8d6b5496b79dee310fbdd4b",
+      "files": [
+        {
+          "layer": "front",
+          "path": "courage-sun-front.png",
+          "width": 768,
+          "height": 776,
+          "bytes": 1000398,
+          "sha256": "bbd06793ba0fe6782a7219d51dc0b7a2c5fa358c70fadb982544996375cc2840"
+        },
+        {
+          "layer": "icon-256",
+          "path": "courage-sun-256.png",
+          "width": 256,
+          "height": 256,
+          "bytes": 134202,
+          "sha256": "eece2358ce3415b568124287febb82fab3a3d37f375417e824546c23bba783d4"
+        },
+        {
+          "layer": "icon-512",
+          "path": "courage-sun-512.png",
+          "width": 512,
+          "height": 512,
+          "bytes": 469187,
+          "sha256": "dd6c7be8ed3d36b471c0688bfa61967b4f59b9138142b077c163c6774391b496"
+        }
+      ]
+    },
+    {
+      "id": "dress-growth-sprout-v1",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceSHA256": "23bd417e577b6d3663821f91b4939e430eeca99ebe63441a3e2d24f3e6ee679e",
+      "files": [
+        {
+          "layer": "front",
+          "path": "growth-sprout-front.png",
+          "width": 768,
+          "height": 806,
+          "bytes": 914246,
+          "sha256": "adc02b1adccb261658ea58564d422233ae6b2577000aa1b50056d2f40b07b9bc"
+        },
+        {
+          "layer": "icon-256",
+          "path": "growth-sprout-256.png",
+          "width": 256,
+          "height": 256,
+          "bytes": 109019,
+          "sha256": "c955d94aa6ebb53552f28c0100a8db31331507db2d40342f7c9d6f252cd5da52"
+        },
+        {
+          "layer": "icon-512",
+          "path": "growth-sprout-512.png",
+          "width": 512,
+          "height": 512,
+          "bytes": 382662,
+          "sha256": "3f51903e7a8de14ba1f3caa4e3cb8e58ade93acdfe386017aeb39c23b406f53d"
+        }
+      ]
+    },
+    {
+      "id": "dress-dream-moon-v1",
+      "sourceWidth": 1254,
+      "sourceHeight": 1254,
+      "sourceSHA256": "df0b6e05f5ea9ecd6a7ace40d3b91e69313f4af429325b885457c7b3786d7d29",
+      "files": [
+        {
+          "layer": "front",
+          "path": "dream-moon-front.png",
+          "width": 768,
+          "height": 661,
+          "bytes": 754262,
+          "sha256": "c6763bee6068ba1f6c994a9df1edfebcc55a2fec5b18ed310322e70be8a297ef"
+        },
+        {
+          "layer": "icon-256",
+          "path": "dream-moon-256.png",
+          "width": 256,
+          "height": 256,
+          "bytes": 97465,
+          "sha256": "1d9155e46ea352e2f477c82fab850563070bc241809505cce059ac0c51cdcffa"
+        },
+        {
+          "layer": "icon-512",
+          "path": "dream-moon-512.png",
+          "width": 512,
+          "height": 512,
+          "bytes": 339953,
+          "sha256": "7427a7058857f2ec92a31a697815192ad2be8f3b6cec0714db1bbd2a8ea7fe34"
+        }
+      ]
+    }
+  ]
+}

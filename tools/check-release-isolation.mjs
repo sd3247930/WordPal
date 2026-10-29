@@ -2,6 +2,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import {readFileSync} from 'node:fs'
 import {verifySpiritStoneArtwork} from './lib/spirit-stone-artwork.mjs'
+import {verifyBuildIdentity} from './lib/build-identity.mjs'
 
 const roots=process.argv.slice(2).length?process.argv.slice(2):['dist/build/h5','dist/build/app','dist/build/mp-weixin']
 const forbidden=['wordpal.test.synthetic-course','wordpal.test.textbook-series','synthetic-quartz','synthetic-archived','synthetic-textbook']
@@ -16,6 +17,7 @@ async function inspect(folder){
  }
 }
 for(const root of roots){
+ verifyBuildIdentity(file=>readFileSync(path.join(root,file)))
  verifySpiritStoneArtwork(file=>readFileSync(path.join(root,file)))
  await inspect(root)
 }

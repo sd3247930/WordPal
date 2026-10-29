@@ -6,6 +6,7 @@
 /src/static/local-course-media/
 /src/static/local-starter-media/
 /src/static/local-spirit-stone/
+/src/static/build-info.json
 
 # ===== 依赖与包管理 =====
 node_modules/

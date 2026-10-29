@@ -22,3 +22,17 @@ test('原生顶部安全区只计入一次，旋转尺寸改变后按新窗口�
  await page.setViewportSize({width:844,height:390});await expect.poll(()=>header.evaluate(h=>h.getBoundingClientRect().height)).toBe(115);expect(await header.locator('.brand-logo').evaluate(n=>n.getBoundingClientRect().width)).toBe(60)
  await page.evaluate(async()=>{const {windowLayout}=await import('/src/services/window/index.ts' as string);windowLayout.safeTop=0});await expect.poll(()=>header.evaluate(h=>h.getBoundingClientRect().height)).toBe(76);expect(await database(page)).toEqual(before)
 })
+
+test('精灵屋紧凑Header避开39px原生安全区，手机横竖屏均完整显示标题',async({page})=>{
+ await go(page,'pet');await page.evaluate(async()=>{const {windowLayout}=await import('/src/services/window/index.ts' as string);windowLayout.safeTop=39})
+ for(const width of [359,390,844]){await page.setViewportSize({width,height:900});const bounds=await page.locator('.wp-brand-header').evaluate(header=>{const h=header.getBoundingClientRect(),title=header.querySelector('.brand-name')!.getBoundingClientRect(),logo=header.querySelector('.brand-logo')!.getBoundingClientRect();return{top:title.top,bottom:title.bottom,headerBottom:h.bottom,logoTop:logo.top}});expect(bounds.top).toBeGreaterThanOrEqual(39);expect(bounds.logoTop).toBeGreaterThanOrEqual(39);expect(bounds.bottom).toBeLessThanOrEqual(bounds.headerBottom);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)}
+})
+
+for(const mode of ['light','dark'])test(`精灵屋奶油主题 ${mode} 灵石余额沿用蓝灰文字与页面表面配色`,async({page})=>{
+ await setAppearance(page,'clay',mode);await go(page,'pet')
+ const colors=await page.locator('.spirit-stone-badge').evaluate(badge=>{
+  const style=getComputedStyle(badge),reference=document.createElement('span');reference.style.color='var(--lh-ink)';reference.style.backgroundColor='var(--lh-surface)';reference.style.borderColor='var(--lh-line)';badge.append(reference);const palette=getComputedStyle(reference),expected={color:palette.color,background:palette.backgroundColor,border:palette.borderTopColor};reference.remove()
+  return {actual:{color:getComputedStyle(badge.querySelector('.spirit-stone-count')!).color,background:style.backgroundColor,border:style.borderTopColor},expected}
+ })
+ expect(colors.actual).toEqual(colors.expected)
+})

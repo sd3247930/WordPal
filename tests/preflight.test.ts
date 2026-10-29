@@ -34,6 +34,13 @@ test('内置音频 SHA 仅豁免已核对的清单整行，其他数字及位置
  assert.ok(scanBytes('other.json',Buffer.from(line)).some((hit:any)=>hit.category==='identity/account digits'))
  assert.ok(scanBytes(name,Buffer.from(line.replace('sha256','account'))).some((hit:any)=>hit.category==='identity/account digits'))
 })
+test('穿戴清单坐标豁免绑定已审核整文件，改动内容、其他路径与其他秘密仍阻断',()=>{
+ const name='src/static/pet-house/lifehouse/v2/manifest.json',data=fs.readFileSync(name),text=data.toString(),digits=text.match(/\d{16,19}/)![0]
+ assert.deepEqual(scanBytes(name,data),[])
+ assert.ok(scanBytes('other.json',data).some((hit:any)=>hit.category==='identity/account digits'))
+ assert.ok(scanBytes(name,Buffer.from(text+'\naccount = '+digits)).some((hit:any)=>hit.category==='identity/account digits'))
+ assert.ok(scanBytes(name,Buffer.from(text+'\n'+secret())).some((hit:any)=>hit.category==='service credential'))
+})
 function fixture(action:(root:string)=>void){
  const parent=fs.realpathSync(os.tmpdir()),root=fs.mkdtempSync(path.join(parent,'wordpal-purity-fixture-'))
  try{action(root)}finally{const resolved=fs.realpathSync(root);assert.equal(path.dirname(resolved),parent);assert.ok(path.basename(resolved).startsWith('wordpal-purity-fixture-'));fs.rmSync(resolved,{recursive:true,force:true})}

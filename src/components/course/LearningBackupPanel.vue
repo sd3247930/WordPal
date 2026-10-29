@@ -32,7 +32,7 @@ onMounted(()=>{
  document.querySelector('.recovery-textarea textarea')?.setAttribute('aria-label','学习备份文本')
  // #endif
 })
-async function exportBackup(){if(!props.active||!parentGate.canAccess())return;try{message.value=await downloadLocalFile('wordpal-private-learning-backup.json',makeLearningBackup(profile.db))?'学习备份已保存到本机。':'未保存学习备份，请重试。'}catch{message.value='备份无法保存，请检查本机存储。'}}
+async function exportBackup(){if(!props.active||!parentGate.canAccess())return;try{if(!profile.flushLearningDraft()){message.value=profile.storageError;return}message.value=await downloadLocalFile('wordpal-private-learning-backup.json',makeLearningBackup(profile.db))?'学习备份已保存到本机。':'未保存学习备份，请重试。'}catch{message.value='备份无法保存，请检查本机存储。'}}
 defineExpose({exportBackup})
 async function exportRecovery(){if(!props.active||!parentGate.canAccess())return;try{await downloadLocalFile('wordpal-private-recovery.json',exportRecoverySnapshot());message.value='故障快照已保存，最新档案未被覆盖。'}catch{message.value='故障快照无法保存。'}}
 async function choose(){if(!props.active||!parentGate.canAccess())return;try{const file=await pickCourseFile();if(file&&props.active&&parentGate.canAccess()){if(file.bytes.length>16*1024*1024)throw new Error('学习备份过大。');input.value=strFromU8(file.bytes);prepare()}}catch(error){message.value=(error as Error).message}}

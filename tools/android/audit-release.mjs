@@ -4,6 +4,7 @@ import {execFileSync} from 'node:child_process'
 import {createHash} from 'node:crypto'
 import {unzipSync} from 'fflate'
 import {verifySpiritStoneArtwork} from '../lib/spirit-stone-artwork.mjs'
+import {verifyBuildIdentity} from '../lib/build-identity.mjs'
 const source='build/android/app/build/outputs/apk/release/app-release.apk'
 const sdk=process.env.ANDROID_HOME||process.env.ANDROID_SDK_ROOT
 const expected=process.env.WORDPAL_EXPECTED_CERT_SHA256?.replaceAll(':','').toLowerCase()
@@ -20,6 +21,11 @@ const permissions=[...run(exe('aapt2'),['dump','permissions',source]).matchAll(/
 const allowed=new Set(['android.permission.INTERNET','android.permission.ACCESS_NETWORK_STATE','android.permission.RECORD_AUDIO','android.permission.VIBRATE','com.wordpal.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'])
 if(permissions.some(permission=>!allowed.has(permission)))throw Error('APK requests a permission outside the reviewed application scope.')
 const bytes=fs.readFileSync(source),files=unzipSync(bytes)
+const buildIdentity=verifyBuildIdentity(file=>{
+ const entries=Object.keys(files).filter(name=>name.startsWith('assets/apps/')&&name.endsWith('/www/'+file))
+ if(entries.length!==1)throw Error('APK must contain exactly one source build identity.')
+ return files[entries[0]]
+})
 verifySpiritStoneArtwork(file=>{
  const suffix='/www/'+file,entries=Object.keys(files).filter(name=>name.startsWith('assets/apps/')&&name.endsWith(suffix))
  if(entries.length!==1)throw Error('APK must contain exactly one reviewed spirit-stone asset: '+file)
@@ -31,6 +37,6 @@ fs.mkdirSync('build/release',{recursive:true})
 fs.copyFileSync(source,'build/release/WordPal.apk')
 const hash=createHash('sha256').update(bytes).digest('hex')
 fs.writeFileSync('build/release/WordPal.apk.sha256',hash+'  WordPal.apk\n')
-const report={version:pkg.version,versionCode:manifest.versionCode,packageName:identity[1],bytes:bytes.length,sha256:hash,signatureVerified:true,debuggable:false,zip16kAligned:true,permissions,excludedFiles:forbidden.length,localContentIncluded:false,spiritStoneArtworkVerified:true}
+const report={version:pkg.version,versionCode:manifest.versionCode,packageName:identity[1],bytes:bytes.length,sha256:hash,signatureVerified:true,debuggable:false,zip16kAligned:true,permissions,excludedFiles:forbidden.length,localContentIncluded:false,spiritStoneArtworkVerified:true,buildIdentity}
 fs.writeFileSync('build/release-audit.json',JSON.stringify(report,null,2)+'\n')
 console.log(JSON.stringify(report,null,2))

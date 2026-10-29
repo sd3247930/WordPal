@@ -19,7 +19,7 @@ test('五模式线索不返回完整隐藏英文或正确词义，缺词性与�
 for(const mode of ['flash','connect','listen','spell','dictation'] as LearningMode[])test(`${mode}提示连续点击只扣一次，计划与学习记录不变，冷重建恢复后可再看且切词清理`,()=>{
  const {profile,learning,view}=fresh();assert(learning.start());while(learning.session!.flow!.step!==mode)answerDailyWord(learning);view.sync();const before=JSON.parse(JSON.stringify(profile.db)),oldRevealed=learning.session!.revealed
  for(let i=0;i<20;i++)assert(view.hint());assert.equal(view.hinted,true);assert.equal(learning.session!.revealed,oldRevealed);assert.equal(profile.db.gems,2)
- const expected=JSON.parse(JSON.stringify(before));expected.gems=2;expected.courseProgress.starter.dailyPlan.hinted=true;assert.deepEqual(profile.db,expected)
+ const expected=JSON.parse(JSON.stringify(before));expected.gems=2;expected.courseProgress.starter.dailyPlan.hinted=true;expected.courseProgress.starter.dailyPlan.hintKind=['connect','spell','dictation'].includes(mode)?'answer':'encouragement';assert.deepEqual(profile.db,expected)
  setActivePinia(createPinia());const restored=useStudyPresentation();restored.sync();assert(restored.hinted);assert(restored.hint());assert.equal(useProfileStore().db.gems,2)
  answerDailyWord(useLearningStore());assert.equal(useLearningStore().session!.hinted,undefined);assert.equal(restored.hinted,false)
 })

@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import {fileURLToPath} from 'node:url'
 import {spawnSync} from 'node:child_process'
+import {createHash} from 'node:crypto'
 
 const generatedDirs = new Set(['node_modules','.git','dist','build','unpackage','.hbuilderx','coverage','.nyc_output','.cache','.idea','.vscode','test-results','playwright-report','blob-report','test-output','test-artifacts','screenshots','tmp','temp','.tmp','.temp','__pycache__'])
 const localDirs = new Set(['docs','private'])
@@ -16,6 +17,9 @@ const compilerBuildIds = new Set([['50204','20260813003'].join(''),['50206','202
 const publicVocabularyRevision=['5dd252c7df0e698','76442492814428','c5fc6d63880'].join('')
 // Verified against the existing wind.wav bytes; this exact SHA field is not an account number.
 const publicStarterWindDigest=['4ae0b08b8d27e788','f8ee96b148473','286542441411','eb33e760af1c7413f388e08'].join('')
+// Reviewed generated fitting coordinates: 182 long fractional runs, no account data.
+// Pin the entire artifact so any edit must be reviewed again; other rules still apply.
+const publicLifehouseFitManifestDigest='2hHvgJGuYuQfK57zFJvBcNFnzKisIhfi4UNBtxPm32A='
 const rules = [
  ['credential assignment', /["']?\b(?:api[_-]?key|access[_-]?key|secret[_-]?key|app[_-]?secret|client[_-]?secret|private[_-]?key|auth[_-]?token|access[_-]?token|refresh[_-]?token|_authToken|password|passwd|pwd|pin)\b["']?\s*[:=]\s*(["'])([^"'\r\n]+)\1/gi],
  ['numeric credential', /["']?\b(?:password|passwd|pwd|pin)\b["']?\s*[:=]\s*(\d+)/gi],
@@ -41,6 +45,7 @@ export function forbiddenPath(name) {
 }
 
 function exempt(label,match,name) {
+ if(label==='identity/account digits'&&name==='src/static/pet-house/lifehouse/v2/manifest.json')return createHash('sha256').update(match.input).digest('base64')===publicLifehouseFitManifestDigest
  if(label==='identity/account digits'&&name==='src/content/starter-media.json'){const start=match.input.lastIndexOf('\n',match.index)+1,end=match.input.indexOf('\n',match.index);return match.input.slice(start,end<0?undefined:end).trim()==='"sha256": "'+publicStarterWindDigest+'",'}
  if(label==='identity/account digits'&&name==='tools/master-vocabulary/index.ts'){const start=match.input.lastIndexOf('\n',match.index)+1,end=match.input.indexOf('\n',match.index);return match.input.slice(start,end<0?undefined:end).trim()==="const revision='"+publicVocabularyRevision+"'"}
  if(label==='email address')return /@(?:example\.(?:com|org)|[^@]*\.invalid|users\.noreply\.github\.com)$/i.test(match[0])

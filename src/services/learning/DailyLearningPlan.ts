@@ -5,6 +5,7 @@ import type {Database} from '../../stores/profile'
 import {orderedCourseWords} from './CourseStudySequence'
 import {initialProgress} from '../storage/MigrationV1toV2'
 import {isUserDeleted} from '../../../packages/content_schema/course-lifecycle'
+import {validSessionSafety} from './LearningSafetySchema'
 
 export const STUDY_STEPS:readonly StudyStep[]=['flash','connect','listen','spell','dictation','consolidate']
 export const STEP_TITLES:Record<StudyStep,string>={flash:'闪现',connect:'连接',listen:'听音',spell:'拼写',dictation:'听写',consolidate:'复习巩固'}
@@ -66,24 +67,24 @@ export function advanceDailyPlan(plan:LearningSession,now=new Date()){
  if(!plan.flow||plan.completedAt)return false
  const answer=plan.answers[plan.index]
  if(!answer)return false
- if(!answer.correct){plan.answers.splice(plan.index);plan.input='';delete plan.letterDraft;plan.selected='';plan.revealed=plan.mode==='flash';return true}
- if(plan.index<plan.wordIds.length-1){plan.index++;plan.input='';delete plan.letterDraft;plan.selected='';plan.revealed=plan.mode==='flash';delete plan.hinted;delete plan.inputAssistance;return true}
+ if(!answer.correct){plan.answers.splice(plan.index);plan.input='';delete plan.letterDraft;delete plan.inputAssistance;plan.selected='';plan.revealed=plan.mode==='flash';return true}
+ if(plan.index<plan.wordIds.length-1){plan.index++;plan.input='';delete plan.letterDraft;plan.selected='';plan.revealed=plan.mode==='flash';delete plan.hinted;delete plan.hintKind;delete plan.inputAssistance;return true}
  const next=STUDY_STEPS[STUDY_STEPS.indexOf(plan.flow.step)+1]
- if(next){plan.flow.step=next;plan.mode=stepMode(next);plan.index=0;plan.answers=[];plan.input='';delete plan.letterDraft;delete plan.inputAssistance;plan.selected='';plan.revealed=next==='flash';delete plan.hinted}
+ if(next){plan.flow.step=next;plan.mode=stepMode(next);plan.index=0;plan.answers=[];plan.input='';delete plan.letterDraft;delete plan.inputAssistance;plan.selected='';plan.revealed=next==='flash';delete plan.hinted;delete plan.hintKind}
  else{plan.completedAt=now.toISOString();plan.flow.finishedDate=localDate(now)}
  return true
 }
 export function recordDailyAnswer(plan:LearningSession,answer:Answer){
  if(!plan.flow||plan.completedAt||plan.answers[plan.index]||answer.wordId!==plan.wordIds[plan.index])return false
  plan.flow.begunAt??=answer.at;plan.flow.attempts.push(answer);plan.answers.push(answer);plan.revealed=true
- if(answer.correct&&!plan.flow.completed[plan.flow.step].includes(answer.wordId))plan.flow.completed[plan.flow.step].push(answer.wordId)
+ if(answer.correct&&!plan.flow.completed[plan.flow.step].includes(answer.wordId)){plan.flow.completed[plan.flow.step].push(answer.wordId);if(plan.flow.capabilities?.[plan.flow.step])plan.flow.capabilities[plan.flow.step]![answer.wordId]={status:'completed'}}
  return true
 }
 export function validDailyPlan(plan:LearningSession,owner:string){
  const flow=plan?.flow
  if(!flow||flow.schemaVersion!==1||plan.courseId!==owner||!STUDY_STEPS.includes(flow.step)||![1,2,3,4,5].includes(flow.entryLevel)||LEVEL_WORD_COUNTS[flow.entryLevel]!==flow.target||!Array.isArray(plan.wordIds)||!plan.wordIds.length||plan.wordIds.some(id=>typeof id!=='string')||new Set(plan.wordIds).size!==plan.wordIds.length||!Number.isInteger(plan.index)||plan.index<0||plan.index>=plan.wordIds.length||plan.mode!==stepMode(flow.step)||typeof plan.input!=='string'||typeof plan.selected!=='string'||typeof plan.revealed!=='boolean'||!Number.isFinite(Date.parse(plan.startedAt))||!/^\d{4}-\d{2}-\d{2}$/.test(plan.date)||!Array.isArray(plan.answers)||plan.answers.length<plan.index||plan.answers.length>plan.index+1||!Array.isArray(flow.attempts))return false
  const validAnswer=(answer:Answer)=>answer&&typeof answer.id==='string'&&plan.wordIds.includes(answer.wordId)&&answer.courseId===owner&&typeof answer.correct==='boolean'&&[1,2,3,4].includes(answer.rating)&&Number.isFinite(Date.parse(answer.at))
- if(!flow.attempts.every(validAnswer)||!plan.answers.every((answer,index)=>validAnswer(answer)&&answer.wordId===plan.wordIds[index]))return false
+ if(!flow.attempts.every(validAnswer)||!plan.answers.every((answer,index)=>validAnswer(answer)&&answer.wordId===plan.wordIds[index])||!validSessionSafety(plan))return false
  if(!STUDY_STEPS.every(step=>Array.isArray(flow.completed?.[step])&&new Set(flow.completed[step]).size===flow.completed[step].length&&flow.completed[step].every((id,index)=>id===plan.wordIds[index])))return false
  const index=STUDY_STEPS.indexOf(flow.step)
  if(STUDY_STEPS.some((step,i)=>i<index&&flow.completed[step].length!==plan.wordIds.length||i>index&&flow.completed[step].length!==0))return false

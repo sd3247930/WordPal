@@ -17,7 +17,7 @@
   </template>
   <template v-else>
    <text v-if="!challenge.supported" class="small muted block">{{challenge.reason}}</text>
-   <WordSlotInput :model-value="modelValue" :mode="mode" :disabled="disabled" :question-key="questionKey" :show-instruction="false" @update:model-value="typed" @confirm="$emit('confirm')"/>
+   <WordSlotInput :model-value="modelValue" :mode="mode" :disabled="disabled" :question-key="questionKey" :show-instruction="false" @update:model-value="typed" @confirm="$emit('confirm')" @blur="$emit('blur')"/>
    <WPButton v-if="challenge.supported" kind="quiet" :disabled="disabled" @click="switchInput('tiles')">用字母积木辅助</WPButton>
   </template>
   <text v-if="inputPreference.storageError" class="small muted block" role="status">{{inputPreference.storageError}}</text>
@@ -30,7 +30,7 @@ import WordSlotInput from './WordSlotInput.vue'
 import WPButton from '../wp-button/WPButton.vue'
 import {useSpellingInputStore} from '../../stores/spelling-input'
 const props=withDefaults(defineProps<{word:{id:string;word:string};modelValue:string;mode:string;questionKey:string;letterDraft?:LetterBlockDraft;compact?:boolean;defaultTiles?:boolean;disabled?:boolean;correct?:boolean}>(),{defaultTiles:false,disabled:false,correct:undefined})
-const emit=defineEmits<{(event:'change',value:SpellingInputChange):void;(event:'ready',value:boolean):void;(event:'confirm'):void}>()
+const emit=defineEmits<{(event:'change',value:SpellingInputChange):void;(event:'ready',value:boolean):void;(event:'confirm'):void;(event:'blur'):void}>()
 const inputPreference=useSpellingInputStore()
 const challenge=computed(()=>normalizeSpellingWord(props.word.word,props.questionKey)),local=ref<LetterBlockDraft>(),conversionNotice=ref(''),uid=getCurrentInstance()!.uid
 const draft=computed(()=>local.value||makeBlockDraft(challenge.value,props.word.id,props.questionKey,props.modelValue,inputPreference.preferred(props.defaultTiles)))

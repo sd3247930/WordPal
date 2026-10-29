@@ -2,7 +2,7 @@ import {readFileSync} from 'node:fs'
 import path from 'node:path'
 import {createHash} from 'node:crypto'
 
-export const spiritStoneArtwork=[128,192].map(size=>({file:`static/brand/spirit-stone-${size}.png`,size}))
+export const spiritStoneArtwork=[...[128,192].map(size=>({file:`static/brand/spirit-stone-${size}.png`,size})),...[128,192,256].map(size=>({file:`static/brand/blue-diamond-${size}.png`,size}))]
 const digest=bytes=>createHash('sha256').update(bytes).digest('hex')
 
 // Public exports contain pixel data only, with no C2PA, EXIF or text chunks.

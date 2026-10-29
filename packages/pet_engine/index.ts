@@ -1,5 +1,6 @@
 import type {Answer} from '../core_learning'
 import {localDate} from '../core_learning'
+import {changeBalance,validMoney} from './wallet'
 export type Element='water'|'fire'|'earth'|'wind'
 export interface PetState {petId:string;element:Element;level:number;exp:number;affection:number;mood:'calm'|'happy'|'excited'|'curious';evolutionStage:1|2|3;equippedCosmetics:string[];lastInteractionAt:number;lastFedDate?:string}
 export interface PetRewardEvent {source:'review_due'|'new_word'|'pronunciation'|'spelling'|'dictation'|'streak';exp:number;affection:number}
@@ -18,17 +19,20 @@ export function growPet(pet:PetState,event:PetRewardEvent,now:number):PetState {
 interface RewardDatabase {pets:Record<string,PetState>;companion:string;rewardIds:string[];gems:number;history:Answer[]}
 export function applyLearningReward(db:RewardDatabase,answer:Answer){
  if(answer.source==='practice'||db.rewardIds.includes(answer.id))return
+ const date=localDate(new Date(answer.at)),taskId=`daily-task:${date}`
+ const dailyBonus=db.history.filter(a=>localDate(new Date(a.at))===date).length>=5&&!db.rewardIds.includes(taskId)
+ // Validate the whole credit before touching any part of the reward state.
+ const gems=changeBalance(db.gems,(answer.correct?2:0)+(dailyBonus?1:0))
  const element=(db.companion||'water') as Element
  const current=db.pets[element]??createPet(element)
  const source=answer.mode==='dictation'?'dictation':answer.mode==='spell'?'spelling':answer.source
  db.pets[element]=growPet(current,{source,exp:answer.correct?12:4,affection:answer.correct?2:1},+new Date(answer.at))
- db.gems=Math.max(0,db.gems+(answer.correct?2:0));db.rewardIds.push(answer.id)
- const date=localDate(new Date(answer.at)),taskId=`daily-task:${date}`
- if(db.history.filter(a=>localDate(new Date(a.at))===date).length>=5 && !db.rewardIds.includes(taskId)){
-  db.pets[element]=growPet(db.pets[element],{source:'streak',exp:10,affection:3},+new Date(answer.at));db.gems+=1;db.rewardIds.push(taskId)
+ db.gems=gems;db.rewardIds.push(answer.id)
+ if(dailyBonus){
+  db.pets[element]=growPet(db.pets[element],{source:'streak',exp:10,affection:3},+new Date(answer.at));db.rewardIds.push(taskId)
  }
 }
 export function feedPet(pet:PetState,gems:number,date=localDate()){
- if(gems<5 || pet.lastFedDate===date)return {pet,gems,success:false}
- return {pet:{...pet,affection:Math.min(100,pet.affection+5),mood:'happy' as const,lastFedDate:date,lastInteractionAt:Date.now()},gems:gems-5,success:true}
+ if(!validMoney(gems)||gems<5 || pet.lastFedDate===date)return {pet,gems,success:false}
+ return {pet:{...pet,affection:Math.min(100,pet.affection+5),mood:'happy' as const,lastFedDate:date,lastInteractionAt:Date.now()},gems:changeBalance(gems,-5),success:true}
 }

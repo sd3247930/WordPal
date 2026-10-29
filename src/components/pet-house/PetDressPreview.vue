@@ -3,8 +3,8 @@
   <image class="dress-scene" :src="scene.sceneAsset" mode="aspectFill" aria-hidden="true"/>
   <view class="dress-scene-shade" aria-hidden="true"/>
   <view class="dress-preview-heading"><text class="dress-pet-name">{{identity}}</text><text class="dress-scene-name">{{scene.title}} · {{petStages[form-1].title}}</text></view>
-  <view class="dress-model"><PetHousePetArt :element="pet.element" :cosmetic="pet.equippedCosmetics[0]" :badge="false"/></view>
-  <text class="dress-wearing-state">{{worn?'正在穿戴 · '+worn.name:'选一件喜欢的装扮吧'}}</text>
+  <view class="dress-model"><PetHousePetArt :element="pet.element" :cosmetics="pet.equippedCosmetics" :badge="false"/></view>
+  <text class="dress-wearing-state">{{worn.length?'正在穿戴 · '+worn.join('、'):'选一件喜欢的装扮吧'}}</text>
  </view>
 </template>
 <script setup lang="ts">
@@ -12,13 +12,13 @@ import {computed} from 'vue'
 import {petInfo,type PetState} from '../../../packages/pet_engine'
 import type {PetHouseTheme} from '../../styles/pet-house'
 import {petStages} from '../../services/pet-growth'
-import {cosmetics} from '../../stores/pet'
+import {equippedItems,dressDefinition} from '../../services/pet-lifehouse/DressCatalog'
 import {usePetFormsStore} from '../../stores/pet-forms'
 import PetHousePetArt from './PetHousePetArt.vue'
 const props=withDefaults(defineProps<{pet:PetState;scene:PetHouseTheme;dark?:boolean}>(),{dark:false}),forms=usePetFormsStore()
 const form=computed(()=>forms.stage(props.pet.element))
 const identity=computed(()=>petInfo[props.pet.element].elementName+'精灵 · '+petInfo[props.pet.element].name)
-const worn=computed(()=>cosmetics.find(item=>item.id===props.pet.equippedCosmetics[0]))
+const worn=computed(()=>equippedItems(props.pet.equippedCosmetics,props.pet.element).map(id=>dressDefinition(id,props.pet.element)!.name))
 </script>
 <style scoped>
 .dress-preview{position:relative;isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:center;width:100%;max-width:680px;align-self:center;padding:0;border:1px solid var(--pet-border);border-radius:var(--pet-radius);background:var(--pet-tonal);height:auto;min-width:0}

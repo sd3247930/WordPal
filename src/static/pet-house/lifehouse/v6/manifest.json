@@ -1,0 +1,3047 @@
+{
+  "schemaVersion": 1,
+  "assetVersion": 6,
+  "status": "ready",
+  "metadataClean": true,
+  "source": "Codex image generation; independent runtime exports",
+  "files": [
+    {
+      "id": "v6-room-water-l0",
+      "path": "room-water-l0.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 264849,
+      "sha256Base64": "bVPZqP/PFS+TOnu+wkIHl4PvQfvSir+B1IK2QgZakI4="
+    },
+    {
+      "id": "v6-floor-water-l0",
+      "path": "floor-water-l0.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 89046,
+      "sha256Base64": "W3mXWMecL1gfwOPRJSVhj0TJ3MlXqaw/TCW5imT15VQ="
+    },
+    {
+      "id": "v6-architecture-water-l0",
+      "path": "architecture-water-l0.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 174872,
+      "sha256Base64": "blGnPB4RISJukdr7/7fyOFxkmj1tMmcMcQZdn64Glt0="
+    },
+    {
+      "id": "v6-front-water-l0",
+      "path": "front-water-l0.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 141344,
+      "sha256Base64": "czyWu++mnTMnlQHAx9itfNVbNO4eej/DZ9RPCOmiAcU="
+    },
+    {
+      "id": "v6-thumb-water-l0-f1",
+      "path": "thumb-water-l0-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23205,
+      "sha256Base64": "1OZ69sqmP0mYxdQOVhqK5SzkDXsrmSJJEkgNDcPgqCg="
+    },
+    {
+      "id": "v6-thumb-water-l0-f2",
+      "path": "thumb-water-l0-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23662,
+      "sha256Base64": "JN9TPMlUjAr6l4hJRY+4J2+Xq8maKi6mNCB8UzEQfLM="
+    },
+    {
+      "id": "v6-thumb-water-l0-f3",
+      "path": "thumb-water-l0-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 24113,
+      "sha256Base64": "RLHOpuv3JwVWoV4AmLdyAA923f78gLhmIP4aqW7yeMw="
+    },
+    {
+      "id": "v6-thumb-water-l0-f4",
+      "path": "thumb-water-l0-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23934,
+      "sha256Base64": "lE8o+bS/1L3m4cVErxiE2NviRRFKWn1oP39edmf439Y="
+    },
+    {
+      "id": "v6-room-water-l1",
+      "path": "room-water-l1.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 232339,
+      "sha256Base64": "6tJ3//a2gOVTGuuUTY3ilByFNblp3H7E6fqG+TEhZzI="
+    },
+    {
+      "id": "v6-floor-water-l1",
+      "path": "floor-water-l1.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 70054,
+      "sha256Base64": "mKdlTGJhp91I/CpCR7BAdkiCVUUlBA+5i6Vij3EeQFU="
+    },
+    {
+      "id": "v6-architecture-water-l1",
+      "path": "architecture-water-l1.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 148458,
+      "sha256Base64": "LM7ybLKjzGAM63XJ3Cy96j7oy9bop7DTVlsb1K9O/0Y="
+    },
+    {
+      "id": "v6-front-water-l1",
+      "path": "front-water-l1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 118144,
+      "sha256Base64": "hCRa9lgwtwe3he3p6eFduxG3gJZoKpCb4LLGuo3VtwM="
+    },
+    {
+      "id": "v6-thumb-water-l1-f1",
+      "path": "thumb-water-l1-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23163,
+      "sha256Base64": "0afd0ASanYvI4oY7gJx5ZUZ5BzpuOYl33bddU98dAuY="
+    },
+    {
+      "id": "v6-thumb-water-l1-f2",
+      "path": "thumb-water-l1-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23553,
+      "sha256Base64": "vNdZBPo/lrEThM1Az3qi+eR4D3RHux/uwA8gQsZcHeE="
+    },
+    {
+      "id": "v6-thumb-water-l1-f3",
+      "path": "thumb-water-l1-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23937,
+      "sha256Base64": "rJq+Ry1SaKcYDos8OtoKwU2JbmqC4SaccEvDZIE2Ntc="
+    },
+    {
+      "id": "v6-thumb-water-l1-f4",
+      "path": "thumb-water-l1-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23947,
+      "sha256Base64": "bj9QA0w+K2Ztj5DSQCKnTO5ZkxOoHKieYcdrBfzZqpQ="
+    },
+    {
+      "id": "v6-room-water-l2",
+      "path": "room-water-l2.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 217251,
+      "sha256Base64": "SB5D3++lcJnHXvREjbrMtnGRpwdqcHfw2uKt09oR/60="
+    },
+    {
+      "id": "v6-floor-water-l2",
+      "path": "floor-water-l2.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 70264,
+      "sha256Base64": "OglBlA2Jq1pfv5smDQU9eCX0pG5SZcvuvmKkR8grVk4="
+    },
+    {
+      "id": "v6-architecture-water-l2",
+      "path": "architecture-water-l2.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 132556,
+      "sha256Base64": "DcW1/AxjQ7gM7Oa2zVBmwgAzpo5dJFa0vzF5MZLlj6s="
+    },
+    {
+      "id": "v6-front-water-l2",
+      "path": "front-water-l2.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 113429,
+      "sha256Base64": "oAoNOaLzfUtgycI2lQ2RHx1S/NFD7KGkIGI4KSP/usg="
+    },
+    {
+      "id": "v6-thumb-water-l2-f1",
+      "path": "thumb-water-l2-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 22653,
+      "sha256Base64": "nGDnW8S2GCBTrBe7LJoiMA8jIV2a9gq2OW4IEpkRcPE="
+    },
+    {
+      "id": "v6-thumb-water-l2-f2",
+      "path": "thumb-water-l2-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23116,
+      "sha256Base64": "8xOcQhU0TquFuU73OOkMJoTYoEmCHWwI8ppfAXW2HbA="
+    },
+    {
+      "id": "v6-thumb-water-l2-f3",
+      "path": "thumb-water-l2-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23565,
+      "sha256Base64": "3vlEURNj2pHUJtP62UMChMMjV+R9WxV4NzHplZnkOqk="
+    },
+    {
+      "id": "v6-thumb-water-l2-f4",
+      "path": "thumb-water-l2-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23518,
+      "sha256Base64": "HoQyvtPWbtY8Yqc+BBObpzm2CaI8PcKxrz5XTWFooyU="
+    },
+    {
+      "id": "v6-room-water-l3",
+      "path": "room-water-l3.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 229461,
+      "sha256Base64": "LSObSQ+O7mXVlyHQWCF9fYD9TvxPkz6JJTQL8S1kdN4="
+    },
+    {
+      "id": "v6-floor-water-l3",
+      "path": "floor-water-l3.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 74678,
+      "sha256Base64": "kt0MjkODEFMHgfAth21DsI/AjQ9bejrQ7lOpX+EQ+js="
+    },
+    {
+      "id": "v6-architecture-water-l3",
+      "path": "architecture-water-l3.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 146964,
+      "sha256Base64": "D1QazoZ+iHGfOXaDktflZ5M6HfeyXxi6M+89WXQVwQE="
+    },
+    {
+      "id": "v6-front-water-l3",
+      "path": "front-water-l3.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 127349,
+      "sha256Base64": "ykHGxnb/Azs+MvfreEzaNybneKlO8UJZIjCbp4ppwCY="
+    },
+    {
+      "id": "v6-thumb-water-l3-f1",
+      "path": "thumb-water-l3-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23247,
+      "sha256Base64": "ibNvm5Rx+KWu5lpXVvhGk1aBD4lSbtm1ueLGf4Azck8="
+    },
+    {
+      "id": "v6-thumb-water-l3-f2",
+      "path": "thumb-water-l3-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23702,
+      "sha256Base64": "eHB7jjajD7rEuVgTjNoJ0YLUDw11zaFCRGSYLg1OuVQ="
+    },
+    {
+      "id": "v6-thumb-water-l3-f3",
+      "path": "thumb-water-l3-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23990,
+      "sha256Base64": "jyBxZuO8oLQIRsDKn+7dDNI+jpb3CfurouMKejuD9yA="
+    },
+    {
+      "id": "v6-thumb-water-l3-f4",
+      "path": "thumb-water-l3-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23893,
+      "sha256Base64": "FzT3Wzbkqzl1ALhyvh6D/I/h7Ej6riDEU6DtwcphQGA="
+    },
+    {
+      "id": "v6-room-water-l4",
+      "path": "room-water-l4.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 285331,
+      "sha256Base64": "gpm3EaSmeXodzTRYLjwBOm78sM5mVnTpygq33lY0RIk="
+    },
+    {
+      "id": "v6-floor-water-l4",
+      "path": "floor-water-l4.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 89930,
+      "sha256Base64": "kk+eCu9UqsttXUjJHVN5cUdRJaTFwyGztQy3u/L1ZIw="
+    },
+    {
+      "id": "v6-architecture-water-l4",
+      "path": "architecture-water-l4.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 196742,
+      "sha256Base64": "eVi/28MTLHZPgboaW6+WlrVTpODRSU/xcEjGOz5ym+4="
+    },
+    {
+      "id": "v6-front-water-l4",
+      "path": "front-water-l4.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 128415,
+      "sha256Base64": "6aJWhB+mk5ak/y+OTWHpICR4S4wwmK0N0qJuGBTZIyo="
+    },
+    {
+      "id": "v6-thumb-water-l4-f1",
+      "path": "thumb-water-l4-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 25121,
+      "sha256Base64": "wN5rSbCGzh/iVPNqC3sVwtmyaucUpgHtN0sSd/MiraM="
+    },
+    {
+      "id": "v6-thumb-water-l4-f2",
+      "path": "thumb-water-l4-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 25484,
+      "sha256Base64": "UTk+DsKIkp3UC9FoQJav9Na0kZ1WKTmgo4H4Bg89uO8="
+    },
+    {
+      "id": "v6-thumb-water-l4-f3",
+      "path": "thumb-water-l4-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 25738,
+      "sha256Base64": "aPM/Xyk0+vJobnkMNvT41FrsecF5vveaqf7m+MPmqE8="
+    },
+    {
+      "id": "v6-thumb-water-l4-f4",
+      "path": "thumb-water-l4-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 25659,
+      "sha256Base64": "dtxMgr75LA68k+iNdlt4dE1KLG7jhL6bS97EeEnieas="
+    },
+    {
+      "id": "v6-room-water-l5",
+      "path": "room-water-l5.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 354897,
+      "sha256Base64": "rOMeBOqc5j1EtC/pV60l9WxDeobEKQwbqEfqZLvpjdw="
+    },
+    {
+      "id": "v6-floor-water-l5",
+      "path": "floor-water-l5.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 129354,
+      "sha256Base64": "hKr4rniSv2AJioxcLjqeA3MM4e4q0PUquxHZAKob8Is="
+    },
+    {
+      "id": "v6-architecture-water-l5",
+      "path": "architecture-water-l5.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 225336,
+      "sha256Base64": "m7yMnPlJH7Zrv/ohnB0qIS86ydIdCxtJsoKKKSgDwIg="
+    },
+    {
+      "id": "v6-front-water-l5",
+      "path": "front-water-l5.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 141543,
+      "sha256Base64": "Iz6JqA2c/7MVlKyjMoEJ2g767aZLzalhzJmq36A4sw8="
+    },
+    {
+      "id": "v6-thumb-water-l5-f1",
+      "path": "thumb-water-l5-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 28786,
+      "sha256Base64": "qLhbudU6GPKvi/d5y09vOLGrYtvJ1GpHK79alK7wlok="
+    },
+    {
+      "id": "v6-thumb-water-l5-f2",
+      "path": "thumb-water-l5-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 29045,
+      "sha256Base64": "U//4skOa4frjZuifdwA3LojFZMvZtuHVR3POfMCfInI="
+    },
+    {
+      "id": "v6-thumb-water-l5-f3",
+      "path": "thumb-water-l5-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 29314,
+      "sha256Base64": "H0TG+uD4I5owN4mRiulCuqRV9EVsXL+VVcTCKa3mIUk="
+    },
+    {
+      "id": "v6-thumb-water-l5-f4",
+      "path": "thumb-water-l5-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 29236,
+      "sha256Base64": "/rZYtGUdTvniQMRwUZaj5B9XwyddQHMfitEk8TwGJ2s="
+    },
+    {
+      "id": "v6-room-fire-l0",
+      "path": "room-fire-l0.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 302274,
+      "sha256Base64": "7lT5rOCxKYySfhZmbw8afDJiZToMiaV19lNT9Lbiwks="
+    },
+    {
+      "id": "v6-floor-fire-l0",
+      "path": "floor-fire-l0.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 120862,
+      "sha256Base64": "5l5e8Gq2TzQRemiEuM1KyBLHw6Ld0e2Do5dfbhrJB9o="
+    },
+    {
+      "id": "v6-architecture-fire-l0",
+      "path": "architecture-fire-l0.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 198134,
+      "sha256Base64": "FlW/j+0cY+It4U7E209IOGvE086Ik/oXPXXNnot2x9k="
+    },
+    {
+      "id": "v6-front-fire-l0",
+      "path": "front-fire-l0.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 139305,
+      "sha256Base64": "43sAX7WaxxmUWDCcXvTpGeT2XNTxqmVpobtXpzfWdbE="
+    },
+    {
+      "id": "v6-thumb-fire-l0-f1",
+      "path": "thumb-fire-l0-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 26453,
+      "sha256Base64": "ri58JpK+OP9gAtW2LNJzdo42ELIkgMA3nGfgY12NQJM="
+    },
+    {
+      "id": "v6-thumb-fire-l0-f2",
+      "path": "thumb-fire-l0-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 26759,
+      "sha256Base64": "UdXLzaHyxCOAWJBhlj1QSZ7SMD1a8wH5LiFJ206JiRQ="
+    },
+    {
+      "id": "v6-thumb-fire-l0-f3",
+      "path": "thumb-fire-l0-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 27126,
+      "sha256Base64": "rA2OxRNBRkoDL+96n4F7kxOW9FVexIiecSB1PMPWnk8="
+    },
+    {
+      "id": "v6-thumb-fire-l0-f4",
+      "path": "thumb-fire-l0-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 27507,
+      "sha256Base64": "kP0G+IxeNYzEabkpoHFnCHmhkuzfGmXZb4lbsMbnqPo="
+    },
+    {
+      "id": "v6-room-fire-l1",
+      "path": "room-fire-l1.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 233549,
+      "sha256Base64": "wTH8mKyAVFTsIua/0J6mlEyX6kVI4Rjhb4P2X6BCyDE="
+    },
+    {
+      "id": "v6-floor-fire-l1",
+      "path": "floor-fire-l1.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 76538,
+      "sha256Base64": "TajJ3yesuZco28jCcqVxrfOs8735UVmeTlWj4hFfTfw="
+    },
+    {
+      "id": "v6-architecture-fire-l1",
+      "path": "architecture-fire-l1.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 143678,
+      "sha256Base64": "FR/55qCyL0OG7O1YZI/G7ftQm7a76bxwFlvbcZHEuNs="
+    },
+    {
+      "id": "v6-front-fire-l1",
+      "path": "front-fire-l1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 103410,
+      "sha256Base64": "uZCZpWkMtTZ+GW8S1WiKq89BzWfY2TtC1U/sOMvTUog="
+    },
+    {
+      "id": "v6-thumb-fire-l1-f1",
+      "path": "thumb-fire-l1-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 24630,
+      "sha256Base64": "uOA+pCR9b0Ey7fSxiokQHmcw1YWMY+MKA6LLXaGZY8E="
+    },
+    {
+      "id": "v6-thumb-fire-l1-f2",
+      "path": "thumb-fire-l1-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 24759,
+      "sha256Base64": "1QZu5ppUMFG2q0a5O/cR7tqNgjG0VOYz8mBOHndZMXE="
+    },
+    {
+      "id": "v6-thumb-fire-l1-f3",
+      "path": "thumb-fire-l1-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 25126,
+      "sha256Base64": "jQq1GPUyW4nPXbr0wbl3lC6qQfqypqykFMayLSxFrHc="
+    },
+    {
+      "id": "v6-thumb-fire-l1-f4",
+      "path": "thumb-fire-l1-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 25507,
+      "sha256Base64": "Pu++iLcQ8hMW0haZ4ZsUFjzPARSUlCn2CTN1q1uEsDc="
+    },
+    {
+      "id": "v6-room-fire-l2",
+      "path": "room-fire-l2.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 251149,
+      "sha256Base64": "HlcZGzZuhldzockOpYXNaR4GqixXO8A/58c9BAUMRs8="
+    },
+    {
+      "id": "v6-floor-fire-l2",
+      "path": "floor-fire-l2.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 86356,
+      "sha256Base64": "0QtLnNsrsm6+NgeMKAebMYV1TWwnchCQa+zqeXI+rFI="
+    },
+    {
+      "id": "v6-architecture-fire-l2",
+      "path": "architecture-fire-l2.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 149940,
+      "sha256Base64": "nEcKaCBpWQlHSi6fDaMOX4rOV2BTwBIITDjmSPeGbuM="
+    },
+    {
+      "id": "v6-front-fire-l2",
+      "path": "front-fire-l2.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 105934,
+      "sha256Base64": "LmFy1QC1Z0IudlGTH424h/HlUvcFjUDNh1ljHkYKW/0="
+    },
+    {
+      "id": "v6-thumb-fire-l2-f1",
+      "path": "thumb-fire-l2-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 25998,
+      "sha256Base64": "Hh8TbNMsL/B+C+BFtGpxspi6FKOCchItGkdid3FzTuY="
+    },
+    {
+      "id": "v6-thumb-fire-l2-f2",
+      "path": "thumb-fire-l2-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 26094,
+      "sha256Base64": "dE9/JRTN1f/XCl9YHJrVlj68TnVNULsNx50hukwVScA="
+    },
+    {
+      "id": "v6-thumb-fire-l2-f3",
+      "path": "thumb-fire-l2-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 26396,
+      "sha256Base64": "iIBuxUaOnqqnOSt4fbHxJ4DcIzCcDX+IU7IX9TW52bQ="
+    },
+    {
+      "id": "v6-thumb-fire-l2-f4",
+      "path": "thumb-fire-l2-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 26662,
+      "sha256Base64": "J8NLy9ojIpycRFnVg4BVidjDHRz2wgpGrPagaDqLEAM="
+    },
+    {
+      "id": "v6-room-fire-l3",
+      "path": "room-fire-l3.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 252587,
+      "sha256Base64": "ewuelsAYDP7zdYraci/XyqsghL4UpdCyB2dmJuU+R1k="
+    },
+    {
+      "id": "v6-floor-fire-l3",
+      "path": "floor-fire-l3.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 86644,
+      "sha256Base64": "dlewztfQrX8YInCYqTcHKZ3bxrke5dYwxZqV16RMxHk="
+    },
+    {
+      "id": "v6-architecture-fire-l3",
+      "path": "architecture-fire-l3.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 161526,
+      "sha256Base64": "3HNkNtIJXavXvKLRg/4dBjKdbV7n99KKU+xd12STnKI="
+    },
+    {
+      "id": "v6-front-fire-l3",
+      "path": "front-fire-l3.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 119283,
+      "sha256Base64": "iCMRQlq14BnS57pLNR602j9+gmT+PjbLTsfreoMc9/c="
+    },
+    {
+      "id": "v6-thumb-fire-l3-f1",
+      "path": "thumb-fire-l3-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 25882,
+      "sha256Base64": "nRnFCUDfMY8PU6Y4GiJ5ji1paW15v8UNv4Zge5AFCxc="
+    },
+    {
+      "id": "v6-thumb-fire-l3-f2",
+      "path": "thumb-fire-l3-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 26006,
+      "sha256Base64": "wlctRVO2eLFNiMwjkGIcNBLwXLpamL5LtQeb9CdGOPo="
+    },
+    {
+      "id": "v6-thumb-fire-l3-f3",
+      "path": "thumb-fire-l3-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 26317,
+      "sha256Base64": "DinheDWcu6/o3QCDmnGVy/WSczNVjnbGBVSic8BtVvw="
+    },
+    {
+      "id": "v6-thumb-fire-l3-f4",
+      "path": "thumb-fire-l3-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 26530,
+      "sha256Base64": "eQaPk4ClEcYK3BJqmWZffFxMpilo77ApoaGpEgfrUdQ="
+    },
+    {
+      "id": "v6-room-fire-l4",
+      "path": "room-fire-l4.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 269285,
+      "sha256Base64": "OHL196tMOp1rub6uD6C9G9GjpXxNC1pcrK8gRXWUCcU="
+    },
+    {
+      "id": "v6-floor-fire-l4",
+      "path": "floor-fire-l4.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 84376,
+      "sha256Base64": "xsTmC42lqXjsZOizBPVdjEMfxbQWpTnca5EhPZEVyPg="
+    },
+    {
+      "id": "v6-architecture-fire-l4",
+      "path": "architecture-fire-l4.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 178960,
+      "sha256Base64": "sleJt7wnxzEab7lasejvxjBWfrT8xfWZveg2RIbxoHM="
+    },
+    {
+      "id": "v6-front-fire-l4",
+      "path": "front-fire-l4.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 97984,
+      "sha256Base64": "QX3pPFkXjC4dhXDiZe4Ba99WK0VT+EJBqxId/zmEf9w="
+    },
+    {
+      "id": "v6-thumb-fire-l4-f1",
+      "path": "thumb-fire-l4-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 25879,
+      "sha256Base64": "/Xnw9U4jXTk0nMxxbJ/c11DDeOcT/zSADTG45Tw+nx8="
+    },
+    {
+      "id": "v6-thumb-fire-l4-f2",
+      "path": "thumb-fire-l4-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 25978,
+      "sha256Base64": "9ywOGZsIdW1Rai3Kyn6WRUPxGm8UFZB7KlvkD6AcvKs="
+    },
+    {
+      "id": "v6-thumb-fire-l4-f3",
+      "path": "thumb-fire-l4-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 26223,
+      "sha256Base64": "rlWTvsteXDaa+vqCvFCVSQiHFi45o9PAWAacSMh+jvI="
+    },
+    {
+      "id": "v6-thumb-fire-l4-f4",
+      "path": "thumb-fire-l4-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 26421,
+      "sha256Base64": "0ky7y/nyO3nGNVuFPDzgtXCSEt0AA0079svLVwmSw+0="
+    },
+    {
+      "id": "v6-room-fire-l5",
+      "path": "room-fire-l5.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 317509,
+      "sha256Base64": "b2BjERnRVbNMdeFEz4eQdNGDm4pnTCWgu96NvuDYQO0="
+    },
+    {
+      "id": "v6-floor-fire-l5",
+      "path": "floor-fire-l5.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 102674,
+      "sha256Base64": "bnjzAcpkqm7NETzsTK82wE5knOIgdt63cpvZ2dhAtUg="
+    },
+    {
+      "id": "v6-architecture-fire-l5",
+      "path": "architecture-fire-l5.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 217816,
+      "sha256Base64": "iw0CHhH2YFVas0byqVQvlLc8slvxJBY145R2dk157ZE="
+    },
+    {
+      "id": "v6-front-fire-l5",
+      "path": "front-fire-l5.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 111039,
+      "sha256Base64": "QzwV3SdyqXr5W7GwcnYWMN7gaBWoDTBrfo5RbVCjw/E="
+    },
+    {
+      "id": "v6-thumb-fire-l5-f1",
+      "path": "thumb-fire-l5-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 28061,
+      "sha256Base64": "hr+eAlf33YXnEJfd1mFpUfx9tmGKxWBcp2nRnSHQLhM="
+    },
+    {
+      "id": "v6-thumb-fire-l5-f2",
+      "path": "thumb-fire-l5-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 28203,
+      "sha256Base64": "HtS2lLvTrqbsNxxNQ9FncDG6NI4Vf8C1uKGC2YuxNEY="
+    },
+    {
+      "id": "v6-thumb-fire-l5-f3",
+      "path": "thumb-fire-l5-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 28426,
+      "sha256Base64": "Ngon7lW1kCj/Dq+pzVgtOnBq0JYcYpqXJoQqAQMnKRo="
+    },
+    {
+      "id": "v6-thumb-fire-l5-f4",
+      "path": "thumb-fire-l5-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 28627,
+      "sha256Base64": "nrBKRJNxYpXlDvZZFbv1D6+1G7R/59Y9J/sLmGouMAs="
+    },
+    {
+      "id": "v6-room-earth-l0",
+      "path": "room-earth-l0.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 418734,
+      "sha256Base64": "yaTu2CHCtVYM/wYdjtSNvaNuWhFhAqKKhwXizsGqHDQ="
+    },
+    {
+      "id": "v6-floor-earth-l0",
+      "path": "floor-earth-l0.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 164504,
+      "sha256Base64": "80aQxCKyiGPJeXR43RpBHtGLa6PG4WCdVu3PkCaDzr4="
+    },
+    {
+      "id": "v6-architecture-earth-l0",
+      "path": "architecture-earth-l0.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 300288,
+      "sha256Base64": "fpXcScbTxyWoHzxDUBE4akOQbZ95E0AqM6VjoGv14kc="
+    },
+    {
+      "id": "v6-front-earth-l0",
+      "path": "front-earth-l0.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 141975,
+      "sha256Base64": "T8ne38009F9sZPc+RVzcQW50d8Mblgwu4ZkvInEQrRk="
+    },
+    {
+      "id": "v6-thumb-earth-l0-f1",
+      "path": "thumb-earth-l0-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 33377,
+      "sha256Base64": "9M7pujY8FHmtixD4st6IGqeDEyFv1wTRDn16k2QsvWU="
+    },
+    {
+      "id": "v6-thumb-earth-l0-f2",
+      "path": "thumb-earth-l0-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 33699,
+      "sha256Base64": "mhs/KFas2PzFlxDdU0fdNlLxJi7PWWIomQHsf+s9TyU="
+    },
+    {
+      "id": "v6-thumb-earth-l0-f3",
+      "path": "thumb-earth-l0-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 33588,
+      "sha256Base64": "bhEIqTKFl4l3V+mHf61hQjDwc80iXeX1AJdbUCFqGvk="
+    },
+    {
+      "id": "v6-thumb-earth-l0-f4",
+      "path": "thumb-earth-l0-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 33691,
+      "sha256Base64": "ioiPBxQ8XUm/j899IhlNXVg2hVsyuP2FP7Fkot5YukQ="
+    },
+    {
+      "id": "v6-room-earth-l1",
+      "path": "room-earth-l1.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 352726,
+      "sha256Base64": "x/uv0Ztu2JgUWP1kxhO5BaY/dfcH3Iqx6u4gTw6J+9M="
+    },
+    {
+      "id": "v6-floor-earth-l1",
+      "path": "floor-earth-l1.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 135452,
+      "sha256Base64": "x1ywQH029k4gVyeyrnd34WwnD3uI9bf8xnepxKlQ/i8="
+    },
+    {
+      "id": "v6-architecture-earth-l1",
+      "path": "architecture-earth-l1.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 230852,
+      "sha256Base64": "VM4kFgCPtxPrU/juEExRVzDm4K6qkJ8LlLy2nt/Vxu0="
+    },
+    {
+      "id": "v6-front-earth-l1",
+      "path": "front-earth-l1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 132682,
+      "sha256Base64": "KZxCU8KRQOVlR+EZPr+TqWCW99M2/PNHFHJMY+R41c8="
+    },
+    {
+      "id": "v6-thumb-earth-l1-f1",
+      "path": "thumb-earth-l1-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 32029,
+      "sha256Base64": "CMTju68uz+lcWQYxI0EaovoS0ss/zbI01pXDo989GGE="
+    },
+    {
+      "id": "v6-thumb-earth-l1-f2",
+      "path": "thumb-earth-l1-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 32257,
+      "sha256Base64": "3L91h19JmEEZ0RGQyZxRTesJkh9/n1Q1qdHiGYK5WoU="
+    },
+    {
+      "id": "v6-thumb-earth-l1-f3",
+      "path": "thumb-earth-l1-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 32146,
+      "sha256Base64": "32vm3VbFOOXiZhzMASmQvdsM+xk842GVFjOsgjCG7Yg="
+    },
+    {
+      "id": "v6-thumb-earth-l1-f4",
+      "path": "thumb-earth-l1-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 32387,
+      "sha256Base64": "/LPADlHTiG7wdcSzuI0kgBLunejAcoeiVXy6i+TW/7o="
+    },
+    {
+      "id": "v6-room-earth-l2",
+      "path": "room-earth-l2.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 336641,
+      "sha256Base64": "PqPI/oETbxOtCnyA2WqZoEtqmrdQ/voYtWJHx4cxmC8="
+    },
+    {
+      "id": "v6-floor-earth-l2",
+      "path": "floor-earth-l2.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 116998,
+      "sha256Base64": "YPLgH7wEtgKH29H1c7Z7wWSkqhyOKT791S7qUWxmruU="
+    },
+    {
+      "id": "v6-architecture-earth-l2",
+      "path": "architecture-earth-l2.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 241646,
+      "sha256Base64": "k/Wu9oEGxi/Efp+DV+RUXwt97AwxS7cBqhQhpNgJeO8="
+    },
+    {
+      "id": "v6-front-earth-l2",
+      "path": "front-earth-l2.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 138904,
+      "sha256Base64": "56xRX9VvIx8KULBaZsymIbjtbeNM6Y8t7u5vqLbFM3A="
+    },
+    {
+      "id": "v6-thumb-earth-l2-f1",
+      "path": "thumb-earth-l2-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 30849,
+      "sha256Base64": "McsRl+gBeb5YEpZMLI0O/2iGalBdb25T7tW1EGiYhh4="
+    },
+    {
+      "id": "v6-thumb-earth-l2-f2",
+      "path": "thumb-earth-l2-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 31260,
+      "sha256Base64": "Kxox9zTrzw+Dg10qrwSwHGsc6dhckCxnoUzz1THtPfg="
+    },
+    {
+      "id": "v6-thumb-earth-l2-f3",
+      "path": "thumb-earth-l2-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 31029,
+      "sha256Base64": "n+vyeajvMBvO26XLMl4If3lzaH5hZTL2q+/lIrB9Gss="
+    },
+    {
+      "id": "v6-thumb-earth-l2-f4",
+      "path": "thumb-earth-l2-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 31250,
+      "sha256Base64": "rdFjkdYMZW9bULRidpRj5l/hqleADRIb+X7++aI2qdA="
+    },
+    {
+      "id": "v6-room-earth-l3",
+      "path": "room-earth-l3.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 363736,
+      "sha256Base64": "hTiOsj673wOM+DK4lyPPkDRCoL3kylpLlMwayja8ubw="
+    },
+    {
+      "id": "v6-floor-earth-l3",
+      "path": "floor-earth-l3.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 147108,
+      "sha256Base64": "i1YwNKi2vZ+DJwhqkVS6JK87Oi04z0zt6Wjtkk4OBkk="
+    },
+    {
+      "id": "v6-architecture-earth-l3",
+      "path": "architecture-earth-l3.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 256932,
+      "sha256Base64": "/tRLYUktGq97wo8cd0tW1dp/izz/ldCMSqaLvRyFLow="
+    },
+    {
+      "id": "v6-front-earth-l3",
+      "path": "front-earth-l3.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 142907,
+      "sha256Base64": "ndBI9tWKyXqnvWpojgHm0JbvDEIw55nSp+vo+CrUZ8Q="
+    },
+    {
+      "id": "v6-thumb-earth-l3-f1",
+      "path": "thumb-earth-l3-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 31002,
+      "sha256Base64": "uL6yOKpzL+jwGnNgg+OZw6nPI9gKEAVv2znbpkJZb/s="
+    },
+    {
+      "id": "v6-thumb-earth-l3-f2",
+      "path": "thumb-earth-l3-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 31333,
+      "sha256Base64": "c28+306GRmEMGr3LWuXIRqtS15B6DQZQP11nLpXqwvY="
+    },
+    {
+      "id": "v6-thumb-earth-l3-f3",
+      "path": "thumb-earth-l3-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 31243,
+      "sha256Base64": "oCgK6OZYFSKHSTiNXka9K7ay7j1ffIkwaIqXXNpmM+E="
+    },
+    {
+      "id": "v6-thumb-earth-l3-f4",
+      "path": "thumb-earth-l3-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 31419,
+      "sha256Base64": "/J36eYVE745JKt2rltD8OFTo7dxj8eddZhv67RM6ixU="
+    },
+    {
+      "id": "v6-room-earth-l4",
+      "path": "room-earth-l4.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 396621,
+      "sha256Base64": "6FWoai4tBsbD3HTKuc+2D1bikrEr+x5AXDQHw7XCqxU="
+    },
+    {
+      "id": "v6-floor-earth-l4",
+      "path": "floor-earth-l4.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 148066,
+      "sha256Base64": "/STkmKGdzzLvifacvCFAC/HkZHRkNevCky/n2JrfoDA="
+    },
+    {
+      "id": "v6-architecture-earth-l4",
+      "path": "architecture-earth-l4.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 289540,
+      "sha256Base64": "bPm6MvVzqbp9eD2TzEMe553TPT51a/aaIERnsw0v4QE="
+    },
+    {
+      "id": "v6-front-earth-l4",
+      "path": "front-earth-l4.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 132805,
+      "sha256Base64": "gz/oZfMQoDy5c0jyxhz0zvZmilB9hN0Uq2rGtLI6GWQ="
+    },
+    {
+      "id": "v6-thumb-earth-l4-f1",
+      "path": "thumb-earth-l4-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 31959,
+      "sha256Base64": "c3+0yqMavCMhl8rLp82z5IugTr5lROyd6IY+jQ9xhgk="
+    },
+    {
+      "id": "v6-thumb-earth-l4-f2",
+      "path": "thumb-earth-l4-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 32152,
+      "sha256Base64": "oXmeyh7tTO06CfIJmLDaxQWqCmGPatSivlGM6PgOXmA="
+    },
+    {
+      "id": "v6-thumb-earth-l4-f3",
+      "path": "thumb-earth-l4-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 32086,
+      "sha256Base64": "YPrdkc5P4mrfxqiWMc7slCAmUGTVhx7Q999Yq6dWQRE="
+    },
+    {
+      "id": "v6-thumb-earth-l4-f4",
+      "path": "thumb-earth-l4-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 32230,
+      "sha256Base64": "5txI+R8Ieit9NB7VXYnrCAU1GoC0wA9JyacXLdopstQ="
+    },
+    {
+      "id": "v6-room-earth-l5",
+      "path": "room-earth-l5.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 401420,
+      "sha256Base64": "RykMQIzgekOWLciovSHyP8eKuS+pYzsmnUu5x+hRRJ4="
+    },
+    {
+      "id": "v6-floor-earth-l5",
+      "path": "floor-earth-l5.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 139322,
+      "sha256Base64": "qbgeQx8tYsGewupA3q94DBJLmlS19vZIX5K4h5HZof0="
+    },
+    {
+      "id": "v6-architecture-earth-l5",
+      "path": "architecture-earth-l5.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 296676,
+      "sha256Base64": "y9A+A7Ozh03IBhqdKBk+AUBznxdx8gNRQ5Qi8bDqWcM="
+    },
+    {
+      "id": "v6-front-earth-l5",
+      "path": "front-earth-l5.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 138802,
+      "sha256Base64": "O+Ks/NwshOLlGV372Fw3GVapm5kSlkpv2JzlYGwgIcc="
+    },
+    {
+      "id": "v6-thumb-earth-l5-f1",
+      "path": "thumb-earth-l5-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 30808,
+      "sha256Base64": "1KYtGb6avb+LeJ7PkaS9JFPdxuuzf+NVChrhtugMOsQ="
+    },
+    {
+      "id": "v6-thumb-earth-l5-f2",
+      "path": "thumb-earth-l5-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 31022,
+      "sha256Base64": "eMMjyuI9HXSDaZUSSRT3Kwf1bY6gg2QAYJsVXMyDKnk="
+    },
+    {
+      "id": "v6-thumb-earth-l5-f3",
+      "path": "thumb-earth-l5-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 30953,
+      "sha256Base64": "ekMc6vGTpuKjqoRoM3xXYrSBJGReCW4PkW+IRf1cgdw="
+    },
+    {
+      "id": "v6-thumb-earth-l5-f4",
+      "path": "thumb-earth-l5-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 31012,
+      "sha256Base64": "jEBzZqF7qnrCcTRh4AW2dwpJeBlKs0VkNHrIbV3C6zs="
+    },
+    {
+      "id": "v6-room-wind-l0",
+      "path": "room-wind-l0.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 264040,
+      "sha256Base64": "m467nvHne8bcATkq1zp0i05dmRI07heTI+jwzJGwml8="
+    },
+    {
+      "id": "v6-floor-wind-l0",
+      "path": "floor-wind-l0.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 110434,
+      "sha256Base64": "dclaF+weOMHRO3B+NDsDEVqxVE+0AQikNw1mJq54Uy4="
+    },
+    {
+      "id": "v6-architecture-wind-l0",
+      "path": "architecture-wind-l0.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 161994,
+      "sha256Base64": "dCyrQvcAmB3Yv2V6cFviOZhBAf7Jxaor3WCLWt720Lo="
+    },
+    {
+      "id": "v6-front-wind-l0",
+      "path": "front-wind-l0.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 91286,
+      "sha256Base64": "thxbQWz3JT0bxp8h/1h5TO2fois47iFnFhejAwLGB60="
+    },
+    {
+      "id": "v6-thumb-wind-l0-f1",
+      "path": "thumb-wind-l0-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23984,
+      "sha256Base64": "JI6YpsD0IKh8rF3sRtd6mQAvQLqoM/8Nm4B89+rr9r4="
+    },
+    {
+      "id": "v6-thumb-wind-l0-f2",
+      "path": "thumb-wind-l0-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 24301,
+      "sha256Base64": "QH9NUnG+8JCG9C/C+Pyk12gRQKdvhWe6OQr2KbgbqA8="
+    },
+    {
+      "id": "v6-thumb-wind-l0-f3",
+      "path": "thumb-wind-l0-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 24347,
+      "sha256Base64": "lJhb/p14e3uEGGXw1PvgmbeyMgIDfX8pV4KNAqLNbik="
+    },
+    {
+      "id": "v6-thumb-wind-l0-f4",
+      "path": "thumb-wind-l0-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 24512,
+      "sha256Base64": "OxMeqaMmDLfJy+H7Za0gt7IUCsaiPIvWITLquaqi2xk="
+    },
+    {
+      "id": "v6-room-wind-l1",
+      "path": "room-wind-l1.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 149127,
+      "sha256Base64": "uAzHEZXN4Bja25cnxzx19T2mpUtq/1P0ZTnE79QTDi8="
+    },
+    {
+      "id": "v6-floor-wind-l1",
+      "path": "floor-wind-l1.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 36250,
+      "sha256Base64": "8XrORP2IJ1lnRD02KpVCMdxFJ1bIIAAIP17LiryEpIc="
+    },
+    {
+      "id": "v6-architecture-wind-l1",
+      "path": "architecture-wind-l1.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 94324,
+      "sha256Base64": "tHRPaoH07s0wqLrXfMHJNT6Ub+nOJPr7wainaDGIMwU="
+    },
+    {
+      "id": "v6-front-wind-l1",
+      "path": "front-wind-l1.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 64081,
+      "sha256Base64": "Mlcj7C5RvXkxNO2HiBAD2W3L5+nT26cD/5DojPx7KiI="
+    },
+    {
+      "id": "v6-thumb-wind-l1-f1",
+      "path": "thumb-wind-l1-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 19676,
+      "sha256Base64": "MtfKTZ4TZQizceW4wTThB10dFKjbNLAfrESTp6YqZiY="
+    },
+    {
+      "id": "v6-thumb-wind-l1-f2",
+      "path": "thumb-wind-l1-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 20013,
+      "sha256Base64": "sBpO3TZZFKoZF/KPe/xL9mrWhhvhW3F4liN+WlFc+EY="
+    },
+    {
+      "id": "v6-thumb-wind-l1-f3",
+      "path": "thumb-wind-l1-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 20037,
+      "sha256Base64": "xm7bsq6L/uz4+grg8RM8Bz6C187IvCEOZbLscpNXQjM="
+    },
+    {
+      "id": "v6-thumb-wind-l1-f4",
+      "path": "thumb-wind-l1-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 20199,
+      "sha256Base64": "97qqMQk6snZhw2aNrYF+oqbjA330nh+ayw/pOsDkcx8="
+    },
+    {
+      "id": "v6-room-wind-l2",
+      "path": "room-wind-l2.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 202737,
+      "sha256Base64": "S+vmztlJku/4N8KvJOobfuhJrJgFO0y6jWLRu62Nsg4="
+    },
+    {
+      "id": "v6-floor-wind-l2",
+      "path": "floor-wind-l2.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 56584,
+      "sha256Base64": "7ItNjS91O86h/XjSAVPQoreliNSaR33Tv8WoZ1UC0rE="
+    },
+    {
+      "id": "v6-architecture-wind-l2",
+      "path": "architecture-wind-l2.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 132192,
+      "sha256Base64": "b01XiTaQg1ubCZl+IWeWaUN7R7iA4TabfGTXm2Ro/io="
+    },
+    {
+      "id": "v6-front-wind-l2",
+      "path": "front-wind-l2.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 84378,
+      "sha256Base64": "O0sQZa49X8TJQb2o/2zwPKK3rp0N/h5j+vC8vHO5uQ0="
+    },
+    {
+      "id": "v6-thumb-wind-l2-f1",
+      "path": "thumb-wind-l2-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 22759,
+      "sha256Base64": "X0izXqeU9CaAx+1687Sg6uhessSlPfxmzU+TVnGQN+4="
+    },
+    {
+      "id": "v6-thumb-wind-l2-f2",
+      "path": "thumb-wind-l2-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 22952,
+      "sha256Base64": "rVBTbIAQicigqZc6dsyFQtL46+ZlWrzaw8nI2ILgJSE="
+    },
+    {
+      "id": "v6-thumb-wind-l2-f3",
+      "path": "thumb-wind-l2-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 22983,
+      "sha256Base64": "/IlUKHm4WUyaKwSh3/vpxnMsGvhQehpxSJR9ewlqzeQ="
+    },
+    {
+      "id": "v6-thumb-wind-l2-f4",
+      "path": "thumb-wind-l2-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23150,
+      "sha256Base64": "0BHNI2nlRhq8zIYGxLiLyyn5wSkmuzgQ2CWRxLhZem4="
+    },
+    {
+      "id": "v6-room-wind-l3",
+      "path": "room-wind-l3.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 186487,
+      "sha256Base64": "AKxpEr1Yc2JKiH+OSg6NbgYhlT54T2zGOwWcV/kFvbg="
+    },
+    {
+      "id": "v6-floor-wind-l3",
+      "path": "floor-wind-l3.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 53522,
+      "sha256Base64": "L2/IAVfYii/K8gNgE71oWPtpEg21P2Co8SEQd36UtQI="
+    },
+    {
+      "id": "v6-architecture-wind-l3",
+      "path": "architecture-wind-l3.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 112484,
+      "sha256Base64": "WsIEW03gHPk/8myvakhDNfvuBQQdnomw2JXGrJ8Goa8="
+    },
+    {
+      "id": "v6-front-wind-l3",
+      "path": "front-wind-l3.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 92710,
+      "sha256Base64": "qgZxSVfttBXzeCxLWsHeQGWWEOe0zS/u+2HmTUgTRac="
+    },
+    {
+      "id": "v6-thumb-wind-l3-f1",
+      "path": "thumb-wind-l3-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 22565,
+      "sha256Base64": "JqoFr3Hkywthi4GVSNNx7TmVBJglrgAG2GrZhul2+Dg="
+    },
+    {
+      "id": "v6-thumb-wind-l3-f2",
+      "path": "thumb-wind-l3-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 22770,
+      "sha256Base64": "Zl2KrMN2b2t6oNOsPoClmmESbJdCfHaqhVT0rC8RdJM="
+    },
+    {
+      "id": "v6-thumb-wind-l3-f3",
+      "path": "thumb-wind-l3-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 22848,
+      "sha256Base64": "OoTpB+ayDz/OjpcazfNSCVqUv0lHNUVSWILk3wXMXoI="
+    },
+    {
+      "id": "v6-thumb-wind-l3-f4",
+      "path": "thumb-wind-l3-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23010,
+      "sha256Base64": "ZGx8gyDZYLMkKYleWZzyprykBkBFViwkiYuz0rZaeFs="
+    },
+    {
+      "id": "v6-room-wind-l4",
+      "path": "room-wind-l4.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 238983,
+      "sha256Base64": "p4TAVR4ZPt99IcPS3J3nVGeEgAInAUtFWwuAnl3PunQ="
+    },
+    {
+      "id": "v6-floor-wind-l4",
+      "path": "floor-wind-l4.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 64368,
+      "sha256Base64": "HLEbkce7ZEUK/HMTqA1yWNPwmrhdVU19wXaxbXBu+9k="
+    },
+    {
+      "id": "v6-architecture-wind-l4",
+      "path": "architecture-wind-l4.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 162224,
+      "sha256Base64": "snd83FixvqG/8RjpJ799qR7ddJFGCHEvH7ccelTxztE="
+    },
+    {
+      "id": "v6-front-wind-l4",
+      "path": "front-wind-l4.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 82749,
+      "sha256Base64": "D/r9VJxwOO8f/u5E84nz+/YvJtPQyLvnkG7FdmITpqs="
+    },
+    {
+      "id": "v6-thumb-wind-l4-f1",
+      "path": "thumb-wind-l4-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23439,
+      "sha256Base64": "HvaZsqvOaBcIeLmv0Zz3UlwGk2oqm8Veb89fNunNAVo="
+    },
+    {
+      "id": "v6-thumb-wind-l4-f2",
+      "path": "thumb-wind-l4-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23633,
+      "sha256Base64": "5RyZIxymBR8WFR2rzT/Gq2iKvKIKccGfLWHW6pAMTEY="
+    },
+    {
+      "id": "v6-thumb-wind-l4-f3",
+      "path": "thumb-wind-l4-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23672,
+      "sha256Base64": "jx93eNZbwdi96Y65huFYSr9AN2XQDFAmppYRFdW6UUQ="
+    },
+    {
+      "id": "v6-thumb-wind-l4-f4",
+      "path": "thumb-wind-l4-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23811,
+      "sha256Base64": "2Rh8aVavysxGf2K3lUiwtox7L5FjP6ICcB8sNNJMbfM="
+    },
+    {
+      "id": "v6-room-wind-l5",
+      "path": "room-wind-l5.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 254985,
+      "sha256Base64": "lLH1Z5VajSHGp8ihrRkDAyJmybztfv4ijjcl0F/tYrA="
+    },
+    {
+      "id": "v6-floor-wind-l5",
+      "path": "floor-wind-l5.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 79922,
+      "sha256Base64": "/k3+LRpSw3RvQLGb46H2bYjdOphKito5Ulw+JM+ti5U="
+    },
+    {
+      "id": "v6-architecture-wind-l5",
+      "path": "architecture-wind-l5.webp",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 166190,
+      "sha256Base64": "SMs4YVPnSdbvwL18ET4TmdS/uA5WTQLHUtUkS7lJEBQ="
+    },
+    {
+      "id": "v6-front-wind-l5",
+      "path": "front-wind-l5.png",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 80904,
+      "sha256Base64": "41SqebBdlN8PYBunyLIlTE8hMVoeQoImOGTWprSErzo="
+    },
+    {
+      "id": "v6-thumb-wind-l5-f1",
+      "path": "thumb-wind-l5-f1.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23723,
+      "sha256Base64": "PeA8uL7z1Dx+n4Shtpb+qMMHA7pDFT4+jEsaH9AVsc8="
+    },
+    {
+      "id": "v6-thumb-wind-l5-f2",
+      "path": "thumb-wind-l5-f2.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23762,
+      "sha256Base64": "Y/70/GrMk41DcHwVFLXgkoiMjb01kv3HCBghl9ZurFQ="
+    },
+    {
+      "id": "v6-thumb-wind-l5-f3",
+      "path": "thumb-wind-l5-f3.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23895,
+      "sha256Base64": "Nh7NnzcqyykhbxVUwdXYnK+MA1fqA/GRydubTBiu35k="
+    },
+    {
+      "id": "v6-thumb-wind-l5-f4",
+      "path": "thumb-wind-l5-f4.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 24005,
+      "sha256Base64": "1B6gkJAFQAIMi3XXtnksYid+LKAh28PxjqPMmoY9YHw="
+    },
+    {
+      "id": "v6-pose-water-f1-sit",
+      "path": "pose-water-f1-sit.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 119423,
+      "sha256Base64": "+HxG9mx2GkiEaXNZv3GEHGUsWC0xKqBzN5he6P82MjE="
+    },
+    {
+      "id": "v6-pose-water-f1-sleep",
+      "path": "pose-water-f1-sleep.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 82494,
+      "sha256Base64": "LCyPAWeC+00xM0sh3zVNb8Yi8Yj5FHgzJX1VO5vUpPM="
+    },
+    {
+      "id": "v6-pose-water-f2-sit",
+      "path": "pose-water-f2-sit.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 121206,
+      "sha256Base64": "RTPTrN/DxHcNcmOLMkjj1SASY8bYBFIX+OUree+5VyY="
+    },
+    {
+      "id": "v6-pose-water-f2-sleep",
+      "path": "pose-water-f2-sleep.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 82927,
+      "sha256Base64": "EbfYdhF0s+7K38ztM4VQOmjfBck+mHCgbdW8Nks2p4k="
+    },
+    {
+      "id": "v6-pose-water-f3-sit",
+      "path": "pose-water-f3-sit.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 136897,
+      "sha256Base64": "C7r3Y20nrWyTq4lSjPhevXHat92iTFUbnLHTYCkwbzw="
+    },
+    {
+      "id": "v6-pose-water-f3-sleep",
+      "path": "pose-water-f3-sleep.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 92440,
+      "sha256Base64": "7dsIclvYUGRbjLidC04MnGL1dE2JiN+HULLopW2kldc="
+    },
+    {
+      "id": "v6-pose-water-f4-sit",
+      "path": "pose-water-f4-sit.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 150089,
+      "sha256Base64": "YafgEhs+S1b56i8HVRrJNQbJa1TxgP1pdmrf+wpRBx8="
+    },
+    {
+      "id": "v6-pose-water-f4-sleep",
+      "path": "pose-water-f4-sleep.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 101777,
+      "sha256Base64": "bcpfrLIq6NbH7Enjo2xVpv7JSldWXygYRKXob1erxaQ="
+    },
+    {
+      "id": "v6-pose-fire-f1-sit",
+      "path": "pose-fire-f1-sit.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 118343,
+      "sha256Base64": "vwx2Sn8pNWe8t859KEMYOUKBny3JkI+edwRSF0WT0OY="
+    },
+    {
+      "id": "v6-pose-fire-f1-sleep",
+      "path": "pose-fire-f1-sleep.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 69731,
+      "sha256Base64": "YhX8ww3HrQLCJ1hYjc69xOykmz0akf1Qs/6ZjHCR9gQ="
+    },
+    {
+      "id": "v6-pose-fire-f2-sit",
+      "path": "pose-fire-f2-sit.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 120078,
+      "sha256Base64": "k4i8XdrDsXoULjpyugNFpYaTVabtwO/c/0fFcfqcApE="
+    },
+    {
+      "id": "v6-pose-fire-f2-sleep",
+      "path": "pose-fire-f2-sleep.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 68950,
+      "sha256Base64": "/LHDGdJ2z+MYlsvUX4vogC55p5ZvbT0fqDFbc3NpmnA="
+    },
+    {
+      "id": "v6-pose-fire-f3-sit",
+      "path": "pose-fire-f3-sit.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 131996,
+      "sha256Base64": "Dz+Z2NitL/qKojJCNDKk02nWrhnBbgVtaKwiUpyNXeY="
+    },
+    {
+      "id": "v6-pose-fire-f3-sleep",
+      "path": "pose-fire-f3-sleep.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 73380,
+      "sha256Base64": "VSqfZfP5fF5aRpA1fxHc/nBXiiRIEMKpwlbZUuZXaqE="
+    },
+    {
+      "id": "v6-pose-fire-f4-sit",
+      "path": "pose-fire-f4-sit.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 150270,
+      "sha256Base64": "sJbeU6BEmx4RrlfPiqITwUGYnZPDNfpH0Gde1vyXvsk="
+    },
+    {
+      "id": "v6-pose-fire-f4-sleep",
+      "path": "pose-fire-f4-sleep.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 87045,
+      "sha256Base64": "BXEE25XOnqk7OCM1Ip11d73LcXE7ElxmFfzP1Qf1RaQ="
+    },
+    {
+      "id": "v6-pose-earth-f1-sit",
+      "path": "pose-earth-f1-sit.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 132114,
+      "sha256Base64": "wZbxiI5ZRxYqUGkpLMDXU1xCRR/xtKsDhNR1IJxNLAQ="
+    },
+    {
+      "id": "v6-pose-earth-f1-sleep",
+      "path": "pose-earth-f1-sleep.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 71717,
+      "sha256Base64": "Hx9DQMYI9vWMOswKZTvg78JawppuqRVHrekGl3DkkN8="
+    },
+    {
+      "id": "v6-pose-earth-f2-sit",
+      "path": "pose-earth-f2-sit.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 135689,
+      "sha256Base64": "WiXP4cOoQJe+m5pN8kok03lnrjEzD/mlzeqaQiAdKDc="
+    },
+    {
+      "id": "v6-pose-earth-f2-sleep",
+      "path": "pose-earth-f2-sleep.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 78344,
+      "sha256Base64": "ssdsUOU25HxeiJN8weDZ3NfpTUfikhRCRngJ2Qq6aXM="
+    },
+    {
+      "id": "v6-pose-earth-f3-sit",
+      "path": "pose-earth-f3-sit.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 133187,
+      "sha256Base64": "KJb4ubcgmojd5FYD+tABlGakgUIwYCmA6QwkUgfqfUQ="
+    },
+    {
+      "id": "v6-pose-earth-f3-sleep",
+      "path": "pose-earth-f3-sleep.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 81906,
+      "sha256Base64": "AsWvJmxUQbjUfwLcvhHEnJCo/NU3A9oSzpYsxImt2nY="
+    },
+    {
+      "id": "v6-pose-earth-f4-sit",
+      "path": "pose-earth-f4-sit.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 157036,
+      "sha256Base64": "ASShqA7v0+W6MPJYQwmvOR4vTWIu+6vuFUdJhghUBmw="
+    },
+    {
+      "id": "v6-pose-earth-f4-sleep",
+      "path": "pose-earth-f4-sleep.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 83494,
+      "sha256Base64": "lQsYxO9QE9bC6wpdOdVjvXgazJ1bBXbKQKqzDXNvkWU="
+    },
+    {
+      "id": "v6-pose-wind-f1-sit",
+      "path": "pose-wind-f1-sit.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 133638,
+      "sha256Base64": "WsKad1G4WqkoA0SGSzDCVqkSY2Exmuxd0BV9c2omrfM="
+    },
+    {
+      "id": "v6-pose-wind-f1-sleep",
+      "path": "pose-wind-f1-sleep.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 75879,
+      "sha256Base64": "wcYrwZUTMMMf+Z9NJUsyoRIpFoVzLB+JgMMmAQOc7/4="
+    },
+    {
+      "id": "v6-pose-wind-f2-sit",
+      "path": "pose-wind-f2-sit.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 136436,
+      "sha256Base64": "26We3xhq3Xe0o2JLMf9Gm8jfxJQtHwsR9vdEg0UEuao="
+    },
+    {
+      "id": "v6-pose-wind-f2-sleep",
+      "path": "pose-wind-f2-sleep.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 76787,
+      "sha256Base64": "JeyQYp/igK0lSjqTUSuTQNsBZMYZD2uCld4lKElmMis="
+    },
+    {
+      "id": "v6-pose-wind-f3-sit",
+      "path": "pose-wind-f3-sit.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 144714,
+      "sha256Base64": "N6EhMNT/rbk2E30xYABv3dPqBYThRcoTUis0CaTw5fo="
+    },
+    {
+      "id": "v6-pose-wind-f3-sleep",
+      "path": "pose-wind-f3-sleep.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 86585,
+      "sha256Base64": "8Zw9VLzC0pXGHwrnrFOFU9mALKpEm9jfgP69P1/jrOQ="
+    },
+    {
+      "id": "v6-pose-wind-f4-sit",
+      "path": "pose-wind-f4-sit.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 148163,
+      "sha256Base64": "hXX7G8JIIO4xZ3e1G8n7GTcO0Sid/Uo3rxGP9WUtsnQ="
+    },
+    {
+      "id": "v6-pose-wind-f4-sleep",
+      "path": "pose-wind-f4-sleep.png",
+      "width": 576,
+      "height": 768,
+      "bytes": 87370,
+      "sha256Base64": "7JYiRsGcFEnFZQJnQzDzUmkyBN4C0GO0R1SWzzc44DE="
+    },
+    {
+      "id": "v6-bed-front-water",
+      "path": "bed-front-water.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 59393,
+      "sha256Base64": "GVMGce/K61pD7OqF7t35LlKT+NaIMdxWjtdzQWmbvBg="
+    },
+    {
+      "id": "v6-bed-front-fire",
+      "path": "bed-front-fire.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 44361,
+      "sha256Base64": "Xz5ZjctRGBGfyWRKEEYXBEvh1tKLFrNYrRQygUoBF64="
+    },
+    {
+      "id": "v6-bed-front-earth",
+      "path": "bed-front-earth.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 58686,
+      "sha256Base64": "VBIiVTAvaHQYNN78OYU9qV8v9EGLYJljp62TAH1KpIA="
+    },
+    {
+      "id": "v6-bed-front-wind",
+      "path": "bed-front-wind.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 39019,
+      "sha256Base64": "PccLd6Hl4wjwWj2wok5HXZWNw+OCr6oOaO1ns/03u1k="
+    },
+    {
+      "id": "v6-prop-watering-can",
+      "path": "prop-watering-can.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 49519,
+      "sha256Base64": "ppmTrYhkrByBrEQJI8W2HhN8KYEmhQU/OuS89Ero+0Y="
+    },
+    {
+      "id": "v6-prop-harvest-basket",
+      "path": "prop-harvest-basket.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 75212,
+      "sha256Base64": "t/G8zqR4xPjJFC/18yb+hB/9ppIRWVYql/sDik/MByc="
+    },
+    {
+      "id": "v6-prop-windmill",
+      "path": "prop-windmill.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 47377,
+      "sha256Base64": "/AstjZf6gPRNXlz+qQa5mKrBrLi3N0hI4x02CpQG87Y="
+    },
+    {
+      "id": "v6-prop-windmill-base",
+      "path": "prop-windmill-base.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 27991,
+      "sha256Base64": "lJ/YaUL+INXJBvbaHON/CF8kJ7t9mqiCZr/IkrdkHb0="
+    },
+    {
+      "id": "v6-prop-windmill-rotor",
+      "path": "prop-windmill-rotor.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 117946,
+      "sha256Base64": "V0FdjQtK7lfde0Uw6rq4723ZOnXt8foO3pRL6fejsaw="
+    },
+    {
+      "id": "v6-blue-diamond",
+      "path": "blue-diamond.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 282978,
+      "sha256Base64": "2jDvwErdoJSaHa7De8kUNM/Xxw6M63TfUqeGvbHbEbw="
+    }
+  ],
+  "poses": [
+    {
+      "element": "water",
+      "form": 1,
+      "pose": "sit",
+      "fileId": "v6-pose-water-f1-sit",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.272135,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.298333,
+          "y": 0.407812,
+          "width": 0.165,
+          "rotation": -12
+        },
+        "neck": {
+          "x": 0.5,
+          "y": 0.618112,
+          "width": 0.155833,
+          "rotation": 0
+        },
+        "badge": {
+          "x": 0.564167,
+          "y": 0.679167,
+          "width": 0.06875,
+          "rotation": 0
+        }
+      }
+    },
+    {
+      "element": "water",
+      "form": 1,
+      "pose": "sleep",
+      "fileId": "v6-pose-water-f1-sleep",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.545573,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.243333,
+          "y": 0.626563,
+          "width": 0.155833,
+          "rotation": -30
+        },
+        "neck": {
+          "x": 0.435833,
+          "y": 0.748047,
+          "width": 0.146667,
+          "rotation": -28
+        },
+        "badge": {
+          "x": 0.518333,
+          "y": 0.784492,
+          "width": 0.064167,
+          "rotation": -28
+        }
+      }
+    },
+    {
+      "element": "water",
+      "form": 2,
+      "pose": "sit",
+      "fileId": "v6-pose-water-f2-sit",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.25651,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.298333,
+          "y": 0.395313,
+          "width": 0.165,
+          "rotation": -12
+        },
+        "neck": {
+          "x": 0.5,
+          "y": 0.610456,
+          "width": 0.155833,
+          "rotation": 0
+        },
+        "badge": {
+          "x": 0.564167,
+          "y": 0.672917,
+          "width": 0.06875,
+          "rotation": 0
+        }
+      }
+    },
+    {
+      "element": "water",
+      "form": 2,
+      "pose": "sleep",
+      "fileId": "v6-pose-water-f2-sleep",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.539063,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.243333,
+          "y": 0.621354,
+          "width": 0.155833,
+          "rotation": -30
+        },
+        "neck": {
+          "x": 0.435833,
+          "y": 0.744792,
+          "width": 0.146667,
+          "rotation": -28
+        },
+        "badge": {
+          "x": 0.518333,
+          "y": 0.781823,
+          "width": 0.064167,
+          "rotation": -28
+        }
+      }
+    },
+    {
+      "element": "water",
+      "form": 3,
+      "pose": "sit",
+      "fileId": "v6-pose-water-f3-sit",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.269531,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.298333,
+          "y": 0.405729,
+          "width": 0.165,
+          "rotation": -12
+        },
+        "neck": {
+          "x": 0.5,
+          "y": 0.616836,
+          "width": 0.155833,
+          "rotation": 0
+        },
+        "badge": {
+          "x": 0.564167,
+          "y": 0.678125,
+          "width": 0.06875,
+          "rotation": 0
+        }
+      }
+    },
+    {
+      "element": "water",
+      "form": 3,
+      "pose": "sleep",
+      "fileId": "v6-pose-water-f3-sleep",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.520833,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.243333,
+          "y": 0.606771,
+          "width": 0.155833,
+          "rotation": -30
+        },
+        "neck": {
+          "x": 0.435833,
+          "y": 0.735677,
+          "width": 0.146667,
+          "rotation": -28
+        },
+        "badge": {
+          "x": 0.518333,
+          "y": 0.774349,
+          "width": 0.064167,
+          "rotation": -28
+        }
+      }
+    },
+    {
+      "element": "water",
+      "form": 4,
+      "pose": "sit",
+      "fileId": "v6-pose-water-f4-sit",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.24349,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.298333,
+          "y": 0.384896,
+          "width": 0.165,
+          "rotation": -12
+        },
+        "neck": {
+          "x": 0.5,
+          "y": 0.604076,
+          "width": 0.155833,
+          "rotation": 0
+        },
+        "badge": {
+          "x": 0.564167,
+          "y": 0.667708,
+          "width": 0.06875,
+          "rotation": 0
+        }
+      }
+    },
+    {
+      "element": "water",
+      "form": 4,
+      "pose": "sleep",
+      "fileId": "v6-pose-water-f4-sleep",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.486979,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.243333,
+          "y": 0.579688,
+          "width": 0.155833,
+          "rotation": -30
+        },
+        "neck": {
+          "x": 0.435833,
+          "y": 0.71875,
+          "width": 0.146667,
+          "rotation": -28
+        },
+        "badge": {
+          "x": 0.518333,
+          "y": 0.760469,
+          "width": 0.064167,
+          "rotation": -28
+        }
+      }
+    },
+    {
+      "element": "fire",
+      "form": 1,
+      "pose": "sit",
+      "fileId": "v6-pose-fire-f1-sit",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.265625,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.3075,
+          "y": 0.443698,
+          "width": 0.165,
+          "rotation": -15
+        },
+        "neck": {
+          "x": 0.509167,
+          "y": 0.656016,
+          "width": 0.201667,
+          "rotation": 0
+        },
+        "badge": {
+          "x": 0.564167,
+          "y": 0.710807,
+          "width": 0.073333,
+          "rotation": 0
+        }
+      }
+    },
+    {
+      "element": "fire",
+      "form": 1,
+      "pose": "sleep",
+      "fileId": "v6-pose-fire-f1-sleep",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.540365,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.243333,
+          "y": 0.642904,
+          "width": 0.155833,
+          "rotation": -22
+        },
+        "neck": {
+          "x": 0.426667,
+          "y": 0.778255,
+          "width": 0.183333,
+          "rotation": -12
+        },
+        "badge": {
+          "x": 0.5275,
+          "y": 0.811068,
+          "width": 0.06875,
+          "rotation": -12
+        }
+      }
+    },
+    {
+      "element": "fire",
+      "form": 2,
+      "pose": "sit",
+      "fileId": "v6-pose-fire-f2-sit",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.244792,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.3075,
+          "y": 0.428281,
+          "width": 0.165,
+          "rotation": -15
+        },
+        "neck": {
+          "x": 0.509167,
+          "y": 0.647057,
+          "width": 0.201667,
+          "rotation": 0
+        },
+        "badge": {
+          "x": 0.564167,
+          "y": 0.703516,
+          "width": 0.073333,
+          "rotation": 0
+        }
+      }
+    },
+    {
+      "element": "fire",
+      "form": 2,
+      "pose": "sleep",
+      "fileId": "v6-pose-fire-f2-sleep",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.516927,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.243333,
+          "y": 0.625326,
+          "width": 0.155833,
+          "rotation": -22
+        },
+        "neck": {
+          "x": 0.426667,
+          "y": 0.768411,
+          "width": 0.183333,
+          "rotation": -12
+        },
+        "badge": {
+          "x": 0.5275,
+          "y": 0.803099,
+          "width": 0.06875,
+          "rotation": -12
+        }
+      }
+    },
+    {
+      "element": "fire",
+      "form": 3,
+      "pose": "sit",
+      "fileId": "v6-pose-fire-f3-sit",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.236979,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.3075,
+          "y": 0.4225,
+          "width": 0.165,
+          "rotation": -15
+        },
+        "neck": {
+          "x": 0.509167,
+          "y": 0.643698,
+          "width": 0.201667,
+          "rotation": 0
+        },
+        "badge": {
+          "x": 0.564167,
+          "y": 0.700781,
+          "width": 0.073333,
+          "rotation": 0
+        }
+      }
+    },
+    {
+      "element": "fire",
+      "form": 3,
+      "pose": "sleep",
+      "fileId": "v6-pose-fire-f3-sleep",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.566406,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.243333,
+          "y": 0.662435,
+          "width": 0.155833,
+          "rotation": -22
+        },
+        "neck": {
+          "x": 0.426667,
+          "y": 0.789193,
+          "width": 0.183333,
+          "rotation": -12
+        },
+        "badge": {
+          "x": 0.5275,
+          "y": 0.819922,
+          "width": 0.06875,
+          "rotation": -12
+        }
+      }
+    },
+    {
+      "element": "fire",
+      "form": 4,
+      "pose": "sit",
+      "fileId": "v6-pose-fire-f4-sit",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.229167,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.3075,
+          "y": 0.416719,
+          "width": 0.165,
+          "rotation": -15
+        },
+        "neck": {
+          "x": 0.509167,
+          "y": 0.640339,
+          "width": 0.201667,
+          "rotation": 0
+        },
+        "badge": {
+          "x": 0.564167,
+          "y": 0.698047,
+          "width": 0.073333,
+          "rotation": 0
+        }
+      }
+    },
+    {
+      "element": "fire",
+      "form": 4,
+      "pose": "sleep",
+      "fileId": "v6-pose-fire-f4-sleep",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.502604,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.243333,
+          "y": 0.614583,
+          "width": 0.155833,
+          "rotation": -22
+        },
+        "neck": {
+          "x": 0.426667,
+          "y": 0.762396,
+          "width": 0.183333,
+          "rotation": -12
+        },
+        "badge": {
+          "x": 0.5275,
+          "y": 0.798229,
+          "width": 0.06875,
+          "rotation": -12
+        }
+      }
+    },
+    {
+      "element": "earth",
+      "form": 1,
+      "pose": "sit",
+      "fileId": "v6-pose-earth-f1-sit",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.05599,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.261667,
+          "y": 0.404857,
+          "width": 0.155833,
+          "rotation": -18
+        },
+        "neck": {
+          "x": 0.435833,
+          "y": 0.664271,
+          "width": 0.183333,
+          "rotation": 6
+        },
+        "badge": {
+          "x": 0.490833,
+          "y": 0.744779,
+          "width": 0.073333,
+          "rotation": 6
+        }
+      }
+    },
+    {
+      "element": "earth",
+      "form": 1,
+      "pose": "sleep",
+      "fileId": "v6-pose-earth-f1-sleep",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.510417,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.206667,
+          "y": 0.686458,
+          "width": 0.155833,
+          "rotation": -25
+        },
+        "neck": {
+          "x": 0.371667,
+          "y": 0.805286,
+          "width": 0.165,
+          "rotation": -18
+        },
+        "badge": {
+          "x": 0.481667,
+          "y": 0.836094,
+          "width": 0.06875,
+          "rotation": -18
+        }
+      }
+    },
+    {
+      "element": "earth",
+      "form": 2,
+      "pose": "sit",
+      "fileId": "v6-pose-earth-f2-sit",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.098958,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.261667,
+          "y": 0.431068,
+          "width": 0.155833,
+          "rotation": -18
+        },
+        "neck": {
+          "x": 0.435833,
+          "y": 0.678021,
+          "width": 0.183333,
+          "rotation": 6
+        },
+        "badge": {
+          "x": 0.490833,
+          "y": 0.754661,
+          "width": 0.073333,
+          "rotation": 6
+        }
+      }
+    },
+    {
+      "element": "earth",
+      "form": 2,
+      "pose": "sleep",
+      "fileId": "v6-pose-earth-f2-sleep",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.492188,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.206667,
+          "y": 0.675521,
+          "width": 0.155833,
+          "rotation": -25
+        },
+        "neck": {
+          "x": 0.371667,
+          "y": 0.799271,
+          "width": 0.165,
+          "rotation": -18
+        },
+        "badge": {
+          "x": 0.481667,
+          "y": 0.831354,
+          "width": 0.06875,
+          "rotation": -18
+        }
+      }
+    },
+    {
+      "element": "earth",
+      "form": 3,
+      "pose": "sit",
+      "fileId": "v6-pose-earth-f3-sit",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.186198,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.261667,
+          "y": 0.484284,
+          "width": 0.155833,
+          "rotation": -18
+        },
+        "neck": {
+          "x": 0.435833,
+          "y": 0.705938,
+          "width": 0.183333,
+          "rotation": 6
+        },
+        "badge": {
+          "x": 0.490833,
+          "y": 0.774727,
+          "width": 0.073333,
+          "rotation": 6
+        }
+      }
+    },
+    {
+      "element": "earth",
+      "form": 3,
+      "pose": "sleep",
+      "fileId": "v6-pose-earth-f3-sleep",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.503906,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.206667,
+          "y": 0.682552,
+          "width": 0.155833,
+          "rotation": -25
+        },
+        "neck": {
+          "x": 0.371667,
+          "y": 0.803138,
+          "width": 0.165,
+          "rotation": -18
+        },
+        "badge": {
+          "x": 0.481667,
+          "y": 0.834401,
+          "width": 0.06875,
+          "rotation": -18
+        }
+      }
+    },
+    {
+      "element": "earth",
+      "form": 4,
+      "pose": "sit",
+      "fileId": "v6-pose-earth-f4-sit",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.089844,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.261667,
+          "y": 0.425508,
+          "width": 0.155833,
+          "rotation": -18
+        },
+        "neck": {
+          "x": 0.435833,
+          "y": 0.675104,
+          "width": 0.183333,
+          "rotation": 6
+        },
+        "badge": {
+          "x": 0.490833,
+          "y": 0.752565,
+          "width": 0.073333,
+          "rotation": 6
+        }
+      }
+    },
+    {
+      "element": "earth",
+      "form": 4,
+      "pose": "sleep",
+      "fileId": "v6-pose-earth-f4-sleep",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.49349,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.206667,
+          "y": 0.676302,
+          "width": 0.155833,
+          "rotation": -25
+        },
+        "neck": {
+          "x": 0.371667,
+          "y": 0.799701,
+          "width": 0.165,
+          "rotation": -18
+        },
+        "badge": {
+          "x": 0.481667,
+          "y": 0.831693,
+          "width": 0.06875,
+          "rotation": -18
+        }
+      }
+    },
+    {
+      "element": "wind",
+      "form": 1,
+      "pose": "sit",
+      "fileId": "v6-pose-wind-f1-sit",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.191406,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.3075,
+          "y": 0.464688,
+          "width": 0.155833,
+          "rotation": -15
+        },
+        "neck": {
+          "x": 0.5,
+          "y": 0.700013,
+          "width": 0.155833,
+          "rotation": 0
+        },
+        "badge": {
+          "x": 0.555,
+          "y": 0.760742,
+          "width": 0.066917,
+          "rotation": 0
+        }
+      }
+    },
+    {
+      "element": "wind",
+      "form": 1,
+      "pose": "sleep",
+      "fileId": "v6-pose-wind-f1-sleep",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.514323,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.215833,
+          "y": 0.680078,
+          "width": 0.146667,
+          "rotation": -25
+        },
+        "neck": {
+          "x": 0.399167,
+          "y": 0.79349,
+          "width": 0.146667,
+          "rotation": -20
+        },
+        "badge": {
+          "x": 0.5,
+          "y": 0.832747,
+          "width": 0.064167,
+          "rotation": -20
+        }
+      }
+    },
+    {
+      "element": "wind",
+      "form": 2,
+      "pose": "sit",
+      "fileId": "v6-pose-wind-f2-sit",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.207031,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.3075,
+          "y": 0.474688,
+          "width": 0.155833,
+          "rotation": -15
+        },
+        "neck": {
+          "x": 0.5,
+          "y": 0.705169,
+          "width": 0.155833,
+          "rotation": 0
+        },
+        "badge": {
+          "x": 0.555,
+          "y": 0.764648,
+          "width": 0.066917,
+          "rotation": 0
+        }
+      }
+    },
+    {
+      "element": "wind",
+      "form": 2,
+      "pose": "sleep",
+      "fileId": "v6-pose-wind-f2-sleep",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.507813,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.215833,
+          "y": 0.676042,
+          "width": 0.146667,
+          "rotation": -25
+        },
+        "neck": {
+          "x": 0.399167,
+          "y": 0.791146,
+          "width": 0.146667,
+          "rotation": -20
+        },
+        "badge": {
+          "x": 0.5,
+          "y": 0.83099,
+          "width": 0.064167,
+          "rotation": -20
+        }
+      }
+    },
+    {
+      "element": "wind",
+      "form": 3,
+      "pose": "sit",
+      "fileId": "v6-pose-wind-f3-sit",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.217448,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.3075,
+          "y": 0.481354,
+          "width": 0.155833,
+          "rotation": -15
+        },
+        "neck": {
+          "x": 0.5,
+          "y": 0.708607,
+          "width": 0.155833,
+          "rotation": 0
+        },
+        "badge": {
+          "x": 0.555,
+          "y": 0.767253,
+          "width": 0.066917,
+          "rotation": 0
+        }
+      }
+    },
+    {
+      "element": "wind",
+      "form": 3,
+      "pose": "sleep",
+      "fileId": "v6-pose-wind-f3-sleep",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.5,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.215833,
+          "y": 0.671198,
+          "width": 0.146667,
+          "rotation": -25
+        },
+        "neck": {
+          "x": 0.399167,
+          "y": 0.788333,
+          "width": 0.146667,
+          "rotation": -20
+        },
+        "badge": {
+          "x": 0.5,
+          "y": 0.82888,
+          "width": 0.064167,
+          "rotation": -20
+        }
+      }
+    },
+    {
+      "element": "wind",
+      "form": 4,
+      "pose": "sit",
+      "fileId": "v6-pose-wind-f4-sit",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.217448,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.3075,
+          "y": 0.481354,
+          "width": 0.155833,
+          "rotation": -15
+        },
+        "neck": {
+          "x": 0.5,
+          "y": 0.708607,
+          "width": 0.155833,
+          "rotation": 0
+        },
+        "badge": {
+          "x": 0.555,
+          "y": 0.767253,
+          "width": 0.066917,
+          "rotation": 0
+        }
+      }
+    },
+    {
+      "element": "wind",
+      "form": 4,
+      "pose": "sleep",
+      "fileId": "v6-pose-wind-f4-sleep",
+      "support": {
+        "x": 0.5,
+        "y": 0.950521
+      },
+      "bounds": {
+        "left": 0.041667,
+        "top": 0.53125,
+        "right": 0.958333,
+        "bottom": 0.950521
+      },
+      "anchors": {
+        "head": {
+          "x": 0.215833,
+          "y": 0.690573,
+          "width": 0.146667,
+          "rotation": -25
+        },
+        "neck": {
+          "x": 0.399167,
+          "y": 0.799583,
+          "width": 0.146667,
+          "rotation": -20
+        },
+        "badge": {
+          "x": 0.5,
+          "y": 0.837318,
+          "width": 0.064167,
+          "rotation": -20
+        }
+      }
+    }
+  ],
+  "thumbnailComposition": "same scene nodes, fixed geometry, gifts and current form; 384x256 runtime",
+  "rotorRegistration": {
+    "pivot": {
+      "x": 0.506,
+      "y": 0.343
+    },
+    "rawCanvasScale": 0.7,
+    "offset": {
+      "x": 0.15625,
+      "y": 0
+    }
+  }
+}

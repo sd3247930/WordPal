@@ -1,0 +1,3 @@
+export const lifeHouseAssetVersion=1
+export type LifeHouseIconName='home'|'feed'|'growth'|'dress'|'album'|'food-water'|'food-pearl'|'food-leaf'|'food-feather'|'dress-ribbon'|'dress-scarf'|'dress-star'|'progress'|'experience'|'affection'|'device'|'book'
+export function lifeHouseIcon(name:LifeHouseIconName){const alias:Record<string,string>={home:'ui-home',feed:'ui-feed',growth:'ui-growth',dress:'ui-dress',album:'ui-album',progress:'ui-growth',experience:'metric-experience',affection:'metric-affection',device:'metric-book',book:'metric-book'};return `/static/pet-house/lifehouse/ui/${alias[name]||name}-256.png`}

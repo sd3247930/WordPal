@@ -1,11 +1,10 @@
 import {spellingInputReady} from '../../packages/phonics/letter-blocks'
 import {defineStore} from 'pinia'
-import {computed,ref} from 'vue'
+import {computed,ref,watch} from 'vue'
 import {wordById,lessons,words} from '../../packages/content_schema'
 import {localDate,canUnlockNextUnit,type LearningMode,type ReviewRating,type Answer,type LearningSession} from '../../packages/core_learning'
-import {FSRSScheduler,newCard} from '../../packages/srs_fsrs'
 import {isCorrectSpelling} from '../../packages/phonics'
-import {applyLearningReward} from '../../packages/pet_engine'
+import {changeBalance} from '../../packages/pet_engine/wallet'
 import {useProfileStore} from './profile'
 import {useReviewStore} from './review'
 import {useCourseStore} from './course'
@@ -17,17 +16,26 @@ import {useParentSettingsStore} from './parent-settings'
 import {orderedCourseWords,courseIntroductions,sessionInCourse} from '../services/learning/CourseStudySequence'
 import {selectDailyPlan,ensureDailyPlan,continueDailyPlan,dailyTasks,advanceDailyPlan,recordDailyAnswer,fullCourseWords,completedPrefix,STEP_TITLES} from '../services/learning/DailyLearningPlan'
 import {todayCourseWordIds} from '../services/learning/StudyStats'
+import {captureMemoryVersions,settleMemoryAnswer} from '../services/learning/MemorySettlement'
+import {studyCapability,planCapabilities,questionKey} from '../services/learning/StudyCapability'
+import type {AudioProgress} from '../services/audio/AudioPlaybackService'
+import type {AudioEvidence,Word} from '../../packages/core_learning'
+import {studyHintKind} from '../services/learning/StudyHint'
 export const modes:{id:LearningMode;name:string;description:string}[]=[{id:'flash',name:'闪现',description:'看看单词，回想它的意思'},{id:'connect',name:'连接',description:'为单词找到正确的中文意思'},{id:'listen',name:'听音',description:'听发音，选出对应的单词'},{id:'spell',name:'拼写',description:'看中文，用字母拼出单词'},{id:'dictation',name:'听写',description:'听发音，写出这个单词'}]
 export const useLearningStore=defineStore('learning',()=>{
  const profile=useProfileStore(),review=useReviewStore(),course=useCourseStore(),parent=useParentSettingsStore()
  const clock=ref(Date.now())
  const todayPlan=computed(()=>selectDailyPlan(profile.db,course.current,new Date(clock.value)))
  const isDaily=computed(()=>course.progress.studyActivity==='daily'&&!!course.progress.dailyPlan?.flow?.begunAt)
- const session=computed(()=>isDaily.value?course.progress.dailyPlan!:profile.db.session&&sessionInCourse(profile.db.session,course.currentId)?profile.db.session:null)
+ const storedSession=computed(()=>isDaily.value?course.progress.dailyPlan!:profile.db.session&&sessionInCourse(profile.db.session,course.currentId)?profile.db.session:null)
+ const session=computed(()=>{const saved=storedSession.value,pending=profile.learningDraft;return saved&&pending?.key===questionKey(saved)?{...saved,...pending.fields}:saved})
+ const submitNotice=ref('')
+ const audioGate=ref<{key:string;url:string;requestId?:number;started?:boolean;status:'pending'|'ended'|'error';heardAt?:string}|null>(null)
+ watch(()=>questionKey(session.value),()=>{audioGate.value=null;submitNotice.value=''},{flush:'sync'})
  const tasks=computed(()=>dailyTasks(todayPlan.value))
  const todayTaskWordIds=computed(()=>(todayPlan.value?.wordIds||[]).slice(0,todayPlan.value?.flow?.target??parent.settings.dailyNewWordLimit))
  const planProblem=computed(()=>todayPlan.value?.wordIds.some(id=>!allowedIds.value.has(id))?'教材内容已变更，原任务已保留。请在家长区恢复对应教材版本后继续。':'')
- const current=computed(()=>session.value ? resolveFrozenWord(session.value.wordSnapshot?.[session.value.wordIds[session.value.index]]||wordById[session.value.wordIds[session.value.index]],session.value.courseId,session.value.contentVersion):undefined)
+ const current=computed(()=>session.value ? resolveFrozenWord(session.value.wordSnapshot?.[session.value.wordIds[session.value.index]]||wordById[session.value.wordIds[session.value.index]],session.value.courseId,session.value.resourceVersion||session.value.contentVersion):undefined)
  const todayAnswers=computed(()=>profile.db.history.filter(a=>localDate(new Date(a.at))===localDate()))
  const courseWordPool=computed(()=>orderedCourseWords(course.current)),allowedIds=computed(()=>new Set(courseWordPool.value))
  const introductions=computed(()=>courseIntroductions(profile.db,course.currentId))
@@ -46,10 +54,28 @@ export const useLearningStore=defineStore('learning',()=>{
  const choices=computed(()=>{
   if(!current.value)return []
   const pool=session.value?.wordSnapshot||wordById,selected=[current.value],meanings=new Set([current.value.meaning])
-  for(const id of [...current.value.distractors,...courseWordPool.value]){if(!allowedIds.value.has(id)||selected.some(word=>word.id===id))continue;const word=resolveFrozenWord(pool[id]||getCourseWord(course.currentId,id),course.currentId,session.value?.contentVersion);if(!word||meanings.has(word.meaning)||word.word===current.value.word)continue;selected.push(word);meanings.add(word.meaning);if(selected.length===4)break}
+  for(const id of [...current.value.distractors,...courseWordPool.value]){if(!allowedIds.value.has(id)||selected.some(word=>word.id===id))continue;const word=resolveFrozenWord(pool[id]||getCourseWord(course.currentId,id),course.currentId,session.value?.resourceVersion||session.value?.contentVersion);if(!word||meanings.has(word.meaning)||word.word===current.value.word)continue;selected.push(word);meanings.add(word.meaning);if(selected.length===4)break}
   const offset=(session.value?.index??0)%selected.length
   return [...selected.slice(offset),...selected.slice(0,offset)]
  })
+ const capability=computed(()=>studyCapability(current.value,session.value?.mode||'flash',choices.value,readFeedbackSettings().sound))
+ const audioEvidence=computed<AudioEvidence|undefined>(()=>{const gate=audioGate.value;return gate?.key===questionKey(session.value)&&gate.url===current.value?.audio&&gate.status==='ended'&&gate.requestId!==undefined&&gate.heardAt?{url:gate.url,requestId:gate.requestId,heardAt:gate.heardAt}:undefined})
+ const resourceProblem=computed(()=>capability.value.status==='unavailable'?capability.value.reason||'这道题暂时不能完成。':session.value&&['listen','dictation'].includes(session.value.mode)&&!audioEvidence.value?(audioGate.value?.status==='error'?'发音未能完整播放，请重试；这道听力题还没有完成。':'请先完整听一遍发音，再作答。'):'')
+ function beginQuestionAudio(){const s=session.value;if(!s||!current.value)return '';const key=questionKey(s);audioGate.value={key,url:current.value.audio,status:'pending'};return key}
+ function observeQuestionAudio(key:string,progress:AudioProgress){
+  const gate=audioGate.value
+  if(!gate||gate.key!==key||key!==questionKey(session.value)||progress.url!==gate.url||gate.url!==current.value?.audio)return false
+  if(gate.requestId!==undefined&&progress.requestId<gate.requestId)return false
+  if(gate.requestId!==progress.requestId){gate.requestId=progress.requestId;gate.started=false}
+  if(progress.state==='error'){gate.status='error';gate.started=false;delete gate.heardAt}
+  else if(progress.state==='ended'){if(!gate.started)return false;gate.status='ended';gate.heardAt=new Date().toISOString()}
+  else if(progress.state==='idle'||progress.state==='playing'||progress.waiting){if(progress.state==='playing'&&!progress.waiting)gate.started=true;gate.status='pending';delete gate.heardAt}
+  return true
+ }
+ function setPlanCapabilities(plan:LearningSession){
+  const resolve=(id:string)=>resolveFrozenWord(plan.wordSnapshot?.[id],plan.courseId,plan.resourceVersion||plan.contentVersion)
+  plan.flow!.capabilities=planCapabilities(plan,resolve,word=>[word,...word.distractors.map(resolve).filter((item):item is Word=>!!item)])
+ }
  function freezeWords(ids:string[]){
   const snapshot:Record<string,typeof wordById[string]>={}
   for(const id of ids){
@@ -75,7 +101,7 @@ export const useLearningStore=defineStore('learning',()=>{
   else{ids=[];kind='practice'}
   if(!ids.length)return false
   const snapshot=freezeWords(ids)
-  return profile.transact(d=>{d.courseProgress??={};(d.courseProgress[course.currentId]??=initialProgress(course.currentId)).studyActivity='independent';const introduced=courseIntroductions(d,course.currentId);if(Object.keys(introduced).length){d.courseProgress??={};const progress=d.courseProgress[course.currentId]??=initialProgress(course.currentId);progress.introducedWords=introduced}d.session={id:`session-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,startedAt:new Date().toISOString(),date:localDate(),kind,wordIds:ids,index:0,mode:'flash',input:'',selected:'',revealed:false,answers:[],courseId:course.currentId,contentVersion:course.current.contentVersion,lessonId:lesson.value.id,wordSnapshot:snapshot,seed:Date.now(),wordSources,plannerConfig:{...parent.plannerConfig},intent:scopedDue||requested.length&&kind==='review_due'?'review':requested.length?'practice':'course',...(sequenceWordIds?{sequenceWordIds}:{})}})
+  return profile.transact(d=>{d.courseProgress??={};(d.courseProgress[course.currentId]??=initialProgress(course.currentId)).studyActivity='independent';const introduced=courseIntroductions(d,course.currentId);if(Object.keys(introduced).length){d.courseProgress??={};const progress=d.courseProgress[course.currentId]??=initialProgress(course.currentId);progress.introducedWords=introduced}d.session={id:`session-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,startedAt:new Date().toISOString(),date:localDate(),kind,wordIds:ids,index:0,mode:'flash',input:'',selected:'',revealed:false,answers:[],courseId:course.currentId,contentVersion:course.current.contentVersion,lessonId:lesson.value.id,wordSnapshot:snapshot,memoryVersions:captureMemoryVersions(d,ids),seed:Date.now(),wordSources,plannerConfig:{...parent.plannerConfig},intent:scopedDue||requested.length&&kind==='review_due'?'review':requested.length?'practice':'course',...(sequenceWordIds?{sequenceWordIds}:{})}})
  }
  function refreshDay(){clock.value=Date.now()}
  // Page previews must not write a new daily assignment over an independent visit.
@@ -83,14 +109,20 @@ export const useLearningStore=defineStore('learning',()=>{
  function prepareDaily(){refreshDay();return !!todayPlan.value&&!planProblem.value}
  function start(request?:string[],scopedDue=false,selection?:{unitId?:string;wordId?:string}){
   if(request?.length||scopedDue)return startIndependent(request,scopedDue,selection)
-  refreshDay();if(!todayPlan.value||planProblem.value){if(planProblem.value)uni.showToast?.({title:planProblem.value,icon:'none'});return false}
+  refreshDay();review.refresh()
+  const unfinished=todayPlan.value&&!todayPlan.value.completedAt
+  if(!unfinished&&profile.db.session&&!profile.db.session.completedAt&&sessionInCourse(profile.db.session,course.currentId)&&profile.db.session.kind==='review_due')return startIndependent(profile.db.session.wordIds,true)
+  if(!unfinished&&due.value.length)return startIndependent(due.value.map(card=>card.wordId),true)
+  if(!todayPlan.value||planProblem.value){if(planProblem.value)uni.showToast?.({title:planProblem.value,icon:'none'});return false}
   const owner=course.currentId,pack=course.current
   return profile.transact(d=>{
    const plan=ensureDailyPlan(d,pack,new Date(clock.value))!;d.courseProgress![owner].studyActivity='daily'
    if(!plan.wordSnapshot){
     plan.wordSnapshot=freezeWords(plan.wordIds)
     plan.wordSources=Object.fromEntries(plan.wordIds.map(id=>[id,d.cards[id]?(Date.parse(d.cards[id].due)<=clock.value?'review_due':'practice'):'new_word']))
+    plan.memoryVersions=captureMemoryVersions(d,plan.wordIds)
    }
+   if(!plan.flow!.capabilities)setPlanCapabilities(plan)
    plan.flow!.begunAt??=new Date(clock.value).toISOString();if(plan.mode==='flash'&&!plan.answers[plan.index])plan.revealed=true
   })
  }
@@ -102,14 +134,33 @@ export const useLearningStore=defineStore('learning',()=>{
    const plan=continueDailyPlan(d,pack,expectedId,new Date(clock.value));if(!plan)return
    plan.wordSnapshot=freezeWords(plan.wordIds)
    plan.wordSources=Object.fromEntries(plan.wordIds.map(id=>[id,d.cards[id]?(Date.parse(d.cards[id].due)<=clock.value?'review_due':'practice'):'new_word']))
+   plan.memoryVersions=captureMemoryVersions(d,plan.wordIds);setPlanCapabilities(plan)
    plan.flow!.begunAt=new Date(clock.value).toISOString();plan.revealed=true
    d.courseProgress![owner].studyActivity='daily';continued=true
   })
   return saved&&continued
  }
  function activeDraft(d:typeof profile.db){return isDaily.value?d.courseProgress?.[course.currentId]?.dailyPlan:d.session}
- function patch(change:Partial<LearningSession>){return profile.transact(d=>{const target=activeDraft(d);if(target&&!target.completedAt){if(target.flow){for(const field of ['input','selected','revealed','letterDraft','inputAssistance'] as const)if(change[field]!==undefined)(target as any)[field]=change[field]}else Object.assign(target,change)}})}
- function setMode(mode:LearningMode){if(isDaily.value)return session.value?.mode===mode;if(session.value?.answers[session.value.index]||!current.value||!availableModes(current.value,Object.values(session.value?.wordSnapshot||wordById),readFeedbackSettings().sound,session.value?.plannerConfig?.entryLevel).includes(mode))return false;return patch({mode,input:'',selected:'',revealed:false,hinted:false,letterDraft:undefined,inputAssistance:undefined})}
+ function patch(change:Partial<LearningSession>){
+  const s=session.value
+  if(s&&Object.keys(change).length&&Object.keys(change).every(field=>['input','letterDraft','inputAssistance'].includes(field)))return profile.stageLearningDraft(s,change)
+  return profile.transact(d=>{const target=activeDraft(d);if(target&&!target.completedAt){if(target.flow){for(const field of ['input','selected','revealed','letterDraft','inputAssistance'] as const)if(change[field]!==undefined)(target as any)[field]=change[field]}else Object.assign(target,change)}})
+ }
+ function refreshResources(){
+  const s=session.value;if(!s?.flow||s.completedAt)return false
+  const fresh=freezeWords(s.wordIds)
+  if(s.wordIds.some(id=>{const old=s.wordSnapshot?.[id],word=fresh[id];return !old||!word||old.word!==word.word||old.meaning!==word.meaning||old.pos!==word.pos})){submitNotice.value='教材词义已经变化，原任务已保留，请先恢复对应内容版本。';return false}
+  let refreshed=false
+  const saved=profile.transact(d=>{const target=d.courseProgress?.[s.courseId!]?.dailyPlan;if(!target||target.id!==s.id)return
+   for(const [id,word]of Object.entries(fresh)){const old=target.wordSnapshot?.[id];if(!old){(target.wordSnapshot??={})[id]=word;continue}if(old.word===word.word&&old.meaning===word.meaning&&old.pos===word.pos){old.audio=word.audio;old.image=word.image;old.distractors=word.distractors}}
+   target.resourceVersion=course.current.contentVersion
+   setPlanCapabilities(target)
+   refreshed=true
+  })
+  if(saved&&refreshed)audioGate.value=null
+  return saved&&refreshed
+ }
+ function setMode(mode:LearningMode){if(isDaily.value)return session.value?.mode===mode;if(session.value?.answers[session.value.index]||!current.value||!availableModes(current.value,Object.values(session.value?.wordSnapshot||wordById),readFeedbackSettings().sound,session.value?.plannerConfig?.entryLevel).includes(mode))return false;return patch({mode,input:'',selected:'',revealed:false,hinted:false,hintKind:undefined,letterDraft:undefined,inputAssistance:undefined})}
  function reveal(){return patch({revealed:true})}
  function hint(){
   const s=session.value
@@ -117,56 +168,69 @@ export const useLearningStore=defineStore('learning',()=>{
   if(s.hinted||s.mode!=='flash'&&s.revealed)return true
   if(profile.db.gems<1)return false
   let provided=false
-  const saved=profile.transact(d=>{const target=activeDraft(d);if(target&&target.id===s.id&&target.index===s.index&&!target.hinted&&!target.answers[target.index]&&d.gems>=1){d.gems-=1;target.hinted=true;provided=true}})
+  const saved=profile.transact(d=>{const target=activeDraft(d);if(target&&questionKey(target)===questionKey(s)&&!target.hinted&&!target.answers[target.index]&&d.gems>=1){d.gems=changeBalance(d.gems,-1);target.hinted=true;target.hintKind=studyHintKind(current.value!,s.mode);provided=true}})
   return saved&&provided
  }
  function submit(rating?:ReviewRating){
   if(!session.value||!current.value||session.value.completedAt||session.value.answers[session.value.index])return false
+  if(rating!==undefined&&![1,2,3,4].includes(rating))return false
+  if(resourceProblem.value){submitNotice.value=resourceProblem.value;return false}
   if(isDaily.value)return submitDaily(rating)
   const s=session.value,w=current.value,source=currentSource.value
   if(s.mode!=='flash' && ((s.mode==='connect'||s.mode==='listen')?!s.selected:!s.input.trim()))return false
   if(s.mode==='flash' && !s.revealed)return false
+  if(['connect','listen'].includes(s.mode)&&!choices.value.some(choice=>choice.id===s.selected))return false
   if(['spell','dictation'].includes(s.mode)&&!spellingInputReady(s.input,w,s.letterDraft))return false
   const correct=s.mode==='flash' ? rating!==1 : (s.mode==='spell'||s.mode==='dictation') ? isCorrectSpelling(s.input,w) : s.selected===w.id
-  const actualRating:ReviewRating=correct?((s.hinted||s.revealed||s.inputAssistance==='tiles')&&s.mode!=='flash'?2:rating??3):1
+  const assisted=answerAssisted(s),actualRating=effectiveRating(correct,rating,assisted)
   const now=new Date()
-  const answer:Answer={id:`${s.id}:${s.index}`,wordId:w.id,correct,rating:actualRating,at:now.toISOString(),source,mode:s.mode,input:s.input||s.selected,hinted:s.mode!=='flash'&&!!(s.hinted||s.revealed||s.inputAssistance==='tiles'),courseId:course.currentId,...(s.inputAssistance==='tiles'?{inputAssistance:'tiles' as const}:{}),...(source==='review_due'&&profile.db.cards[w.id]?{dueAtSubmit:profile.db.cards[w.id].due}:{})}
+  const answer:Answer={id:`${s.id}:${s.index}`,wordId:w.id,correct,rating:actualRating,requestedRating:rating??3,at:now.toISOString(),source,mode:s.mode,input:s.input||s.selected,hinted:!!s.hinted||assisted,...(assisted?{hintKind:'answer' as const}:s.hintKind?{hintKind:s.hintKind}:{}),assessmentVersion:1,recallAttempt:'first',courseId:course.currentId,...(s.inputAssistance==='tiles'?{inputAssistance:'tiles' as const}:{}),...(audioEvidence.value?{audioEvidence:audioEvidence.value}:{})}
+  let applied=false,reason:Answer['settlement']
   const ok=profile.transact(d=>{
-   if(!d.session || d.session.answers[d.session.index])return
+   if(!d.session||questionKey(d.session)!==questionKey(s)||d.session.answers[d.session.index])return
+   reason=settleMemoryAnswer(d,d.session,answer,now)
    d.session.answers.push(answer)
    if(s.sequenceWordIds?.includes(w.id)||source==='new_word'){d.courseProgress??={};const p=d.courseProgress[course.currentId]??=initialProgress(course.currentId);p.introducedWords={...courseIntroductions(d,course.currentId),[w.id]:now.toISOString()}}
-   // Real free-practice evidence is retained without scheduling or rewards.
-   if(source==='practice'){d.practiceAnswers??=[];d.practiceAnswers.push(answer)}
-   if(source!=='practice'){
-    d.cards[w.id]=new FSRSScheduler().schedule(d.cards[w.id]??newCard(w.id,now),actualRating,now).card
-    d.history.push(answer)
-    applyLearningReward(d,answer)
+   if(reason==='settled'){
     if(!d.streakDates.includes(localDate(now)))d.streakDates.push(localDate(now))
    }
    d.session.revealed=true
+   applied=true
   })
-  review.refresh();return ok
+  if(ok&&applied)showSettlementNotice(reason)
+  review.refresh();return ok&&applied
  }
+ function answerAssisted(s:LearningSession){return s.inputAssistance==='tiles'||s.hintKind==='answer'||!!(s.hinted&&!s.hintKind&&['spell','dictation'].includes(s.mode))||s.mode!=='flash'&&s.revealed}
+ function effectiveRating(correct:boolean,rating:ReviewRating|undefined,assisted:boolean):ReviewRating{return !correct?1:assisted?Math.min(rating??3,2) as ReviewRating:rating??3}
+ function showSettlementNotice(reason:Answer['settlement']){submitNotice.value=reason==='stale_due'||reason==='already_settled'?'这张词卡已复习过啦，这次记作练习，继续下一题。':reason==='legacy_session'?'这次保留为练习；完成后可从当前到期队列继续复习。':''}
  function submitDaily(rating?:ReviewRating){
   const s=session.value!,w=current.value!,owner=s.courseId!,step=s.flow!.step
   if(planProblem.value||s.mode!=='flash'&&(['connect','listen'].includes(s.mode)?!s.selected:!s.input.trim())||s.mode==='flash'&&!s.revealed)return false
+  if(['connect','listen'].includes(s.mode)&&!choices.value.some(choice=>choice.id===s.selected))return false
   if(['spell','dictation'].includes(s.mode)&&!spellingInputReady(s.input,w,s.letterDraft))return false
   const correct=s.mode==='flash'?rating!==1:['spell','dictation'].includes(s.mode)?isCorrectSpelling(s.input,w):s.selected===w.id
-  const now=new Date(),hadError=s.flow!.attempts.some(a=>a.wordId===w.id&&!a.correct),actualRating:ReviewRating=correct?(hadError||s.mode!=='flash'&&(s.hinted||s.revealed||s.inputAssistance==='tiles')?2:rating??3):1
-  const source=step==='consolidate'&&correct?(s.wordSources?.[w.id]||'new_word'):'practice'
-  const answer:Answer={id:`${s.id}:${step}:${s.index}:${s.flow!.attempts.length}`,wordId:w.id,courseId:owner,at:now.toISOString(),correct,rating:actualRating,mode:s.mode,source,input:s.input||s.selected,...(s.inputAssistance==='tiles'?{inputAssistance:'tiles' as const,hinted:true}:s.hinted?{hinted:true}:{})}
-  return profile.transact(d=>{
+  const now=new Date(),assisted=answerAssisted(s),actualRating=effectiveRating(correct,rating,assisted)
+  const source=step==='consolidate'?(s.wordSources?.[w.id]||'new_word'):'practice'
+  const answer:Answer={id:`${s.id}:${step}:${s.index}:${s.flow!.attempts.length}`,wordId:w.id,courseId:owner,at:now.toISOString(),correct,rating:actualRating,requestedRating:rating??3,mode:s.mode,step,source,input:s.input||s.selected,hinted:!!s.hinted||assisted,...(assisted?{hintKind:'answer' as const}:s.hintKind?{hintKind:s.hintKind}:{}),...(s.inputAssistance==='tiles'?{inputAssistance:'tiles' as const}:{}),...(audioEvidence.value?{audioEvidence:audioEvidence.value}:{})}
+  let applied=false,reason:Answer['settlement']
+  const saved=profile.transact(d=>{
    const target=d.courseProgress?.[owner]?.dailyPlan
-   if(!target||target.id!==s.id||target.flow?.step!==step||target.index!==s.index||!recordDailyAnswer(target,answer))return
+   if(!target||questionKey(target)!==questionKey(s)||target.answers[target.index])return
+   const assessed=target.flow!.assessments?.[w.id]
+   if(!recordDailyAnswer(target,answer))return
    d.practiceAnswers??=[]
-   // All six activities retain evidence, while SRS and original rewards settle once per word.
-   if(source==='practice')d.practiceAnswers.push(answer)
-   else if(!d.history.some(a=>a.id===answer.id||a.wordId===w.id&&localDate(new Date(a.at))===localDate(now))){
-    d.cards[w.id]=new FSRSScheduler().schedule(d.cards[w.id]??newCard(w.id,now),actualRating,now).card
-    d.history.push(answer);applyLearningReward(d,answer)
-   }else d.practiceAnswers.push({...answer,source:'practice'})
+   if(step==='consolidate'&&!assessed){
+    answer.assessmentVersion=1;answer.recallAttempt='first'
+    ;(target.flow!.assessments??={})[w.id]=answer.id
+    reason=settleMemoryAnswer(d,target,answer,now)
+   }else{
+    answer.source='practice';answer.settlement=assessed?'already_settled':'practice';d.practiceAnswers.push(answer)
+   }
    if(!d.streakDates.includes(localDate(now)))d.streakDates.push(localDate(now))
+   applied=true
   })
+  if(saved&&applied){showSettlementNotice(reason);review.refresh()}
+  return saved&&applied
  }
  function next(){
   if(!session.value||session.value.completedAt||!session.value.answers[session.value.index])return false
@@ -177,7 +241,7 @@ export const useLearningStore=defineStore('learning',()=>{
   })}
   return profile.transact(d=>{
    const s=d.session!;
-   if(s.index<s.wordIds.length-1){s.index++;s.input='';s.selected='';s.revealed=false;delete s.hinted;delete s.letterDraft;delete s.inputAssistance}
+   if(s.index<s.wordIds.length-1){s.index++;s.input='';s.selected='';s.revealed=false;delete s.hinted;delete s.hintKind;delete s.letterDraft;delete s.inputAssistance}
    else{
     s.completedAt=new Date().toISOString()
     if(s.sequenceWordIds?.length){const id=s.courseId||course.currentId,p=d.courseProgress![id],introduced=courseIntroductions(d,id),next=courseWordPool.value.find(wordId=>!(wordId in introduced)),target=course.lessons.find(lesson=>lesson.wordIds.includes(next||s.wordIds[s.wordIds.length-1]!))||lesson.value;p.currentLessonId=target.id;p.lastLessonAccuracy=s.answers.filter(answer=>answer.correct).length/s.answers.length;if(id==='starter'){d.lastLessonAccuracy=p.lastLessonAccuracy;d.lessonIndex=Math.max(0,lessons.findIndex(lesson=>lesson.id===target.id))}return}
@@ -204,5 +268,5 @@ export const useLearningStore=defineStore('learning',()=>{
  const remainingCount=computed(()=>course.wordIds.filter(id=>!profile.db.cards[id]).length)
  const positionFor=(id?:string)=>{const index=courseWordPool.value.indexOf(id||'');return index<0?null:{index:index+1,total:courseWordPool.value.length}}
  const currentPosition=computed(()=>positionFor(current.value?.id))
- return {session,current,currentSource,choices,todayAnswers,newToday,newTodayWordIds,newWords,studyWords,due,dailyPlan,todayPlan,todayTaskWordIds,tasks,isDaily,planProblem,textbookProgress,canContinue,continueLearning,prepareDaily,refreshDay,startPractice:()=>startIndependent(todayPlan.value?.wordIds||lesson.value.wordIds,false,undefined,true),stepTitles:STEP_TITLES,lesson,needsConsolidation,learnedCount,remainingCount,currentPosition,positionFor,start,startSelected:(unitId?:string,wordId?:string)=>start(undefined,false,{unitId,wordId}),startDue:(ids:string[])=>start(ids,true),patch,setMode,reveal,hint,submit,next,previous}
+ return {session,current,currentSource,choices,todayAnswers,newToday,newTodayWordIds,newWords,studyWords,due,dailyPlan,todayPlan,todayTaskWordIds,tasks,isDaily,planProblem,textbookProgress,canContinue,continueLearning,prepareDaily,refreshDay,startPractice:()=>startIndependent(todayPlan.value?.wordIds||lesson.value.wordIds,false,undefined,true),stepTitles:STEP_TITLES,lesson,needsConsolidation,learnedCount,remainingCount,currentPosition,positionFor,start,startSelected:(unitId?:string,wordId?:string)=>start(undefined,false,{unitId,wordId}),startDue:(ids:string[])=>start(ids,true),patch,setMode,reveal,hint,submit,next,previous,capability,resourceProblem,refreshResources,beginQuestionAudio,observeQuestionAudio,submitNotice,flushDraft:profile.flushLearningDraft}
 })

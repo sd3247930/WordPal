@@ -6,10 +6,12 @@ import {selectDailyPlan,STUDY_STEPS,stepMode} from '../../src/services/learning/
 import {starterPack,wordById} from '../../src/services/content/ContentRegistry'
 import type {EntryLevel} from '../../packages/parent_settings'
 import type {StudyStep} from '../../packages/core_learning'
+import {captureMemoryVersions} from '../../src/services/learning/MemorySettlement'
 async function seed(page:Page,level:EntryLevel=1,step:StudyStep='flash'){
  const db:Database={...freshDatabase(),version:2,currentCourseId:'starter',abilityLevel:`L${level}`,courseProgress:{starter:initialProgress('starter')},auxiliaryRecords:[]}
  const plan=selectDailyPlan(db,starterPack)!;plan.flow!.begunAt=plan.startedAt;plan.flow!.step=step;plan.mode=stepMode(step);plan.revealed=plan.mode==='flash';plan.wordSnapshot=Object.fromEntries(Object.entries(wordById).map(([id,word])=>[id,JSON.parse(JSON.stringify(word))]));plan.wordSources=Object.fromEntries(plan.wordIds.map(id=>[id,'new_word']))
  for(const old of STUDY_STEPS.slice(0,STUDY_STEPS.indexOf(step)))plan.flow!.completed[old]=[...plan.wordIds]
+ plan.memoryVersions=captureMemoryVersions(db,plan.wordIds)
  db.courseProgress!.starter.dailyPlan=plan;db.courseProgress!.starter.studyActivity='daily'
  await page.addInitScript(db=>{if(localStorage.getItem('wordpal.database.active.v2'))return;localStorage.setItem('wordpal.database.v2',JSON.stringify(db));localStorage.setItem('wordpal.database.active.v2',JSON.stringify('v2'))},db)
 }

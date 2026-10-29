@@ -1,0 +1,842 @@
+[
+  {
+    "id": "water-feed-l0-v1",
+    "element": "water",
+    "module": "feed",
+    "designTier": 0,
+    "name": "水滴果冻"
+  },
+  {
+    "id": "water-feed-l1-v1",
+    "element": "water",
+    "module": "feed",
+    "designTier": 1,
+    "name": "浪花米糕"
+  },
+  {
+    "id": "water-feed-l2-v1",
+    "element": "water",
+    "module": "feed",
+    "designTier": 2,
+    "name": "贝壳布丁"
+  },
+  {
+    "id": "water-feed-l3-v1",
+    "element": "water",
+    "module": "feed",
+    "designTier": 3,
+    "name": "珊瑚果塔"
+  },
+  {
+    "id": "water-feed-l4-v1",
+    "element": "water",
+    "module": "feed",
+    "designTier": 4,
+    "name": "海月奶冻"
+  },
+  {
+    "id": "water-feed-l5-v1",
+    "element": "water",
+    "module": "feed",
+    "designTier": 5,
+    "name": "幻海果盘"
+  },
+  {
+    "id": "water-dress-l0-v1",
+    "element": "water",
+    "module": "dress",
+    "designTier": 0,
+    "name": "水滴丝带"
+  },
+  {
+    "id": "water-dress-l1-v1",
+    "element": "water",
+    "module": "dress",
+    "designTier": 1,
+    "name": "贝壳领结"
+  },
+  {
+    "id": "water-dress-l2-v1",
+    "element": "water",
+    "module": "dress",
+    "designTier": 2,
+    "name": "珍珠围巾"
+  },
+  {
+    "id": "water-dress-l3-v1",
+    "element": "water",
+    "module": "dress",
+    "designTier": 3,
+    "name": "海星披肩"
+  },
+  {
+    "id": "water-dress-l4-v1",
+    "element": "water",
+    "module": "dress",
+    "designTier": 4,
+    "name": "海月胸针"
+  },
+  {
+    "id": "water-dress-l5-v1",
+    "element": "water",
+    "module": "dress",
+    "designTier": 5,
+    "name": "幻海礼冠"
+  },
+  {
+    "id": "water-furniture-l0-v1",
+    "element": "water",
+    "module": "furniture",
+    "designTier": 0,
+    "name": "贝壳软垫"
+  },
+  {
+    "id": "water-furniture-l1-v1",
+    "element": "water",
+    "module": "furniture",
+    "designTier": 1,
+    "name": "涟漪小床"
+  },
+  {
+    "id": "water-furniture-l2-v1",
+    "element": "water",
+    "module": "furniture",
+    "designTier": 2,
+    "name": "珊瑚书架"
+  },
+  {
+    "id": "water-furniture-l3-v1",
+    "element": "water",
+    "module": "furniture",
+    "designTier": 3,
+    "name": "浪花茶桌"
+  },
+  {
+    "id": "water-furniture-l4-v1",
+    "element": "water",
+    "module": "furniture",
+    "designTier": 4,
+    "name": "海月书桌"
+  },
+  {
+    "id": "water-furniture-l5-v1",
+    "element": "water",
+    "module": "furniture",
+    "designTier": 5,
+    "name": "幻海摇椅"
+  },
+  {
+    "id": "water-decor-l0-v1",
+    "element": "water",
+    "module": "decor",
+    "designTier": 0,
+    "name": "水纹地毯"
+  },
+  {
+    "id": "water-decor-l1-v1",
+    "element": "water",
+    "module": "decor",
+    "designTier": 1,
+    "name": "贝壳小灯"
+  },
+  {
+    "id": "water-decor-l2-v1",
+    "element": "water",
+    "module": "decor",
+    "designTier": 2,
+    "name": "珍珠台灯"
+  },
+  {
+    "id": "water-decor-l3-v1",
+    "element": "water",
+    "module": "decor",
+    "designTier": 3,
+    "name": "海星风铃"
+  },
+  {
+    "id": "water-decor-l4-v1",
+    "element": "water",
+    "module": "decor",
+    "designTier": 4,
+    "name": "海月花灯"
+  },
+  {
+    "id": "water-decor-l5-v1",
+    "element": "water",
+    "module": "decor",
+    "designTier": 5,
+    "name": "幻海水晶灯"
+  },
+  {
+    "id": "water-courtyard-l0-v1",
+    "element": "water",
+    "module": "courtyard",
+    "designTier": 0,
+    "name": "潮汐芽盆"
+  },
+  {
+    "id": "water-courtyard-l1-v1",
+    "element": "water",
+    "module": "courtyard",
+    "designTier": 1,
+    "name": "贝壳花盆"
+  },
+  {
+    "id": "water-courtyard-l2-v1",
+    "element": "water",
+    "module": "courtyard",
+    "designTier": 2,
+    "name": "泡泡花池"
+  },
+  {
+    "id": "water-courtyard-l3-v1",
+    "element": "water",
+    "module": "courtyard",
+    "designTier": 3,
+    "name": "浅滩小池"
+  },
+  {
+    "id": "water-courtyard-l4-v1",
+    "element": "water",
+    "module": "courtyard",
+    "designTier": 4,
+    "name": "海月喷泉"
+  },
+  {
+    "id": "water-courtyard-l5-v1",
+    "element": "water",
+    "module": "courtyard",
+    "designTier": 5,
+    "name": "幻海凉亭"
+  },
+  {
+    "id": "fire-feed-l0-v1",
+    "element": "fire",
+    "module": "feed",
+    "designTier": 0,
+    "name": "暖阳果冻"
+  },
+  {
+    "id": "fire-feed-l1-v1",
+    "element": "fire",
+    "module": "feed",
+    "designTier": 1,
+    "name": "桃光米糕"
+  },
+  {
+    "id": "fire-feed-l2-v1",
+    "element": "fire",
+    "module": "feed",
+    "designTier": 2,
+    "name": "火花布丁"
+  },
+  {
+    "id": "fire-feed-l3-v1",
+    "element": "fire",
+    "module": "feed",
+    "designTier": 3,
+    "name": "暖星果塔"
+  },
+  {
+    "id": "fire-feed-l4-v1",
+    "element": "fire",
+    "module": "feed",
+    "designTier": 4,
+    "name": "日晕奶冻"
+  },
+  {
+    "id": "fire-feed-l5-v1",
+    "element": "fire",
+    "module": "feed",
+    "designTier": 5,
+    "name": "晨曦果盘"
+  },
+  {
+    "id": "fire-dress-l0-v1",
+    "element": "fire",
+    "module": "dress",
+    "designTier": 0,
+    "name": "火花丝带"
+  },
+  {
+    "id": "fire-dress-l1-v1",
+    "element": "fire",
+    "module": "dress",
+    "designTier": 1,
+    "name": "暖阳领结"
+  },
+  {
+    "id": "fire-dress-l2-v1",
+    "element": "fire",
+    "module": "dress",
+    "designTier": 2,
+    "name": "桃光围巾"
+  },
+  {
+    "id": "fire-dress-l3-v1",
+    "element": "fire",
+    "module": "dress",
+    "designTier": 3,
+    "name": "星焰披肩"
+  },
+  {
+    "id": "fire-dress-l4-v1",
+    "element": "fire",
+    "module": "dress",
+    "designTier": 4,
+    "name": "日晕胸针"
+  },
+  {
+    "id": "fire-dress-l5-v1",
+    "element": "fire",
+    "module": "dress",
+    "designTier": 5,
+    "name": "曦光礼冠"
+  },
+  {
+    "id": "fire-furniture-l0-v1",
+    "element": "fire",
+    "module": "furniture",
+    "designTier": 0,
+    "name": "暖星软垫"
+  },
+  {
+    "id": "fire-furniture-l1-v1",
+    "element": "fire",
+    "module": "furniture",
+    "designTier": 1,
+    "name": "桃光小床"
+  },
+  {
+    "id": "fire-furniture-l2-v1",
+    "element": "fire",
+    "module": "furniture",
+    "designTier": 2,
+    "name": "暖星书架"
+  },
+  {
+    "id": "fire-furniture-l3-v1",
+    "element": "fire",
+    "module": "furniture",
+    "designTier": 3,
+    "name": "日光茶桌"
+  },
+  {
+    "id": "fire-furniture-l4-v1",
+    "element": "fire",
+    "module": "furniture",
+    "designTier": 4,
+    "name": "晨曦书桌"
+  },
+  {
+    "id": "fire-furniture-l5-v1",
+    "element": "fire",
+    "module": "furniture",
+    "designTier": 5,
+    "name": "曦光摇椅"
+  },
+  {
+    "id": "fire-decor-l0-v1",
+    "element": "fire",
+    "module": "decor",
+    "designTier": 0,
+    "name": "暖阳地毯"
+  },
+  {
+    "id": "fire-decor-l1-v1",
+    "element": "fire",
+    "module": "decor",
+    "designTier": 1,
+    "name": "火花小灯"
+  },
+  {
+    "id": "fire-decor-l2-v1",
+    "element": "fire",
+    "module": "decor",
+    "designTier": 2,
+    "name": "柔焰台灯"
+  },
+  {
+    "id": "fire-decor-l3-v1",
+    "element": "fire",
+    "module": "decor",
+    "designTier": 3,
+    "name": "太阳风铃"
+  },
+  {
+    "id": "fire-decor-l4-v1",
+    "element": "fire",
+    "module": "decor",
+    "designTier": 4,
+    "name": "日晕花灯"
+  },
+  {
+    "id": "fire-decor-l5-v1",
+    "element": "fire",
+    "module": "decor",
+    "designTier": 5,
+    "name": "曦光晶灯"
+  },
+  {
+    "id": "fire-courtyard-l0-v1",
+    "element": "fire",
+    "module": "courtyard",
+    "designTier": 0,
+    "name": "火芽盆栽"
+  },
+  {
+    "id": "fire-courtyard-l1-v1",
+    "element": "fire",
+    "module": "courtyard",
+    "designTier": 1,
+    "name": "暖阳花盆"
+  },
+  {
+    "id": "fire-courtyard-l2-v1",
+    "element": "fire",
+    "module": "courtyard",
+    "designTier": 2,
+    "name": "日光花池"
+  },
+  {
+    "id": "fire-courtyard-l3-v1",
+    "element": "fire",
+    "module": "courtyard",
+    "designTier": 3,
+    "name": "暖光石池"
+  },
+  {
+    "id": "fire-courtyard-l4-v1",
+    "element": "fire",
+    "module": "courtyard",
+    "designTier": 4,
+    "name": "曦光喷泉"
+  },
+  {
+    "id": "fire-courtyard-l5-v1",
+    "element": "fire",
+    "module": "courtyard",
+    "designTier": 5,
+    "name": "日晕凉亭"
+  },
+  {
+    "id": "earth-feed-l0-v1",
+    "element": "earth",
+    "module": "feed",
+    "designTier": 0,
+    "name": "嫩芽果冻"
+  },
+  {
+    "id": "earth-feed-l1-v1",
+    "element": "earth",
+    "module": "feed",
+    "designTier": 1,
+    "name": "叶香米糕"
+  },
+  {
+    "id": "earth-feed-l2-v1",
+    "element": "earth",
+    "module": "feed",
+    "designTier": 2,
+    "name": "花苞布丁"
+  },
+  {
+    "id": "earth-feed-l3-v1",
+    "element": "earth",
+    "module": "feed",
+    "designTier": 3,
+    "name": "森莓果塔"
+  },
+  {
+    "id": "earth-feed-l4-v1",
+    "element": "earth",
+    "module": "feed",
+    "designTier": 4,
+    "name": "花露奶冻"
+  },
+  {
+    "id": "earth-feed-l5-v1",
+    "element": "earth",
+    "module": "feed",
+    "designTier": 5,
+    "name": "丰收果盘"
+  },
+  {
+    "id": "earth-dress-l0-v1",
+    "element": "earth",
+    "module": "dress",
+    "designTier": 0,
+    "name": "嫩芽丝带"
+  },
+  {
+    "id": "earth-dress-l1-v1",
+    "element": "earth",
+    "module": "dress",
+    "designTier": 1,
+    "name": "花叶领结"
+  },
+  {
+    "id": "earth-dress-l2-v1",
+    "element": "earth",
+    "module": "dress",
+    "designTier": 2,
+    "name": "叶芽围巾"
+  },
+  {
+    "id": "earth-dress-l3-v1",
+    "element": "earth",
+    "module": "dress",
+    "designTier": 3,
+    "name": "花冠披肩"
+  },
+  {
+    "id": "earth-dress-l4-v1",
+    "element": "earth",
+    "module": "dress",
+    "designTier": 4,
+    "name": "森芽胸针"
+  },
+  {
+    "id": "earth-dress-l5-v1",
+    "element": "earth",
+    "module": "dress",
+    "designTier": 5,
+    "name": "花境礼冠"
+  },
+  {
+    "id": "earth-furniture-l0-v1",
+    "element": "earth",
+    "module": "furniture",
+    "designTier": 0,
+    "name": "叶芽软垫"
+  },
+  {
+    "id": "earth-furniture-l1-v1",
+    "element": "earth",
+    "module": "furniture",
+    "designTier": 1,
+    "name": "叶芽小床"
+  },
+  {
+    "id": "earth-furniture-l2-v1",
+    "element": "earth",
+    "module": "furniture",
+    "designTier": 2,
+    "name": "森芽书架"
+  },
+  {
+    "id": "earth-furniture-l3-v1",
+    "element": "earth",
+    "module": "furniture",
+    "designTier": 3,
+    "name": "花瓣茶桌"
+  },
+  {
+    "id": "earth-furniture-l4-v1",
+    "element": "earth",
+    "module": "furniture",
+    "designTier": 4,
+    "name": "森光书桌"
+  },
+  {
+    "id": "earth-furniture-l5-v1",
+    "element": "earth",
+    "module": "furniture",
+    "designTier": 5,
+    "name": "花境摇椅"
+  },
+  {
+    "id": "earth-decor-l0-v1",
+    "element": "earth",
+    "module": "decor",
+    "designTier": 0,
+    "name": "叶子地毯"
+  },
+  {
+    "id": "earth-decor-l1-v1",
+    "element": "earth",
+    "module": "decor",
+    "designTier": 1,
+    "name": "芽光小灯"
+  },
+  {
+    "id": "earth-decor-l2-v1",
+    "element": "earth",
+    "module": "decor",
+    "designTier": 2,
+    "name": "花苞台灯"
+  },
+  {
+    "id": "earth-decor-l3-v1",
+    "element": "earth",
+    "module": "decor",
+    "designTier": 3,
+    "name": "花叶风铃"
+  },
+  {
+    "id": "earth-decor-l4-v1",
+    "element": "earth",
+    "module": "decor",
+    "designTier": 4,
+    "name": "森光花灯"
+  },
+  {
+    "id": "earth-decor-l5-v1",
+    "element": "earth",
+    "module": "decor",
+    "designTier": 5,
+    "name": "花境晶灯"
+  },
+  {
+    "id": "earth-courtyard-l0-v1",
+    "element": "earth",
+    "module": "courtyard",
+    "designTier": 0,
+    "name": "嫩芽盆栽"
+  },
+  {
+    "id": "earth-courtyard-l1-v1",
+    "element": "earth",
+    "module": "courtyard",
+    "designTier": 1,
+    "name": "花瓣花盆"
+  },
+  {
+    "id": "earth-courtyard-l2-v1",
+    "element": "earth",
+    "module": "courtyard",
+    "designTier": 2,
+    "name": "森芽花池"
+  },
+  {
+    "id": "earth-courtyard-l3-v1",
+    "element": "earth",
+    "module": "courtyard",
+    "designTier": 3,
+    "name": "花园角落"
+  },
+  {
+    "id": "earth-courtyard-l4-v1",
+    "element": "earth",
+    "module": "courtyard",
+    "designTier": 4,
+    "name": "森泉喷泉"
+  },
+  {
+    "id": "earth-courtyard-l5-v1",
+    "element": "earth",
+    "module": "courtyard",
+    "designTier": 5,
+    "name": "花境凉亭"
+  },
+  {
+    "id": "wind-feed-l0-v1",
+    "element": "wind",
+    "module": "feed",
+    "designTier": 0,
+    "name": "云朵果冻"
+  },
+  {
+    "id": "wind-feed-l1-v1",
+    "element": "wind",
+    "module": "feed",
+    "designTier": 1,
+    "name": "轻云米糕"
+  },
+  {
+    "id": "wind-feed-l2-v1",
+    "element": "wind",
+    "module": "feed",
+    "designTier": 2,
+    "name": "风羽布丁"
+  },
+  {
+    "id": "wind-feed-l3-v1",
+    "element": "wind",
+    "module": "feed",
+    "designTier": 3,
+    "name": "云莓果塔"
+  },
+  {
+    "id": "wind-feed-l4-v1",
+    "element": "wind",
+    "module": "feed",
+    "designTier": 4,
+    "name": "星云奶冻"
+  },
+  {
+    "id": "wind-feed-l5-v1",
+    "element": "wind",
+    "module": "feed",
+    "designTier": 5,
+    "name": "晴空果盘"
+  },
+  {
+    "id": "wind-dress-l0-v1",
+    "element": "wind",
+    "module": "dress",
+    "designTier": 0,
+    "name": "轻羽丝带"
+  },
+  {
+    "id": "wind-dress-l1-v1",
+    "element": "wind",
+    "module": "dress",
+    "designTier": 1,
+    "name": "云翼领结"
+  },
+  {
+    "id": "wind-dress-l2-v1",
+    "element": "wind",
+    "module": "dress",
+    "designTier": 2,
+    "name": "晴空围巾"
+  },
+  {
+    "id": "wind-dress-l3-v1",
+    "element": "wind",
+    "module": "dress",
+    "designTier": 3,
+    "name": "风羽披肩"
+  },
+  {
+    "id": "wind-dress-l4-v1",
+    "element": "wind",
+    "module": "dress",
+    "designTier": 4,
+    "name": "星云胸针"
+  },
+  {
+    "id": "wind-dress-l5-v1",
+    "element": "wind",
+    "module": "dress",
+    "designTier": 5,
+    "name": "晴空礼冠"
+  },
+  {
+    "id": "wind-furniture-l0-v1",
+    "element": "wind",
+    "module": "furniture",
+    "designTier": 0,
+    "name": "云朵软垫"
+  },
+  {
+    "id": "wind-furniture-l1-v1",
+    "element": "wind",
+    "module": "furniture",
+    "designTier": 1,
+    "name": "轻云吊床"
+  },
+  {
+    "id": "wind-furniture-l2-v1",
+    "element": "wind",
+    "module": "furniture",
+    "designTier": 2,
+    "name": "云翼书架"
+  },
+  {
+    "id": "wind-furniture-l3-v1",
+    "element": "wind",
+    "module": "furniture",
+    "designTier": 3,
+    "name": "旋风茶桌"
+  },
+  {
+    "id": "wind-furniture-l4-v1",
+    "element": "wind",
+    "module": "furniture",
+    "designTier": 4,
+    "name": "晴空书桌"
+  },
+  {
+    "id": "wind-furniture-l5-v1",
+    "element": "wind",
+    "module": "furniture",
+    "designTier": 5,
+    "name": "云境摇椅"
+  },
+  {
+    "id": "wind-decor-l0-v1",
+    "element": "wind",
+    "module": "decor",
+    "designTier": 0,
+    "name": "薄荷地毯"
+  },
+  {
+    "id": "wind-decor-l1-v1",
+    "element": "wind",
+    "module": "decor",
+    "designTier": 1,
+    "name": "云芽小灯"
+  },
+  {
+    "id": "wind-decor-l2-v1",
+    "element": "wind",
+    "module": "decor",
+    "designTier": 2,
+    "name": "风铃台灯"
+  },
+  {
+    "id": "wind-decor-l3-v1",
+    "element": "wind",
+    "module": "decor",
+    "designTier": 3,
+    "name": "轻羽风铃"
+  },
+  {
+    "id": "wind-decor-l4-v1",
+    "element": "wind",
+    "module": "decor",
+    "designTier": 4,
+    "name": "星云花灯"
+  },
+  {
+    "id": "wind-decor-l5-v1",
+    "element": "wind",
+    "module": "decor",
+    "designTier": 5,
+    "name": "晴空晶灯"
+  },
+  {
+    "id": "wind-courtyard-l0-v1",
+    "element": "wind",
+    "module": "courtyard",
+    "designTier": 0,
+    "name": "轻云芽盆"
+  },
+  {
+    "id": "wind-courtyard-l1-v1",
+    "element": "wind",
+    "module": "courtyard",
+    "designTier": 1,
+    "name": "风车花盆"
+  },
+  {
+    "id": "wind-courtyard-l2-v1",
+    "element": "wind",
+    "module": "courtyard",
+    "designTier": 2,
+    "name": "云边花池"
+  },
+  {
+    "id": "wind-courtyard-l3-v1",
+    "element": "wind",
+    "module": "courtyard",
+    "designTier": 3,
+    "name": "微风小岛"
+  },
+  {
+    "id": "wind-courtyard-l4-v1",
+    "element": "wind",
+    "module": "courtyard",
+    "designTier": 4,
+    "name": "云泉喷泉"
+  },
+  {
+    "id": "wind-courtyard-l5-v1",
+    "element": "wind",
+    "module": "courtyard",
+    "designTier": 5,
+    "name": "晴空凉亭"
+  }
+]

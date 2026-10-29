@@ -1,32 +1,32 @@
 <template>
- <view class="pet-dress-grid" role="group" aria-label="选择精灵装扮">
-  <WPActionTile v-for="item in cosmetics" :key="item.id" toggle-highlight class="cosmetic-button" :class="{equipped:pet.equippedCosmetics.includes(item.id)}" :disabled="pet.level<item.level" :aria-label="item.name+'，'+(pet.level<item.level?'Lv.'+item.level+' 解锁':pet.equippedCosmetics.includes(item.id)?'已穿戴，点击取下':'穿戴')" :aria-pressed="pet.equippedCosmetics.includes(item.id)" @click="$emit('equip',item.id)" @cancel="$emit('equip',item.id)">
-   <view class="cosmetic-art"><PetDressIcon :name="item.id"/></view>
-   <view class="cosmetic-copy"><text class="cosmetic-name">{{item.name}}</text><text class="cosmetic-description">{{descriptions[item.id]}}</text><text class="cosmetic-state">{{pet.level<item.level?'Lv.'+item.level+' 解锁':pet.equippedCosmetics.includes(item.id)?'已穿戴 · 点击取下':'穿戴 →'}}</text></view>
-  </WPActionTile>
+ <view class="dress-closet">
+  <view class="dress-closet-heading"><text class="dress-title">今天，想戴哪一件？</text><text class="dress-count" role="status" aria-live="polite">已穿戴 {{worn.length}}/3</text></view>
+  <text class="dress-instruction">轻点穿戴，再点一次取下。</text>
+  <view class="dress-filters" role="group" aria-label="装扮分类"><WPActionTile v-for="tab in filters" :key="tab.id" :selected="filter===tab.id" :aria-pressed="filter===tab.id" :aria-label="tab.label" @click="filter=tab.id">{{tab.label}}</WPActionTile></view>
+  <view class="dress-results"><text>{{filter==='all'?'小小衣橱':filters.find(tab=>tab.id===filter)?.label}} · {{visible.length}} 件</text><text>可穿戴 {{availableCount}} 件</text></view>
+  <view class="pet-dress-grid" role="group" aria-label="选择精灵装扮">
+   <WPActionTile v-for="item in visible" :key="item.id" class="cosmetic-button" :class="['cosmetic-'+item.slot,{'equipped':worn.includes(item.id)}]" :selected="worn.includes(item.id)" :data-item="item.id" :data-category="item.slot" :disabled="disabled(item)" :aria-label="item.name+'，'+state(item)+(disabled(item)?'':'，'+(worn.includes(item.id)?'点击取下':'点击穿戴'))" :aria-pressed="worn.includes(item.id)" @click="$emit('equip',item.id)">
+    <view class="cosmetic-art"><image v-if="item.icon" class="pet-dress-symbol" :src="item.icon" mode="aspectFit" lazy-load aria-hidden="true" @error="broken.add(item.id)"/><text v-else class="cosmetic-missing">图片暂不可用</text></view>
+    <view class="cosmetic-copy"><text class="cosmetic-name">{{item.name}}</text><text class="cosmetic-description">{{item.description}}</text><text class="cosmetic-status">{{state(item)}}</text></view>
+    <view class="cosmetic-cta"><text>{{worn.includes(item.id)?'取下':disabled(item)?pet.level<item.level?'Lv.'+item.level+' 解锁':'暂不可用':'穿戴'}}</text></view>
+   </WPActionTile>
+  </view>
  </view>
 </template>
 <script setup lang="ts">
+import {computed,ref} from 'vue'
 import WPActionTile from '../button/WPActionTile.vue'
-import PetDressIcon from './PetDressIcon.vue'
-import {cosmetics} from '../../stores/pet'
+import {dressCatalog,equippedItems,hasDressAssets,type DressItem,type DressSlot} from '../../services/pet-lifehouse/DressCatalog'
 import type {PetState} from '../../../packages/pet_engine'
-defineProps<{pet:PetState}>()
+import type {PetForm} from '../../services/pet-growth'
+const props=withDefaults(defineProps<{pet:PetState;form?:PetForm;unavailable?:readonly string[];readOnly?:boolean}>(),{form:1,unavailable:()=>[]})
 defineEmits<{equip:[id:string]}>()
-const descriptions={ribbon:'多彩丝带，陪你探索',scarf:'柔软围巾，暖暖陪伴',star:'闪亮星星，记录成长'}
+const filter=ref<DressSlot|'all'>('all'),broken=ref(new Set<string>())
+const filters=[{id:'all',label:'全部'},{id:'head',label:'头饰'},{id:'neck',label:'围巾'},{id:'badge',label:'徽章'}] as const
+const catalog=computed(()=>dressCatalog(props.pet.element)),worn=computed(()=>equippedItems(props.pet.equippedCosmetics,props.pet.element)),visible=computed(()=>catalog.value.filter(item=>filter.value==='all'||item.slot===filter.value))
+function ready(item:DressItem){return !broken.value.has(item.id)&&!props.unavailable.includes(item.id)&&hasDressAssets(item,props.pet.element,props.form)}
+const availableCount=computed(()=>catalog.value.filter(item=>props.pet.level>=item.level&&ready(item)).length)
+function disabled(item:DressItem){return !!props.readOnly||!worn.value.includes(item.id)&&(props.pet.level<item.level||!ready(item))}
+function state(item:DressItem){return worn.value.includes(item.id)?'已穿戴':!ready(item)?'暂不可用':props.pet.level<item.level?'未获得 · Lv.'+item.level+' 解锁':'未穿戴'}
 </script>
-<style>
-.pet-dress-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;min-width:0}
-.pet-house .pet-dress-grid .cosmetic-button{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;justify-content:flex-start;gap:14px;margin:0;padding:14px 12px;min-height:128px;min-width:0;width:100%;border:2px solid var(--pet-border);border-radius:var(--pet-button-radius);background:var(--pet-surface);color:var(--pet-text);line-height:1.5;text-align:left;white-space:normal;opacity:1}
-.pet-house .pet-dress-grid .cosmetic-button.equipped{background:var(--pet-tonal);border-color:var(--pet-accent)}
-.pet-house .pet-dress-grid .cosmetic-button[disabled]{color:var(--pet-text);background:var(--pet-soft);border-color:var(--pet-border);opacity:1;cursor:default}
-.pet-house .pet-dress-grid .cosmetic-button:focus-visible{outline:2px solid var(--pet-accent);outline-offset:2px}
-.cosmetic-art{display:flex;align-items:center;justify-content:center;width:80px;height:80px;flex-shrink:0}
-.cosmetic-copy{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0;flex:1}
-.cosmetic-name{font-size:clamp(18px,var(--wp-font-body),21px);font-weight:600;color:var(--pet-text);overflow-wrap:anywhere}
-.cosmetic-description{font-size:clamp(13px,var(--wp-font-caption),16px);color:var(--pet-muted);overflow-wrap:anywhere}
-.cosmetic-state{font-size:clamp(14px,var(--wp-font-small),18px);font-weight:600;color:var(--pet-accent);overflow-wrap:anywhere}
-.cosmetic-button[disabled] .cosmetic-state{color:var(--pet-muted)}
-@media(min-width:1100px){.pet-dress-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.pet-house .pet-dress-grid .cosmetic-button{flex-direction:column;min-height:224px;padding:18px 10px;text-align:center}.cosmetic-copy{align-items:center;width:100%}.cosmetic-state{margin-top:auto}}
-.large-text .pet-dress-grid{grid-template-columns:minmax(0,1fr)}.large-text .pet-house .pet-dress-grid .cosmetic-button{flex-direction:row;text-align:left;min-height:140px}.large-text .cosmetic-copy{align-items:flex-start}
-</style>
+<style lang="scss" src="../../styles/pet-dress-closet.scss"></style>

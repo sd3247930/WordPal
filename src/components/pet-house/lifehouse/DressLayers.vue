@@ -1,0 +1,7 @@
+<template><template v-for="layer in layers" :key="layer.key"><view v-if="layer.poseTransform" class="lh-dress-pose-group" :class="['lh-dress-'+layer.depth,'lh-dress-slot-'+layer.slot]" :style="{transform:layer.poseTransform}"><image class="lh-dress-layer lh-q-wear" :data-item="layer.id" :data-slot="layer.slot" :src="layer.src" :style="dressLayerStyle(layer)" mode="aspectFit" :aria-label="layer.depth==='front'?layer.name+'已穿戴':undefined" :aria-hidden="layer.depth==='back'||undefined" @error="$emit('error',layer.id)"/></view><image v-else class="lh-dress-layer lh-q-wear" :class="['lh-dress-'+layer.depth,'lh-q-'+layer.depth,'lh-dress-slot-'+layer.slot]" :data-item="layer.id" :data-slot="layer.slot" :src="layer.src" :style="dressLayerStyle(layer)" mode="aspectFit" :aria-label="layer.depth==='front'?layer.name+'已穿戴':undefined" :aria-hidden="layer.depth==='back'||undefined" @error="$emit('error',layer.id)"/></template></template>
+<script setup lang="ts">
+import {dressLayerStyle,type DressLayer} from '../../../services/pet-lifehouse/DressRenderer'
+defineProps<{layers:readonly DressLayer[]}>()
+defineEmits<{error:[id:string]}>()
+</script>
+<style scoped>.lh-dress-layer{position:absolute;display:block;pointer-events:none;transform-origin:center}.lh-dress-pose-group{position:absolute;inset:0;pointer-events:none;transform-origin:0 0}.lh-dress-back{z-index:0}.lh-dress-front{z-index:2}.lh-dress-front.lh-dress-slot-head{z-index:4}.lh-dress-front.lh-dress-slot-badge{z-index:5}</style>

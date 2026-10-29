@@ -2,6 +2,7 @@ import type {Word,Lesson,LearningMode} from '../core_learning'
 import type {PhonicsData} from '../phonics/types'
 import {validPhonicsData} from '../phonics/chunks'
 import {abilityMeta,type EntryLevel} from '../parent_settings'
+import {studyCapability} from '../core_learning/study-capability'
 export type RightsStatus='pending-review'|'private-use-declared'|'redistribution-approved'
 export interface SourceRecord {id:string;type:'author-created'|'authorized'|'user-provided';rightsStatus:RightsStatus;attribution:string;url?:string;revision?:string;textLicense?:string|null;imageLicense?:string|null;audioLicense?:string|null;declaredAt?:string;fileSha256?:string}
 export interface VocabularyEntry {id:string;language:'en';lemma:string;meaning:string;pos?:string;ipa?:string;senseId?:string;sourceId:string;sourceWordId?:string;phonics?:string[];phonemes?:string[];syllables?:string[];phonicsData?:PhonicsData;example?:string;acceptedSpellings?:string[];assetRefs?:{audio?:string;image?:string};audio?:string;image?:string;phoneticUK?:string;phoneticUS?:string;audioUK?:string;audioUS?:string;examples?:{en:string;zh:string}[];tags?:string[];learningLevel?:number;order?:number}
@@ -97,10 +98,7 @@ export function entryWord(entry:VocabularyEntry,c:CoursePack,resource:(id:string
  * so a lower level never exposes dictation even if the word has audio.
  */
 export function availableModes(word:Word,all:Word[],sound=true,entryLevel?:EntryLevel):LearningMode[]{
- const modes:LearningMode[]=['flash','spell']
- const choices=all.filter(w=>w.id!==word.id&&w.meaning!==word.meaning&&w.word!==word.word)
- if(choices.length)modes.push('connect')
- if(sound&&word.audio){modes.push('dictation');if(choices.length)modes.push('listen')}
+ const modes=(['flash','spell','connect','dictation','listen'] as LearningMode[]).filter(mode=>studyCapability(word,mode,all,sound).status==='ready')
  if(!entryLevel)return modes
  const allowed=new Set(abilityMeta(entryLevel).modes)
  return modes.filter(mode=>allowed.has(mode))

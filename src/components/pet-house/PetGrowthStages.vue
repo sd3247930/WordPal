@@ -1,6 +1,6 @@
 <template>
  <view :class="variant==='growth'?'growth-track':'pet-album-grid'" class="pet-form-gallery" role="group" :aria-label="petInfo[pet.element].name+'的精灵形态'">
-  <WPActionTile v-for="(stage,i) in petStages" :key="stage.title" toggle-highlight class="pet-form-card" :class="[variant==='growth'?'growth-step':'pet-album-entry','stage-'+presentations[i].state,{reached:presentations[i].unlocked,locked:!presentations[i].unlocked,'form-selected':forms.stage(pet.element)===i+1}]" :disabled="!presentations[i].unlocked" :data-state="presentations[i].state" :aria-label="stage.title+'，'+(presentations[i].unlocked?'已解锁':'点亮进度 '+presentations[i].percent+'%')" :aria-describedby="progressId(i)" :aria-pressed="forms.stage(pet.element)===i+1" @click="choose(i+1)">
+  <WPActionTile v-for="(stage,i) in petStages" :key="stage.title" class="pet-form-card" :class="[variant==='growth'?'growth-step':'pet-album-entry','stage-'+presentations[i].state,{reached:presentations[i].unlocked,locked:!presentations[i].unlocked,'form-selected':forms.stage(pet.element)===i+1}]" :disabled="!presentations[i].unlocked" :data-state="presentations[i].state" :aria-label="stage.title+'，'+(presentations[i].unlocked?'已解锁':'点亮进度 '+presentations[i].percent+'%')" :aria-describedby="progressId(i)" :aria-pressed="forms.stage(pet.element)===i+1" @click="choose(i+1)">
    <view class="pet-form-art" :class="{'album-art':variant==='album'}">
     <view class="pet-form-sprite" :class="{'pet-unlock-pop':celebrating.includes(i)}" :style="{filter:presentations[i].unlocked?'none':'grayscale('+presentations[i].grayscale+'%)',opacity:presentations[i].opacity}">
      <PetHousePetArt :element="pet.element" :stage="i+1" :badge="false"/>
@@ -65,6 +65,7 @@ onUnmounted(()=>{if(celebrationTimer)clearTimeout(celebrationTimer)})
 @media(prefers-reduced-motion:reduce){.pet-form-sprite{transition:none;animation:none}}
 @media(min-width:760px) and (max-width:1099px){.pet-house .pet-form-card{flex-direction:row;gap:12px;padding:12px;text-align:left}.pet-house .pet-form-art{width:132px}.pet-form-heading{justify-content:flex-start}}
 @media(min-width:1100px){.pet-house .pet-form-gallery{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(min-width:1000px) and (max-width:1099px){.lh-workspace .pet-form-card{flex-direction:column;padding:10px 8px;text-align:center}.lh-workspace .pet-form-art{width:100%}.lh-workspace .pet-form-heading{justify-content:center}}
 .large-text .pet-house .pet-form-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.large-text .pet-house .pet-form-card{flex-direction:column;text-align:center}.large-text .pet-form-heading{justify-content:center}
 @media(max-width:359px){.large-text .pet-house .pet-form-gallery{grid-template-columns:minmax(0,1fr)}}
 </style>

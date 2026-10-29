@@ -4,6 +4,7 @@ import {freshDatabase,type Database} from '../../src/stores/profile'
 import {initialProgress} from '../../src/services/storage/MigrationV1toV2'
 import {contrast} from '../../src/styles/themes'
 import {customCourse} from '../helpers/custom-course'
+import {openTasks} from './lifehouse-helpers'
 
 const time=new Date('2026-10-03T08:00:00Z'),card=(page:Page)=>page.locator('.home-learning-data-clay'),values=(page:Page)=>card(page).locator('.learning-metric-value')
 function fixture(correct:readonly boolean[]=[true,false,true,false]):Database{
@@ -18,15 +19,15 @@ async function prepare(page:Page,mode='light',largeText=false,db=fixture()){
 }
 test('真实口径、静态说明与只读浏览，重复复习词按事件计数',async({page})=>{
  await prepare(page);const before=await database(page)
- await expect(values(page)).toHaveText(['1','2','4']);await expect(card(page).getByRole('progressbar',{name:'今日正确率',exact:true})).toHaveAttribute('aria-valuenow','50');await expect(card(page).locator('.learning-data-ring')).toHaveCSS('--learning-ring-angle','180deg')
+ await expect(values(page)).toHaveText(['1','2','4']);await expect(card(page).getByRole('progressbar',{name:'正式评估正确率',exact:true})).toHaveAttribute('aria-valuenow','50');await expect(card(page).locator('.learning-data-ring')).toHaveCSS('--learning-ring-angle','180deg')
  await expect(card(page).locator('.learning-metric-label')).toHaveText(['新学单词','复习次数','有效学习']);await expect(card(page).getByRole('group',{name:'有效学习，4 次，当日已保存答题',exact:true})).toBeVisible()
- await expect(card(page).locator('.learning-data-title')).toHaveText('学习数据');await expect(card(page).locator('.learning-data-source')).toHaveText('真实记录');await expect(card(page).locator('[role="button"],uni-button,button')).toHaveCount(0)
+ await expect(card(page).locator('.learning-data-title')).toHaveText('学习数据');await expect(card(page).locator('.learning-data-source')).toHaveText('全局正式记录');await expect(card(page).locator('[role="button"],uni-button,button')).toHaveCount(0)
  await card(page).locator('.learning-data-source').click();for(const screen of ['settings','home','review','home'])await go(page,screen);await page.reload();await expect(values(page)).toHaveText(['1','2','4']);expect(await database(page)).toEqual(before)
 })
 for(const [name,answers,rate,angle]of [['无样本',[],null,'0deg'],['真实全错',[false,false],0,'0deg'],['一半正确',[true,false],50,'180deg'],['全部正确',[true,true],100,'360deg']] as const)test(`${name}：圆环和数字一致且不会伪造0%`,async({page})=>{
  await prepare(page,'light',false,fixture(answers));const before=await database(page)
  await expect(card(page).locator('.learning-rate-number')).toHaveText(rate===null?'—':String(rate));await expect(card(page).locator('.learning-data-ring')).toHaveCSS('--learning-ring-angle',angle)
- if(rate===null){await expect(card(page).getByRole('img',{name:'今日正确率，暂无答题记录',exact:true})).toBeVisible();await expect(card(page).locator('.learning-rate-empty')).toHaveText('今天还没有答题记录');await expect(card(page).locator('.learning-rate-percent')).toHaveCount(0)}else{await expect(card(page).getByRole('progressbar',{name:'今日正确率',exact:true})).toHaveAttribute('aria-valuenow',String(rate));await expect(card(page).locator('.learning-rate-percent')).toHaveText('%')}
+ if(rate===null){await expect(card(page).getByRole('img',{name:'正式评估正确率，暂无答题记录',exact:true})).toBeVisible();await expect(card(page).locator('.learning-rate-empty')).toHaveText('今天还没有答题记录');await expect(card(page).locator('.learning-rate-percent')).toHaveCount(0)}else{await expect(card(page).getByRole('progressbar',{name:'正式评估正确率',exact:true})).toHaveAttribute('aria-valuenow',String(rate));await expect(card(page).locator('.learning-rate-percent')).toHaveText('%')}
  expect(await database(page)).toEqual(before)
 })
 for(const mode of ['light','dark'])for(const largeText of [false,true])test(`学习数据 ${mode} 大字${largeText} 手机、平板窗口、真实容器宽度与AA文字`,async({page})=>{
@@ -78,6 +79,6 @@ test('当前教材只改变新学数，全局答题和主题切换保持原统�
 })
 test('正式六环节结算后自动刷新，真实自定义答题和听音浏览不会并入正式记录',async({page})=>{
  test.setTimeout(90000);const db=fixture([]);db.courseProgress!.starter=initialProgress('starter');db.practiceAnswers=[];await prepare(page,'light',false,db);await expect(values(page)).toHaveText(['0','0','0']);await page.locator('.home-today-clay .hero-cta').click();await completeDaily(page);await go(page,'home');await expect(values(page)).toHaveText(['5','0','5']);await expect(card(page).locator('.learning-rate-number')).toHaveText('100');const formal=await database(page)
- await go(page,'pet');await page.getByRole('button',{name:'试一试拼写或听写',exact:true}).click();await selectCustomModes(page,['spell']);await page.getByRole('button',{name:'开始练习',exact:true}).click();await page.locator('.spelling-input input').fill('cat');await page.getByRole('button',{name:'确认答案 →',exact:true}).click();const practiced=await database(page);expect(practiced.practiceAnswers.length).toBe(formal.practiceAnswers.length+1);expect(practiced.history).toEqual(formal.history)
+ await go(page,'pet');await openTasks(page);await page.getByRole('button',{name:'试一试拼写或听写',exact:true}).click();await selectCustomModes(page,['spell']);await page.getByRole('button',{name:'开始练习',exact:true}).click();await page.locator('.spelling-input input').fill('cat');await page.getByRole('button',{name:'确认答案 →',exact:true}).click();const practiced=await database(page);expect(practiced.practiceAnswers.length).toBe(formal.practiceAnswers.length+1);expect(practiced.history).toEqual(formal.history)
  await go(page,'home');await expect(values(page)).toHaveText(['5','0','5']);await expect(card(page).locator('.learning-rate-number')).toHaveText('100');await page.locator('.home-word-actions .wp-button').first().click();await go(page,'settings');await go(page,'home');const after=await database(page);for(const key of ['history','cards','gems','rewardIds','pets','courseProgress'])expect(after[key]).toEqual(practiced[key])
 })

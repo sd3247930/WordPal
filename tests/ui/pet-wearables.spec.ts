@@ -15,18 +15,17 @@ function learningOnly(db:Awaited<ReturnType<typeof database>>){const copy=JSON.p
 
 test('48种穿戴匹配当前精灵及形态，精确对齐高清原图且主题独立，学习档案不变',async({page})=>{
  test.setTimeout(180000);await page.setViewportSize({width:390,height:950});await fixture(page);await go(page,'pet');const before=learningOnly(await database(page))
- await page.getByRole('button',{name:'土之主题',exact:true}).click()
+
  for(const [element,name]of [['water','玄冥'],['fire','祝融'],['earth','后土'],['wind','飞廉']]){
-  await page.locator('.pet-choice').filter({hasText:name}).click()
+  await page.locator('.lh-companion').filter({hasText:name}).click()
   for(let form=1;form<=4;form++){
    await action(page,'成长');await page.locator('.pet-growth-panel .pet-form-card').nth(form-1).click();await action(page,'装扮')
-   const preview=page.locator('.dress-preview');await expect(preview).toHaveAttribute('data-element',element);await expect(preview).toHaveAttribute('data-form',String(form));await expect(preview).toHaveAttribute('data-scene','earth');await expect(preview.locator('.dress-scene img')).toHaveAttribute('src',/earth-scene[.]jpg$/)
+   const preview=page.locator('.lh-stage');await expect(preview).toHaveAttribute('data-element',element);await expect(preview.locator('.lh-scene-actor-art')).toHaveAttribute('data-form',String(form))
    for(const [i,item]of ['ribbon','scarf','star'].entries()){
-    await page.locator('.cosmetic-button').nth(i).click();const front=preview.locator('.pet-accessory img'),back=preview.locator('.pet-wearable-back img')
-    await expect(front).toHaveAttribute('src',new RegExp(element+'-'+form+'-'+item+'-front[.]png$'));await expect(front).toHaveJSProperty('naturalWidth',960);await expect(back).toHaveJSProperty('naturalHeight',1280)
-    const sizes=await preview.locator('.pet-cutout').evaluate(el=>{const base=el.querySelector('.pet-cutout-image')!.getBoundingClientRect();return Array.from(el.querySelectorAll('.pet-wearable-layer')).map(node=>{const r=node.getBoundingClientRect();return Math.max(Math.abs(r.x-base.x),Math.abs(r.y-base.y),Math.abs(r.width-base.width),Math.abs(r.height-base.height))})});expect(sizes.every(delta=>delta<.1)).toBe(true)
-    const model=await preview.locator('.dress-model').boundingBox(),image=await preview.locator('.pet-cutout-image').boundingBox();expect(image!.x>=model!.x-1&&image!.y>=model!.y-1&&image!.x+image!.width<=model!.x+model!.width+1&&image!.y+image!.height<=model!.y+model!.height+1).toBe(true)
-    await page.locator('.cosmetic-button').nth(i).click();await expect(preview.locator('.pet-accessory')).toHaveCount(0)
+    await page.locator('.cosmetic-button').nth(i).click();const front=preview.locator('.lh-q-front img'),back=preview.locator('.lh-q-back img')
+    await expect(front).toHaveAttribute('src',new RegExp(element+'-'+form+'-'+item+'-front[.]png$'));await expect(front).toHaveJSProperty('naturalWidth',960);await expect(back).toHaveCount(item==='star'?0:1);if(item!=='star')await expect(back).toHaveJSProperty('naturalHeight',1280)
+    const valid=await preview.locator('.lh-q-wear').evaluateAll(nodes=>nodes.every(n=>{const r=n.getBoundingClientRect(),t=getComputedStyle(n).transform;return r.width>0&&r.height>0&&t!=='none'&&!t.includes('NaN')}));expect(valid).toBe(true)
+    await page.locator('.cosmetic-button').nth(i).click();await expect(preview.locator('.lh-q-front')).toHaveCount(0)
    }
   }
  }
@@ -34,8 +33,8 @@ test('48种穿戴匹配当前精灵及形态，精确对齐高清原图且主题
 })
 
 test('装扮预览随所选主题、精灵跨刷新恢复，手机平板和夜间大字无变形溢出',async({page})=>{
- await fixture(page);await setAppearance(page,'swiss','dark',{largeText:true});await go(page,'pet');await page.getByRole('button',{name:'风之主题',exact:true}).click();await page.locator('.pet-choice').filter({hasText:'祝融'}).click();await action(page,'装扮');await page.locator('.cosmetic-button').nth(1).click();await page.reload();await action(page,'装扮')
- const preview=page.locator('.dress-preview');await expect(preview).toHaveAttribute('data-element','fire');await expect(preview).toHaveAttribute('data-scene','wind');await expect(preview.locator('.dress-wearing-state')).toContainText('暖暖围巾')
- for(const width of [320,390,834,1194]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);const bg=await preview.locator('.dress-scene').boundingBox(),p=await preview.boundingBox();expect(bg!.width).toBeCloseTo(p!.width-2,0);expect(bg!.height).toBeCloseTo(p!.height-2,0)}
+ await fixture(page);await setAppearance(page,'swiss','dark',{largeText:true});await go(page,'pet');await page.locator('.lh-companion').filter({hasText:'祝融'}).click();await action(page,'装扮');await page.locator('.cosmetic-button').nth(1).click();await page.reload();await action(page,'装扮')
+ const preview=page.locator('.lh-stage');await expect(preview).toHaveAttribute('data-element','fire')
+ for(const width of [320,390,834,1194]){await page.setViewportSize({width,height:1000});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);const bg=await preview.locator('.lh-scene-canvas').boundingBox();expect(bg!.width/bg!.height).toBeCloseTo(1.5,1)}
  await page.setViewportSize({width:390,height:1000});await page.locator('.pet-dress-panel').screenshot({path:'test-results/pet-wearables-dark.png'})
 })

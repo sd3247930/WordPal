@@ -1,0 +1,10 @@
+<template><view class="lh-segments" :class="{'lh-segments-filter':variant==='filter'}" role="group" :aria-label="label"><WPActionTile v-for="item in items" :key="item.id" :selected="modelValue===item.id" :aria-pressed="modelValue===item.id" :aria-label="item.label" :disabled="disabled" @click="$emit('update:modelValue',item.id)"><text>{{item.label}}</text></WPActionTile></view></template>
+<script setup lang="ts">
+import WPActionTile from '../../button/WPActionTile.vue'
+withDefaults(defineProps<{modelValue:string;items:readonly {id:string;label:string}[];label:string;disabled?:boolean;variant?:'section'|'filter'}>(),{variant:'section'})
+defineEmits<{'update:modelValue':[value:string]}>()
+</script>
+<style scoped>
+.lh-segments.lh-segments .wp-action-tile{border-radius:20px;display:flex;align-items:center;justify-content:center;padding:6px 2px;font-size:var(--wp-font-small)}
+.lh-segments{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--lh-segment-gap,5px);padding:3px;background:var(--lh-tint);border:1px solid var(--lh-line);border-radius:var(--lh-segment-radius,24px);min-width:0;margin-bottom:10px}.lh-segments .wp-action-tile{display:flex;align-items:center;justify-content:center;min-width:0;min-height:44px;padding:6px 2px;border:1px solid transparent;border-radius:20px;background:transparent;font-size:var(--wp-font-small);font-weight:600;line-height:1.3;color:var(--lh-ink);text-align:center}.lh-segments .wp-action-tile[aria-pressed=true]{background:var(--lh-selection,#B6E7CE);border-color:var(--lh-selection-line,#82C9AC);color:var(--lh-selection-ink,#294F5D);font-weight:800;box-shadow:inset 0 1px 2px #ffffff70,0 2px 4px #41675610}.lh-segments-filter{padding:0;border:0;background:transparent;gap:var(--lh-segment-gap,5px)}.lh-segments-filter .wp-action-tile{background:var(--lh-tint);min-height:44px}.lh-segments text{max-width:100%;overflow-wrap:anywhere}.large-text .lh-segments .wp-action-tile,.scaled-text .lh-segments .wp-action-tile{min-height:60px}.high-contrast .lh-segments .wp-action-tile[aria-pressed=true]{border:2px solid var(--lh-ink)}
+</style>

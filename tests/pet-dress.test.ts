@@ -9,6 +9,7 @@ import {useProfileStore} from '../src/stores/profile'
 import {usePetStore,cosmetics} from '../src/stores/pet'
 import {loadCourseRegistry} from '../src/services/content/ContentRegistry'
 import {petDressIconNames,petDressIconSource,petDressIconSvg,isPetDressIconName} from '../src/services/pet-dress-icons'
+import {activeVisualVersion} from '../src/services/pet-lifehouse/VisualPack'
 const storage=new Map<string,string>();let fail=false
 ;(globalThis as any).uni={getStorageSync:(key:string)=>storage.get(key)||'',setStorageSync:(key:string,value:string)=>{if(fail)throw new Error('Quota');storage.set(key,value)}}
 function reset(){storage.clear();fail=false;loadCourseRegistry();setActivePinia(createPinia())}
@@ -21,14 +22,25 @@ test('穿戴严格遵守原Lv.2/4/8门槛，替换与取下只修改装扮',()=>
   assert.equal(pet.equip('missing'),false);assert.equal(withoutDress(profile.db),before)
  }
 })
-test('装扮跨重启恢复，各宠独立且每次仍只穿戴一件',()=>{
+test('装扮跨重启恢复，各宠独立且不同槽位同时保留',()=>{
  reset();let pet=usePetStore();const profile=useProfileStore();profile.transact(db=>{db.pets.water={...createPet('water'),level:8,exp:700};db.pets.fire={...createPet('fire'),level:4,exp:300}})
- assert.equal(pet.equip('ribbon'),true);assert.equal(pet.equip('star'),true);assert.deepEqual(pet.current.equippedCosmetics,['star']);pet.choose('fire');assert.equal(pet.equip('scarf'),true);assert.deepEqual(profile.db.pets.water.equippedCosmetics,['star'])
- setActivePinia(createPinia());pet=usePetStore();assert.equal(pet.current.element,'fire');assert.deepEqual(pet.current.equippedCosmetics,['scarf']);pet.choose('water');assert.deepEqual(pet.current.equippedCosmetics,['star'])
+ assert.equal(pet.equip('ribbon'),true);assert.equal(pet.equip('star'),true);assert.deepEqual(pet.current.equippedCosmetics,['ribbon','star']);pet.choose('fire');assert.equal(pet.equip('scarf'),true);assert.deepEqual(profile.db.pets.water.equippedCosmetics,['ribbon','star'])
+ setActivePinia(createPinia());pet=usePetStore();assert.equal(pet.current.element,'fire');assert.deepEqual(pet.current.equippedCosmetics,['scarf']);pet.choose('water');assert.deepEqual(pet.current.equippedCosmetics,['ribbon','star'])
 })
 test('磁盘写入失败时穿戴或取下都保持完整原档案',()=>{
  reset();const profile=useProfileStore(),pet=usePetStore();profile.transact(db=>{db.pets.water={...createPet('water'),level:4,exp:300}});pet.equip('ribbon');const before=JSON.stringify(profile.db);fail=true
  assert.equal(pet.equip('scarf'),false);assert.equal(JSON.stringify(profile.db),before);assert.equal(pet.equip('ribbon'),false);assert.equal(JSON.stringify(profile.db),before);assert.match(profile.storageError,/保存失败/)
+})
+
+test('新配饰未交付时拒绝穿戴和跨象请求，已有新款可安全取下且不改钱包',()=>{
+ reset();const profile=useProfileStore(),pet=usePetStore();profile.transact(db=>{db.pets.water={...createPet('water'),level:8,exp:700};db.gems=73})
+ const before=JSON.stringify(profile.db)
+ if(activeVisualVersion===1)assert.equal(pet.equip('water-dress-l5-v1'),false)
+ assert.equal(pet.equip('fire-dress-l5-v1'),false);assert.equal(JSON.stringify(profile.db),before)
+ profile.transact(db=>{db.pets.water.equippedCosmetics=['water-dress-l5-v1']})
+ const unchanged=withoutDress(profile.db)
+ assert.equal(pet.equip('water-dress-l5-v1'),true);assert.deepEqual(pet.current.equippedCosmetics,[])
+ assert.equal(withoutDress(profile.db),unchanged);assert.equal(profile.db.gems,73)
 })
 test('十二张装扮PNG均为高清透明离线素材，无来源元数据，高对比独立可用',async()=>{
  for(const value of [undefined,null,'unknown','../../private',''])assert.equal(isPetDressIconName(value),false)

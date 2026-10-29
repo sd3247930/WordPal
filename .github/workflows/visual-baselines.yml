@@ -18,7 +18,7 @@ jobs:
       - run: npm ci
       - run: npx playwright install chromium
       - name: Render formal baselines with synthetic profiles
-        run: npx playwright test tests/ui/golden.spec.ts tests/ui/pet-house.spec.ts tests/ui/study-wordbook.spec.ts tests/ui/v2-matrix.spec.ts --update-snapshots=all --workers=3
+        run: npx playwright test tests/ui/golden.spec.ts tests/ui/pet-house.spec.ts tests/ui/pet-lifehouse-visual.spec.ts tests/ui/study-wordbook.spec.ts tests/ui/v2-matrix.spec.ts --update-snapshots=all --workers=3
         env:
           WORDPAL_VISUAL_PROFILE: windows-server
           VITE_WORDPAL_LOCAL_CONTENT: '0'

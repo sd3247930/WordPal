@@ -44,6 +44,8 @@ node tools/android/audit-release.mjs
 
 版本以 `package.json` 和 `src/manifest.json` 为准，两处必须一致；包名固定 `com.wordpal.app`。通过审计后的附件为 `build/release/WordPal.apk` 与 `WordPal.apk.sha256`。
 
+Vite 编译同时生成被 Git 忽略的 `src/static/build-info.json` 并复制到运行资源。其应用版本、提交与源码 SHA256 用于比对 HBuilderX、网页和 APK；指纹包含应用源码、公开静态资源及编译配置，统一文本换行，排除本机教材/媒体与生成标识自身。APK 审计要求这些字段匹配当前发布检出，并拒绝开发模式或含本机内容的构建。调试与正式包的编译模式及沙箱不同，不以整个二进制字节相同作为一致性条件。
+
 **缺少正式签名时终止构建，不自动使用 debug 签名。** 已安装正式版需要沿用原证书，随意切换签名会导致无法覆盖升级。DCloud 客户端 AppKey 按官方机制进入 APK，证书私钥及密码不进入 APK。
 
 ## GitHub Actions

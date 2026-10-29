@@ -1,10 +1,10 @@
 <template><view class="pet-growth-symbol" :class="'symbol-'+name" aria-hidden="true"><image v-if="!failed" :key="source" :src="source" mode="aspectFit" @error="failed=true"/><text v-else class="growth-icon-fallback">{{fallback[name]}}</text></view></template>
 <script setup lang="ts">
 import {computed,ref,watch} from 'vue'
-import {useThemeStore} from '../../stores/theme'
-import {petGrowthIconSource,type PetGrowthIconName} from '../../services/pet-growth-icons'
-const props=defineProps<{name:PetGrowthIconName}>(),theme=useThemeStore(),failed=ref(false)
-const source=computed(()=>petGrowthIconSource(props.name,theme.settings.highContrast,theme.mode==='dark'))
+import type {PetGrowthIconName} from '../../services/pet-growth-icons'
+import {lifeHouseIcon} from '../../services/pet-lifehouse/LifeHouseAssets'
+const props=defineProps<{name:PetGrowthIconName}>(),failed=ref(false)
+const source=computed(()=>lifeHouseIcon(props.name))
 const fallback={progress:'进度',experience:'经验',affection:'亲密',device:'学习',book:'读书'}
 watch(source,()=>failed.value=false)
 </script>

@@ -18,7 +18,7 @@ test('自动题型混合、手动选择与重启恢复，不重建正式 Session
  const {learning,view}=fresh();startLegacyRound(learning);view.sync();const id=learning.session!.id
  assert.deepEqual([0,1,2,3,4].map(index=>automaticMode(index,'new_word')),['flash','connect','listen','spell','dictation'])
  learning.reveal();view.submit(3);view.next();assert.equal(view.mode,'connect')
- view.chooseMode('spell');view.updateInput('do');setActivePinia(createPinia());const restored=useStudyPresentation();restored.sync()
+ view.chooseMode('spell');view.updateInput('do');assert(learning.flushDraft());setActivePinia(createPinia());const restored=useStudyPresentation();restored.sync()
  assert.equal(restored.input,'do');assert.equal(restored.mode,'spell');assert.equal(useLearningStore().session!.id,id)
 })
 test('正式错词回看每词一次，刷新恢复，完全不改正式记录、排程、课程与奖励',()=>{

@@ -22,8 +22,8 @@ for(const mode of ['light','dark'])for(const extra of cardAppearanceVariants)tes
  await seedDatabase(page,goldenDatabase());await setAppearance(page,'swiss',mode,extra);await go(page,'pet');await growth(page);const before=await database(page)
  for(const width of [320,390,600,768,834,1000,1280]){await page.setViewportSize({width,height:950});await stages(page)}
  await page.setViewportSize({width:390,height:950})
- for(const e of elements){await page.locator('.pet-choice').filter({hasText:petInfo[e].name}).click();await stages(page);await page.locator('.pet-theme-choice').filter({hasText:({water:'水之主题',fire:'火之主题',earth:'土之主题',wind:'风之主题'})[e]}).click()}
- await page.locator('.pet-choice').filter({hasText:'玄冥'}).click();expect(await database(page)).toEqual(before)
+ for(const e of elements){await page.getByRole('button',{name:'选择'+petInfo[e].name,exact:true}).click();await growth(page);await stages(page);await expect(page.locator('.lh-stage')).toHaveAttribute('data-element',e)}
+ await page.getByRole('button',{name:'选择'+petInfo[before.companion as keyof typeof petInfo].name,exact:true}).click();await growth(page);expect(await database(page)).toEqual(before)
  const locked=page.locator('.pet-growth-panel .pet-form-card').nth(3);await expect(locked).toBeDisabled();await expect(locked.locator('.pet-form-veil')).toBeVisible();await expect(locked.locator('.pet-form-lock')).toBeVisible()
  await page.locator('.pet-growth-panel .pet-form-gallery').screenshot({path:test.info().outputPath('growth-'+mode+'-'+(extra.largeText?'large':extra.highContrast?'contrast':'normal')+'.png')})
 })

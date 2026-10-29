@@ -18,8 +18,11 @@
   <view class="learn-main study-main"><view v-if="learning.isDaily" class="daily-step-list" aria-label="六环节学习进度"><view v-for="(title,step) in learning.stepTitles" :key="step" class="daily-step" :class="{active:learning.session?.flow?.step===step,done:learning.session?.flow?.completed[step].length===view.total}"><text>{{title}}</text><text>{{learning.session?.flow?.completed[step].length}}/{{view.total}}</text></view></view><view v-if="!focusPractice" class="practice-round-card"><view class="session-header"><text class="element-chip"><image v-if="theme.settings.themeId==='clay'&&learning.currentSource==='practice'" class="easy-practice-badge" :src="practiceBadge" mode="aspectFit" aria-hidden="true"/>{{view.revisiting?'错词回看':learning.session?.sequenceWordIds?.includes(view.current.id)?'本册学习':learning.currentSource==='review_due'?'到期复习':learning.currentSource==='practice'?'轻松练习':'今日新词'}}</text><text class="small muted">本轮 {{view.index+1}} / {{view.total}}</text></view><text v-if="currentPosition" class="study-word-position small muted block" role="status" aria-live="polite">教材词序：第 {{currentPosition.index}} / {{currentPosition.total}} 词</text><WPProgress :value="view.index+(view.answer?1:0)" :total="view.total" label="本轮学习进度"/></view>
    <WPWordCard :correct="view.answer?.correct" :practice="theme.settings.themeId==='clay'" :mode="view.mode" :word="view.current" :heading="learning.session?.flow?.step==='consolidate'?'复习巩固':modeTitles[view.mode]" :variant="view.mode==='flash'?'flash':'default'" :entry-level="sessionLevel" :prompt-picture="false" :data-phase="view.answer?'rated':view.revealed?'revealed':'prompting'" :conceal="conceal" :show-meaning="view.revealed&&!conceal" :reveal-meaning="view.mode==='spell'" :phonics="resolvedPhonics?.data" :active-chunk-index="activeChunkIndex" :playback-state="playbackState"><WPAudioButton class="practice-audio" :icon-src="practiceSpeaker" :url="view.current.audio" :text="['listen','dictation'].includes(view.mode)?'再听一次':systemVoice?'系统朗读':'听发音'" :label="systemVoice?'播放当前单词的离线系统朗读':'播放当前单词的标准发音'" @click="play"/><text v-if="systemVoice" class="muted audio-source-note">离线系统朗读 · 美式英语</text></WPWordCard>
    <view class="answer-panel">
+    <view v-if="!view.answer&&!view.revisiting&&!view.retrying&&learning.resourceProblem" class="notice" role="status"><text>{{learning.resourceProblem}}</text><WPButton v-if="learning.isDaily&&learning.capability.status==='unavailable'" kind="quiet" @click="learning.refreshResources()">重新检查素材</WPButton><WPButton kind="quiet" @click="independentPractice">先练其他内容</WPButton></view>
+    <text v-if="learning.submitNotice" class="small muted block" role="status">{{learning.submitNotice}}</text>
+    <text v-if="finalTeachingRetry" class="small muted block" role="status">已经记下这次回忆，放心再试，不重复计分。</text>
     <view v-if="view.mode==='connect'||view.mode==='listen'" class="choice-grid study-choice-options" :class="{'choice-locked':choiceLocked,'long-choices':longChoices}" role="group" :aria-label="view.mode==='connect'?'选择对应词义':'选择听到的单词'"><WPActionTile v-for="(choice,i) in learning.choices" :key="choice.id" toggle-highlight class="answer-choice study-card-feedback" hover-class="study-card-pressed" :hover-start-time="0" :hover-stay-time="120" :selected="view.selected===choice.id" :aria-pressed="view.selected===choice.id" :disabled="!!view.answer||choiceLocked" @click="guardChoice(()=>view.select(choice.id))" @cancel="guardChoice(()=>view.select(''))"><text class="choice-index">{{i+1}}</text><text>{{view.mode==='connect'?choice.meaning:choice.word}}</text></WPActionTile></view>
-    <LetterBlockInput compact :word="view.current" :letter-draft="view.revisiting||view.retrying?view.state.letterDraft:learning.session?.letterDraft" :default-tiles="theme.settings.themeId==='clay'&&!learning.isDaily&&!view.revisiting" :correct="view.answer?.correct" v-else-if="view.mode==='spell'||view.mode==='dictation'" :model-value="view.input" :mode="view.mode" :disabled="!!view.answer" :question-key="[learning.session?.id,view.current.id,view.mode,view.index].join(':')" @change="view.updateSpellingInput" @confirm="submit"/>
+    <LetterBlockInput compact :word="view.current" :letter-draft="view.revisiting||view.retrying?view.state.letterDraft:learning.session?.letterDraft" :default-tiles="theme.settings.themeId==='clay'&&!learning.isDaily&&!view.revisiting" :correct="view.answer?.correct" v-else-if="view.mode==='spell'||view.mode==='dictation'" :model-value="view.input" :mode="view.mode" :disabled="!!view.answer" :question-key="[learning.session?.id,view.current.id,view.mode,view.index].join(':')" @change="view.updateSpellingInput" @confirm="submit" @blur="flushInputDraft"/>
     <view v-if="!view.answer&&hintOpen" id="study-hint" class="study-hint" role="status" aria-live="polite"><text class="strong">一点小提示</text><text>{{hintText}}</text></view><text v-if="hintFailure" class="notice error" role="alert">{{hintFailure}}</text>
     <view v-if="!view.answer" class="answer-actions"><template v-if="view.mode==='flash'"><view v-if="!view.revealed" class="recall-action"><WPButton @click="view.reveal()">开始自评</WPButton></view><view v-else class="rating-grid"><WPButton v-for="(label,i) in childRatings" :key="label" :kind="i===2?'primary':'secondary'" @click="view.submit((i+1) as ReviewRating)">{{label}}</WPButton></view></template><template v-else><WPButton :disabled="!canSubmit" @click="submit">确认答案 →</WPButton></template><WPButton kind="quiet" class="study-hint-button" :aria-expanded="hintOpen" aria-controls="study-hint" @click="toggleHint">{{hintOpen?'收起提示':view.hinted?'再看提示':view.revisiting||view.retrying?'查看提示':'提示 · 1 灵石'}}</WPButton></view>
     <view v-else class="answer-feedback" :class="view.answer.correct?'correct':'incorrect'" role="status" aria-live="polite"><text class="strong">{{view.answer.correct?'✓ 很棒，记住啦！':'↻ 我们一起再认识它：'+view.current.word+' · '+view.current.meaning}}</text><text class="small">{{view.retrying?'重试不改变首次作答结果、进度或奖励。':view.revisiting||learning.currentSource==='practice'?'练习不会改变复习日期。':'下次见面：'+nextReviewLabel(profile.db.cards[view.current.id]?.due)}}</text><WPButton v-if="!view.answer.correct&&!learning.isDaily&&!view.revisiting&&['spell','dictation'].includes(view.mode)" kind="secondary" @click="view.retry();hintOpen=false;hintFailure=''">再拼一次</WPButton><WPButton @click="view.next()">{{learning.isDaily&&!view.answer.correct?'再试一次':view.index===view.total-1?learning.isDaily?'继续下一环节':view.revisiting?'完成回看':'完成这一轮':'下一个单词'}} →</WPButton></view>
@@ -66,6 +69,7 @@ import WPAudioButton from "../../components/button/WPAudioButton.vue"
 import {onHide,onShow} from "@dcloudio/uni-app"
 import WPActionTile from "../../components/button/WPActionTile.vue"
 
+import {audioPlayback} from '../../services/audio/AudioPlaybackService'
 import {computed,ref,watch,onMounted,onUnmounted,nextTick} from 'vue'
 import {studyHint} from '../../services/learning/StudyHint'
 import WPButton from '../../components/wp-button/WPButton.vue'
@@ -104,6 +108,16 @@ const learning=useLearningStore(),review=useReviewStore(),profile=useProfileStor
 const custom=useCustomPracticeStore()
 const {locked:choiceLocked,choose:guardChoice}=useChoiceGuard(()=>[learning.session?.id,view.current?.id,view.mode,view.index].join(':'))
 const phonicsController=new PhonicsPlaybackController()
+let questionPlaybackKey=''
+const unsubscribeQuestionAudio=audioPlayback.subscribeProgress(progress=>{if(questionPlaybackKey)learning.observeQuestionAudio(questionPlaybackKey,progress)})
+let draftTimer:ReturnType<typeof setTimeout>|undefined
+function flushInputDraft(){clearTimeout(draftTimer);draftTimer=undefined;return learning.flushDraft()}
+watch(()=>profile.learningDraft,()=>{clearTimeout(draftTimer);if(profile.learningDraft)draftTimer=setTimeout(flushInputDraft,200)})
+onHide(flushInputDraft)
+onUnmounted(flushInputDraft)
+function flushHiddenDraft(){if(typeof document!=='undefined'&&document.hidden)flushInputDraft()}
+onMounted(()=>{if(typeof window!=='undefined'){window.addEventListener('beforeunload',flushInputDraft);window.addEventListener('pagehide',flushInputDraft);document.addEventListener('visibilitychange',flushHiddenDraft)}})
+onUnmounted(()=>{if(typeof window!=='undefined'){window.removeEventListener('beforeunload',flushInputDraft);window.removeEventListener('pagehide',flushInputDraft);document.removeEventListener('visibilitychange',flushHiddenDraft)}})
 let stepTimer:ReturnType<typeof setTimeout>|undefined
 function clearStepTimer(){if(stepTimer)clearTimeout(stepTimer);stepTimer=undefined}
 watch(()=>learning.isDaily?learning.session?.answers[learning.session.index]?.id:undefined,()=>{
@@ -126,6 +140,7 @@ const hintText=computed(()=>view.current?studyHint(view.current,view.mode):'暂�
 function toggleHint(){if(hintOpen.value){hintOpen.value=false;return}if(view.hint()){hintOpen.value=true;hintFailure.value=''}else hintFailure.value=profile.db.gems<1?'灵石不足，查看提示需要 1 灵石。':'提示暂时无法保存，请稍后重试。'}
 watch(()=>[learning.session?.id,view.current?.id,view.index,view.mode].join(':'),()=>{hintOpen.value=view.hinted;hintFailure.value=''},{immediate:true})
 const currentPosition=computed(()=>learning.positionFor(view.current?.id))
+const finalTeachingRetry=computed(()=>{const s=learning.session;if(!learning.isDaily||s?.flow?.step!=='consolidate')return false;const first=s.flow.assessments?.[s.wordIds[s.index]];return !!first&&first!==s.answers[s.index]?.id})
 const sessionLevel=computed(()=>learning.session?.plannerConfig?.entryLevel||parent.settings.entryLevel)
 const {phonics:resolvedPhonics,activeChunkIndex,playbackState,timing}=phonicsController
 const timingNote=computed(()=>resolvedPhonics.value?.source==='whole'?'以完整单词的标准发音为准。':timing.value==='exact'?'音块跟随已标注的发音时间亮起。':timing.value==='weighted'?'按整词时长估算音块位置，仅作跟读提示。':'音块依次亮起，仅作跟读提示，以实际发音为准。')
@@ -155,7 +170,7 @@ const headingSourceLabel=computed(()=>unitOnlyCourse.value?`当前单元：${cou
 const courseSummaryData=computed(()=>summarizeCourse(courseStore.current))
 function cancelPending(){if(courseStore.clearPending())uni.showToast?.({title:'已取消排队',icon:'none'})}
 function showProgress(){uni.pageScrollTo?.({selector:'.study-formal',duration:200})}
-function openGallery(){courseStore.applyPending();openCourseGallery()}
+function openGallery(){if(!flushInputDraft())return;courseStore.applyPending();openCourseGallery()}
 async function scrollPracticeIntoView(){
  await nextTick()
  const query=uni.createSelectorQuery()
@@ -166,11 +181,11 @@ async function scrollPracticeIntoView(){
   if(bounds&&viewport)uni.pageScrollTo?.({scrollTop:Math.max(0,viewport.scrollTop+bounds.top-windowLayout.safeTop-12),duration:theme.reduced?0:150})
  })
 }
-function independentPractice(){clearStepTimer();stopQuestionAudio();custom.openConfig();uni.pageScrollTo?.({scrollTop:0,duration:0})}
+function independentPractice(){if(!flushInputDraft())return;clearStepTimer();stopQuestionAudio();custom.openConfig();uni.pageScrollTo?.({scrollTop:0,duration:0})}
 // Retain the existing current-word-group tools for legacy independent/review sessions.
-function openRoundTools(){clearStepTimer();phonicsController.stop();stopAudio();if(learning.startPractice()){customOpen.value=true;view.sync();void scrollPracticeIntoView()}}
+function openRoundTools(){if(!flushInputDraft())return;clearStepTimer();phonicsController.stop();stopAudio();if(learning.startPractice()){customOpen.value=true;view.sync();void scrollPracticeIntoView()}}
 function toggleCustomPractice(){customOpen.value=!customOpen.value;if(customOpen.value)void scrollPracticeIntoView()}
-function beginStudy(){courseStore.applyPending();learning.start()}
+function beginStudy(){if(!flushInputDraft())return;courseStore.applyPending();learning.start()}
 function beginReady(){beginStudy()}
 const course=computed(()=>learning.lesson)
 const estimate=computed(()=>Math.max(1,Math.ceil((view.total||learning.due.length||learning.studyWords.length||5)*.7)))
@@ -206,7 +221,7 @@ onUnmounted(stopStatsTimer)
 const correctRun=computed(()=>{let count=0;const answers=view.revisiting?view.state.answers:learning.session?.answers||[];for(const answer of [...answers].reverse()){if(!answer.correct)break;count++}return count})
 const longChoices=computed(()=>learning.choices.some(choice=>Array.from(view.mode==='connect'?choice.meaning:choice.word).length>(view.mode==='connect'?12:18)))
 const conceal=computed(()=>!view.answer&&['listen','spell','dictation'].includes(view.mode))
-const canSubmit=computed(()=>view.mode==='connect'||view.mode==='listen'?!!view.selected:!!view.current&&spellingInputReady(view.input,view.current,view.revisiting||view.retrying?view.state.letterDraft:learning.session?.letterDraft))
+const canSubmit=computed(()=>!view.revisiting&&!view.retrying&&!!learning.resourceProblem?false:view.mode==='connect'||view.mode==='listen'?!!view.selected:!!view.current&&spellingInputReady(view.input,view.current,view.revisiting||view.retrying?view.state.letterDraft:learning.session?.letterDraft))
 watch(()=>[learning.session?.id,learning.session?.index,learning.session?.flow?.step,learning.session?.completedAt],()=>view.sync(),{immediate:true})
 watch(()=>view.current,word=>{phonicsController.setWord(word)},{immediate:true})
 watch([()=>learning.session?.id,()=>view.current?.id,()=>view.index,()=>view.mode],()=>{exploreOpen.value=false})
@@ -218,8 +233,8 @@ onShow(()=>{pageActive.value=true;learning.prepareDaily();if(practiceEntry&&!pra
 onHide(()=>{pageActive.value=false;stopQuestionAudio();activities.pauseTimer();custom.leave()})
 watch(()=>view.answer,answer=>{if(answer?.correct)successHaptic(theme.reduced)})
 const questionAudioKey=()=>[learning.session?.id,view.current?.id,view.mode,view.index].join(':')
-function stopQuestionAudio(){playEpoch++;phonicsController.stop();stopAudio()}
-async function play(){const word=view.current,key=questionAudioKey(),epoch=++playEpoch;if(!word||custom.isOpen||!pageActive.value)return;audioError.value='';try{await phonicsController.play(word)}catch(error){if(epoch===playEpoch&&key===questionAudioKey()&&!custom.isOpen&&pageActive.value)audioError.value=(error as Error).message}}
+function stopQuestionAudio(){playEpoch++;questionPlaybackKey='';phonicsController.stop();stopAudio()}
+async function play(){const word=view.current,key=questionAudioKey(),epoch=++playEpoch;if(!word||custom.isOpen||!pageActive.value)return;audioError.value='';questionPlaybackKey=learning.beginQuestionAudio();try{await phonicsController.play(word)}catch(error){if(epoch===playEpoch&&key===questionAudioKey()&&!custom.isOpen&&pageActive.value)audioError.value=(error as Error).message}}
 function submit(){if(view.answer||view.mode!=='flash'&&!canSubmit.value)return;uni.hideKeyboard?.();view.submit(view.mode==='flash'?3:undefined)}
 function another(){stopAudio();courseStore.applyPending();if(learning.studyWords.length||learning.due.length||learning.needsConsolidation)learning.start();else activities.start('check')}
 function shortcut(event:{key:string;metaKey?:boolean;ctrlKey?:boolean}){
@@ -231,7 +246,7 @@ function shortcut(event:{key:string;metaKey?:boolean;ctrlKey?:boolean}){
  else if(/^[1-4]$/.test(event.key)){const index=+event.key-1;if(view.mode==='flash'&&view.revealed)view.submit(+event.key as ReviewRating);else if(!view.revisiting&&learning.choices[index])view.select(learning.choices[index].id)}
 }
 onMounted(()=>uni.$on('wp-shortcut',shortcut))
-onUnmounted(()=>{uni.$off('wp-shortcut',shortcut);stopQuestionAudio();phonicsController.dispose()})
+onUnmounted(()=>{uni.$off('wp-shortcut',shortcut);stopQuestionAudio();unsubscribeQuestionAudio();phonicsController.dispose()})
 </script>
 
 

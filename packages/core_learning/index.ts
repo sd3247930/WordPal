@@ -5,9 +5,14 @@ export type ReviewRating = 1 | 2 | 3 | 4
 export type MasteryState = 'new' | 'learning' | 'review' | 'mastered'
 export type LearningMode = 'flash' | 'connect' | 'listen' | 'spell' | 'dictation'
 export type StudyStep = LearningMode | 'consolidate'
+export interface StudyCapability {status:'ready'|'unavailable'|'completed';reason?:string}
+export interface AudioEvidence {url:string;requestId:number;heardAt:string}
 export interface DailyFlow {
   schemaVersion:1; step:StudyStep; entryLevel:EntryLevel; target:number
   completed:Record<StudyStep,string[]>; attempts:Answer[]; begunAt?:string; finishedDate?:string
+  /** First final assessment is independent of the teaching retry/pass state. */
+  assessments?:Record<string,string>
+  capabilities?:Partial<Record<StudyStep,Record<string,StudyCapability>>>
 }
 export interface CompletedDailyPlan {
  id:string;courseId:string;date:string;completedAt:string;finishedDate:string
@@ -40,6 +45,10 @@ export interface Answer {
   source: 'review_due' | 'new_word' | 'practice'; mode: LearningMode; input: string
   hinted?:boolean; dueAtSubmit?:string;courseId?:string
   inputAssistance?:'tiles'
+  hintKind?:'answer'|'encouragement';requestedRating?:ReviewRating
+  assessmentVersion?:1;recallAttempt?:'first';step?:StudyStep
+  settlement?:'settled'|'practice'|'stale_due'|'already_settled'|'legacy_session'
+  audioEvidence?:AudioEvidence
 }
 export interface LearningSession {
   id: string; startedAt: string; date: string; kind: 'review_due' | 'new_word' | 'practice'
@@ -47,9 +56,12 @@ export interface LearningSession {
   revealed: boolean; selected: string; answers: Answer[]; completedAt?: string
   /** Recall help is separate from revealing the correct answer; absent in legacy sessions. */
   hinted?:boolean
+  hintKind?:'answer'|'encouragement'
   letterDraft?:LetterBlockDraft;inputAssistance?:'tiles'
-  courseId?:string;contentVersion?:string;lessonId?:string;wordSnapshot?:Record<string,Word>;seed?:number
+  courseId?:string;contentVersion?:string;resourceVersion?:string;lessonId?:string;wordSnapshot?:Record<string,Word>;seed?:number
   wordSources?:Record<string,'review_due'|'new_word'|'practice'>
+  /** Frozen shared-card identity. Legacy due sessions must obtain a fresh queue. */
+  memoryVersions?:Record<string,string>
   plannerConfig?:{dailyNewWordLimit:DailyNewWordLimit;entryLevel:EntryLevel}
   /** First-pass targets follow textbook order; practice/review can still be requested explicitly. */
   sequenceWordIds?:string[]

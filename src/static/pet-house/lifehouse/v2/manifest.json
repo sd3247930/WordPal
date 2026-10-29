@@ -1,0 +1,6511 @@
+{
+  "schemaVersion": 1,
+  "assetVersion": 2,
+  "status": "ready",
+  "metadataClean": true,
+  "reviewedSourceCount": 324,
+  "sources": [
+    {
+      "id": "water-feed-l0-v1",
+      "sha256Base64": "/ttt/fVxWFbY0XT5YmcYoSrqzo4DjFgnANoquE/t7EQ="
+    },
+    {
+      "id": "water-feed-l1-v1",
+      "sha256Base64": "y4TU6O6DMCRqWkJmGLpwK/egvvTxxpu+/q0lgYdLxg4="
+    },
+    {
+      "id": "water-feed-l2-v1",
+      "sha256Base64": "kZaYGusAUObCeMlQXoJRR/Ebp4y85rgXePyqWZSOFa8="
+    },
+    {
+      "id": "water-feed-l3-v1",
+      "sha256Base64": "DoCW5pwiyburkqtihE8e39Wtb08k+FMiy10kEAcgHEQ="
+    },
+    {
+      "id": "water-feed-l4-v1",
+      "sha256Base64": "UEzFKBOR0NO1woEddpBzeYuOEXMAJMVIhZ9h+dvHcso="
+    },
+    {
+      "id": "water-feed-l5-v1",
+      "sha256Base64": "YEAeprhQsMbOWIFl3Mwpoe0GrEbXmxuwOcdXqgU/vOc="
+    },
+    {
+      "id": "water-dress-l0-v1",
+      "sha256Base64": "2Ela1UWdeVKvI6iqZ9XKgiIVCE8fVPTX91gvPRkK9+A="
+    },
+    {
+      "id": "water-dress-l0-v1-f1-back",
+      "sha256Base64": "aCBPE6OkdUB8mo7avwe6JjUEn6wNMaJ+hIU62YlS8J8="
+    },
+    {
+      "id": "water-dress-l0-v1-f1-front",
+      "sha256Base64": "j8vweCy+oSwhAcRCRso7HI2NQq6E06qrUmB6pXiA9w4="
+    },
+    {
+      "id": "water-dress-l0-v1-f2-back",
+      "sha256Base64": "O75IRZlXDwtqPke0i1ki9JNyya+POLCgMpzAUO3g8ZM="
+    },
+    {
+      "id": "water-dress-l0-v1-f2-front",
+      "sha256Base64": "UE6RATY6bYWfYYnbvb9YDvQIHlDZ7Sb849HkNiM2C8Y="
+    },
+    {
+      "id": "water-dress-l0-v1-f3-back",
+      "sha256Base64": "ZVDjSpAT+Ujf2BgKZ+ooKWi9r6u/fRYwNwxDVKgSfRA="
+    },
+    {
+      "id": "water-dress-l0-v1-f3-front",
+      "sha256Base64": "v7thKXJgAXqfAfNiULbCeFQGtk1yp5X7IOiVDOqe4uE="
+    },
+    {
+      "id": "water-dress-l0-v1-f4-back",
+      "sha256Base64": "9zzX4M9CPjvwpAhg2sH2QYCkW1NwEpAgRaO8qwI42Xo="
+    },
+    {
+      "id": "water-dress-l0-v1-f4-front",
+      "sha256Base64": "sHWFwx3A7ppPHJh73bkCXxplyXvxhl02Re+CI1XXG6w="
+    },
+    {
+      "id": "water-dress-l1-v1",
+      "sha256Base64": "PuLcHGFcb7yvoYgdCUt3FqR7GsWQlAGKu+arQYW8I5g="
+    },
+    {
+      "id": "water-dress-l1-v1-f1-back",
+      "sha256Base64": "f9sse46cMHiEabfYPwhcevitRG2ygvQLksRgRQVuYEU="
+    },
+    {
+      "id": "water-dress-l1-v1-f1-front",
+      "sha256Base64": "bb5vLfw+80h1jUSs61mw9OIIOpMq2OTa61w/3ZiIf8c="
+    },
+    {
+      "id": "water-dress-l1-v1-f2-back",
+      "sha256Base64": "G0/cm1tnGiazyC215Gnerlr+fhrxvqnEe3EiN1jRMg8="
+    },
+    {
+      "id": "water-dress-l1-v1-f2-front",
+      "sha256Base64": "jW0GqkTqQE8P/69JEmb178xHwAWhEDVPnhQFBLF/Jk8="
+    },
+    {
+      "id": "water-dress-l1-v1-f3-back",
+      "sha256Base64": "FpwiR3fkgna31wkWlexog+9rmayl6BrDO0cmwm8ZKnI="
+    },
+    {
+      "id": "water-dress-l1-v1-f3-front",
+      "sha256Base64": "BxpkdEE5vyN+Gv5mDJAxNWnId0plZ6AzbnhS9OBFuaU="
+    },
+    {
+      "id": "water-dress-l1-v1-f4-back",
+      "sha256Base64": "twdndMOuNBDXrQprdQpItmewzyq9aRO4NRRyxBEKVzc="
+    },
+    {
+      "id": "water-dress-l1-v1-f4-front",
+      "sha256Base64": "D8bqN20C/PCPxF/5Vhv0rl8mFITlgEvgbt51okKc0MM="
+    },
+    {
+      "id": "water-dress-l2-v1",
+      "sha256Base64": "gZoEJbhNwPC2w+SCBBpq1CGVpOcTLSRTUFqJkXPYTMY="
+    },
+    {
+      "id": "water-dress-l2-v1-f1-back",
+      "sha256Base64": "j70K5BMg6NKwXcLVBGHVPU6cq8gLMC7T1XfQ60vcujo="
+    },
+    {
+      "id": "water-dress-l2-v1-f1-front",
+      "sha256Base64": "zG8EXju1aT8PqHaeYn7blUnq2oA2KT384HVmJiAhelQ="
+    },
+    {
+      "id": "water-dress-l2-v1-f2-back",
+      "sha256Base64": "eeT4hWtE9PBH3GBOD0/J0PtEzSFY01Us3grNJhzfiuI="
+    },
+    {
+      "id": "water-dress-l2-v1-f2-front",
+      "sha256Base64": "xm+QoIKsBKZzeBDJPbBBd9mksX4rI86ynHNOVuVKYl0="
+    },
+    {
+      "id": "water-dress-l2-v1-f3-back",
+      "sha256Base64": "gRGOaYVshJLsVNOxo6c1Ey37DPEkOpWbM/vVL9oBOI8="
+    },
+    {
+      "id": "water-dress-l2-v1-f3-front",
+      "sha256Base64": "2c0dSBIQ2jFEpg/Iusa7EjX2DqwVqsiAEKCPP1Eq8B8="
+    },
+    {
+      "id": "water-dress-l2-v1-f4-back",
+      "sha256Base64": "ISj1S80n6ac3E0eJmQQ31b0qnmX+mnlMU5xOxzQKFg0="
+    },
+    {
+      "id": "water-dress-l2-v1-f4-front",
+      "sha256Base64": "lgDdODQZr0T4/VyKBOxhw46ar+VdIJXkbjGCA9po2YM="
+    },
+    {
+      "id": "water-dress-l3-v1",
+      "sha256Base64": "SVmvweLNtf7U1lb4gO3Hv1IjOzJUxqpT8FzZG5uxrMw="
+    },
+    {
+      "id": "water-dress-l3-v1-f1-back",
+      "sha256Base64": "MaJkB/QgALQascSa5CnvhVALHu7eAFzmG0oFjevN55E="
+    },
+    {
+      "id": "water-dress-l3-v1-f1-front",
+      "sha256Base64": "nwXQd3UlzsmOA4nY119uf8BzoV6MCP7N1wNcSiFTQuI="
+    },
+    {
+      "id": "water-dress-l3-v1-f2-back",
+      "sha256Base64": "daykz8SHG5qDhkYqrMB8PbbFUfK1Se1uCG7WB8BkfzQ="
+    },
+    {
+      "id": "water-dress-l3-v1-f2-front",
+      "sha256Base64": "8A5VgST/kt2vPusY0Ipx5OeJsIY52w1CWiQ3yTFOKKk="
+    },
+    {
+      "id": "water-dress-l3-v1-f3-back",
+      "sha256Base64": "VN4tW+bml9q4mpRKtvLCkODNgtd93wkYd9rWKk+Htnw="
+    },
+    {
+      "id": "water-dress-l3-v1-f3-front",
+      "sha256Base64": "fLTTF3r/yUdGBLLIRtyF9qluLoeFJECjnMiHy/GMDMs="
+    },
+    {
+      "id": "water-dress-l3-v1-f4-back",
+      "sha256Base64": "FP9tNPTzvvWrmMxJuoA1y2GYKdFYqBK8pQAbKDsTLTk="
+    },
+    {
+      "id": "water-dress-l3-v1-f4-front",
+      "sha256Base64": "lfXBCLNvV+EkKlT8/vjzT2/ybveKte/fl5BpjQ1CA/I="
+    },
+    {
+      "id": "water-dress-l4-v1",
+      "sha256Base64": "HI9DSY13ocBfw3sZjJGy5mZ0gy/wukGccR9YqLy5DUE="
+    },
+    {
+      "id": "water-dress-l4-v1-f1-front",
+      "sha256Base64": "F/VMfBsQS138MMfVrxThRv+wu9Crg1hNIdjCJU998jA="
+    },
+    {
+      "id": "water-dress-l4-v1-f2-front",
+      "sha256Base64": "KrFKH3AoS21/s5bx5B7BgDCLe5g+ny2NcyQ3dyuYnSs="
+    },
+    {
+      "id": "water-dress-l4-v1-f3-front",
+      "sha256Base64": "TNPHX/Ym9/i/uiEs5YEPZ+801BgQI+UpxEzqo+pJyik="
+    },
+    {
+      "id": "water-dress-l4-v1-f4-front",
+      "sha256Base64": "MVDSeu76Nrnp2F0m+1jtn683vQtUVVrUVhaFza/xwy0="
+    },
+    {
+      "id": "water-dress-l5-v1",
+      "sha256Base64": "Yfdj6UG/OIbOm4k85CNBSd4x8IilAnlX/kOD1Rm4J5Q="
+    },
+    {
+      "id": "water-dress-l5-v1-f1-back",
+      "sha256Base64": "fSepYpv332dbyTxK6adHEV8h5PvbNv0A/l9EL2+o/30="
+    },
+    {
+      "id": "water-dress-l5-v1-f1-front",
+      "sha256Base64": "cHiN2DbnosfDHyP++r75zw6WnXHSvt5+7Rg9Fbuc8uM="
+    },
+    {
+      "id": "water-dress-l5-v1-f2-back",
+      "sha256Base64": "EiaxAVLnGhiVf79AQYtdfdvsr+AADVEIEUBayFFRSsU="
+    },
+    {
+      "id": "water-dress-l5-v1-f2-front",
+      "sha256Base64": "jRdmiFzKzVRbSVefDEPwM7DT6aGI+KZHyegtlPoyCYg="
+    },
+    {
+      "id": "water-dress-l5-v1-f3-back",
+      "sha256Base64": "JD6HglV4BMxXmzpxm7s1qhGvJu98zU7HTdWfFPvxuQc="
+    },
+    {
+      "id": "water-dress-l5-v1-f3-front",
+      "sha256Base64": "8p/TvweKObykgDzv2bo977e9oAghLlcM8MW7VXoIZgk="
+    },
+    {
+      "id": "water-dress-l5-v1-f4-back",
+      "sha256Base64": "N3W0XkDDTqC9JTJFpR+uV13rUu38rbOOfjtj+NaeXoY="
+    },
+    {
+      "id": "water-dress-l5-v1-f4-front",
+      "sha256Base64": "EplayUtsCoFUlYbrZ6MjDFOEMreMGFohg0bIC5m7LkY="
+    },
+    {
+      "id": "water-furniture-l0-v1",
+      "sha256Base64": "JkexNRQwkod1Kt3bWU3PEQ700i0T8c8sTL5YrMTEFoM="
+    },
+    {
+      "id": "water-furniture-l1-v1",
+      "sha256Base64": "0aHundkhivYtdCVav89qGgN6iG96Vbr9ZI47T8Uc/pw="
+    },
+    {
+      "id": "water-furniture-l2-v1",
+      "sha256Base64": "Zn9xF5sUPh9PTJC6fqJtjOF7tThCKj1JgSvf3KHwxe8="
+    },
+    {
+      "id": "water-furniture-l3-v1",
+      "sha256Base64": "eS3qKQCt+IxLUAdgWARn0ltkO2SHC99L92w/rwQd7E8="
+    },
+    {
+      "id": "water-furniture-l4-v1",
+      "sha256Base64": "zo2tOu7Gt6hoEI34RHkv5hsaLwhJiRVZo+zo6+S64pc="
+    },
+    {
+      "id": "water-furniture-l5-v1",
+      "sha256Base64": "yMqbf0sFVi5NFWG8MBZi3CHxHbAJy0gDZrrOCvFOFRY="
+    },
+    {
+      "id": "water-decor-l0-v1",
+      "sha256Base64": "fh1f5PZNxdovmRZHSLcdjNIz4fKI7Jx1DxZ+FZVd5XU="
+    },
+    {
+      "id": "water-decor-l1-v1",
+      "sha256Base64": "kFsDkNp73uJUbCQNb6Bb5w4YurDrKGG7wGG24B3rYQc="
+    },
+    {
+      "id": "water-decor-l2-v1",
+      "sha256Base64": "ByeREwqR+h1CClrnF3Gaa6/B/JqdzdgMbSIPrhOCeEo="
+    },
+    {
+      "id": "water-decor-l3-v1",
+      "sha256Base64": "81V5ZkeDXbW/sV00ttoYv7fD7pMvRbcLx8WIize2WCQ="
+    },
+    {
+      "id": "water-decor-l4-v1",
+      "sha256Base64": "R2gLiEySNP4uQMgPxWCyJ7AzmqxJokk9H1WfTFcM/m8="
+    },
+    {
+      "id": "water-decor-l5-v1",
+      "sha256Base64": "6PtztY7zkpseKwZMQAUYhp0g27GL+edXIMk3Q0+QURI="
+    },
+    {
+      "id": "water-courtyard-l0-v1",
+      "sha256Base64": "LduOfLNOevJZm5mCzVqj8w/tqMqS6ty6293k+TxqPXk="
+    },
+    {
+      "id": "water-courtyard-l1-v1",
+      "sha256Base64": "ClK2KXkLfkE+Ri0Yn83gjFTXoQyLJ+0e9+RhQI6u6SU="
+    },
+    {
+      "id": "water-courtyard-l2-v1",
+      "sha256Base64": "6zWQxss4vgZ4RMrtKZ17wwg3IkQAUXfcUxTyITiL/ek="
+    },
+    {
+      "id": "water-courtyard-l3-v1",
+      "sha256Base64": "f9aWnrBJDNpKUvrbLTREO2rCEdOvg2kc9DgmBa4mXzY="
+    },
+    {
+      "id": "water-courtyard-l4-v1",
+      "sha256Base64": "+sK5PwShxrZD1UmSha70ucKMcQ+IelOS3t8tQPHdvWs="
+    },
+    {
+      "id": "water-courtyard-l5-v1",
+      "sha256Base64": "NsxBLGMw8+7ceJba74J2+OFaMD+ezz3n9bjRZ9p97f0="
+    },
+    {
+      "id": "fire-feed-l0-v1",
+      "sha256Base64": "4RKvPXh9FqrzM3yIEWw2IGGqM0f3d/cjnb1BuicPtgU="
+    },
+    {
+      "id": "fire-feed-l1-v1",
+      "sha256Base64": "HMmGBirf8t9DgmUno/Eh62WdmSsWNPlNv5TdwYQxqjg="
+    },
+    {
+      "id": "fire-feed-l2-v1",
+      "sha256Base64": "R/JCEk4uW9w6tBhArMhcIelU63phaqQ0J3H6DFa6ENg="
+    },
+    {
+      "id": "fire-feed-l3-v1",
+      "sha256Base64": "iafPGnoQREJFDvI5rmXqGRk1c90GcPHqb+JQs0JRoYE="
+    },
+    {
+      "id": "fire-feed-l4-v1",
+      "sha256Base64": "dbor2acIKu1QmYeAi1fGeSSax4S+Z1etDI4+vPoVsco="
+    },
+    {
+      "id": "fire-feed-l5-v1",
+      "sha256Base64": "YfsapLoa/uYl9aFo4W104noMwXcrAJzxUKlM+GQOAYM="
+    },
+    {
+      "id": "fire-dress-l0-v1",
+      "sha256Base64": "QV+RiORSstlta3+QpvPYi/khiJAM/Vq9thCYCZLz3wk="
+    },
+    {
+      "id": "fire-dress-l0-v1-f1-back",
+      "sha256Base64": "IhlocaTEu5leygwA04eCWDGBgrWO9O3niQEBJ3P1kMs="
+    },
+    {
+      "id": "fire-dress-l0-v1-f1-front",
+      "sha256Base64": "Tr2v5xqM3gxI7QbVqa2pIPlYNsMBWnRiu3A25VdvC8g="
+    },
+    {
+      "id": "fire-dress-l0-v1-f2-back",
+      "sha256Base64": "7sPGpXyvl/q7izE7xBX/tLC927aCcTJs2rwM77xis/s="
+    },
+    {
+      "id": "fire-dress-l0-v1-f2-front",
+      "sha256Base64": "oMNnnp1uo2qZBalVDu8KfaSYxZKm2QRPiS6wCBhSMFY="
+    },
+    {
+      "id": "fire-dress-l0-v1-f3-back",
+      "sha256Base64": "q0ENt5OJUXI1oyXK0EC1lNFnNWs6inY/kCwLO8hOapg="
+    },
+    {
+      "id": "fire-dress-l0-v1-f3-front",
+      "sha256Base64": "pfmXdHA8XxpcgiKQUPs7alQmwdawktNW5deJCTDFztI="
+    },
+    {
+      "id": "fire-dress-l0-v1-f4-back",
+      "sha256Base64": "dSJx438XoQxcZJFikKYzcUMDlXFhRJ9pBQ/pl5uxtYY="
+    },
+    {
+      "id": "fire-dress-l0-v1-f4-front",
+      "sha256Base64": "z2AozSzB7iZ94D3CSa/7DJgl3OO604bwCbh3iqp/gck="
+    },
+    {
+      "id": "fire-dress-l1-v1",
+      "sha256Base64": "zWnVzXpISn/5lxg480z9l8kXp1Js2V6goCMUqZekwRA="
+    },
+    {
+      "id": "fire-dress-l1-v1-f1-back",
+      "sha256Base64": "N3n9OkTf8bmG44RA/Z4JT95h7Th1cdYyaMuFdpvxy3A="
+    },
+    {
+      "id": "fire-dress-l1-v1-f1-front",
+      "sha256Base64": "7a8K/aPviitKHpGUSZRc93Aw/gt3eQo98amDiOvEBQo="
+    },
+    {
+      "id": "fire-dress-l1-v1-f2-back",
+      "sha256Base64": "CrWnzty2VcMcknEj7eXGGCDWPngY9G8VpZ7ZdlVpS8Q="
+    },
+    {
+      "id": "fire-dress-l1-v1-f2-front",
+      "sha256Base64": "LJSwi0QdVC+iNpRyrZ4N8hJRia7lAq2inrj+VFb/Q6M="
+    },
+    {
+      "id": "fire-dress-l1-v1-f3-back",
+      "sha256Base64": "UiLd1+Vz4Y53XND9q1/0IinSA3gCGgExNVx/Y5FAFB0="
+    },
+    {
+      "id": "fire-dress-l1-v1-f3-front",
+      "sha256Base64": "bvaZnHqhDWpc1yNz61pcVTs6sk1gergq0qmxNaHmGQw="
+    },
+    {
+      "id": "fire-dress-l1-v1-f4-back",
+      "sha256Base64": "yf4/HFuJv5idztHh266nDPGp1IHfruxqjCXSqyP10lY="
+    },
+    {
+      "id": "fire-dress-l1-v1-f4-front",
+      "sha256Base64": "wulZVETpuBvS+TXF9p3mJvgvRju8rdHX8Gb3Td3xJF0="
+    },
+    {
+      "id": "fire-dress-l2-v1",
+      "sha256Base64": "/Z52PJNYTJgOQzaQpPa5LlC78kM9WG93kjPkbqu1j2U="
+    },
+    {
+      "id": "fire-dress-l2-v1-f1-back",
+      "sha256Base64": "L6F/FGD8800PCyZfjXxLPpPyYeHCGcAldxWqf8jbZMw="
+    },
+    {
+      "id": "fire-dress-l2-v1-f1-front",
+      "sha256Base64": "7+R4FNjOPZ18+xxfxALUj14IwihYLf6AlSfU98r/iOo="
+    },
+    {
+      "id": "fire-dress-l2-v1-f2-back",
+      "sha256Base64": "NjR0wLQ3oFJVEOh8PK4FQuxwZ83dDX09OpSLpHhb0lQ="
+    },
+    {
+      "id": "fire-dress-l2-v1-f2-front",
+      "sha256Base64": "yjv/LG3lNGCXgrZbD5r6sioWT4ILY5fCxcS7e5n+CHk="
+    },
+    {
+      "id": "fire-dress-l2-v1-f3-back",
+      "sha256Base64": "00KRcmE/ZRy/N6U9sAtxyNvqCoUbA0WNYH+XMLHl86Y="
+    },
+    {
+      "id": "fire-dress-l2-v1-f3-front",
+      "sha256Base64": "U6ozd2RDPa4T1ehJwpQ3Mihrn3oC6YeOU9vCIwhReCE="
+    },
+    {
+      "id": "fire-dress-l2-v1-f4-back",
+      "sha256Base64": "5X0jgj5pnc+ikEjPe1DXKGeMxvtwtv/3rkQryhoK1Po="
+    },
+    {
+      "id": "fire-dress-l2-v1-f4-front",
+      "sha256Base64": "V6jg8NmmcM0m0kEP5WUZ83+Zkz/XkJHa4CQ4+PyMvaI="
+    },
+    {
+      "id": "fire-dress-l3-v1",
+      "sha256Base64": "mFG/TWCKShRNHseGkFLwTuebOkZtB1m0Q0DTNNjbalc="
+    },
+    {
+      "id": "fire-dress-l3-v1-f1-back",
+      "sha256Base64": "jssdEvF0vCp02rueIeR0Lh9hvYOphRp1Es1rLlJZd2I="
+    },
+    {
+      "id": "fire-dress-l3-v1-f1-front",
+      "sha256Base64": "qflLDbbjVvFQN6DmWAoGz/gNLxM2sy76oVxNrszTKiU="
+    },
+    {
+      "id": "fire-dress-l3-v1-f2-back",
+      "sha256Base64": "uDQMB6NJoESemm8/kXAB/oHDNowSlwDZ8RsYOe+Ro0Q="
+    },
+    {
+      "id": "fire-dress-l3-v1-f2-front",
+      "sha256Base64": "upIBn5sqwkqYVu2ebNuBJ13A8EaKldBIGla8n2VbZL4="
+    },
+    {
+      "id": "fire-dress-l3-v1-f3-back",
+      "sha256Base64": "PiTyIzI8cebgHipxEUb7Yg1jEdsHhWOruHICu8SOUmM="
+    },
+    {
+      "id": "fire-dress-l3-v1-f3-front",
+      "sha256Base64": "FWRM00fm9JZaA1ec8pyRfEebUIuPXZsD9vdBdmYxNNE="
+    },
+    {
+      "id": "fire-dress-l3-v1-f4-back",
+      "sha256Base64": "GXwzFDLwqS4Sffe553ahHmCXsjTTpbjSKJ7IFrucexQ="
+    },
+    {
+      "id": "fire-dress-l3-v1-f4-front",
+      "sha256Base64": "9zS/DE+PMPxL9nmMfCjwoi0DL8Z7lIOHYQ7wJ17SbaM="
+    },
+    {
+      "id": "fire-dress-l4-v1",
+      "sha256Base64": "RrToGx83p3tbkwR6Gx6I4EQVSTcUh3aCT2Gyfnpw6DA="
+    },
+    {
+      "id": "fire-dress-l4-v1-f1-front",
+      "sha256Base64": "qaCUrULKsYO4HF8RKJdhgmn90MIPqx2dC0xbTIPRkWA="
+    },
+    {
+      "id": "fire-dress-l4-v1-f2-front",
+      "sha256Base64": "PSAmBJ9cewh1gzkNlIGFdpMDOYhRlait9sOpVuC80QQ="
+    },
+    {
+      "id": "fire-dress-l4-v1-f3-front",
+      "sha256Base64": "WsKI6ItcgOL9MkfccjjiF+tKJV9xCKJKhrA/rCS4epc="
+    },
+    {
+      "id": "fire-dress-l4-v1-f4-front",
+      "sha256Base64": "3+jCAI27868BTzjRSTnx0oSc+l7Gz4naVWm/xBo/UNw="
+    },
+    {
+      "id": "fire-dress-l5-v1",
+      "sha256Base64": "EtSZaol91EW+XgVZZqhTgp2h512HbDQxBV0PHgNjx2I="
+    },
+    {
+      "id": "fire-dress-l5-v1-f1-back",
+      "sha256Base64": "cxwCn8GQv6NycBMRH9j5uUIuZaAcmfsrUKDtWAmliYI="
+    },
+    {
+      "id": "fire-dress-l5-v1-f1-front",
+      "sha256Base64": "c1sn57YmIMvAJXM76wMRxkElqzqGt2/ap3sWAJR7/kI="
+    },
+    {
+      "id": "fire-dress-l5-v1-f2-back",
+      "sha256Base64": "Fh5OR9FezMdNjaMOZVPWgywLG4vyrACLI6euIW7Sx9s="
+    },
+    {
+      "id": "fire-dress-l5-v1-f2-front",
+      "sha256Base64": "4XGajztrJ7xcnzdIVhU64Ke7ZO8xlOHCIZ/wQcD/VgE="
+    },
+    {
+      "id": "fire-dress-l5-v1-f3-back",
+      "sha256Base64": "ZLxMsp1MXTEJZ1dQ6TvsVmphTY9w3CLWJ5z8PKI59a4="
+    },
+    {
+      "id": "fire-dress-l5-v1-f3-front",
+      "sha256Base64": "G69aS2yEePk64+feg79e5W3ywi1BT4qHU/LJaAunLik="
+    },
+    {
+      "id": "fire-dress-l5-v1-f4-back",
+      "sha256Base64": "MnxdMek5SrkPdIz7eV2hkvFDZr0UDfCQrrgk8mtHMEs="
+    },
+    {
+      "id": "fire-dress-l5-v1-f4-front",
+      "sha256Base64": "JfKvhAuz7JA7ld4MVJifCCUnxbYeF45n9GHSjAs6BAk="
+    },
+    {
+      "id": "fire-furniture-l0-v1",
+      "sha256Base64": "pjMdPLZ6QK6Y90GwIjpdhopRT5RHwxbmNviwjZTVpN0="
+    },
+    {
+      "id": "fire-furniture-l1-v1",
+      "sha256Base64": "/dvXh6CPx55671NLUwax8guNNxnGoulePllx0yAlnVg="
+    },
+    {
+      "id": "fire-furniture-l2-v1",
+      "sha256Base64": "D/y+fQUGFWAgLChG4KdIUbAeUnwgTdQfFT7ekOD5eXY="
+    },
+    {
+      "id": "fire-furniture-l3-v1",
+      "sha256Base64": "ZfFTGVi1iu9m7xkHWgqSJPujqv0Qmq8mJkKG5xkcrg4="
+    },
+    {
+      "id": "fire-furniture-l4-v1",
+      "sha256Base64": "162QZIX7CMw6whbDPJfLUNe7kcA+PSL6vwzFxLhoCwk="
+    },
+    {
+      "id": "fire-furniture-l5-v1",
+      "sha256Base64": "OtueU2JpcfOxL5J0+ikMMSj/PvbYTaBJAiLyJJnHRgo="
+    },
+    {
+      "id": "fire-decor-l0-v1",
+      "sha256Base64": "lYdMUD/RgCXiOypRv/fsWiBB4MtZCljaJzWyZAWDUH0="
+    },
+    {
+      "id": "fire-decor-l1-v1",
+      "sha256Base64": "Uwt2bFh7ycsWA4GlJMsl8yx1EmA8i9VLgI+BGbY/eVE="
+    },
+    {
+      "id": "fire-decor-l2-v1",
+      "sha256Base64": "KiKy/Qbyo9l7VqWaD6+RXVmWlBfR7eEgEqcA0UEB0OA="
+    },
+    {
+      "id": "fire-decor-l3-v1",
+      "sha256Base64": "74RByUjaWaNeMDguqpgzCejyt7rZ2qWFb7/agJKVHcQ="
+    },
+    {
+      "id": "fire-decor-l4-v1",
+      "sha256Base64": "BSF5opne2OIW2k5cII8RBHQMKyblUgmiQGiaamS8p3I="
+    },
+    {
+      "id": "fire-decor-l5-v1",
+      "sha256Base64": "GZGycYyuoC1eKa2G8FCHak3zM5v6bi0Y3VTywAIBx2o="
+    },
+    {
+      "id": "fire-courtyard-l0-v1",
+      "sha256Base64": "sDAfgsm8LdWU3O4/w3CB7yLPLuXLLkAPbpIze/sV1uM="
+    },
+    {
+      "id": "fire-courtyard-l1-v1",
+      "sha256Base64": "yJXUhtljGr88hE1sPV5AgUzJiy4b87W808hnxKnV+OE="
+    },
+    {
+      "id": "fire-courtyard-l2-v1",
+      "sha256Base64": "U8S5J3boQVMkvFKDUmfYdv9lETJNArN6pS3U89hgcy0="
+    },
+    {
+      "id": "fire-courtyard-l3-v1",
+      "sha256Base64": "82ltLNbpw/G2xLPHOI7hmVUk7sPb9YtFzV3d7B/pkHI="
+    },
+    {
+      "id": "fire-courtyard-l4-v1",
+      "sha256Base64": "QYbFp5Txh96Wmu+YhzfDT1Zk2W1rhfd9DkYzdB91ilU="
+    },
+    {
+      "id": "fire-courtyard-l5-v1",
+      "sha256Base64": "NlwzLcsNxu92ftqLVJyoCnEae51DYIFZyY2Ffw8x/zY="
+    },
+    {
+      "id": "earth-feed-l0-v1",
+      "sha256Base64": "0exfTN+Y4ACwW4mJjksBd5m9yt0dqSi20p4oYW+FT/E="
+    },
+    {
+      "id": "earth-feed-l1-v1",
+      "sha256Base64": "Qp1cU9BJr7Nc67IwIvICHXN2NZOFlYrtpu0pKhDXUAQ="
+    },
+    {
+      "id": "earth-feed-l2-v1",
+      "sha256Base64": "qxY6nlaWsq1BoBNFPzquHGIBJ/TCqJtyFjlqYrpc74w="
+    },
+    {
+      "id": "earth-feed-l3-v1",
+      "sha256Base64": "Dby3a64Ep/fjUWTdxp1Pk8h0m7TCTxvo7TIn9xfbdUY="
+    },
+    {
+      "id": "earth-feed-l4-v1",
+      "sha256Base64": "/C8xNZTcRPjPt1nhqXmHIgwXJVH8wVFwNMuhQK9tII4="
+    },
+    {
+      "id": "earth-feed-l5-v1",
+      "sha256Base64": "er8RzjJXqBFUd3xzwa4SMmYd1xa+US0wYbKZAw6egjw="
+    },
+    {
+      "id": "earth-dress-l0-v1",
+      "sha256Base64": "JhIimJbVwWz6EVvWFTHKCIJRHAk9GSBCONCQ5NzTZhU="
+    },
+    {
+      "id": "earth-dress-l0-v1-f1-back",
+      "sha256Base64": "1TTDSZZWzxqs0CSFBZt88gtMLdCn/lyOWks7n+s7XGg="
+    },
+    {
+      "id": "earth-dress-l0-v1-f1-front",
+      "sha256Base64": "vFgg/3AEdQSckOqzq7VngXLXBPz6dAwgMQYPajvdzJU="
+    },
+    {
+      "id": "earth-dress-l0-v1-f2-back",
+      "sha256Base64": "fp+tn0NxQJWeG/oo2RvgKQGFtsnOjnkChj9Ki02PyUY="
+    },
+    {
+      "id": "earth-dress-l0-v1-f2-front",
+      "sha256Base64": "5ORzMFB9jubjg3OIWS4Olg/ORNGLhxoG4BhOQ6e+iss="
+    },
+    {
+      "id": "earth-dress-l0-v1-f3-back",
+      "sha256Base64": "pYM02xhp4nRd+jYq3cxnFvq4nhVfPl72B0y/meVSQ70="
+    },
+    {
+      "id": "earth-dress-l0-v1-f3-front",
+      "sha256Base64": "pLPC4op1f8DKApRFz+2sWGJpirgpnQJCB0094NjCs/0="
+    },
+    {
+      "id": "earth-dress-l0-v1-f4-back",
+      "sha256Base64": "NFr5n0NAeroSt3Evy7ks/4UdFGEcY/GZ936jaeoV9pY="
+    },
+    {
+      "id": "earth-dress-l0-v1-f4-front",
+      "sha256Base64": "kxCMt4GToIszubb/5+SKpgqlnrxTJryqZEP33LPE4Ik="
+    },
+    {
+      "id": "earth-dress-l1-v1",
+      "sha256Base64": "5QK3ztbaV5ZfmL6mOzhOwuLXuUEovdb31GChq3i/o2o="
+    },
+    {
+      "id": "earth-dress-l1-v1-f1-back",
+      "sha256Base64": "EGeqWtDB+ksz95ggoV6kbGS1UWAis3uEGQgiwYxmdbc="
+    },
+    {
+      "id": "earth-dress-l1-v1-f1-front",
+      "sha256Base64": "7a73qwIurBAfPNyY3IY4KdyyGArWXE8ZHY1yz+/MBow="
+    },
+    {
+      "id": "earth-dress-l1-v1-f2-back",
+      "sha256Base64": "1BRxvMAsFo/EvoYKNJM2gzTRgzsMRzq9Ioff+OPITMs="
+    },
+    {
+      "id": "earth-dress-l1-v1-f2-front",
+      "sha256Base64": "3I7CgKHsk7y82BNBnxsbLLRciECkbJKW3LyVSTWK0iw="
+    },
+    {
+      "id": "earth-dress-l1-v1-f3-back",
+      "sha256Base64": "PedHtk9NVXZ+oLzIVQNLL1gEvIfFr4ywYOiHFeYuEV4="
+    },
+    {
+      "id": "earth-dress-l1-v1-f3-front",
+      "sha256Base64": "ARWeh3U3Oi+tfCIz5ZtPN51ioGYBuIt87UgmUPswBR0="
+    },
+    {
+      "id": "earth-dress-l1-v1-f4-back",
+      "sha256Base64": "RsJgLd/sG/7Z99+AK6jlcoYTmOgOavAg3ThEvxmiyJs="
+    },
+    {
+      "id": "earth-dress-l1-v1-f4-front",
+      "sha256Base64": "7OTpKjQLMSViEHth9mjLjuBPFLS4Y1KtfqxGnskmwCw="
+    },
+    {
+      "id": "earth-dress-l2-v1",
+      "sha256Base64": "yt1ht/dC5isnbfMdGdP7HhjdA33Mb/yo/SsoC8JRa28="
+    },
+    {
+      "id": "earth-dress-l2-v1-f1-back",
+      "sha256Base64": "lX6keSSFicoKnYTIpDmWyCrWWgLljhI2IpUwlrXN58g="
+    },
+    {
+      "id": "earth-dress-l2-v1-f1-front",
+      "sha256Base64": "A9xfUSvKBkr/De7U539RR+GYMZkHiN2WjhDGYntE44o="
+    },
+    {
+      "id": "earth-dress-l2-v1-f2-back",
+      "sha256Base64": "qZWHMcOB1/9amLpQH6ONaYzuw5iOLeikJU2+ZxeeBYo="
+    },
+    {
+      "id": "earth-dress-l2-v1-f2-front",
+      "sha256Base64": "VEQ4LPG0ykGNTS85u2LzYVgTvKm5wjJPXffYRSf6Mls="
+    },
+    {
+      "id": "earth-dress-l2-v1-f3-back",
+      "sha256Base64": "hO6daPRdo3ZjF9YMEKYHRDEOMq3OoWK8tfgHicZvS6c="
+    },
+    {
+      "id": "earth-dress-l2-v1-f3-front",
+      "sha256Base64": "euoRaEgIf/9B95Q9EWo+QriaF5KsyEzJZd86l/w6K0c="
+    },
+    {
+      "id": "earth-dress-l2-v1-f4-back",
+      "sha256Base64": "JJg1Y5IFvIhLy5E0kB8BYA+1oevU9rHQjXXOBe1MnUs="
+    },
+    {
+      "id": "earth-dress-l2-v1-f4-front",
+      "sha256Base64": "6J5ifZ/zOpS80pZzZtKYCqRVVuOob9Wji/B9bukJoZU="
+    },
+    {
+      "id": "earth-dress-l3-v1",
+      "sha256Base64": "uGlkXAVc+Q/8gPcZVNszDllvDKOCLEFpWkdRVwZwJnY="
+    },
+    {
+      "id": "earth-dress-l3-v1-f1-back",
+      "sha256Base64": "2AIg28lgsrGAfZY5QN44+CVwfQ9lo0hsoX7dz1FeUlQ="
+    },
+    {
+      "id": "earth-dress-l3-v1-f1-front",
+      "sha256Base64": "t0wat2Xy2+4zuU+eIVgH4M6GiEx4JHZ4QOBYP33RGqY="
+    },
+    {
+      "id": "earth-dress-l3-v1-f2-back",
+      "sha256Base64": "CHVAl2LDYCmZuctkJo1dKJCZgErpC7tC+Bw7Lkju97A="
+    },
+    {
+      "id": "earth-dress-l3-v1-f2-front",
+      "sha256Base64": "fDxz+vBK/3fGRyoSqt8+MeAhPARJ4H/JaLvJv5bIgrc="
+    },
+    {
+      "id": "earth-dress-l3-v1-f3-back",
+      "sha256Base64": "eMAF+j3QOYUApasyCeRO+ROvEqKdM8tKWj2XZJt1JoA="
+    },
+    {
+      "id": "earth-dress-l3-v1-f3-front",
+      "sha256Base64": "Han+d6WHz+KEX78KM8pjYDmvsVzSz2KBO3izPGzCpm0="
+    },
+    {
+      "id": "earth-dress-l3-v1-f4-back",
+      "sha256Base64": "2HfCR9XmuiDi1REH4Fx+OFz82+oncCkCSIcpELjAJag="
+    },
+    {
+      "id": "earth-dress-l3-v1-f4-front",
+      "sha256Base64": "3iM5REinKcNdOo15oY+4bj3lcz/AiKXqsOTuWZfD/z8="
+    },
+    {
+      "id": "earth-dress-l4-v1",
+      "sha256Base64": "J0EboKDNidyiaNPlEqgUwwOl9mimadXJXRBjW5Amzas="
+    },
+    {
+      "id": "earth-dress-l4-v1-f1-front",
+      "sha256Base64": "W4EDHpZiTCIy+KDYTjkYuqLSsGDRJizapJSgtbCdsOw="
+    },
+    {
+      "id": "earth-dress-l4-v1-f2-front",
+      "sha256Base64": "2QQF5vRC2tmc7FKWQIcRg0riuV1DlnS3hnCfBnvaYDY="
+    },
+    {
+      "id": "earth-dress-l4-v1-f3-front",
+      "sha256Base64": "4ptNO66o+tGd5KNtunRZbiWx/6GstfcrrYZaV2tx48A="
+    },
+    {
+      "id": "earth-dress-l4-v1-f4-front",
+      "sha256Base64": "pJkbUQq+r/hzeu64AIb8XCNm+XVK9WzBj7ht/0FeXiY="
+    },
+    {
+      "id": "earth-dress-l5-v1",
+      "sha256Base64": "92fFdQJi0uShH2uI6QKVa/MkL1nU7uAfeUHiBfJtIeE="
+    },
+    {
+      "id": "earth-dress-l5-v1-f1-back",
+      "sha256Base64": "w1RXju9K7tUOBFvcrW1VmfsS9+gwCmtjXcUZ5V8rdJ4="
+    },
+    {
+      "id": "earth-dress-l5-v1-f1-front",
+      "sha256Base64": "qsKBnfb/FtpLK8T1DWOuplK+ot9/eDMhVoUCg0JF77A="
+    },
+    {
+      "id": "earth-dress-l5-v1-f2-back",
+      "sha256Base64": "qoME5EeSEilzH8ESq/Ik1zX4IdvX83VwpwM/q9GLUI4="
+    },
+    {
+      "id": "earth-dress-l5-v1-f2-front",
+      "sha256Base64": "ey/DjQthOWdhzIMpa2TFZvrg8c9On+7QosaNkVxQ/74="
+    },
+    {
+      "id": "earth-dress-l5-v1-f3-back",
+      "sha256Base64": "KJFumMolDnFDw2IlTyoWIakx1i65oULFhA/XFNuHH1w="
+    },
+    {
+      "id": "earth-dress-l5-v1-f3-front",
+      "sha256Base64": "5++EQKl2D3itkK07bqYEhBKWCMS1Lxv4BSZmwYPA9ek="
+    },
+    {
+      "id": "earth-dress-l5-v1-f4-back",
+      "sha256Base64": "nVtYcd5FMkrw16ZNeO5k2nenxCeGDsxHKA6P0fbsDGE="
+    },
+    {
+      "id": "earth-dress-l5-v1-f4-front",
+      "sha256Base64": "kg6QvjlItkKaFPHRCkM49KW5K3qptJxqRq4uYsZNfVc="
+    },
+    {
+      "id": "earth-furniture-l0-v1",
+      "sha256Base64": "AtjZVQrtVwls9AtaOdalFSAgOFvX3FWE3lXoNkaKIJQ="
+    },
+    {
+      "id": "earth-furniture-l1-v1",
+      "sha256Base64": "VwkphLNKa6RdaBrcODXdXbRjyOe60RISmx1mbLYPHdk="
+    },
+    {
+      "id": "earth-furniture-l2-v1",
+      "sha256Base64": "7DdF4w+wFeVCTjdRBnk8By9P393dapqbCRqvDOtPtkw="
+    },
+    {
+      "id": "earth-furniture-l3-v1",
+      "sha256Base64": "j0w5/epYMumxCt+wlgFsS0DSkcvDvQOFe2xyGyQ3Wyc="
+    },
+    {
+      "id": "earth-furniture-l4-v1",
+      "sha256Base64": "kjfhnudmzBhMrvDu3EUUjPCh2iQ1IWWdtR+VwHn7OYg="
+    },
+    {
+      "id": "earth-furniture-l5-v1",
+      "sha256Base64": "aS/XyzgXMardJYhjjZ7fvY6/bIO5gduy554alKgHMvE="
+    },
+    {
+      "id": "earth-decor-l0-v1",
+      "sha256Base64": "WhBJ+S8B9/Pe8HR1GDa6BE2xr9w6CJsqX+b7nE2sZCs="
+    },
+    {
+      "id": "earth-decor-l1-v1",
+      "sha256Base64": "uHKAO70oBH85Z1vFWm5LWtDISlDXAhVy9tfzXckpfKY="
+    },
+    {
+      "id": "earth-decor-l2-v1",
+      "sha256Base64": "MdFXNasf5o8ykIOwpZrWeVGoefYFNjhqmAgHkCqIOjM="
+    },
+    {
+      "id": "earth-decor-l3-v1",
+      "sha256Base64": "ym9p0mJbTBmko2U8u30cWpMqUgLo1xxwqBBiRUBpy64="
+    },
+    {
+      "id": "earth-decor-l4-v1",
+      "sha256Base64": "56nvRH18C5ZTchgEUqeTdNDw/6dDwjqGAXWjwEvu1FE="
+    },
+    {
+      "id": "earth-decor-l5-v1",
+      "sha256Base64": "K1lo4ysXFr9jaoww0q9oufE/hALPuXezzqa3Pbt1+1E="
+    },
+    {
+      "id": "earth-courtyard-l0-v1",
+      "sha256Base64": "9EVfVVWhEBLMuY5XR9X4TzFHGpcmJdYvHUx9Wk8ED3k="
+    },
+    {
+      "id": "earth-courtyard-l1-v1",
+      "sha256Base64": "36wS3Lezae+MkxhhuekCcDpaUNoLQJgV5+D9dKBnV6Y="
+    },
+    {
+      "id": "earth-courtyard-l2-v1",
+      "sha256Base64": "4w7D6rAZ5Ps/FDhoBSsS8dnO3tJjJ/tBOqEn7aLmQA4="
+    },
+    {
+      "id": "earth-courtyard-l3-v1",
+      "sha256Base64": "6fcsh2dPwLnGPGEKwzICzcPK8csF3AmIH2tgD8Rmoxo="
+    },
+    {
+      "id": "earth-courtyard-l4-v1",
+      "sha256Base64": "DlxbjGFil+dZESBztUwF4z4PEpkFmm6ut96dpFHuhc4="
+    },
+    {
+      "id": "earth-courtyard-l5-v1",
+      "sha256Base64": "84wBzOPcJhc6JPwi7D0iwvBpp0L2SoMDsp/5qxJGdQY="
+    },
+    {
+      "id": "wind-feed-l0-v1",
+      "sha256Base64": "UrAOec0KauWxkbLiDhY4u5rq/nI9nBpnp4JtrAFdKC4="
+    },
+    {
+      "id": "wind-feed-l1-v1",
+      "sha256Base64": "SS3JeqXChwHRAO92zKwAYFrJaH9GU5TktiT94OxblU8="
+    },
+    {
+      "id": "wind-feed-l2-v1",
+      "sha256Base64": "FT06BTny+UNT+xta2VyUHiEbPqRo4Qm+6KMG3SYobaA="
+    },
+    {
+      "id": "wind-feed-l3-v1",
+      "sha256Base64": "3GBijpqQFjemju+wRFK/dPDuyAIclIt/Q+3Zo7PXD8M="
+    },
+    {
+      "id": "wind-feed-l4-v1",
+      "sha256Base64": "vPAdKrX2v0acq8AVBiIPg9/GlqGYoGcafQl3GGGTHlw="
+    },
+    {
+      "id": "wind-feed-l5-v1",
+      "sha256Base64": "GhqyBzKVOoXLKHzDrhnhX6Bq3FCveETLojMezo2B/Bc="
+    },
+    {
+      "id": "wind-dress-l0-v1",
+      "sha256Base64": "9qbUvlzXfYbC9ljdnPRrBljthnXCKD/CRgZcgwamTzw="
+    },
+    {
+      "id": "wind-dress-l0-v1-f1-back",
+      "sha256Base64": "VfCBDzLoNEmPZ70oqfXqS7RECmmBZ0i4edAdnNXiWaM="
+    },
+    {
+      "id": "wind-dress-l0-v1-f1-front",
+      "sha256Base64": "LWke4cVai8zgpISMnGWj0RCKOcWlKqi5bWsMuGmslU8="
+    },
+    {
+      "id": "wind-dress-l0-v1-f2-back",
+      "sha256Base64": "9JntAwu/EhR0hvwXGVfbWoYSr+YCw8jieC0hVHUfObY="
+    },
+    {
+      "id": "wind-dress-l0-v1-f2-front",
+      "sha256Base64": "4Wq/JtnRBEHrG4HlTVSu29mB5zxebDQB1bvnI6Yt+1o="
+    },
+    {
+      "id": "wind-dress-l0-v1-f3-back",
+      "sha256Base64": "/JDAkiku0CiTcRcqtXnGVhI4vII9DaNkBKPoWfAxw+E="
+    },
+    {
+      "id": "wind-dress-l0-v1-f3-front",
+      "sha256Base64": "VR0guV8LuCJ5Q2c9p9m51e5dQC35BZLbK9wBM1JiRgw="
+    },
+    {
+      "id": "wind-dress-l0-v1-f4-back",
+      "sha256Base64": "+5xGzlzZv0JMTm5QgMtMTbrHVg12ddTN/BAsiRU0n8I="
+    },
+    {
+      "id": "wind-dress-l0-v1-f4-front",
+      "sha256Base64": "+KfktE3YrqdqNF5f56KTcnDT8qpjiawwkH7/ONkO+wI="
+    },
+    {
+      "id": "wind-dress-l1-v1",
+      "sha256Base64": "2RbV16N9o51jkuPXmsJRpeD/kC9OHlYkHwCPhxBOgRg="
+    },
+    {
+      "id": "wind-dress-l1-v1-f1-back",
+      "sha256Base64": "SoX0zlqXbK0tcZeamF0xyPzFwcbc+w7ohW5O02aaNQo="
+    },
+    {
+      "id": "wind-dress-l1-v1-f1-front",
+      "sha256Base64": "ihGy/hRh/0wyVwzObm5Ocd4BF0GNmLc6xIQnz1amEfQ="
+    },
+    {
+      "id": "wind-dress-l1-v1-f2-back",
+      "sha256Base64": "iawjQIU+ffpcqBQacygpVOA/uYf2euQXUnUrXX2W+Wk="
+    },
+    {
+      "id": "wind-dress-l1-v1-f2-front",
+      "sha256Base64": "o9KLrPgDJQRRnxQY9bcsa6YmOVDZWUbe4Sq0RqxxyVk="
+    },
+    {
+      "id": "wind-dress-l1-v1-f3-back",
+      "sha256Base64": "ExEE7VHgh1o2JleSSFSOq/Q5MqO7LNLk+/+Lmf1bKx4="
+    },
+    {
+      "id": "wind-dress-l1-v1-f3-front",
+      "sha256Base64": "r7I0HYFEvOIu+r6Ci3dGTHIY8pXKjRLcWVRUGZEyftE="
+    },
+    {
+      "id": "wind-dress-l1-v1-f4-back",
+      "sha256Base64": "j85oDbLmNF3TxrVuRwm0NZVBhppRe82CECNL7flTOhY="
+    },
+    {
+      "id": "wind-dress-l1-v1-f4-front",
+      "sha256Base64": "G/lYsP8XXY1TNXnqZb6/Ww/G+qR0nbOb6/LtKzvY5PY="
+    },
+    {
+      "id": "wind-dress-l2-v1",
+      "sha256Base64": "GgtqvDYIZ0myNakF+3pqf2JhVv8jM3Yew0shvqs1f0c="
+    },
+    {
+      "id": "wind-dress-l2-v1-f1-back",
+      "sha256Base64": "9om6zDkPMQqiTJ1HpkJRI5cwy9cci3zX1kHxQLWpuYQ="
+    },
+    {
+      "id": "wind-dress-l2-v1-f1-front",
+      "sha256Base64": "h8fXHLvCo3a6QgAc4D33uR6Kr5FfWiJgEQrOqLlS0IE="
+    },
+    {
+      "id": "wind-dress-l2-v1-f2-back",
+      "sha256Base64": "Kj+IcsOZQymYDJAUdU2OpzMQ9VTGc20fO1oCuH3plLo="
+    },
+    {
+      "id": "wind-dress-l2-v1-f2-front",
+      "sha256Base64": "EjkT/hMTfQhKqidAGC1ZcNb2RY/fdX9IcQoDIAcbUgI="
+    },
+    {
+      "id": "wind-dress-l2-v1-f3-back",
+      "sha256Base64": "h5PQna81Kf3wPz1Zovj7ViT9HY+L2QsPqKVxVmfKmls="
+    },
+    {
+      "id": "wind-dress-l2-v1-f3-front",
+      "sha256Base64": "uihh8+VETWWtEpPbmOvUsod65QbfG44FgDmB2s4NDUk="
+    },
+    {
+      "id": "wind-dress-l2-v1-f4-back",
+      "sha256Base64": "hDEfYSFkej0ZmJmLdrxrC4h51ueHV/reDNmixBlb8M0="
+    },
+    {
+      "id": "wind-dress-l2-v1-f4-front",
+      "sha256Base64": "vdjzA3FtyWfHoD7a0YS0qcivluMlVcBQ4jDmlW5gLMU="
+    },
+    {
+      "id": "wind-dress-l3-v1",
+      "sha256Base64": "IQl11C1AX0qqFLuD6yKqX4nMtw1Olsw2z3CkYuyi3wU="
+    },
+    {
+      "id": "wind-dress-l3-v1-f1-back",
+      "sha256Base64": "mp3Ps4Q/8+4sXqQ//PdsmMn4a0wzxjUZywgVyXpAbS0="
+    },
+    {
+      "id": "wind-dress-l3-v1-f1-front",
+      "sha256Base64": "BQ6QJZRWfUn4TIQI5eskZAPz3dbfoEJHqED4Hv1mUbA="
+    },
+    {
+      "id": "wind-dress-l3-v1-f2-back",
+      "sha256Base64": "H458kAyu4hwCQCQ0VNrDYk9q8zoV1vmFXJOvDLG7P+M="
+    },
+    {
+      "id": "wind-dress-l3-v1-f2-front",
+      "sha256Base64": "mFQ5mz8YRlupT/pjTkd83KurhLO6EsmyN2Zw2aeNGyc="
+    },
+    {
+      "id": "wind-dress-l3-v1-f3-back",
+      "sha256Base64": "iys+gDhZ2sa385iCVADHx192RrwUF3aApGdBsMxzOus="
+    },
+    {
+      "id": "wind-dress-l3-v1-f3-front",
+      "sha256Base64": "0E17Myw4BOjDRfRzZOpUfJQw4F8ggP5TGx69dj9Jzns="
+    },
+    {
+      "id": "wind-dress-l3-v1-f4-back",
+      "sha256Base64": "zmODP8Ut/jigQUVbgwWJ0wvJ5qbZzqW4o3EuXm6f82M="
+    },
+    {
+      "id": "wind-dress-l3-v1-f4-front",
+      "sha256Base64": "bKJlgckoZJzy/fA9we+WNfQ8R2/o/xXzmRixEC3AWeU="
+    },
+    {
+      "id": "wind-dress-l4-v1",
+      "sha256Base64": "wFqwFSFOFCmfzX+oNZnvWXQPWHQHYf0f3EVpbJFVbJ8="
+    },
+    {
+      "id": "wind-dress-l4-v1-f1-front",
+      "sha256Base64": "HFmGSi/0mShoUQ2wMNCqcvK2pWyGqhEvUsQJ99/JXV8="
+    },
+    {
+      "id": "wind-dress-l4-v1-f2-front",
+      "sha256Base64": "sU2DmV4NXe9SYXMKdduupau/r9hIWwkoE23HyONsYb4="
+    },
+    {
+      "id": "wind-dress-l4-v1-f3-front",
+      "sha256Base64": "w2vaGKljia2wqtGFZlIoI0YgtDeNs/hBZ0v0ORDs82Q="
+    },
+    {
+      "id": "wind-dress-l4-v1-f4-front",
+      "sha256Base64": "krSfpyw0AEnHEPo/e1Ihj5ORaMvenj7NEaJkqlIpq14="
+    },
+    {
+      "id": "wind-dress-l5-v1",
+      "sha256Base64": "ZDxioWhVw2/AXFmvijgF1GVi8v8W/JQjfFLK6HtcDwo="
+    },
+    {
+      "id": "wind-dress-l5-v1-f1-back",
+      "sha256Base64": "5qwnjw6BFwJC8iHoxI7eMrCE1N+UlgucvI/nIIrACG8="
+    },
+    {
+      "id": "wind-dress-l5-v1-f1-front",
+      "sha256Base64": "2Wt+wwSHGVMwAyb9+uZoKUeivQOwix4BJu1FSW1FzCE="
+    },
+    {
+      "id": "wind-dress-l5-v1-f2-back",
+      "sha256Base64": "ixIqgvJZ9fe4kujfcvpCsSGPqCP6v3wJszN13kbjZH0="
+    },
+    {
+      "id": "wind-dress-l5-v1-f2-front",
+      "sha256Base64": "Cn1gXRWgiZHnWVMQNCkOYjzGpwiWWCpBPsT5G6wzzX4="
+    },
+    {
+      "id": "wind-dress-l5-v1-f3-back",
+      "sha256Base64": "H9boEbiC/c9ea7hlB4cjSLgBHrVbcISUfUbVLVz243U="
+    },
+    {
+      "id": "wind-dress-l5-v1-f3-front",
+      "sha256Base64": "rYVg8RPMJq5lMpmA9u3LwhFWDjTODGaFHj0qZfDf97M="
+    },
+    {
+      "id": "wind-dress-l5-v1-f4-back",
+      "sha256Base64": "mH2wJiINdWtr6vI5GaBdpwIHlqti+bOBytFmJld9wes="
+    },
+    {
+      "id": "wind-dress-l5-v1-f4-front",
+      "sha256Base64": "ddyhHX7IxGWyxLXaOFcF8efXl4nbfk9RlX57lpgZojw="
+    },
+    {
+      "id": "wind-furniture-l0-v1",
+      "sha256Base64": "fvYcJahSo6NrOsWgQoZwavZQeeCXy4QepC9eChuSzd0="
+    },
+    {
+      "id": "wind-furniture-l1-v1",
+      "sha256Base64": "VTlOumeF8tcgtv2ZTSlzWlRUA/xF2OkDs0Hjq/sYafc="
+    },
+    {
+      "id": "wind-furniture-l2-v1",
+      "sha256Base64": "I8gcBxip2n5XWVXNEzvRBN2wOfgifuF5hqAUI9THZs8="
+    },
+    {
+      "id": "wind-furniture-l3-v1",
+      "sha256Base64": "wBkPh5SuQ0VL4Icfa7jAxuiqvrwNdNlr2AO4YUGFfNI="
+    },
+    {
+      "id": "wind-furniture-l4-v1",
+      "sha256Base64": "M0JbTol61mvyKbc+UD3bigGAiUfeMNXwyUQ4hY3aaLo="
+    },
+    {
+      "id": "wind-furniture-l5-v1",
+      "sha256Base64": "CqUVhHvstIQmkWnCpl+6DRsaPbj5uFOqPQIHyDxtZuI="
+    },
+    {
+      "id": "wind-decor-l0-v1",
+      "sha256Base64": "LXJUZc/MUJUanA58VgLFyKagknb7AZaA3twDdERAHYE="
+    },
+    {
+      "id": "wind-decor-l1-v1",
+      "sha256Base64": "JCjALaKy/kBbNozx1GpeFoEmSqDNG05Gyvsp6NLmrSk="
+    },
+    {
+      "id": "wind-decor-l2-v1",
+      "sha256Base64": "ru4qnYt7aA9+lH04KbHC+qxuiMLHrTAtx1Vty088YHg="
+    },
+    {
+      "id": "wind-decor-l3-v1",
+      "sha256Base64": "muPuS9aVLiEijdGRIMrP6IdtTC2VlILMcKCRfMXs3Ug="
+    },
+    {
+      "id": "wind-decor-l4-v1",
+      "sha256Base64": "3ekXvvJZcXWy1OG17df4/ebmxc1OzLAVkdJoK4Dvpn4="
+    },
+    {
+      "id": "wind-decor-l5-v1",
+      "sha256Base64": "nGAW2TmdQQpRdor3mDJwllZBYnBdD2ZCEAkF+M3v8mU="
+    },
+    {
+      "id": "wind-courtyard-l0-v1",
+      "sha256Base64": "6mEZQuNHICBOlJG4pnZFw2OHmnPBIeFsRiUF4HVDyFw="
+    },
+    {
+      "id": "wind-courtyard-l1-v1",
+      "sha256Base64": "fKe1jVRufwRO6fnhilLvUx5hmWCGdNu/USn1ZKebONw="
+    },
+    {
+      "id": "wind-courtyard-l2-v1",
+      "sha256Base64": "P2J3+KXTG+mhoKb+f7I/QZ5Z0g/9PPmAypNitqYroI0="
+    },
+    {
+      "id": "wind-courtyard-l3-v1",
+      "sha256Base64": "r1fW6IrE4km/uY8kRL/pTOHXJst0X8tFV0W0CBf4QeY="
+    },
+    {
+      "id": "wind-courtyard-l4-v1",
+      "sha256Base64": "YVwX1xr6nTghtDKqjxtmNpb4VS73tbn0t2frquuy21g="
+    },
+    {
+      "id": "wind-courtyard-l5-v1",
+      "sha256Base64": "1jIGKHXuR9hQwuykmp4es3cmy1Y52dUyUl1cNjHn8xQ="
+    },
+    {
+      "id": "room-water-l0",
+      "sha256Base64": "6fnFemTJa9mPLVRZBs0VYVyr+fTV8pNIaAC/0x/3saU="
+    },
+    {
+      "id": "room-water-l1",
+      "sha256Base64": "fKgR5WjGFA9sLznNmnq5R2Lu+GIeHwz6hn7pPijErNE="
+    },
+    {
+      "id": "room-water-l2",
+      "sha256Base64": "iAajbcSIaTSf+WOg8cY4P/RXqHr2oDktVMeJYOl8WXI="
+    },
+    {
+      "id": "room-water-l3",
+      "sha256Base64": "vsJbHiqXJ4unZ8eb4P6DOjcgdKY+0Cp+by/q1AiYpG8="
+    },
+    {
+      "id": "room-water-l4",
+      "sha256Base64": "Oi4LBtypHu/3AiVfFmVHujU0jQNl4eAhtUHNyfuOD5E="
+    },
+    {
+      "id": "room-water-l5",
+      "sha256Base64": "/Rw2v45TuupPQqWNUxQ+03dFjA5uj9y/GEhmlXD+erI="
+    },
+    {
+      "id": "shared-water-window",
+      "sha256Base64": "VzcCAbCRr3vaalY8MGO9kMOaE5MabTA7TN2zhFxgtqo="
+    },
+    {
+      "id": "room-fire-l0",
+      "sha256Base64": "APH6WSdduQgVa6YzmOKwM0HeMPukmumHoL7rKt2oH/o="
+    },
+    {
+      "id": "room-fire-l1",
+      "sha256Base64": "D/Xdygv73skzYN//ddHBEFX36ql6y5OcuYAtdz9AQsg="
+    },
+    {
+      "id": "room-fire-l2",
+      "sha256Base64": "MxqwRu0H8mkH0IfK2M4hYKPi9erDUg+YMiz/uVNi4fE="
+    },
+    {
+      "id": "room-fire-l3",
+      "sha256Base64": "afkfz6so6WdLuMm4d0gFIae5dbrmoxOjtlLKAmqevPc="
+    },
+    {
+      "id": "room-fire-l4",
+      "sha256Base64": "ufZJWFwnwYGeeFb3TYcv53SAUnUjhv94t4oP5ltHz7s="
+    },
+    {
+      "id": "room-fire-l5",
+      "sha256Base64": "tMplYehxxiv/5th23Z7GotvKwteaBLKdqiMGGi32TmI="
+    },
+    {
+      "id": "shared-fire-window",
+      "sha256Base64": "uOWcarUasyfswa+bDmJShfqgBYaBS6U0Tu8/wBpZNQs="
+    },
+    {
+      "id": "room-earth-l0",
+      "sha256Base64": "dBL4XK8UQMEXTGYKhrU2M5dP0QUhzwfzTSlDqYk5mdo="
+    },
+    {
+      "id": "room-earth-l1",
+      "sha256Base64": "FPNuN7F6IQzb9FTwoQJKsMeft4NUtbQArSCnVMYbIdo="
+    },
+    {
+      "id": "room-earth-l2",
+      "sha256Base64": "LJ0YF78/ksPNUQ7A0gVLpMAc3fcwoAopQkoAr/BvB2Q="
+    },
+    {
+      "id": "room-earth-l3",
+      "sha256Base64": "x+9GWw44C3MyPBzXrS2VokjKZVZBVTDQGyTr7I+3Fjs="
+    },
+    {
+      "id": "room-earth-l4",
+      "sha256Base64": "JjhHZ886xy5W2qlVOpcLxC+bRb1SICuU2SrMa3ZoRjQ="
+    },
+    {
+      "id": "room-earth-l5",
+      "sha256Base64": "HUVAfqD/VRqwBZjhlX+u3RZ3htU3cvHIsxt9Flf6GVk="
+    },
+    {
+      "id": "shared-earth-window",
+      "sha256Base64": "/dQEGJF1UizLOmNlL1ljK+iFhGZ7cPIJiNLaEIa/xDE="
+    },
+    {
+      "id": "room-wind-l0",
+      "sha256Base64": "bxCtKRbI0DXIBRC6WtC3qrQfxdLUeTeKK+EfrktpHts="
+    },
+    {
+      "id": "room-wind-l1",
+      "sha256Base64": "U1LuPtpxoe3cjmKWwSlB68QY99suCihKH3BlVkG0QhE="
+    },
+    {
+      "id": "room-wind-l2",
+      "sha256Base64": "JkVaVD8LhZiT8YwpfzLJkanA+Ks0jfvrUUEouTlS1VY="
+    },
+    {
+      "id": "room-wind-l3",
+      "sha256Base64": "JBfz+DEqscAUJY3bRqOhULth/MKTCyuUUFRELc7R84o="
+    },
+    {
+      "id": "room-wind-l4",
+      "sha256Base64": "FQeMCZVL5Noa1X+zir/CFaBRiBIEGqyYSWKqJi/fyNs="
+    },
+    {
+      "id": "room-wind-l5",
+      "sha256Base64": "2SVcz8Ju6BvCFPxMBRMNBD3K9dMLymsbio8XtLLOp5s="
+    },
+    {
+      "id": "shared-wind-window",
+      "sha256Base64": "EV7RsxOcMFuEGHxAWElgkMg+lhk8wUeu9FadDb0f6Fk="
+    }
+  ],
+  "bodySources": [
+    {
+      "element": "water",
+      "form": 1,
+      "sha256Base64": "zN0u3gqgng+LhOfNjLWHDAOpRroWHxjCTIuB/nxMKr8="
+    },
+    {
+      "element": "water",
+      "form": 2,
+      "sha256Base64": "T3DqDDED2rtjcbHHKEL/9O6CUzhgQKzPfYr/JrwOMLc="
+    },
+    {
+      "element": "water",
+      "form": 3,
+      "sha256Base64": "VlNpJ07rWUexLuZW1WPYEod2ozJ3QtZ1hySwvz6iBBE="
+    },
+    {
+      "element": "water",
+      "form": 4,
+      "sha256Base64": "QfES+YxAqyCtUWpWeEQP19vnYD9K5DzCQF9+4ra9qKU="
+    },
+    {
+      "element": "fire",
+      "form": 1,
+      "sha256Base64": "FwfsQ6MkAweZ0ymGYp7c5aV5gBwCa8QBqeFCIACh0N8="
+    },
+    {
+      "element": "fire",
+      "form": 2,
+      "sha256Base64": "Lkgggia1vr61q256I5S9g6j7gmGVaQcEDMM8TyehHqE="
+    },
+    {
+      "element": "fire",
+      "form": 3,
+      "sha256Base64": "A1qWFXv+ftKeLn+yFO2kYIdwCg6STxKcI2ZPXkeP7kE="
+    },
+    {
+      "element": "fire",
+      "form": 4,
+      "sha256Base64": "n/S8h2D3s7GEeXTWgZlY3dU+tTOD+sT0p6++ASZ9+zA="
+    },
+    {
+      "element": "earth",
+      "form": 1,
+      "sha256Base64": "m9YRTZnxu05V3FFAQbTohOU7Zd/7PGQH6W2SnaRgpN0="
+    },
+    {
+      "element": "earth",
+      "form": 2,
+      "sha256Base64": "wae4YL3ea1R8DfM4t4tNrexd2RY0oOLUavyVY69GCew="
+    },
+    {
+      "element": "earth",
+      "form": 3,
+      "sha256Base64": "PLBiMxrlv6PwTme4CRPvhLUz0z+1N2Et5oa1jPr16wQ="
+    },
+    {
+      "element": "earth",
+      "form": 4,
+      "sha256Base64": "bmQbhAdyJHX/diR+XJEuf+stV5rzzoYaQmlLRhxaeTc="
+    },
+    {
+      "element": "wind",
+      "form": 1,
+      "sha256Base64": "qC5DsLo7JKotSRfDl4XG4YacjvI2e7E7rLBVOnY7krw="
+    },
+    {
+      "element": "wind",
+      "form": 2,
+      "sha256Base64": "S02sWuxfdoS0NuPYUedNFzh6an+V0YtvwLfUFiYcSoI="
+    },
+    {
+      "element": "wind",
+      "form": 3,
+      "sha256Base64": "OQ6Csr8gUt0oQ5xOU+CxgAWgVls/HFjPbuqktT2DONE="
+    },
+    {
+      "element": "wind",
+      "form": 4,
+      "sha256Base64": "g6wo5Za5/fdjONIDOU2zCZmUsbZ7qqMnFwQwfsDkIN0="
+    }
+  ],
+  "wearableFits": [
+    {
+      "key": "water-dress-l0-v1-f1",
+      "front": {
+        "scale": 0.55,
+        "offsetX": 0.7513812154696211,
+        "offsetY": -50.30939226519337,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.75,
+        "offsetX": -14.885543232941188,
+        "offsetY": -42.43398673579813,
+        "rotation": 16
+      }
+    },
+    {
+      "key": "water-dress-l0-v1-f2",
+      "front": {
+        "scale": 0.15696476964769648,
+        "offsetX": 22.68780487804878,
+        "offsetY": -62.96715447154472,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.1622408963585434,
+        "offsetX": 22.515966386554624,
+        "offsetY": -74.92941176470589,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l0-v1-f3",
+      "front": {
+        "scale": 0.1267704280155642,
+        "offsetX": 43.7898832684825,
+        "offsetY": -83.18549416342412,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.13844192634560906,
+        "offsetX": 43.5869688385269,
+        "offsetY": -95,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l0-v1-f4",
+      "front": {
+        "scale": 0.12275347575449305,
+        "offsetX": 53.61342828077315,
+        "offsetY": -72.27772126144455,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.13134978229317854,
+        "offsetX": 52.41074020319303,
+        "offsetY": -80.47314949201743,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l1-v1-f1",
+      "front": {
+        "scale": 0.17119755911517925,
+        "offsetX": 24.943249427917607,
+        "offsetY": -65.11156064073228,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.1490305444887118,
+        "offsetX": 24.87649402390437,
+        "offsetY": -72.07250996015935,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l1-v1-f2",
+      "front": {
+        "scale": 0.15601346801346802,
+        "offsetX": 22.844848484848484,
+        "offsetY": -65.717397979798,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.12442534908700321,
+        "offsetX": 22.97937701396347,
+        "offsetY": -76.3813104189044,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l1-v1-f3",
+      "front": {
+        "scale": 0.13923076923076924,
+        "offsetX": 44,
+        "offsetY": -86.98338461538461,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.09735059760956176,
+        "offsetX": 44,
+        "offsetY": -94.6288844621514,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l1-v1-f4",
+      "front": {
+        "scale": 0.12275347575449305,
+        "offsetX": 53.938962360122076,
+        "offsetY": -75.21729399796541,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.10342857142857144,
+        "offsetX": 53.98285714285714,
+        "offsetY": -81.46285714285713,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l2-v1-f1",
+      "front": {
+        "scale": 0.18875913110342174,
+        "offsetX": 20.901528258362163,
+        "offsetY": -65.06566320645905,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.13520481927710842,
+        "offsetX": 24.417349397590357,
+        "offsetY": -74.49855421686746,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l2-v1-f2",
+      "front": {
+        "scale": 0.20677274581803345,
+        "offsetX": 17.482252141982855,
+        "offsetY": -66.88940024479805,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.13469767441860464,
+        "offsetX": 22.8660465116279,
+        "offsetY": -73.45023255813953,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l2-v1-f3",
+      "front": {
+        "scale": 0.16364810562571758,
+        "offsetX": 40.55525258323766,
+        "offsetY": -84.86597014925374,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.10693654266958426,
+        "offsetX": 43.68096280087528,
+        "offsetY": -89.00919037199125,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l2-v1-f4",
+      "front": {
+        "scale": 0.14746275605214154,
+        "offsetX": 51.189245810055866,
+        "offsetY": -72.71759776536314,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.10450346420323325,
+        "offsetX": 53.8960739030023,
+        "offsetY": -80.81293302540416,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l3-v1-f1",
+      "front": {
+        "scale": 0.20013294422827496,
+        "offsetX": 24.867315175097275,
+        "offsetY": -56.10480155642023,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.20269622331691298,
+        "offsetX": 24.966403940886693,
+        "offsetY": -55.4849024630542,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l3-v1-f2",
+      "front": {
+        "scale": 0.20598771419333983,
+        "offsetX": 22.829291949563526,
+        "offsetY": -53.407844810863224,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.20283985991722384,
+        "offsetX": 22.966380133715376,
+        "offsetY": -62.91731041069721,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l3-v1-f3",
+      "front": {
+        "scale": 0.17147368421052633,
+        "offsetX": 43.971578947368414,
+        "offsetY": -75.89406315789475,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.16920679886685555,
+        "offsetX": 43.85977337110481,
+        "offsetY": -77.47054957507083,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l3-v1-f4",
+      "front": {
+        "scale": 0.16061632784769284,
+        "offsetX": 53.97337850919652,
+        "offsetY": -68.57076476282671,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.16250408096637284,
+        "offsetX": 53.97306562193927,
+        "offsetY": -73.51929480901077,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l4-v1-f1",
+      "front": {
+        "scale": 0.05,
+        "offsetX": 37,
+        "offsetY": -21.406077348066304,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l4-v1-f2",
+      "front": {
+        "scale": 0.062342135476463834,
+        "offsetX": 33.86567164179104,
+        "offsetY": -47.61997703788748,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l4-v1-f3",
+      "front": {
+        "scale": 0.05271844660194175,
+        "offsetX": 54.89514563106795,
+        "offsetY": -61.50679611650486,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l4-v1-f4",
+      "front": {
+        "scale": 0.05650364203954214,
+        "offsetX": 53.8595213319459,
+        "offsetY": -54.14984391259105,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l5-v1-f1",
+      "front": {
+        "scale": 0.16883650952858575,
+        "offsetX": 21.97201604814444,
+        "offsetY": -189.5580782347041,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.1610813397129187,
+        "offsetX": 21.97330143540671,
+        "offsetY": -170.08507177033493,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l5-v1-f2",
+      "front": {
+        "scale": 0.17306772908366536,
+        "offsetX": 20.94262948207171,
+        "offsetY": -188.51843824701194,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.1690272373540856,
+        "offsetX": 20.719844357976655,
+        "offsetY": -183.9330739299611,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l5-v1-f3",
+      "front": {
+        "scale": 0.14779233870967742,
+        "offsetX": 41.95100806451612,
+        "offsetY": -193.69467338709677,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.14869168356997972,
+        "offsetX": 42,
+        "offsetY": -185.55638945233267,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "water-dress-l5-v1-f4",
+      "front": {
+        "scale": 0.13453914767096134,
+        "offsetX": 56.97770069375619,
+        "offsetY": -168.91684836471754,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.13282778864970646,
+        "offsetX": 56.11937377690802,
+        "offsetY": -162.35469667318984,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l0-v1-f1",
+      "front": {
+        "scale": 0.2524083955887585,
+        "offsetX": 17.372465314834585,
+        "offsetY": -0.753161152614723,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.18890308839190628,
+        "offsetX": 17.968690095846654,
+        "offsetY": -16.7143769968051,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l0-v1-f2",
+      "front": {
+        "scale": 0.2235725463894478,
+        "offsetX": 17.074446680080484,
+        "offsetY": -28.11612867808094,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.18879818594104306,
+        "offsetX": 18,
+        "offsetY": -42.03401360544217,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l0-v1-f3",
+      "front": {
+        "scale": 0.21451851851851853,
+        "offsetX": 31.893333333333345,
+        "offsetY": -36.11395555555555,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.16243589743589745,
+        "offsetX": 31.946153846153862,
+        "offsetY": -42.11153846153846,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l0-v1-f4",
+      "front": {
+        "scale": 0.17841763942931257,
+        "offsetX": 26.8225680933852,
+        "offsetY": -17.332575875486384,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.14775510204081632,
+        "offsetX": 26.975510204081644,
+        "offsetY": -30.31836734693877,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l1-v1-f1",
+      "front": {
+        "scale": 0.2510686482661005,
+        "offsetX": 17.75031847133758,
+        "offsetY": -5.940280254777065,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.17072184793070258,
+        "offsetX": 17.97170356111647,
+        "offsetY": -19.50933589990376,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l1-v1-f2",
+      "front": {
+        "scale": 0.2578706929926442,
+        "offsetX": 17.957259001161447,
+        "offsetY": -25.82265272938443,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.18159214830970555,
+        "offsetX": 18.030098146128694,
+        "offsetY": -37.08047982551798,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l1-v1-f3",
+      "front": {
+        "scale": 0.2275196408529742,
+        "offsetX": 30.45387205387206,
+        "offsetY": -38.14575084175084,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.14746847720659553,
+        "offsetX": 31.97555771096023,
+        "offsetY": -49.6333656644035,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l1-v1-f4",
+      "front": {
+        "scale": 0.19065835065835068,
+        "offsetX": 26.936798336798347,
+        "offsetY": -15.997555093555093,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.13687562189054728,
+        "offsetX": 26.977313432835814,
+        "offsetY": -30.022686567164186,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l2-v1-f1",
+      "front": {
+        "scale": 0.2558646554566436,
+        "offsetX": 16.6853363006924,
+        "offsetY": -10.281622156280918,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.2228391959798995,
+        "offsetX": 16.079396984924614,
+        "offsetY": -8.215075376884414,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l2-v1-f2",
+      "front": {
+        "scale": 0.24679031165311655,
+        "offsetX": 16.036585365853654,
+        "offsetY": -32.094146341463414,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.1972985781990521,
+        "offsetX": 15.841706161137438,
+        "offsetY": -34.14644549763034,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l2-v1-f3",
+      "front": {
+        "scale": 0.225559511698881,
+        "offsetX": 31.065361139369287,
+        "offsetY": -38.48893184130213,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.21844827586206894,
+        "offsetX": 28.886206896551727,
+        "offsetY": -37.001724137931035,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l2-v1-f4",
+      "front": {
+        "scale": 0.19961028192371477,
+        "offsetX": 25.77587064676618,
+        "offsetY": -19.788517412935335,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.15543502824858757,
+        "offsetX": 26.304406779661008,
+        "offsetY": -23.97152542372882,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l3-v1-f1",
+      "front": {
+        "scale": 0.3151130490956073,
+        "offsetX": 17.58217054263565,
+        "offsetY": 3.7577519379844944,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.32715962441314556,
+        "offsetX": 17.891549295774638,
+        "offsetY": 14.55898591549294,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l3-v1-f2",
+      "front": {
+        "scale": 0.293262888248479,
+        "offsetX": 17.951392891450524,
+        "offsetY": -17.520883765609994,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.30620528251420925,
+        "offsetX": 17.949247743229677,
+        "offsetY": -12.252726178535625,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l3-v1-f3",
+      "front": {
+        "scale": 0.273811394891945,
+        "offsetX": 32,
+        "offsetY": -24.78455009823182,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.27220703125,
+        "offsetX": 31.36835937500001,
+        "offsetY": -24.709109374999997,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l3-v1-f4",
+      "front": {
+        "scale": 0.2431951141112183,
+        "offsetX": 27.04030858244937,
+        "offsetY": -6.506422372227576,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.24390070921985818,
+        "offsetX": 27,
+        "offsetY": -15.757276595744685,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l4-v1-f1",
+      "front": {
+        "scale": 0.07963999999999999,
+        "offsetX": 12.973600000000005,
+        "offsetY": 10.574399999999997,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l4-v1-f2",
+      "front": {
+        "scale": 0.07380582524271845,
+        "offsetX": 14.975533980582526,
+        "offsetY": -9.32116504854369,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l4-v1-f3",
+      "front": {
+        "scale": 0.06791744840525328,
+        "offsetX": 29,
+        "offsetY": -19.247654784240154,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l4-v1-f4",
+      "front": {
+        "scale": 0.06651837524177949,
+        "offsetX": 30,
+        "offsetY": 2.3903288201160535,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l5-v1-f1",
+      "front": {
+        "scale": 0.2642204568023833,
+        "offsetX": 16.956206554121138,
+        "offsetY": -114.28469513406154,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.2668706118355065,
+        "offsetX": 16.601905717151453,
+        "offsetY": -96.0554663991976,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l5-v1-f2",
+      "front": {
+        "scale": 0.24464250734573945,
+        "offsetX": 17.959451518119494,
+        "offsetY": -135.95250930460332,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.2480436941410129,
+        "offsetX": 17.958887785501474,
+        "offsetY": -111.47646474677259,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l5-v1-f3",
+      "front": {
+        "scale": 0.22077444336882868,
+        "offsetX": 31.963407550822836,
+        "offsetY": -135.29536495643754,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.21353932584269664,
+        "offsetX": 32,
+        "offsetY": -127.83202247191011,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "fire-dress-l5-v1-f4",
+      "front": {
+        "scale": 0.2026915520628684,
+        "offsetX": 27,
+        "offsetY": -120.52069941060904,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.19840384615384615,
+        "offsetX": 27,
+        "offsetY": -110.29596153846154,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l0-v1-f1",
+      "front": {
+        "scale": 0.3310709987966306,
+        "offsetX": -24.591335740072196,
+        "offsetY": 50.705068592057756,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.275855614973262,
+        "offsetX": -23.91443850267379,
+        "offsetY": 48.85828877005349,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l0-v1-f2",
+      "front": {
+        "scale": 0.23616717635066264,
+        "offsetX": -32.03914373088685,
+        "offsetY": 32.103241590214054,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.19926605504587153,
+        "offsetX": -32.26422018348623,
+        "offsetY": 14.570642201834858,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l0-v1-f3",
+      "front": {
+        "scale": 0.19052631578947368,
+        "offsetX": -26,
+        "offsetY": 10.709894736842102,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.16006802721088434,
+        "offsetX": -26.053061224489795,
+        "offsetY": -3.9979591836734585,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l0-v1-f4",
+      "front": {
+        "scale": 0.18271293375394324,
+        "offsetX": -28.999369085173498,
+        "offsetY": 17.030712933753932,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.1677220077220077,
+        "offsetX": -28.250193050193047,
+        "offsetY": 5.722779922779921,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l1-v1-f1",
+      "front": {
+        "scale": 0.3087766554433221,
+        "offsetX": -22.027609427609434,
+        "offsetY": 57.14152188552188,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.21382383419689116,
+        "offsetX": -23.177202072538847,
+        "offsetY": 42.74424870466322,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l1-v1-f2",
+      "front": {
+        "scale": 0.3052437417654809,
+        "offsetX": -32.860079051383394,
+        "offsetY": 12.686292490118575,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.19949483352468425,
+        "offsetX": -32.23145809414467,
+        "offsetY": 17.47990815154995,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l1-v1-f3",
+      "front": {
+        "scale": 0.1794470924690181,
+        "offsetX": -26.089227836034325,
+        "offsetY": 9.83193136320304,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.1522977346278317,
+        "offsetX": -26.88349514563106,
+        "offsetY": -0.9747572815533943,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l1-v1-f4",
+      "front": {
+        "scale": 0.1858395721925134,
+        "offsetX": -29.139679144385013,
+        "offsetY": 14.893843850267388,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.1264015518913676,
+        "offsetX": -28.272356935014557,
+        "offsetY": 1.7945683802133772,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l2-v1-f1",
+      "front": {
+        "scale": 0.2982284440039643,
+        "offsetX": -24.532333994053516,
+        "offsetY": 57.27355797819624,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.28738161559888575,
+        "offsetX": -22.523676880222837,
+        "offsetY": 48.85905292479109,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l2-v1-f2",
+      "front": {
+        "scale": 0.2567375886524823,
+        "offsetX": -33.31914893617022,
+        "offsetY": 32.6059574468085,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.21504950495049505,
+        "offsetX": -32.998019801980206,
+        "offsetY": 17.138613861386148,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l2-v1-f3",
+      "front": {
+        "scale": 0.21335492227979275,
+        "offsetX": -26.813341968911914,
+        "offsetY": 14.597492227979274,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.16867383512544804,
+        "offsetX": -27.034408602150535,
+        "offsetY": 2.7182795698924735,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l2-v1-f4",
+      "front": {
+        "scale": 0.22022016222479723,
+        "offsetX": -30.737543453070685,
+        "offsetY": 17.939606025492452,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.14512249443207126,
+        "offsetX": -28.384855233853017,
+        "offsetY": 6.443207126948778,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l3-v1-f1",
+      "front": {
+        "scale": 0.38561671763506633,
+        "offsetX": -22.936085626911307,
+        "offsetY": 68.58771865443424,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.36096374045801527,
+        "offsetX": -23,
+        "offsetY": 62.46125954198473,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l3-v1-f2",
+      "front": {
+        "scale": 0.3191983967935872,
+        "offsetX": -32.21162324649299,
+        "offsetY": 34.43693787575151,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.3188788788788789,
+        "offsetX": -32.05285285285285,
+        "offsetY": 33.181381381381385,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l3-v1-f3",
+      "front": {
+        "scale": 0.2414458955223881,
+        "offsetX": -26.080037313432825,
+        "offsetY": 19.88900746268658,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.2630386178861789,
+        "offsetX": -25.82560975609755,
+        "offsetY": 12.815195121951206,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l3-v1-f4",
+      "front": {
+        "scale": 0.24231237322515214,
+        "offsetX": -28.080324543610544,
+        "offsetY": 32.15029614604461,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.24012060301507537,
+        "offsetX": -28.039798994974888,
+        "offsetY": 25.603143718592975,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l4-v1-f1",
+      "front": {
+        "scale": 0.09816949152542372,
+        "offsetX": -36.38305084745764,
+        "offsetY": 81.50305084745762,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l4-v1-f2",
+      "front": {
+        "scale": 0.07932270916334662,
+        "offsetX": -41.34183266932271,
+        "offsetY": 55.65816733067729,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l4-v1-f3",
+      "front": {
+        "scale": 0.06884884884884886,
+        "offsetX": -35.26246246246245,
+        "offsetY": 37.486486486486484,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l4-v1-f4",
+      "front": {
+        "scale": 0.06271414821944177,
+        "offsetX": -33.05197305101058,
+        "offsetY": 42.60500481231955,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l5-v1-f1",
+      "front": {
+        "scale": 0.30020368574199807,
+        "offsetX": -27.34830261881669,
+        "offsetY": -85.4602909796314,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.3360586319218241,
+        "offsetX": -27.278501628664515,
+        "offsetY": -41.66156351791531,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l5-v1-f2",
+      "front": {
+        "scale": 0.25754940711462454,
+        "offsetX": -32,
+        "offsetY": -90.42134387351777,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.2540350877192983,
+        "offsetX": -32,
+        "offsetY": -69.7157894736842,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l5-v1-f3",
+      "front": {
+        "scale": 0.206806640625,
+        "offsetX": -26.137109374999994,
+        "offsetY": -106.6369921875,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.20640350877192984,
+        "offsetX": -26,
+        "offsetY": -76.18157894736842,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "earth-dress-l5-v1-f4",
+      "front": {
+        "scale": 0.19145935357492652,
+        "offsetX": -28.031733594515174,
+        "offsetY": -92.35692850146916,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.18564102564102564,
+        "offsetX": -28.030769230769238,
+        "offsetY": -80.47692307692307,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l0-v1-f1",
+      "front": {
+        "scale": 0.14790602655771196,
+        "offsetX": 2.5832482124617115,
+        "offsetY": 15.277344228804907,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.1196035242290749,
+        "offsetX": 3,
+        "offsetY": 7.863436123348009,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l0-v1-f2",
+      "front": {
+        "scale": 0.14153016514998318,
+        "offsetX": 13.882709807886755,
+        "offsetY": 15.420618806875638,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.14662011173184358,
+        "offsetX": 13.756983240223462,
+        "offsetY": 7.274581005586583,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l0-v1-f3",
+      "front": {
+        "scale": 0.13070277240490008,
+        "offsetX": 18.566731141199227,
+        "offsetY": -6.535613152804643,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.13460823373173972,
+        "offsetX": 18.174501992031878,
+        "offsetY": -12.850199203187259,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l0-v1-f4",
+      "front": {
+        "scale": 0.1459350503919373,
+        "offsetX": 15.024188129899215,
+        "offsetY": 5.488053751399775,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.12627906976744188,
+        "offsetX": 15.41860465116278,
+        "offsetY": -4.537209302325579,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l1-v1-f1",
+      "front": {
+        "scale": 0.1742478941034898,
+        "offsetX": 2.5090252707581158,
+        "offsetY": 15.602454873646195,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.11300728407908428,
+        "offsetX": 2.868886576482822,
+        "offsetY": 6.78668054110301,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l1-v1-f2",
+      "front": {
+        "scale": 0.1429758256724549,
+        "offsetX": 13.92890704800817,
+        "offsetY": 16.838030643513804,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.11498357064622124,
+        "offsetX": 13.447316538882802,
+        "offsetY": 6.503395399780942,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l1-v1-f3",
+      "front": {
+        "scale": 0.13706558485463152,
+        "offsetX": 19,
+        "offsetY": -6.004251521298187,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.10353421859039837,
+        "offsetX": 18.98283963227783,
+        "offsetY": -16.91419816138918,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l1-v1-f4",
+      "front": {
+        "scale": 0.12826771653543306,
+        "offsetX": 14.957480314960634,
+        "offsetY": 7.0308031496062995,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.09774,
+        "offsetX": 14.935200000000009,
+        "offsetY": -1.34020000000001,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l2-v1-f1",
+      "front": {
+        "scale": 0.18100000000000002,
+        "offsetX": 0.15000000000000568,
+        "offsetY": 17.283199999999994,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.11419558359621451,
+        "offsetX": 2.9053627760252425,
+        "offsetY": 5.545741324921124,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l2-v1-f2",
+      "front": {
+        "scale": 0.15815685261707987,
+        "offsetX": 12.165030991735534,
+        "offsetY": 16.688491735537184,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.10867494824016562,
+        "offsetX": 13.53167701863353,
+        "offsetY": 10.567080745341627,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l2-v1-f3",
+      "front": {
+        "scale": 0.15911374237531398,
+        "offsetX": 15.861679224973102,
+        "offsetY": -6.997674919268036,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.10311291963377417,
+        "offsetX": 18.98290946083418,
+        "offsetY": -16.98290946083418,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l2-v1-f4",
+      "front": {
+        "scale": 0.14816787941787943,
+        "offsetX": 12.986226611226613,
+        "offsetY": 7.996112266112277,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.11775903614457832,
+        "offsetX": 15,
+        "offsetY": 2.7669879518072378,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l3-v1-f1",
+      "front": {
+        "scale": 0.1961576354679803,
+        "offsetX": 2.9674876847290648,
+        "offsetY": 25.989477832512307,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.21617806731813244,
+        "offsetX": 2.964169381107496,
+        "offsetY": 18.63817589576547,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l3-v1-f2",
+      "front": {
+        "scale": 0.19207917498336663,
+        "offsetX": 13.808982035928153,
+        "offsetY": 23.650227544910194,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.18703919663103338,
+        "offsetX": 14.031000971817292,
+        "offsetY": 18.354853255587955,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l3-v1-f3",
+      "front": {
+        "scale": 0.1816487455197133,
+        "offsetX": 19.03010752688172,
+        "offsetY": 0.534365591397858,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.17613902053712482,
+        "offsetX": 18.97080568720378,
+        "offsetY": -1.7675753554502478,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l3-v1-f4",
+      "front": {
+        "scale": 0.17313043478260873,
+        "offsetX": 14.971304347826077,
+        "offsetY": 11.82358260869566,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.1799096385542169,
+        "offsetX": 14.880722891566279,
+        "offsetY": 10.744024096385544,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l4-v1-f1",
+      "front": {
+        "scale": 0.060870425321463896,
+        "offsetX": 9.808308605341239,
+        "offsetY": 32.42611275964393,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l4-v1-f2",
+      "front": {
+        "scale": 0.061725175526579724,
+        "offsetX": 18.785155466399203,
+        "offsetY": 35.27101303911735,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l4-v1-f3",
+      "front": {
+        "scale": 0.05751737835153922,
+        "offsetX": 25.761668321747777,
+        "offsetY": 8.084806355511432,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l4-v1-f4",
+      "front": {
+        "scale": 0.058328298086606244,
+        "offsetX": 21.893655589123853,
+        "offsetY": 26.390936555891244,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l5-v1-f1",
+      "front": {
+        "scale": 0.15954946131243877,
+        "offsetX": 2.8148873653281044,
+        "offsetY": -84.87800195886385,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.16538071065989848,
+        "offsetX": 2.972588832487304,
+        "offsetY": -77.48020304568527,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l5-v1-f2",
+      "front": {
+        "scale": 0.1571556886227545,
+        "offsetX": 13.895808383233543,
+        "offsetY": -88.48111377245507,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.15873991935483872,
+        "offsetX": 13.78951612903225,
+        "offsetY": -77.89435483870969,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l5-v1-f3",
+      "front": {
+        "scale": 0.14935166994106092,
+        "offsetX": 18.65343811394891,
+        "offsetY": -107.2127622789784,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.1575544041450777,
+        "offsetX": 18.347150259067348,
+        "offsetY": -95.39937823834197,
+        "rotation": 0
+      }
+    },
+    {
+      "key": "wind-dress-l5-v1-f4",
+      "front": {
+        "scale": 0.1424781341107872,
+        "offsetX": 14.976384839650137,
+        "offsetY": -97.65927696793003,
+        "rotation": 0
+      },
+      "back": {
+        "scale": 0.1467803410230692,
+        "offsetX": 14.975626880641926,
+        "offsetY": -87.84512296365318,
+        "rotation": 0
+      }
+    }
+  ],
+  "files": [
+    {
+      "key": "water-feed-l0-v1:icon",
+      "path": "items/water/feed/l0/water-feed-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 57434,
+      "sha256Base64": "mPBvJEvTlAFr3Y4XhtQUKeUcbAO3z/QXylMVrXMkePI="
+    },
+    {
+      "key": "water-feed-l0-v1:preview",
+      "path": "items/water/feed/l0/water-feed-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 203177,
+      "sha256Base64": "Idi/KXnzIvsA3q+fO1QjWdTo1OH87mswYO1E+UjylUs="
+    },
+    {
+      "key": "water-feed-l1-v1:icon",
+      "path": "items/water/feed/l1/water-feed-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 63417,
+      "sha256Base64": "sLwiOXZu3RO4CYn4XIKyLyH0xuDFCahBNIzEkGnOsGA="
+    },
+    {
+      "key": "water-feed-l1-v1:preview",
+      "path": "items/water/feed/l1/water-feed-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 235889,
+      "sha256Base64": "LNlkljZpJ4hOt27GEi4/Wespm28AqPKAaWeeXCxVRH0="
+    },
+    {
+      "key": "water-feed-l2-v1:icon",
+      "path": "items/water/feed/l2/water-feed-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 66875,
+      "sha256Base64": "y/93uYsni7RV4rn0OLaNxGvIJkuZwAgc05TMkA2ayIQ="
+    },
+    {
+      "key": "water-feed-l2-v1:preview",
+      "path": "items/water/feed/l2/water-feed-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 245951,
+      "sha256Base64": "kDdhz3bbHyLP0OqapCaADNnN0IRJ31b5vXtAH+egJTk="
+    },
+    {
+      "key": "water-feed-l3-v1:icon",
+      "path": "items/water/feed/l3/water-feed-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 82184,
+      "sha256Base64": "BRc31TFmAA+jpLfWOVbYzJ6BR3YjyTsh1nBtG/WPPmE="
+    },
+    {
+      "key": "water-feed-l3-v1:preview",
+      "path": "items/water/feed/l3/water-feed-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 308109,
+      "sha256Base64": "z9TJIursFOJ3olS9wWyrTZ9LKNQGaHeRxS1uO70NLhk="
+    },
+    {
+      "key": "water-feed-l4-v1:icon",
+      "path": "items/water/feed/l4/water-feed-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 75318,
+      "sha256Base64": "p18pjd99hhIKsiYa9LkSQUM1LwgkdMoNa689oLEVPr4="
+    },
+    {
+      "key": "water-feed-l4-v1:preview",
+      "path": "items/water/feed/l4/water-feed-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 279022,
+      "sha256Base64": "cd+hS93tR5q7EQNC1xTeU4ig2+ooUkx53sOq7Khy0NY="
+    },
+    {
+      "key": "water-feed-l5-v1:icon",
+      "path": "items/water/feed/l5/water-feed-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 86900,
+      "sha256Base64": "DLejbtnnJtBH869TMR0fwm0Cw1odRDJPKCMycEb2qAo="
+    },
+    {
+      "key": "water-feed-l5-v1:preview",
+      "path": "items/water/feed/l5/water-feed-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 330049,
+      "sha256Base64": "4MlpYnm2ViqWD3fKr7omo/nXL3dqYqmQAieVa80ihU8="
+    },
+    {
+      "key": "water-dress-l0-v1:icon",
+      "path": "items/water/dress/l0/water-dress-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 69218,
+      "sha256Base64": "XNZrJTNInXAs8bqsx9Fedah6B/vh0xx8/BKHYE5zzPc="
+    },
+    {
+      "key": "water-dress-l0-v1:preview",
+      "path": "items/water/dress/l0/water-dress-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 247309,
+      "sha256Base64": "EM5mlZzakwPGizbAe5CpJrq/ElAmj5W5Wt9jsKPLwL0="
+    },
+    {
+      "key": "water-dress-l0-v1-f1-back",
+      "path": "wearables/water/water-dress-l0-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 15775,
+      "sha256Base64": "KBzlyJpFEftXFsKvlaykHQB/i+c9SvTbh1vmPMoPgKw="
+    },
+    {
+      "key": "water-dress-l0-v1-f1-front",
+      "path": "wearables/water/water-dress-l0-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 74512,
+      "sha256Base64": "Jr49SKumLwLlniP7xMN035ii6yhVQXaCoh99qB6ouq4="
+    },
+    {
+      "key": "water-dress-l0-v1-f2-back",
+      "path": "wearables/water/water-dress-l0-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 208755,
+      "sha256Base64": "gZbLl+GSqqTBwx3pzkaCFLO3sz/RpaK0r9n3vzpLQwA="
+    },
+    {
+      "key": "water-dress-l0-v1-f2-front",
+      "path": "wearables/water/water-dress-l0-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1055153,
+      "sha256Base64": "f1BrPoZVY7C3xp+6V4GYxQb9diDasoJpM7SGO5QmcSM="
+    },
+    {
+      "key": "water-dress-l0-v1-f3-back",
+      "path": "wearables/water/water-dress-l0-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 214928,
+      "sha256Base64": "SxQ95EpxH1pPWeKxdhTDAc1NpqT6sulQ5nP4hna5cZg="
+    },
+    {
+      "key": "water-dress-l0-v1-f3-front",
+      "path": "wearables/water/water-dress-l0-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1072094,
+      "sha256Base64": "HW1ArM27v1JC+UVcroUN6d+osmR6dPp3ltTEcQHaqdg="
+    },
+    {
+      "key": "water-dress-l0-v1-f4-back",
+      "path": "wearables/water/water-dress-l0-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 174777,
+      "sha256Base64": "OwRmr7QbCv65fQoltZpUurke5MIuB6r+0ER7inbrGl4="
+    },
+    {
+      "key": "water-dress-l0-v1-f4-front",
+      "path": "wearables/water/water-dress-l0-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1341252,
+      "sha256Base64": "WvGHvh1yMcTaG4LzXAcOynF+8DUl2g2WMOaY2jEioBk="
+    },
+    {
+      "key": "water-dress-l1-v1:icon",
+      "path": "items/water/dress/l1/water-dress-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 57768,
+      "sha256Base64": "yRiIrvNQN4VksHUZFG2uHh4geiYCmgnU2A/i4HXn2Vk="
+    },
+    {
+      "key": "water-dress-l1-v1:preview",
+      "path": "items/water/dress/l1/water-dress-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 207383,
+      "sha256Base64": "D9aVt1+t3HTnG5T3Asv7NJ4Zzrhsz14AXQ5D1ugae6w="
+    },
+    {
+      "key": "water-dress-l1-v1-f1-back",
+      "path": "wearables/water/water-dress-l1-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 222547,
+      "sha256Base64": "vv/aaYtSI7+UvE9jhJKysfGwJ5iKfVozwgPnFop+hQ4="
+    },
+    {
+      "key": "water-dress-l1-v1-f1-front",
+      "path": "wearables/water/water-dress-l1-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 844787,
+      "sha256Base64": "GiCIoF5Tqqx4bbv9O5CfJhVKirLp7oiAzchStRh5v9g="
+    },
+    {
+      "key": "water-dress-l1-v1-f2-back",
+      "path": "wearables/water/water-dress-l1-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 333219,
+      "sha256Base64": "WWrwKF8u7QOAW8HnjaKC5rlQwLgB7AO7kGfsYaXCJ20="
+    },
+    {
+      "key": "water-dress-l1-v1-f2-front",
+      "path": "wearables/water/water-dress-l1-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 996657,
+      "sha256Base64": "X6VaVm8tUVv0DXDZjTjAgicrA/+yktzdNcfXMxZcblM="
+    },
+    {
+      "key": "water-dress-l1-v1-f3-back",
+      "path": "wearables/water/water-dress-l1-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 361771,
+      "sha256Base64": "DXi1d0Pp6bL2lNZ/2zFZu521hUt8QEgKi4QKv3OGHZw="
+    },
+    {
+      "key": "water-dress-l1-v1-f3-front",
+      "path": "wearables/water/water-dress-l1-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 863743,
+      "sha256Base64": "7KhbF3Tgu63XwlDnkh8DwDs+BBac0UaniBObScayp6w="
+    },
+    {
+      "key": "water-dress-l1-v1-f4-back",
+      "path": "wearables/water/water-dress-l1-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 272641,
+      "sha256Base64": "Vu8DtXY3f1qVtSP97SAPdzP4uKDMa3OZHx1ZhE92MsI="
+    },
+    {
+      "key": "water-dress-l1-v1-f4-front",
+      "path": "wearables/water/water-dress-l1-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1060004,
+      "sha256Base64": "/PXA9ziN8ANv+bD8KlfCQhW0h7CJMRG/y6j2ocZQEzc="
+    },
+    {
+      "key": "water-dress-l2-v1:icon",
+      "path": "items/water/dress/l2/water-dress-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 80529,
+      "sha256Base64": "LBICiNibb4UUOJ7sk2pKFcwzCHWpqaX99imbD0YvBjg="
+    },
+    {
+      "key": "water-dress-l2-v1:preview",
+      "path": "items/water/dress/l2/water-dress-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 296660,
+      "sha256Base64": "Jie3IkGgKWwXde0pqprxXEk7+hce1wWk9Aj3qGo9Vt4="
+    },
+    {
+      "key": "water-dress-l2-v1-f1-back",
+      "path": "wearables/water/water-dress-l2-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 582351,
+      "sha256Base64": "kn1B95QabIxi/BlNivGbQGHFX9yU4JLxPO4P3C4V8Fw="
+    },
+    {
+      "key": "water-dress-l2-v1-f1-front",
+      "path": "wearables/water/water-dress-l2-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 971630,
+      "sha256Base64": "4G97qU6VrHNunm1eLPCjJ8Yjr0lP8+/2AQE7FbCMwZ8="
+    },
+    {
+      "key": "water-dress-l2-v1-f2-back",
+      "path": "wearables/water/water-dress-l2-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 462555,
+      "sha256Base64": "DjDh7e8Q57KmuBfg833psfN89mWrsyPGsxo19t73EOg="
+    },
+    {
+      "key": "water-dress-l2-v1-f2-front",
+      "path": "wearables/water/water-dress-l2-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 826272,
+      "sha256Base64": "55LEOM3HIFeCZlDWWv/uhr1+MW3wBec7LZs43fTBYUI="
+    },
+    {
+      "key": "water-dress-l2-v1-f3-back",
+      "path": "wearables/water/water-dress-l2-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 508147,
+      "sha256Base64": "W3QTfpYpI+cgM/7dUuqCd+ibHalTqOZhkrn4M1lkbtY="
+    },
+    {
+      "key": "water-dress-l2-v1-f3-front",
+      "path": "wearables/water/water-dress-l2-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1026603,
+      "sha256Base64": "KluoIzO9u/f2qHBG1ZMD/hW7KS3xXQbYUXzdFA1Ncjw="
+    },
+    {
+      "key": "water-dress-l2-v1-f4-back",
+      "path": "wearables/water/water-dress-l2-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 488897,
+      "sha256Base64": "y5ulSnseJGkoH+fkaWvYRJXkmYjRNtnjAJ7f4UT0Rww="
+    },
+    {
+      "key": "water-dress-l2-v1-f4-front",
+      "path": "wearables/water/water-dress-l2-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1193289,
+      "sha256Base64": "5Yq1OQACsgC17RY/Yy/PhEefeq3OThI0DHoIJ/yn2bA="
+    },
+    {
+      "key": "water-dress-l3-v1:icon",
+      "path": "items/water/dress/l3/water-dress-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 59401,
+      "sha256Base64": "bQlqK3oV7nutHpptOqJOV+93G9tF4EKHzui1SzFBF/s="
+    },
+    {
+      "key": "water-dress-l3-v1:preview",
+      "path": "items/water/dress/l3/water-dress-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 224353,
+      "sha256Base64": "MMT6VlHsZpVfmNBpknofl7VzUVYwS9A3RL0tcZZ9Pkw="
+    },
+    {
+      "key": "water-dress-l3-v1-f1-back",
+      "path": "wearables/water/water-dress-l3-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 888048,
+      "sha256Base64": "xEdaxkapAtplBNC/oMGUXL/MrUCHSd9RNEyDhi5+0A4="
+    },
+    {
+      "key": "water-dress-l3-v1-f1-front",
+      "path": "wearables/water/water-dress-l3-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1057546,
+      "sha256Base64": "EN1MNAF6vxA9xbR/MnGRWBTFcHGuYUgij3csHOxsKYo="
+    },
+    {
+      "key": "water-dress-l3-v1-f2-back",
+      "path": "wearables/water/water-dress-l3-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1046876,
+      "sha256Base64": "gVODb1eK7noeXqMmlAF0eEuSQJ4VDUY56sRDKOygLI4="
+    },
+    {
+      "key": "water-dress-l3-v1-f2-front",
+      "path": "wearables/water/water-dress-l3-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1040069,
+      "sha256Base64": "Z5z5g4Ot2JhLfOq8TZBqHVozht15Kd7P08wc/2bRS/g="
+    },
+    {
+      "key": "water-dress-l3-v1-f3-back",
+      "path": "wearables/water/water-dress-l3-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 772816,
+      "sha256Base64": "LYCfRtmcXcgFWcmC46b6lW1tQHcnT3PogR2AuqQ12gA="
+    },
+    {
+      "key": "water-dress-l3-v1-f3-front",
+      "path": "wearables/water/water-dress-l3-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1150397,
+      "sha256Base64": "xpTPWI5+vyMl151N6obIILpqto8loN+IEa15WbP7+OA="
+    },
+    {
+      "key": "water-dress-l3-v1-f4-back",
+      "path": "wearables/water/water-dress-l3-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1083768,
+      "sha256Base64": "T50X94E7t8L/IMKqY0BvUV0ce5PfFH2xjxJHwQUx5Jg="
+    },
+    {
+      "key": "water-dress-l3-v1-f4-front",
+      "path": "wearables/water/water-dress-l3-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 978468,
+      "sha256Base64": "zfGBEh6uUmKfl4e6PNDA6ycf5k1MJakTq+mSkdg3Aiw="
+    },
+    {
+      "key": "water-dress-l4-v1:icon",
+      "path": "items/water/dress/l4/water-dress-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 65096,
+      "sha256Base64": "wDgQ3jN71Ms6d+POaLYFhl0g/X2RJjIxDR0POLGesSQ="
+    },
+    {
+      "key": "water-dress-l4-v1:preview",
+      "path": "items/water/dress/l4/water-dress-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 243088,
+      "sha256Base64": "5xoihJkbRVhKF7Vrdqhsgx1rk1hDZdlwQmgq+vqJCM8="
+    },
+    {
+      "key": "water-dress-l4-v1-f1-front",
+      "path": "wearables/water/water-dress-l4-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1220255,
+      "sha256Base64": "kDaEJ3pZTbJhXjIYD99dX9KGETNjFhQ1I5+7BT/1qxg="
+    },
+    {
+      "key": "water-dress-l4-v1-f2-front",
+      "path": "wearables/water/water-dress-l4-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1175790,
+      "sha256Base64": "Jq3NWV5JLdfUv6cVPfTBq+BaN1EKdVdQlvf2iRqF1Xo="
+    },
+    {
+      "key": "water-dress-l4-v1-f3-front",
+      "path": "wearables/water/water-dress-l4-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1733718,
+      "sha256Base64": "g+8Sb2VU/3RHMM7dxXfPwisSpgxHJJU3cRCJSB+eHZo="
+    },
+    {
+      "key": "water-dress-l4-v1-f4-front",
+      "path": "wearables/water/water-dress-l4-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1547765,
+      "sha256Base64": "pUjmbZN+FmmAKJPjcpwIm0OK9/M9CNqKYoVrsPb9xw0="
+    },
+    {
+      "key": "water-dress-l5-v1:icon",
+      "path": "items/water/dress/l5/water-dress-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 53831,
+      "sha256Base64": "aKU6aWVYDtFBY5mxtxyqYEFXbIAnazit7h/AMXmTy+4="
+    },
+    {
+      "key": "water-dress-l5-v1:preview",
+      "path": "items/water/dress/l5/water-dress-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 200662,
+      "sha256Base64": "7fALturTpcGE+nc+dsd1YFRCTwFCG3uv70iFBT/Qq74="
+    },
+    {
+      "key": "water-dress-l5-v1-f1-back",
+      "path": "wearables/water/water-dress-l5-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 551646,
+      "sha256Base64": "gEtcoC+WsjfsgVkO7CaHPF31OkNZI2ZqqcZ0wxKPLZU="
+    },
+    {
+      "key": "water-dress-l5-v1-f1-front",
+      "path": "wearables/water/water-dress-l5-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 974987,
+      "sha256Base64": "FjMBKkmVnwMWYz2fOQ17Q1/bD8cgzB+9VOUM1HEshLQ="
+    },
+    {
+      "key": "water-dress-l5-v1-f2-back",
+      "path": "wearables/water/water-dress-l5-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 883954,
+      "sha256Base64": "G0snVJniw2pAr8nmx5VHl8lYou6NraBTCc27JjGKODg="
+    },
+    {
+      "key": "water-dress-l5-v1-f2-front",
+      "path": "wearables/water/water-dress-l5-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 966135,
+      "sha256Base64": "lP5IIF7ALq/5TlKxAP76H8mlMhqZP14BiVH+yaGsN7U="
+    },
+    {
+      "key": "water-dress-l5-v1-f3-back",
+      "path": "wearables/water/water-dress-l5-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 917713,
+      "sha256Base64": "q7Jlcdtpx2wdyQi5Qn9bOd988fj2YuJu2W7UWqnbdWI="
+    },
+    {
+      "key": "water-dress-l5-v1-f3-front",
+      "path": "wearables/water/water-dress-l5-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 965780,
+      "sha256Base64": "HvFhz6sP67AcLx5lcn7dqvcgOcs6Vp+t16Wk8nWqwsk="
+    },
+    {
+      "key": "water-dress-l5-v1-f4-back",
+      "path": "wearables/water/water-dress-l5-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 699706,
+      "sha256Base64": "4B/nTZ2kO8ky66CvYehj2SncICwNoIDT9aDT2yw+mTM="
+    },
+    {
+      "key": "water-dress-l5-v1-f4-front",
+      "path": "wearables/water/water-dress-l5-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 812530,
+      "sha256Base64": "AUrs9g9JvVb07JH1cMTqSTsP6dbhG0ex/CXtpLoW+DA="
+    },
+    {
+      "key": "water-furniture-l0-v1:icon",
+      "path": "items/water/furniture/l0/water-furniture-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 63520,
+      "sha256Base64": "L/IlCI8hqyFp2gzt4S/qWh554YatdKNso7Xf5wRdeCA="
+    },
+    {
+      "key": "water-furniture-l0-v1:preview",
+      "path": "items/water/furniture/l0/water-furniture-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 226703,
+      "sha256Base64": "ug4QPNcw3AOiiZWP9InM1rn6rBZbetgvUFs8hfzJX5w="
+    },
+    {
+      "key": "water-furniture-l1-v1:icon",
+      "path": "items/water/furniture/l1/water-furniture-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 65838,
+      "sha256Base64": "KUO1VGr3etX8d+GKHpCo7vdi8Ci5HIMQSX995v85Sas="
+    },
+    {
+      "key": "water-furniture-l1-v1:preview",
+      "path": "items/water/furniture/l1/water-furniture-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 242647,
+      "sha256Base64": "uOTb4hdUk4ypHxsYgJbcPbzdJPIiBqoPgV05MUFkn4c="
+    },
+    {
+      "key": "water-furniture-l2-v1:icon",
+      "path": "items/water/furniture/l2/water-furniture-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 90921,
+      "sha256Base64": "+oDSVnxuQwbaAOLMqWlyrEKMf4dn31D8CLtxvWnRnm0="
+    },
+    {
+      "key": "water-furniture-l2-v1:preview",
+      "path": "items/water/furniture/l2/water-furniture-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 338378,
+      "sha256Base64": "UmTqcsBBqOBCkd9p9/ItIe1JPjsudhKrt0nubp1/Mg8="
+    },
+    {
+      "key": "water-furniture-l3-v1:icon",
+      "path": "items/water/furniture/l3/water-furniture-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 57876,
+      "sha256Base64": "YNpuHASY04CY96vuWzZGF1tybv3cxroDUHFlPREWWe0="
+    },
+    {
+      "key": "water-furniture-l3-v1:preview",
+      "path": "items/water/furniture/l3/water-furniture-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 215035,
+      "sha256Base64": "WtN6O6k7xw4vKFDNQjGrpTam0IPFQF95PiR3f5IFxm4="
+    },
+    {
+      "key": "water-furniture-l4-v1:icon",
+      "path": "items/water/furniture/l4/water-furniture-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 77192,
+      "sha256Base64": "xMRa8CryUj8cIiZt0kScpSD29NIC3uC55/qQ5e0L55w="
+    },
+    {
+      "key": "water-furniture-l4-v1:preview",
+      "path": "items/water/furniture/l4/water-furniture-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 288657,
+      "sha256Base64": "p3EcTA4S0QkZX8HNIeQHH88l3H519jdKiTnuBOpK7VI="
+    },
+    {
+      "key": "water-furniture-l5-v1:icon",
+      "path": "items/water/furniture/l5/water-furniture-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 77371,
+      "sha256Base64": "3BNSBy/yBOUjGe91CSmSJgBwUZ4kvBL2T0yqvYvM85I="
+    },
+    {
+      "key": "water-furniture-l5-v1:preview",
+      "path": "items/water/furniture/l5/water-furniture-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 289600,
+      "sha256Base64": "j44GIUDYB17l+TML1Gu4jharlzJW1MeZ1mtOQWiTe58="
+    },
+    {
+      "key": "water-decor-l0-v1:icon",
+      "path": "items/water/decor/l0/water-decor-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 52871,
+      "sha256Base64": "RLC4YzsyEFVTjMyu/hSFeC303HzZ5PdI7RuyBjz9H78="
+    },
+    {
+      "key": "water-decor-l0-v1:preview",
+      "path": "items/water/decor/l0/water-decor-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 190968,
+      "sha256Base64": "Rt+JYF/wXEaXmkuM3Cgr/Y/qPSfye6NpK1qB2kkWHsA="
+    },
+    {
+      "key": "water-decor-l1-v1:icon",
+      "path": "items/water/decor/l1/water-decor-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 64257,
+      "sha256Base64": "bBs3zF37VfQWolDcLSRBhkYKxkJ9r+hiRyMYmBT9edE="
+    },
+    {
+      "key": "water-decor-l1-v1:preview",
+      "path": "items/water/decor/l1/water-decor-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 237551,
+      "sha256Base64": "MYUXXZdb9pzofi+/mqMWhOGsb0aIyKDC/JknCjPVnO4="
+    },
+    {
+      "key": "water-decor-l2-v1:icon",
+      "path": "items/water/decor/l2/water-decor-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 75949,
+      "sha256Base64": "Q/nwmhXg3/HPW2mroDzDZAvaovsD0yGMIc6zZ6b0XOM="
+    },
+    {
+      "key": "water-decor-l2-v1:preview",
+      "path": "items/water/decor/l2/water-decor-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 276849,
+      "sha256Base64": "JY+S6FlokG8JIvl5oUKetoX3vm+cSBQKi7hPZ7pFpuo="
+    },
+    {
+      "key": "water-decor-l3-v1:icon",
+      "path": "items/water/decor/l3/water-decor-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 40699,
+      "sha256Base64": "2+6EWxGC9Kp6baIUW+LF0msQFyhe9MtcpVcifLSIpfU="
+    },
+    {
+      "key": "water-decor-l3-v1:preview",
+      "path": "items/water/decor/l3/water-decor-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 148486,
+      "sha256Base64": "RG1jSQ1gICwKX3B8PDm3iAtvK+ej457mG9e4PSpQrt0="
+    },
+    {
+      "key": "water-decor-l4-v1:icon",
+      "path": "items/water/decor/l4/water-decor-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 72386,
+      "sha256Base64": "dOK+mEbJo/pTCSXhEQjWZES3z05BNcANGjs9phpB1wQ="
+    },
+    {
+      "key": "water-decor-l4-v1:preview",
+      "path": "items/water/decor/l4/water-decor-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 268825,
+      "sha256Base64": "Y/iUW6ClchfvZ3clyuBaeyeQ7jxSKYPvzLgOrLA6fm4="
+    },
+    {
+      "key": "water-decor-l5-v1:icon",
+      "path": "items/water/decor/l5/water-decor-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 65908,
+      "sha256Base64": "OM2hp1EAKqbc2aCVzuB1Lm5yVQT6cWCsgb9GHKuo1vA="
+    },
+    {
+      "key": "water-decor-l5-v1:preview",
+      "path": "items/water/decor/l5/water-decor-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 246050,
+      "sha256Base64": "NgQh6Ki/mePTpjNhTJfgRd3hI5EyBmZA8nSifvlN2p0="
+    },
+    {
+      "key": "water-courtyard-l0-v1:icon",
+      "path": "items/water/courtyard/l0/water-courtyard-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 64853,
+      "sha256Base64": "0msEPtwimKumRIe34NCyjk3qGOCTRHq5R81NGsBZBBM="
+    },
+    {
+      "key": "water-courtyard-l0-v1:preview",
+      "path": "items/water/courtyard/l0/water-courtyard-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 238921,
+      "sha256Base64": "0BVnBjwrpSMZpnQdMWFMV6wHsofKcEZ4jvCkLO2KKyc="
+    },
+    {
+      "key": "water-courtyard-l1-v1:icon",
+      "path": "items/water/courtyard/l1/water-courtyard-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 74616,
+      "sha256Base64": "iO64FFTAf34t0VLWlfLz8G3Bmn9l4nwl2kulQzo+N/o="
+    },
+    {
+      "key": "water-courtyard-l1-v1:preview",
+      "path": "items/water/courtyard/l1/water-courtyard-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 279705,
+      "sha256Base64": "HYU7gyUxznV9OEbCu5gPkbv9z0cbjymAXvE6+ilmMoQ="
+    },
+    {
+      "key": "water-courtyard-l2-v1:icon",
+      "path": "items/water/courtyard/l2/water-courtyard-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 85926,
+      "sha256Base64": "plbqdjjrmxmovuCsDvQT+N0C3cE6S9fMY9tGWTEL7zc="
+    },
+    {
+      "key": "water-courtyard-l2-v1:preview",
+      "path": "items/water/courtyard/l2/water-courtyard-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 321488,
+      "sha256Base64": "ijJO32pTyBb1D/jz0l1xbssBRnMrVQApeCUB+BiDsuU="
+    },
+    {
+      "key": "water-courtyard-l3-v1:icon",
+      "path": "items/water/courtyard/l3/water-courtyard-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 71761,
+      "sha256Base64": "GzL6QfcVeigdYx/lckEBPSqzEmesm4sm82hFRmIFrbQ="
+    },
+    {
+      "key": "water-courtyard-l3-v1:preview",
+      "path": "items/water/courtyard/l3/water-courtyard-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 270568,
+      "sha256Base64": "OQ/vwr+q9rWOvD96bzg8qNoYsh4zFBJw3fW8RGsmxuw="
+    },
+    {
+      "key": "water-courtyard-l4-v1:icon",
+      "path": "items/water/courtyard/l4/water-courtyard-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 76014,
+      "sha256Base64": "8qBuaLc5LfW8gW3zHqv+pclUCYsm3TxOesgD/Oy0nQ4="
+    },
+    {
+      "key": "water-courtyard-l4-v1:preview",
+      "path": "items/water/courtyard/l4/water-courtyard-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 283941,
+      "sha256Base64": "NNY6Sv3Xc+LFmve5TfP9kaOzNJqhSlVU0U8daybc2Ps="
+    },
+    {
+      "key": "water-courtyard-l5-v1:icon",
+      "path": "items/water/courtyard/l5/water-courtyard-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 82615,
+      "sha256Base64": "K3d9dlABoTynz0hXTz+BY8jrWtCxqXiGO+U0Q0fDHuE="
+    },
+    {
+      "key": "water-courtyard-l5-v1:preview",
+      "path": "items/water/courtyard/l5/water-courtyard-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 315803,
+      "sha256Base64": "gccgOV+8LXQ7HXbMVhNtY4INibfLNoxY1/Pt3vBpQp0="
+    },
+    {
+      "key": "fire-feed-l0-v1:icon",
+      "path": "items/fire/feed/l0/fire-feed-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 59729,
+      "sha256Base64": "nyqRhFvPzQW+O6rX6PX0lgwO5y5B81yJpjVF5rBydUE="
+    },
+    {
+      "key": "fire-feed-l0-v1:preview",
+      "path": "items/fire/feed/l0/fire-feed-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 215621,
+      "sha256Base64": "kslrUuGg1219aMkTMXzGazXF8c24FMOeSqr/8fzQdUE="
+    },
+    {
+      "key": "fire-feed-l1-v1:icon",
+      "path": "items/fire/feed/l1/fire-feed-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 63674,
+      "sha256Base64": "0dCzQ0Qd6kxRI9k95QWFNbxXS3Hsdb8HG3jgosXwWc8="
+    },
+    {
+      "key": "fire-feed-l1-v1:preview",
+      "path": "items/fire/feed/l1/fire-feed-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 237061,
+      "sha256Base64": "NNvKI78nlmGv3lD8hBYrK+uDz72fo7dOnV9kq5kXMWs="
+    },
+    {
+      "key": "fire-feed-l2-v1:icon",
+      "path": "items/fire/feed/l2/fire-feed-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 65564,
+      "sha256Base64": "r2kL7JdVyPf/VS7sNnxZxcjDsDTlRIhGGYRdu/2N60w="
+    },
+    {
+      "key": "fire-feed-l2-v1:preview",
+      "path": "items/fire/feed/l2/fire-feed-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 234746,
+      "sha256Base64": "icZcTFwBNcVTaDwYnGwgimhJOYb1td/gDJiLDA4PdnE="
+    },
+    {
+      "key": "fire-feed-l3-v1:icon",
+      "path": "items/fire/feed/l3/fire-feed-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 73605,
+      "sha256Base64": "qGz+n0FsX+ZVolSwYBTyV1oumEy15tmR74l/FjAwKuc="
+    },
+    {
+      "key": "fire-feed-l3-v1:preview",
+      "path": "items/fire/feed/l3/fire-feed-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 278736,
+      "sha256Base64": "GgHolLXIahOMweaDpBatVjAwMEnOGDw5kZKC10FEkzc="
+    },
+    {
+      "key": "fire-feed-l4-v1:icon",
+      "path": "items/fire/feed/l4/fire-feed-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 65816,
+      "sha256Base64": "4swAVwZkbaE9MRrA3po7hQf/1s40LButHzp3r7Tu0KU="
+    },
+    {
+      "key": "fire-feed-l4-v1:preview",
+      "path": "items/fire/feed/l4/fire-feed-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 237814,
+      "sha256Base64": "qq5NDnQEyyJztYn6Zcc6jyGVpeUGq2YE8V5jAkGvvFU="
+    },
+    {
+      "key": "fire-feed-l5-v1:icon",
+      "path": "items/fire/feed/l5/fire-feed-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 68876,
+      "sha256Base64": "cjRnV6Ru3W1C2lqTXXlCcJsnmpcjnxekNWVu+s9SkYo="
+    },
+    {
+      "key": "fire-feed-l5-v1:preview",
+      "path": "items/fire/feed/l5/fire-feed-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 252567,
+      "sha256Base64": "S8dX87EDweCe73TMK43dziqwWHrPyh5PYVY9g4NVUsU="
+    },
+    {
+      "key": "fire-dress-l0-v1:icon",
+      "path": "items/fire/dress/l0/fire-dress-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 66429,
+      "sha256Base64": "ATJyPV9TS7vqI2Bm+3hV2HbplZJ3vZ86l4SQLgncmzk="
+    },
+    {
+      "key": "fire-dress-l0-v1:preview",
+      "path": "items/fire/dress/l0/fire-dress-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 241984,
+      "sha256Base64": "k3xeGoeerpBshz8UzftrGlm+u5rnbbmm61wDwnDESq0="
+    },
+    {
+      "key": "fire-dress-l0-v1-f1-back",
+      "path": "wearables/fire/fire-dress-l0-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 372721,
+      "sha256Base64": "mJdkWJ9JpGTaTZTP/aX2kObk7eH5nSInHW7B5ZJMyEk="
+    },
+    {
+      "key": "fire-dress-l0-v1-f1-front",
+      "path": "wearables/fire/fire-dress-l0-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1120062,
+      "sha256Base64": "hD+viluXKnuOcEfnGKj1jKkhbOIdTDI2bC+hi+OnQkI="
+    },
+    {
+      "key": "fire-dress-l0-v1-f2-back",
+      "path": "wearables/fire/fire-dress-l0-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 293174,
+      "sha256Base64": "y7cs7TLdjRxN53zURCbicaSZ6pwlHNayYS0sKAHaTkI="
+    },
+    {
+      "key": "fire-dress-l0-v1-f2-front",
+      "path": "wearables/fire/fire-dress-l0-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 837634,
+      "sha256Base64": "Wyh+s5wO8zv4SrXe/WipeoI1LPzz1EivawlyEQnCU7s="
+    },
+    {
+      "key": "fire-dress-l0-v1-f3-back",
+      "path": "wearables/fire/fire-dress-l0-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 347297,
+      "sha256Base64": "cRdeJMf1NSGc6wQIFpMa4vRJJTPIdLWP4ea1H2XIz+Q="
+    },
+    {
+      "key": "fire-dress-l0-v1-f3-front",
+      "path": "wearables/fire/fire-dress-l0-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1035769,
+      "sha256Base64": "aDo4EoOsz8hL3urvt/caxESVH2gVJzllou99t3nROLY="
+    },
+    {
+      "key": "fire-dress-l0-v1-f4-back",
+      "path": "wearables/fire/fire-dress-l0-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 357275,
+      "sha256Base64": "zzcntJaTAa04FjOCuuqiLWfANEl2ihkcJhinH/h63w4="
+    },
+    {
+      "key": "fire-dress-l0-v1-f4-front",
+      "path": "wearables/fire/fire-dress-l0-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1304057,
+      "sha256Base64": "kMJ/ieE0r30Cuwqs9AS+fURkC1GXYk74btr2qHqCp6E="
+    },
+    {
+      "key": "fire-dress-l1-v1:icon",
+      "path": "items/fire/dress/l1/fire-dress-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 72864,
+      "sha256Base64": "WRIm34BKK1mktRSRMmQgxFUCXNzV3A5hneIhDoJoibU="
+    },
+    {
+      "key": "fire-dress-l1-v1:preview",
+      "path": "items/fire/dress/l1/fire-dress-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 265989,
+      "sha256Base64": "sk2NOrZICDF4Q2OjUdG7FVYGkx8EhvhDC1miPAc5cB4="
+    },
+    {
+      "key": "fire-dress-l1-v1-f1-back",
+      "path": "wearables/fire/fire-dress-l1-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 372580,
+      "sha256Base64": "tS4uSHOtSMTiaj/ul1tvUN3yXAfX6WAhAik12jIylFE="
+    },
+    {
+      "key": "fire-dress-l1-v1-f1-front",
+      "path": "wearables/fire/fire-dress-l1-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 988493,
+      "sha256Base64": "VV/xF2JTwwlnTDRWSkuEYTNbVdysiWzCBHlvUGgOKLY="
+    },
+    {
+      "key": "fire-dress-l1-v1-f2-back",
+      "path": "wearables/fire/fire-dress-l1-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 338088,
+      "sha256Base64": "jVy0sNRqzhLPsCe2hdXeiNRsBV5srYQt3t2x49rMp4g="
+    },
+    {
+      "key": "fire-dress-l1-v1-f2-front",
+      "path": "wearables/fire/fire-dress-l1-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 927269,
+      "sha256Base64": "dD2J1YJWXHdTnvQBeDHqGBrjI3MLDqLFcsQAXijejto="
+    },
+    {
+      "key": "fire-dress-l1-v1-f3-back",
+      "path": "wearables/fire/fire-dress-l1-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 581272,
+      "sha256Base64": "AGhjqDr2v8jISLpvtdb5TTEqtqr9YjZ826x5s7neZ0U="
+    },
+    {
+      "key": "fire-dress-l1-v1-f3-front",
+      "path": "wearables/fire/fire-dress-l1-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1093071,
+      "sha256Base64": "lgdUY+Uc8yNoCkPkqYPKafJMitazlRuEqlxqSscgSFU="
+    },
+    {
+      "key": "fire-dress-l1-v1-f4-back",
+      "path": "wearables/fire/fire-dress-l1-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 369904,
+      "sha256Base64": "A3AJLbkf0ZeADSID1Do/2z8fPHlzWTRYZ3oBLqZtogU="
+    },
+    {
+      "key": "fire-dress-l1-v1-f4-front",
+      "path": "wearables/fire/fire-dress-l1-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1069966,
+      "sha256Base64": "g6ExUXwcgnMJC/9x0m4Q2CGfn0iN1my1srxB4cfAlFM="
+    },
+    {
+      "key": "fire-dress-l2-v1:icon",
+      "path": "items/fire/dress/l2/fire-dress-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 55306,
+      "sha256Base64": "prePm96Z1jbjeFSOTKesHt4R/NwlXV1qHErnxRkWMUo="
+    },
+    {
+      "key": "fire-dress-l2-v1:preview",
+      "path": "items/fire/dress/l2/fire-dress-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 201113,
+      "sha256Base64": "B6u4sOcM1e2K5f5Vttu0/PXJlz+yPphCo0EUtRxL0Qw="
+    },
+    {
+      "key": "fire-dress-l2-v1-f1-back",
+      "path": "wearables/fire/fire-dress-l2-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 429098,
+      "sha256Base64": "lSnBv9pb8DJhVinhp8XZxBAvnKKdJNLMnPdj1E/VwVU="
+    },
+    {
+      "key": "fire-dress-l2-v1-f1-front",
+      "path": "wearables/fire/fire-dress-l2-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 926024,
+      "sha256Base64": "0dqRsZD6lx6tX3OTSY3FoiiD2wdxs07pKw5oyki41E8="
+    },
+    {
+      "key": "fire-dress-l2-v1-f2-back",
+      "path": "wearables/fire/fire-dress-l2-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 485245,
+      "sha256Base64": "+BfbQJAyEMJpTA2WPa6/pnMHUa7Zev/dyyHcJX97gCc="
+    },
+    {
+      "key": "fire-dress-l2-v1-f2-front",
+      "path": "wearables/fire/fire-dress-l2-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 885061,
+      "sha256Base64": "sxRYv3k6WpACI8keFDJmqIusuJN3MRIasTzUINd9aog="
+    },
+    {
+      "key": "fire-dress-l2-v1-f3-back",
+      "path": "wearables/fire/fire-dress-l2-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 365883,
+      "sha256Base64": "UUZejZw1a7dqVQzc5qC8n5cunsFSOyiVv5aumYmq78c="
+    },
+    {
+      "key": "fire-dress-l2-v1-f3-front",
+      "path": "wearables/fire/fire-dress-l2-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 901234,
+      "sha256Base64": "26rOzWsDPdH/cEgs6uA85vW+7zYCHCf2utJg+U1u1BU="
+    },
+    {
+      "key": "fire-dress-l2-v1-f4-back",
+      "path": "wearables/fire/fire-dress-l2-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 524023,
+      "sha256Base64": "XWUL5Jx9A5iaZJvQyDsUVBGdKYGasLRtrC/D7SHo6Q8="
+    },
+    {
+      "key": "fire-dress-l2-v1-f4-front",
+      "path": "wearables/fire/fire-dress-l2-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 950339,
+      "sha256Base64": "KYOU0oUow4Hc7N0sYw3b3n7dAe57EwrLolAaeBgfXsM="
+    },
+    {
+      "key": "fire-dress-l3-v1:icon",
+      "path": "items/fire/dress/l3/fire-dress-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 54317,
+      "sha256Base64": "m/nAWowb2OGUHYgu+oJ8Cf5bggoNr4WhrOSgkgvCLEM="
+    },
+    {
+      "key": "fire-dress-l3-v1:preview",
+      "path": "items/fire/dress/l3/fire-dress-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 196611,
+      "sha256Base64": "yXArHlm1r40gmXaY/zuNtOlIC6/qQ+8kkXRGy5jZp/8="
+    },
+    {
+      "key": "fire-dress-l3-v1-f1-back",
+      "path": "wearables/fire/fire-dress-l3-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1073673,
+      "sha256Base64": "qFv4MMyWaBTrQ9Np/vALsp66pu50oXpGFHUb66ySyaM="
+    },
+    {
+      "key": "fire-dress-l3-v1-f1-front",
+      "path": "wearables/fire/fire-dress-l3-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 920624,
+      "sha256Base64": "mwanbmd0I1BT5PpICZ7RHXIZMJGIpK1F+hNh77ykq5M="
+    },
+    {
+      "key": "fire-dress-l3-v1-f2-back",
+      "path": "wearables/fire/fire-dress-l3-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 883595,
+      "sha256Base64": "/wLQ6cTzVJ8Z0/eozMm20D5EggaIAxuJl39WwGIByK8="
+    },
+    {
+      "key": "fire-dress-l3-v1-f2-front",
+      "path": "wearables/fire/fire-dress-l3-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 904231,
+      "sha256Base64": "DrKqjGKPdeQakR14/5h6Bs9c6XhUKv4Xuv8c+RDng/0="
+    },
+    {
+      "key": "fire-dress-l3-v1-f3-back",
+      "path": "wearables/fire/fire-dress-l3-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1017476,
+      "sha256Base64": "Z9qnMBla2RQXiUwO/kSJZvRQTMYDvh2xydzPZPWBgjs="
+    },
+    {
+      "key": "fire-dress-l3-v1-f3-front",
+      "path": "wearables/fire/fire-dress-l3-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 933179,
+      "sha256Base64": "IJWSha66rYdIzxpSj3St8W0ORVq6iNSLPPmdGhTy1h4="
+    },
+    {
+      "key": "fire-dress-l3-v1-f4-back",
+      "path": "wearables/fire/fire-dress-l3-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 841416,
+      "sha256Base64": "A1vIjqu8HvWZ4nr4DRVSTWhumrILcK+drnxt/QoE4Qs="
+    },
+    {
+      "key": "fire-dress-l3-v1-f4-front",
+      "path": "wearables/fire/fire-dress-l3-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 964418,
+      "sha256Base64": "y8BUNM6rufguIxSCVgLV3RdjpP+9vNmGP6KE4Dtlsug="
+    },
+    {
+      "key": "fire-dress-l4-v1:icon",
+      "path": "items/fire/dress/l4/fire-dress-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 52733,
+      "sha256Base64": "MyKCmeNrVX7hRFP2OVcczaDujjkuV8PRtKeTY6rEX8A="
+    },
+    {
+      "key": "fire-dress-l4-v1:preview",
+      "path": "items/fire/dress/l4/fire-dress-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 189597,
+      "sha256Base64": "6jylePikN0A5ke0pRaelVL8jDP64bOgSYegqfA4KkJI="
+    },
+    {
+      "key": "fire-dress-l4-v1-f1-front",
+      "path": "wearables/fire/fire-dress-l4-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1060138,
+      "sha256Base64": "0E1mR9dVLX2XG1xGRZAVtqCN+JvNJmNIeDh9BHCQqk4="
+    },
+    {
+      "key": "fire-dress-l4-v1-f2-front",
+      "path": "wearables/fire/fire-dress-l4-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1107041,
+      "sha256Base64": "E/mJNUtpcUU0TiQWv0tU/K0C7gzrDTh6FDvwNikXxTo="
+    },
+    {
+      "key": "fire-dress-l4-v1-f3-front",
+      "path": "wearables/fire/fire-dress-l4-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1166266,
+      "sha256Base64": "kr9Y7pWOzzbh0CJbJ9m0OB0qcZrNjxVwIiMMuOE4lYo="
+    },
+    {
+      "key": "fire-dress-l4-v1-f4-front",
+      "path": "wearables/fire/fire-dress-l4-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1060080,
+      "sha256Base64": "4m60T76OHIIfw0HLPHrEDqO0ILwzFcfCutapFecE15o="
+    },
+    {
+      "key": "fire-dress-l5-v1:icon",
+      "path": "items/fire/dress/l5/fire-dress-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 52753,
+      "sha256Base64": "o4QB7vJG1vOhrO1F89NYj0iiH49QUcfgp3EtWlHhHVg="
+    },
+    {
+      "key": "fire-dress-l5-v1:preview",
+      "path": "items/fire/dress/l5/fire-dress-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 192466,
+      "sha256Base64": "f6hqvabNsRqqOV8M6a8wLx7dvyVmXT9SutGC2ogzWi8="
+    },
+    {
+      "key": "fire-dress-l5-v1-f1-back",
+      "path": "wearables/fire/fire-dress-l5-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 565213,
+      "sha256Base64": "s7D3cYb5hddn5LaAEFdzX4UCyO9aTsRnIQkcWyNnvJ8="
+    },
+    {
+      "key": "fire-dress-l5-v1-f1-front",
+      "path": "wearables/fire/fire-dress-l5-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 876604,
+      "sha256Base64": "K31j26CkVxXbWSjzJjdCCAJexnqOh0w9OoDSldk3ado="
+    },
+    {
+      "key": "fire-dress-l5-v1-f2-back",
+      "path": "wearables/fire/fire-dress-l5-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 536038,
+      "sha256Base64": "C56jS2QxDcivPUplu/mrcxxbJVP6pnBpiLuYGbgg7PA="
+    },
+    {
+      "key": "fire-dress-l5-v1-f2-front",
+      "path": "wearables/fire/fire-dress-l5-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 859187,
+      "sha256Base64": "6Apmr4CmUgQqluWAt1jkqWhqRff9aMSNMcJGpDuF8nk="
+    },
+    {
+      "key": "fire-dress-l5-v1-f3-back",
+      "path": "wearables/fire/fire-dress-l5-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 684222,
+      "sha256Base64": "GwHnvpPRkk1DnRhtZkNzEhiZG4DEr4XP8d1dXOmJ9nY="
+    },
+    {
+      "key": "fire-dress-l5-v1-f3-front",
+      "path": "wearables/fire/fire-dress-l5-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 881645,
+      "sha256Base64": "it9Va0Y0L4p30HYSKHJz4DhepP95EclAuaGj9FExYMc="
+    },
+    {
+      "key": "fire-dress-l5-v1-f4-back",
+      "path": "wearables/fire/fire-dress-l5-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 581933,
+      "sha256Base64": "umalKY+oYUn0C4IYCcjk+y0SCSBOZsbaC725cNNKsMw="
+    },
+    {
+      "key": "fire-dress-l5-v1-f4-front",
+      "path": "wearables/fire/fire-dress-l5-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 882630,
+      "sha256Base64": "1MiApyVeJZMs6olpBm5wIWwjzAYiCn8BwfQJnDQPcnI="
+    },
+    {
+      "key": "fire-furniture-l0-v1:icon",
+      "path": "items/fire/furniture/l0/fire-furniture-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 59309,
+      "sha256Base64": "DdF5FCj20cwqdKJyI2gqnZ16IOW8uLiRYO9rucrjNxs="
+    },
+    {
+      "key": "fire-furniture-l0-v1:preview",
+      "path": "items/fire/furniture/l0/fire-furniture-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 221292,
+      "sha256Base64": "Ta5DH6XIq+zhmKO0hLAcwQz1EmZu2H+33Q1l9D6SPDI="
+    },
+    {
+      "key": "fire-furniture-l1-v1:icon",
+      "path": "items/fire/furniture/l1/fire-furniture-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 60518,
+      "sha256Base64": "ZrtbR9heEm+jl9ulrupAqhHTzYCh13FrUjBSKHYWzuw="
+    },
+    {
+      "key": "fire-furniture-l1-v1:preview",
+      "path": "items/fire/furniture/l1/fire-furniture-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 218478,
+      "sha256Base64": "mgRm+i+vIvPbOup3uMPSg/Im4IqrSKpTxMxHYKmkCWY="
+    },
+    {
+      "key": "fire-furniture-l2-v1:icon",
+      "path": "items/fire/furniture/l2/fire-furniture-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 70066,
+      "sha256Base64": "pzkPQ1k/7JhxIcTsu+ONoMTt5xwVIdG145Q9n2Rwi1c="
+    },
+    {
+      "key": "fire-furniture-l2-v1:preview",
+      "path": "items/fire/furniture/l2/fire-furniture-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 254785,
+      "sha256Base64": "DpPBvLGu/zZ3Ijkj63MnHpWHLPmysCzYjpOtNEyusgE="
+    },
+    {
+      "key": "fire-furniture-l3-v1:icon",
+      "path": "items/fire/furniture/l3/fire-furniture-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 65376,
+      "sha256Base64": "e6MTUauhvzAwXY1XNvdy0ywZdXMKeKbitJqYkM27bgA="
+    },
+    {
+      "key": "fire-furniture-l3-v1:preview",
+      "path": "items/fire/furniture/l3/fire-furniture-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 236365,
+      "sha256Base64": "hi5oOR1Qt31VbMqZGDTSQYzAaov/iGjhi4+kXc05o0E="
+    },
+    {
+      "key": "fire-furniture-l4-v1:icon",
+      "path": "items/fire/furniture/l4/fire-furniture-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 74586,
+      "sha256Base64": "Qk0rnt33rtlCnXny7xOtl0OZEesuBQQHW0cONO4zLxQ="
+    },
+    {
+      "key": "fire-furniture-l4-v1:preview",
+      "path": "items/fire/furniture/l4/fire-furniture-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 271753,
+      "sha256Base64": "n4//nL2s/qV6UJ9oOvK+MsSX5LpYNug+TzrIgcx88L8="
+    },
+    {
+      "key": "fire-furniture-l5-v1:icon",
+      "path": "items/fire/furniture/l5/fire-furniture-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 76937,
+      "sha256Base64": "3xnbB6Ntk8cZV5RKGdxBTgD1Au28FNi9GgNChwXhUZA="
+    },
+    {
+      "key": "fire-furniture-l5-v1:preview",
+      "path": "items/fire/furniture/l5/fire-furniture-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 280881,
+      "sha256Base64": "53Do0xjB3O5+27UEBct1Hid09CHUrcwQT+/ogR1ffzU="
+    },
+    {
+      "key": "fire-decor-l0-v1:icon",
+      "path": "items/fire/decor/l0/fire-decor-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 59919,
+      "sha256Base64": "dQv40oRu26je9GsFqQwMEwdUafnCauaecjKa+u9BTuc="
+    },
+    {
+      "key": "fire-decor-l0-v1:preview",
+      "path": "items/fire/decor/l0/fire-decor-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 227054,
+      "sha256Base64": "RsVE1we7gdGcBmv1DsKxBpd1hx4pgiNrtfnztlelOTA="
+    },
+    {
+      "key": "fire-decor-l1-v1:icon",
+      "path": "items/fire/decor/l1/fire-decor-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 49579,
+      "sha256Base64": "QewuqSHC+COpMElhZ3GorRNvqM2JIRrqMqPJxYMfQEo="
+    },
+    {
+      "key": "fire-decor-l1-v1:preview",
+      "path": "items/fire/decor/l1/fire-decor-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 177639,
+      "sha256Base64": "MGUgYJa6zrzAyGbG81jp5AGRF05mj4Erp8SEpBir4D4="
+    },
+    {
+      "key": "fire-decor-l2-v1:icon",
+      "path": "items/fire/decor/l2/fire-decor-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 55008,
+      "sha256Base64": "EdTWk5yGsHr69Z3G128gqraM6+ZogLAs8oA3vj39E3E="
+    },
+    {
+      "key": "fire-decor-l2-v1:preview",
+      "path": "items/fire/decor/l2/fire-decor-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 197903,
+      "sha256Base64": "W2kQJPoQKUNkZFHwpKtOWclsX3j/YlkwqGPIb6gkkuQ="
+    },
+    {
+      "key": "fire-decor-l3-v1:icon",
+      "path": "items/fire/decor/l3/fire-decor-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 35138,
+      "sha256Base64": "nICF09q4H6/+nFRCMaHiMx9Ipq2b6jTakBZq2U4Zl6Y="
+    },
+    {
+      "key": "fire-decor-l3-v1:preview",
+      "path": "items/fire/decor/l3/fire-decor-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 126783,
+      "sha256Base64": "83rqK/rNDvuqMD3049jdpCAipCe8bPrWpbEmwaNMubY="
+    },
+    {
+      "key": "fire-decor-l4-v1:icon",
+      "path": "items/fire/decor/l4/fire-decor-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 64613,
+      "sha256Base64": "kvr3e7lj9Zkm2tKWHBvaVs5Ntuoh/IgX6wztE3CeB8c="
+    },
+    {
+      "key": "fire-decor-l4-v1:preview",
+      "path": "items/fire/decor/l4/fire-decor-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 232470,
+      "sha256Base64": "SicvuFbTbKkwLwCBW9FpgDvxVy0vkYHUNnRimK1v8jk="
+    },
+    {
+      "key": "fire-decor-l5-v1:icon",
+      "path": "items/fire/decor/l5/fire-decor-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 56257,
+      "sha256Base64": "gV3Sxsp5Hq2Lyajq+r6McnxAIj5N/LoMEnh9lS7Yffc="
+    },
+    {
+      "key": "fire-decor-l5-v1:preview",
+      "path": "items/fire/decor/l5/fire-decor-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 203404,
+      "sha256Base64": "e06Fm5s3eOFwfNNWfhp+2Lgm3LGD+/JQdg+E21vlgGg="
+    },
+    {
+      "key": "fire-courtyard-l0-v1:icon",
+      "path": "items/fire/courtyard/l0/fire-courtyard-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 52347,
+      "sha256Base64": "pAmuF8YPI9xJaX9rvmrV+lNW8l7jJ73FdWxOjR9NNCs="
+    },
+    {
+      "key": "fire-courtyard-l0-v1:preview",
+      "path": "items/fire/courtyard/l0/fire-courtyard-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 186390,
+      "sha256Base64": "o9qiM4BiaS32TAlrO7xyh2CbcydV859ZIULo45gEoMI="
+    },
+    {
+      "key": "fire-courtyard-l1-v1:icon",
+      "path": "items/fire/courtyard/l1/fire-courtyard-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 75061,
+      "sha256Base64": "Cg6pJpQiyXfMXb+zo/Oq0HWJWO2A4lVZ6bh1G+717BM="
+    },
+    {
+      "key": "fire-courtyard-l1-v1:preview",
+      "path": "items/fire/courtyard/l1/fire-courtyard-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 273755,
+      "sha256Base64": "rgwe1xa3BuJ2etlNA1Dk6+7AmMkUk2LA2GPyWyvgymU="
+    },
+    {
+      "key": "fire-courtyard-l2-v1:icon",
+      "path": "items/fire/courtyard/l2/fire-courtyard-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 60006,
+      "sha256Base64": "jxu2ZvNPySKNI9RXAM+mGULP1rq/TWN/Dl1ptLGGQSQ="
+    },
+    {
+      "key": "fire-courtyard-l2-v1:preview",
+      "path": "items/fire/courtyard/l2/fire-courtyard-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 216752,
+      "sha256Base64": "8XhGxn9jZpxn5oZuZHk3W2ad6rgJlVMvrTTB1sox8fM="
+    },
+    {
+      "key": "fire-courtyard-l3-v1:icon",
+      "path": "items/fire/courtyard/l3/fire-courtyard-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 71481,
+      "sha256Base64": "SReIpt6JItFs/J1MXxawrupW+VDQe1VFEMNMM/z9t/k="
+    },
+    {
+      "key": "fire-courtyard-l3-v1:preview",
+      "path": "items/fire/courtyard/l3/fire-courtyard-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 266735,
+      "sha256Base64": "Hnz4aMcfyOupNnyD9B/WQHW08p0dvmyutLhq8gTHZmE="
+    },
+    {
+      "key": "fire-courtyard-l4-v1:icon",
+      "path": "items/fire/courtyard/l4/fire-courtyard-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 77091,
+      "sha256Base64": "yRDvBLZf+bfMOtpR7S9A2zFxmapu9GODItfZ+6/vabc="
+    },
+    {
+      "key": "fire-courtyard-l4-v1:preview",
+      "path": "items/fire/courtyard/l4/fire-courtyard-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 284570,
+      "sha256Base64": "LzrutnwpvdnORmzOKe7oMuNAFfD5/6hhxxEmLORiZwA="
+    },
+    {
+      "key": "fire-courtyard-l5-v1:icon",
+      "path": "items/fire/courtyard/l5/fire-courtyard-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 85263,
+      "sha256Base64": "LIXIBS4hv5knbwqvTvR5fL90eI+dpvvxKxcYiitXwyA="
+    },
+    {
+      "key": "fire-courtyard-l5-v1:preview",
+      "path": "items/fire/courtyard/l5/fire-courtyard-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 307334,
+      "sha256Base64": "GeP+wmLPO5VnDCDEMqBRr0Yi/7heUbs+dDNvAMyA+HY="
+    },
+    {
+      "key": "earth-feed-l0-v1:icon",
+      "path": "items/earth/feed/l0/earth-feed-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 67860,
+      "sha256Base64": "YW3uKRP15uENyzR4/jJVsu3wIdigaiXIaq+Py4WLljs="
+    },
+    {
+      "key": "earth-feed-l0-v1:preview",
+      "path": "items/earth/feed/l0/earth-feed-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 239895,
+      "sha256Base64": "SITraA5hQELyyBOsHfKSV3tfDx9OO2gnfcgr2K1RPMI="
+    },
+    {
+      "key": "earth-feed-l1-v1:icon",
+      "path": "items/earth/feed/l1/earth-feed-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 63308,
+      "sha256Base64": "b36sO5AslnmJa68UfasiOwmk3+FloR0Qmo0I+eB73XU="
+    },
+    {
+      "key": "earth-feed-l1-v1:preview",
+      "path": "items/earth/feed/l1/earth-feed-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 228514,
+      "sha256Base64": "LYwa+H9neyrTVKMt4L1GRA1+F1uwWVu5RfEUxUUWhXg="
+    },
+    {
+      "key": "earth-feed-l2-v1:icon",
+      "path": "items/earth/feed/l2/earth-feed-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 61737,
+      "sha256Base64": "ybdZHQyu83isiO6D60fB99RUDWssVNoFvC/CXALdvII="
+    },
+    {
+      "key": "earth-feed-l2-v1:preview",
+      "path": "items/earth/feed/l2/earth-feed-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 218548,
+      "sha256Base64": "c7IG9ZTE1bP+z3OkgPpAcnHqPWnc9lJ6ZUek3slELAg="
+    },
+    {
+      "key": "earth-feed-l3-v1:icon",
+      "path": "items/earth/feed/l3/earth-feed-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 82792,
+      "sha256Base64": "6g6z3GKmHFRMStTmrp6vOgIkyEYZ2Rhpdy1on8GMLzM="
+    },
+    {
+      "key": "earth-feed-l3-v1:preview",
+      "path": "items/earth/feed/l3/earth-feed-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 309289,
+      "sha256Base64": "iNc8EiKu7q4Mi4OGNCssg7ZIM+c5UjAv1vSkFfgiO3k="
+    },
+    {
+      "key": "earth-feed-l4-v1:icon",
+      "path": "items/earth/feed/l4/earth-feed-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 74787,
+      "sha256Base64": "rXlho9gBttot/mH9G7c/q5dagToT+q4PkTjfh+rnkjk="
+    },
+    {
+      "key": "earth-feed-l4-v1:preview",
+      "path": "items/earth/feed/l4/earth-feed-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 265716,
+      "sha256Base64": "GwwHjjmHiy3I9Jp+kqRd9THPJo0mUed4eYcKJc+P6Tw="
+    },
+    {
+      "key": "earth-feed-l5-v1:icon",
+      "path": "items/earth/feed/l5/earth-feed-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 68393,
+      "sha256Base64": "hzrN2HE61adnwX4EdVLy+v8UT9Qt3pfLSnn4U4wnkG0="
+    },
+    {
+      "key": "earth-feed-l5-v1:preview",
+      "path": "items/earth/feed/l5/earth-feed-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 253254,
+      "sha256Base64": "NYBOKOHvHynQQfWHQCWys8WVmlB5Yn8fwO7Vi5Hk9oQ="
+    },
+    {
+      "key": "earth-dress-l0-v1:icon",
+      "path": "items/earth/dress/l0/earth-dress-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 63434,
+      "sha256Base64": "CsNwCt9NHXAaH/Us7FisIqTNpuG7+ck/lOvDHytayn4="
+    },
+    {
+      "key": "earth-dress-l0-v1:preview",
+      "path": "items/earth/dress/l0/earth-dress-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 222293,
+      "sha256Base64": "2EeQGAe2CSUKLH3ZqanIIsN9c3EkeQ6Suotk91GEL2Q="
+    },
+    {
+      "key": "earth-dress-l0-v1-f1-back",
+      "path": "wearables/earth/earth-dress-l0-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 231768,
+      "sha256Base64": "INuhDssTuS0pP1GM/k0tATAIFkVrNagJKR1wFahfi2w="
+    },
+    {
+      "key": "earth-dress-l0-v1-f1-front",
+      "path": "wearables/earth/earth-dress-l0-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 713695,
+      "sha256Base64": "YJMu53++sU16dCFKwLJbP6YKk74rXKWAwUdQ1JGTsQM="
+    },
+    {
+      "key": "earth-dress-l0-v1-f2-back",
+      "path": "wearables/earth/earth-dress-l0-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 255886,
+      "sha256Base64": "gQgTkVZC8z7Edq4mGQ0w18dBCUx90mJy8hqf8laBR7U="
+    },
+    {
+      "key": "earth-dress-l0-v1-f2-front",
+      "path": "wearables/earth/earth-dress-l0-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1080327,
+      "sha256Base64": "AU3aX0SJJHNTCS5gjv4ylNy3gu8okrT2j+yaE5UmO7w="
+    },
+    {
+      "key": "earth-dress-l0-v1-f3-back",
+      "path": "wearables/earth/earth-dress-l0-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 275192,
+      "sha256Base64": "J1SC+POS8pZr2N6vy48lT381vy2FwN+iqPqJBLU8YE8="
+    },
+    {
+      "key": "earth-dress-l0-v1-f3-front",
+      "path": "wearables/earth/earth-dress-l0-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 925895,
+      "sha256Base64": "GNJdW8kZ5bBRYBuNKR+zQS3E3PtBnDFbvM1+CSo8yLk="
+    },
+    {
+      "key": "earth-dress-l0-v1-f4-back",
+      "path": "wearables/earth/earth-dress-l0-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 279683,
+      "sha256Base64": "OxE4PBmXzcGt9ECKlVYTy1ZflIikvCvkrfCAnWgPBss="
+    },
+    {
+      "key": "earth-dress-l0-v1-f4-front",
+      "path": "wearables/earth/earth-dress-l0-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 936034,
+      "sha256Base64": "evZ1j1+gzhmogTCstuy0OyoR7p5gKnMDB3AK7vxmKxE="
+    },
+    {
+      "key": "earth-dress-l1-v1:icon",
+      "path": "items/earth/dress/l1/earth-dress-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 57693,
+      "sha256Base64": "NQ97WweMwfei0SH8o6uqDI2A8yjBM8ZNoRtGGVup3VQ="
+    },
+    {
+      "key": "earth-dress-l1-v1:preview",
+      "path": "items/earth/dress/l1/earth-dress-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 202642,
+      "sha256Base64": "wWhET7a9llG7wLAxFfquV2+bMBQ+hHc2VLsY2zfWPdI="
+    },
+    {
+      "key": "earth-dress-l1-v1-f1-back",
+      "path": "wearables/earth/earth-dress-l1-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 361430,
+      "sha256Base64": "nVifHJqn0STDQ+hv8mUX6XpiCNuvYCEecl0LpDfT8Ng="
+    },
+    {
+      "key": "earth-dress-l1-v1-f1-front",
+      "path": "wearables/earth/earth-dress-l1-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 785536,
+      "sha256Base64": "NmUnT9gxsMqsZO+rx/YRWtWKpk9vkBNH3CdKZggKL0A="
+    },
+    {
+      "key": "earth-dress-l1-v1-f2-back",
+      "path": "wearables/earth/earth-dress-l1-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 281081,
+      "sha256Base64": "S9MybL4VcS8nvCIgL7vSSSp2oasVK5IToRRAe+Ygrgc="
+    },
+    {
+      "key": "earth-dress-l1-v1-f2-front",
+      "path": "wearables/earth/earth-dress-l1-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 693431,
+      "sha256Base64": "tdu3YbMkKowRGfwC9WUwSM2Li6qjMiifycSysXAHs7E="
+    },
+    {
+      "key": "earth-dress-l1-v1-f3-back",
+      "path": "wearables/earth/earth-dress-l1-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 300900,
+      "sha256Base64": "YB+0pr+dC/38Ia9ftYnLEuJCZXJCu8dCtwgSg42Z14g="
+    },
+    {
+      "key": "earth-dress-l1-v1-f3-front",
+      "path": "wearables/earth/earth-dress-l1-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 974743,
+      "sha256Base64": "58J8XthIGub4+eaAY/DCnEAmeSc6dPHjOkJdIHUUfmM="
+    },
+    {
+      "key": "earth-dress-l1-v1-f4-back",
+      "path": "wearables/earth/earth-dress-l1-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 460399,
+      "sha256Base64": "W8L1+gYf151X9okfPxZr1auzoJFlHavA6mLHbkhoDwA="
+    },
+    {
+      "key": "earth-dress-l1-v1-f4-front",
+      "path": "wearables/earth/earth-dress-l1-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 870052,
+      "sha256Base64": "1OvSjz/g0nq6UCq3ULh2kRszeJXt6O5OZ9/Qq3/+blk="
+    },
+    {
+      "key": "earth-dress-l2-v1:icon",
+      "path": "items/earth/dress/l2/earth-dress-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 63571,
+      "sha256Base64": "EomS16+DAuaY0INgTWqba26SxvK67psUoNNymNCBOqI="
+    },
+    {
+      "key": "earth-dress-l2-v1:preview",
+      "path": "items/earth/dress/l2/earth-dress-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 229664,
+      "sha256Base64": "oR62Tzl0+s+9r5TG6fvGTrNFOamaXICHtCbUK054jeA="
+    },
+    {
+      "key": "earth-dress-l2-v1-f1-back",
+      "path": "wearables/earth/earth-dress-l2-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 349407,
+      "sha256Base64": "E3K38i+5ov+ov23q46+oXXieIu2h+NlNGwFwn5gWuBU="
+    },
+    {
+      "key": "earth-dress-l2-v1-f1-front",
+      "path": "wearables/earth/earth-dress-l2-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1104281,
+      "sha256Base64": "u9jo0l3N3qu4sgvQLKlk7LdMsngAjzS6ZNBkOwXj5bY="
+    },
+    {
+      "key": "earth-dress-l2-v1-f2-back",
+      "path": "wearables/earth/earth-dress-l2-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 422970,
+      "sha256Base64": "JENTI6IfSTxjS3jCyI8ckd1//3IhC+8S6pqJ/WS/NO4="
+    },
+    {
+      "key": "earth-dress-l2-v1-f2-front",
+      "path": "wearables/earth/earth-dress-l2-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1191834,
+      "sha256Base64": "pDCuEuYanMZLjJ7fHRiZmOHvyTJtF54+ejkXNPzKjFU="
+    },
+    {
+      "key": "earth-dress-l2-v1-f3-back",
+      "path": "wearables/earth/earth-dress-l2-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 451285,
+      "sha256Base64": "fi7TNYUsXaJbs+hUv/iKgiSu3djJeexx2azZwhmNFTE="
+    },
+    {
+      "key": "earth-dress-l2-v1-f3-front",
+      "path": "wearables/earth/earth-dress-l2-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1065600,
+      "sha256Base64": "FPFDhm80LE/LbyVTtjSoMIKjpa8etph9CWlinCqgCUw="
+    },
+    {
+      "key": "earth-dress-l2-v1-f4-back",
+      "path": "wearables/earth/earth-dress-l2-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 603763,
+      "sha256Base64": "SZt7TGMK8skBYZSl8BhHPIBjzItNZvfrnYVXxxz2zKA="
+    },
+    {
+      "key": "earth-dress-l2-v1-f4-front",
+      "path": "wearables/earth/earth-dress-l2-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 916490,
+      "sha256Base64": "51kTB9mAv/I5NevKVhGVmDnGifncWeMAvCcAEmC4CKg="
+    },
+    {
+      "key": "earth-dress-l3-v1:icon",
+      "path": "items/earth/dress/l3/earth-dress-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 54705,
+      "sha256Base64": "asB2JkcwqIAbrJR1NLacH6tMrabVwdSQ4AxJpBOLPRU="
+    },
+    {
+      "key": "earth-dress-l3-v1:preview",
+      "path": "items/earth/dress/l3/earth-dress-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 197284,
+      "sha256Base64": "VF26D3ZyijRhwQGrOUfDwxlafHwcJ+3GVri//I+5D/0="
+    },
+    {
+      "key": "earth-dress-l3-v1-f1-back",
+      "path": "wearables/earth/earth-dress-l3-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 803691,
+      "sha256Base64": "xi1H08EwhS3G+pd0Rrf5siZoSnlGGAtSCvgqf9gV2N8="
+    },
+    {
+      "key": "earth-dress-l3-v1-f1-front",
+      "path": "wearables/earth/earth-dress-l3-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 803180,
+      "sha256Base64": "cgPKzni4HcwhNqKiVpHLxcwloHs7D+hlDKGMew/P32o="
+    },
+    {
+      "key": "earth-dress-l3-v1-f2-back",
+      "path": "wearables/earth/earth-dress-l3-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 657444,
+      "sha256Base64": "Q/CtrEJUBiDTmAJJt/H8FjKYGoOCAb4UkkivRKQQBE8="
+    },
+    {
+      "key": "earth-dress-l3-v1-f2-front",
+      "path": "wearables/earth/earth-dress-l3-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 710423,
+      "sha256Base64": "961VVEkyIzbDrQ4mQvtejRVsFCk00rsCNzgk5Cy82J0="
+    },
+    {
+      "key": "earth-dress-l3-v1-f3-back",
+      "path": "wearables/earth/earth-dress-l3-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 797377,
+      "sha256Base64": "JUwBpKNyHDzcvbo7M4k5HUU3Upac8DNAGZrPD7R5NuE="
+    },
+    {
+      "key": "earth-dress-l3-v1-f3-front",
+      "path": "wearables/earth/earth-dress-l3-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 786429,
+      "sha256Base64": "bfuoAVFve7n+2Febte2W5PK5rK0SqPWdJcl4CqQyVfM="
+    },
+    {
+      "key": "earth-dress-l3-v1-f4-back",
+      "path": "wearables/earth/earth-dress-l3-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 936591,
+      "sha256Base64": "lhcH+bvVn7SIPbJ18mXlnTsBp4aTUiFT7ULV6CsGIvQ="
+    },
+    {
+      "key": "earth-dress-l3-v1-f4-front",
+      "path": "wearables/earth/earth-dress-l3-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 956823,
+      "sha256Base64": "q80jsznUgqsVLPxeSgFiO9RY0RmryyVDgsqb9ymTuP4="
+    },
+    {
+      "key": "earth-dress-l4-v1:icon",
+      "path": "items/earth/dress/l4/earth-dress-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 72309,
+      "sha256Base64": "k6todlEPpozr8H4rm/so/Tr6OOXUXEdLMigzRmM1tks="
+    },
+    {
+      "key": "earth-dress-l4-v1:preview",
+      "path": "items/earth/dress/l4/earth-dress-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 263461,
+      "sha256Base64": "OzDCjxW3KeVeASl/+ruTXly5Mv73v1jdMv2gbu0l6KM="
+    },
+    {
+      "key": "earth-dress-l4-v1-f1-front",
+      "path": "wearables/earth/earth-dress-l4-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1100871,
+      "sha256Base64": "DhVDaSfQOdV5wrJB1oC8tmm0pYX3ZelqYwWF8nvvzu0="
+    },
+    {
+      "key": "earth-dress-l4-v1-f2-front",
+      "path": "wearables/earth/earth-dress-l4-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1585485,
+      "sha256Base64": "FpZtVVTES4AE2HJ+221EJjUiYweQ1/fwB3h5JqjL+XM="
+    },
+    {
+      "key": "earth-dress-l4-v1-f3-front",
+      "path": "wearables/earth/earth-dress-l4-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1439720,
+      "sha256Base64": "oVoaYfAgpGcV6Cqo9voL2uylH/lRaCdzM3vCGzwwtgE="
+    },
+    {
+      "key": "earth-dress-l4-v1-f4-front",
+      "path": "wearables/earth/earth-dress-l4-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1514647,
+      "sha256Base64": "BKfUduvidZsIwm95FKZ+BotDn8B4+nf9cXamEzkHeK8="
+    },
+    {
+      "key": "earth-dress-l5-v1:icon",
+      "path": "items/earth/dress/l5/earth-dress-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 40961,
+      "sha256Base64": "jBKR83qwtJGvv7JYGodGxjwnbvcZMQranf3NKhba04Q="
+    },
+    {
+      "key": "earth-dress-l5-v1:preview",
+      "path": "items/earth/dress/l5/earth-dress-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 152007,
+      "sha256Base64": "ZsuV2GXaqs76cNEmGnW0B34zxkkMI3xtEEGfkYSi+BI="
+    },
+    {
+      "key": "earth-dress-l5-v1-f1-back",
+      "path": "wearables/earth/earth-dress-l5-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 481270,
+      "sha256Base64": "2ADu1+e7xgZIm7dfJx/N6psDm/HWB/GafXKaOGLx3GQ="
+    },
+    {
+      "key": "earth-dress-l5-v1-f1-front",
+      "path": "wearables/earth/earth-dress-l5-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 731098,
+      "sha256Base64": "NV9D08qi3Q+n8+Biz/By1I618oNy7eaDe36Twkaxngg="
+    },
+    {
+      "key": "earth-dress-l5-v1-f2-back",
+      "path": "wearables/earth/earth-dress-l5-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 619485,
+      "sha256Base64": "Kt5u5WO0lbRjnc4p/qMufdnv/neGjVCMGc4Azum4TYY="
+    },
+    {
+      "key": "earth-dress-l5-v1-f2-front",
+      "path": "wearables/earth/earth-dress-l5-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 728838,
+      "sha256Base64": "G3gPQKTeObr4stwvEKTalK7R/LtPfXR6xyHBa9M/OOs="
+    },
+    {
+      "key": "earth-dress-l5-v1-f3-back",
+      "path": "wearables/earth/earth-dress-l5-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 797181,
+      "sha256Base64": "PclvS2QxmYzVSPj5nCVl0W8++m0NKveJzaTA+OuKdUI="
+    },
+    {
+      "key": "earth-dress-l5-v1-f3-front",
+      "path": "wearables/earth/earth-dress-l5-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 802917,
+      "sha256Base64": "v6ZAKwn1dWvS4yfJER1FwNsx0WebJQgBdbibRu5t6eU="
+    },
+    {
+      "key": "earth-dress-l5-v1-f4-back",
+      "path": "wearables/earth/earth-dress-l5-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 517247,
+      "sha256Base64": "wIxvtEQEYg91O9YxWDwXrNoC72Iqifw05GiqI0uopE4="
+    },
+    {
+      "key": "earth-dress-l5-v1-f4-front",
+      "path": "wearables/earth/earth-dress-l5-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 718071,
+      "sha256Base64": "ZnDAZqf9AuQRBn3FhCi0AGckkfU0uT79K4TWQrIHu6w="
+    },
+    {
+      "key": "earth-furniture-l0-v1:icon",
+      "path": "items/earth/furniture/l0/earth-furniture-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 64894,
+      "sha256Base64": "hqVAYAEhcA3SJPgBEPNH0/wsGGvTmyQ5FBskasDdCGc="
+    },
+    {
+      "key": "earth-furniture-l0-v1:preview",
+      "path": "items/earth/furniture/l0/earth-furniture-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 229907,
+      "sha256Base64": "+awmHc6DN1/oZnJBNEZaEV7mys9Q+PJigzYBGvL5IgU="
+    },
+    {
+      "key": "earth-furniture-l1-v1:icon",
+      "path": "items/earth/furniture/l1/earth-furniture-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 62547,
+      "sha256Base64": "IBSwfhk9FyFawaWEmBhghA+WRmgEshzuBvy7lLovesc="
+    },
+    {
+      "key": "earth-furniture-l1-v1:preview",
+      "path": "items/earth/furniture/l1/earth-furniture-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 222887,
+      "sha256Base64": "RZMB8QXfPo8yh1f75wIXkQHB3qqvYt5SYbW6OFGKVZE="
+    },
+    {
+      "key": "earth-furniture-l2-v1:icon",
+      "path": "items/earth/furniture/l2/earth-furniture-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 89281,
+      "sha256Base64": "6IuQ5h0Ujncg1kUeqo8ajxL9tMroJecR2htCmtqG64w="
+    },
+    {
+      "key": "earth-furniture-l2-v1:preview",
+      "path": "items/earth/furniture/l2/earth-furniture-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 325826,
+      "sha256Base64": "ap1eVqvm6XKhr6EvY7EJEJT9dgDRSJc0sfZkbwTdjkU="
+    },
+    {
+      "key": "earth-furniture-l3-v1:icon",
+      "path": "items/earth/furniture/l3/earth-furniture-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 52328,
+      "sha256Base64": "6fQkkDfB8VrsC7ZaNeqQwT2K4pY2RdBGAYplvB8/wng="
+    },
+    {
+      "key": "earth-furniture-l3-v1:preview",
+      "path": "items/earth/furniture/l3/earth-furniture-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 186539,
+      "sha256Base64": "dl2QUI8AxHRF8rlX061DQ001tE8izVPjsLY2mkJTzG8="
+    },
+    {
+      "key": "earth-furniture-l4-v1:icon",
+      "path": "items/earth/furniture/l4/earth-furniture-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 61986,
+      "sha256Base64": "huQOSgdielWjrZ+XFZM48xxdPF7WxJpQCkrIlQx0Wck="
+    },
+    {
+      "key": "earth-furniture-l4-v1:preview",
+      "path": "items/earth/furniture/l4/earth-furniture-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 223166,
+      "sha256Base64": "j9sl+GeIm7AQKj21LBQxoWmYGH6CasOpDdSpadvnE+U="
+    },
+    {
+      "key": "earth-furniture-l5-v1:icon",
+      "path": "items/earth/furniture/l5/earth-furniture-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 75910,
+      "sha256Base64": "SjbgHxPN+AD0JrptGeLUW1uNnaoIY9CViZ7n86G8wkk="
+    },
+    {
+      "key": "earth-furniture-l5-v1:preview",
+      "path": "items/earth/furniture/l5/earth-furniture-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 272891,
+      "sha256Base64": "hfJx7MebcXvzrAEOrT8FejWABUI7/DGIcuja2zoZcyw="
+    },
+    {
+      "key": "earth-decor-l0-v1:icon",
+      "path": "items/earth/decor/l0/earth-decor-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 57933,
+      "sha256Base64": "LS+td50nMPSXqNyzkpgD+EZY4smVH7KMqeTpUF5OeTE="
+    },
+    {
+      "key": "earth-decor-l0-v1:preview",
+      "path": "items/earth/decor/l0/earth-decor-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 220885,
+      "sha256Base64": "kiD4RhO+Q2RbBqB47MGZTomrWtg//+FPhoKTp0G+XCg="
+    },
+    {
+      "key": "earth-decor-l1-v1:icon",
+      "path": "items/earth/decor/l1/earth-decor-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 56587,
+      "sha256Base64": "mSAnJoLYjDEZ/4Dw7ZKMH/gPma+r7PnLP0uNv1934LE="
+    },
+    {
+      "key": "earth-decor-l1-v1:preview",
+      "path": "items/earth/decor/l1/earth-decor-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 197473,
+      "sha256Base64": "t1mYvZHRggx4JRdInY83oDcT1Wf0QaDtbLeKsn1bdt8="
+    },
+    {
+      "key": "earth-decor-l2-v1:icon",
+      "path": "items/earth/decor/l2/earth-decor-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 49994,
+      "sha256Base64": "uILbCMJKoXfPWLCqTdEz9cfTpxPVCvyR2TURCfkJpAs="
+    },
+    {
+      "key": "earth-decor-l2-v1:preview",
+      "path": "items/earth/decor/l2/earth-decor-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 175885,
+      "sha256Base64": "3aAI4vEPSuz7pwcCvd7V0R+uN8YYJack2NwQ1xgo7fk="
+    },
+    {
+      "key": "earth-decor-l3-v1:icon",
+      "path": "items/earth/decor/l3/earth-decor-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 42153,
+      "sha256Base64": "JQF4XEZKgcTuySheKHJl77x3WZVUVgyPTasO1r1WKIo="
+    },
+    {
+      "key": "earth-decor-l3-v1:preview",
+      "path": "items/earth/decor/l3/earth-decor-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 150752,
+      "sha256Base64": "JTw+jU1fh6XUpCetJ9m+kr2/ER7bmqTFkNd58Y7qaTg="
+    },
+    {
+      "key": "earth-decor-l4-v1:icon",
+      "path": "items/earth/decor/l4/earth-decor-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 60689,
+      "sha256Base64": "N0qv1AdufPhVFg6NPydDOEnhtufNTXdfU083Bcqe2Gg="
+    },
+    {
+      "key": "earth-decor-l4-v1:preview",
+      "path": "items/earth/decor/l4/earth-decor-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 219242,
+      "sha256Base64": "/3NHQDcMKip9oOhetiXOsSCmg53GyrKSZJUR6G2FADo="
+    },
+    {
+      "key": "earth-decor-l5-v1:icon",
+      "path": "items/earth/decor/l5/earth-decor-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 61364,
+      "sha256Base64": "mBe4qnn/f38ZIDlXhU+oZnRYEwANa0+ZKQ9w1rp0hek="
+    },
+    {
+      "key": "earth-decor-l5-v1:preview",
+      "path": "items/earth/decor/l5/earth-decor-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 225449,
+      "sha256Base64": "ih3S4RExH8xOiI5mKaQBvECYH8S4m1j5bC8ciNrjtyQ="
+    },
+    {
+      "key": "earth-courtyard-l0-v1:icon",
+      "path": "items/earth/courtyard/l0/earth-courtyard-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 66746,
+      "sha256Base64": "f6iPoKp30Psl49Lbl0gNUgUtyqTOP2mQo0RqrFKEvko="
+    },
+    {
+      "key": "earth-courtyard-l0-v1:preview",
+      "path": "items/earth/courtyard/l0/earth-courtyard-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 231060,
+      "sha256Base64": "RdONIHGmb/U9b+m8dpb+VPMN+xy/rVrfXqczOFjzHmE="
+    },
+    {
+      "key": "earth-courtyard-l1-v1:icon",
+      "path": "items/earth/courtyard/l1/earth-courtyard-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 77244,
+      "sha256Base64": "qBRiTBsZqGWhreCr2lj0denH3Rd8Sl5LN9ni1cjWBYI="
+    },
+    {
+      "key": "earth-courtyard-l1-v1:preview",
+      "path": "items/earth/courtyard/l1/earth-courtyard-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 275585,
+      "sha256Base64": "Qa9+tAGVWw4vnm5KloFh+R5qutsV/tz++0XILVmzZio="
+    },
+    {
+      "key": "earth-courtyard-l2-v1:icon",
+      "path": "items/earth/courtyard/l2/earth-courtyard-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 73268,
+      "sha256Base64": "VaJ6g2Zq/dc711QOZt4g0MeK4tHE2bIvc79WEAHp18k="
+    },
+    {
+      "key": "earth-courtyard-l2-v1:preview",
+      "path": "items/earth/courtyard/l2/earth-courtyard-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 268439,
+      "sha256Base64": "E6EL+W6IPJzb/EERWTx4bPwx/9CG236XJ4dMuOXmt7g="
+    },
+    {
+      "key": "earth-courtyard-l3-v1:icon",
+      "path": "items/earth/courtyard/l3/earth-courtyard-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 85321,
+      "sha256Base64": "jTZMYgqpVZ4d92uCRRPCVWUPBre75qX6Z/W0ocAoTpQ="
+    },
+    {
+      "key": "earth-courtyard-l3-v1:preview",
+      "path": "items/earth/courtyard/l3/earth-courtyard-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 318497,
+      "sha256Base64": "oseKZhBU0TwunI8FL9mUvaHBeIxa2Vad/IOCeAvET7w="
+    },
+    {
+      "key": "earth-courtyard-l4-v1:icon",
+      "path": "items/earth/courtyard/l4/earth-courtyard-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 78449,
+      "sha256Base64": "zbFlQoLjrI9YpGHdxgbhNvJCBxMIdQmndNl05425+f0="
+    },
+    {
+      "key": "earth-courtyard-l4-v1:preview",
+      "path": "items/earth/courtyard/l4/earth-courtyard-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 290902,
+      "sha256Base64": "xjBacf/icAkIPFvxKH1N1QHI8qMjVncO7PAWtJh5Jpc="
+    },
+    {
+      "key": "earth-courtyard-l5-v1:icon",
+      "path": "items/earth/courtyard/l5/earth-courtyard-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 73580,
+      "sha256Base64": "DyNvz3IEjvDpb82/D7A4S/poDUTor0cVr6+AOhII4Y0="
+    },
+    {
+      "key": "earth-courtyard-l5-v1:preview",
+      "path": "items/earth/courtyard/l5/earth-courtyard-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 275373,
+      "sha256Base64": "W2a20YebRIyRCaxGumLd+SlS4gLTZld4Rron37eGUBo="
+    },
+    {
+      "key": "wind-feed-l0-v1:icon",
+      "path": "items/wind/feed/l0/wind-feed-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 46847,
+      "sha256Base64": "GX++FFCT3NrhiMigLp29WrUrKRhTlSfzqWpjlU762XI="
+    },
+    {
+      "key": "wind-feed-l0-v1:preview",
+      "path": "items/wind/feed/l0/wind-feed-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 167070,
+      "sha256Base64": "3kdOynn9RaZDv2ImnhCZ9NKx6kP2Sx9vaD7uTGTWdXU="
+    },
+    {
+      "key": "wind-feed-l1-v1:icon",
+      "path": "items/wind/feed/l1/wind-feed-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 56699,
+      "sha256Base64": "pIUGtcIGPWUTqfFh8vby0xVuOJci1glabFcvm0auKvw="
+    },
+    {
+      "key": "wind-feed-l1-v1:preview",
+      "path": "items/wind/feed/l1/wind-feed-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 210030,
+      "sha256Base64": "42bsaa3oJxzhSPcaQPaGhXRP8BKfNPHHZFXvFhIp0UA="
+    },
+    {
+      "key": "wind-feed-l2-v1:icon",
+      "path": "items/wind/feed/l2/wind-feed-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 59200,
+      "sha256Base64": "5scqYTAT+ETJQyyYXyLPNxkotWKKpw0zG1C/i4FeWSU="
+    },
+    {
+      "key": "wind-feed-l2-v1:preview",
+      "path": "items/wind/feed/l2/wind-feed-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 214621,
+      "sha256Base64": "aSU//wxCrLwY4U2cGfOmELywz1FFK/fGWoPcIbbIX1s="
+    },
+    {
+      "key": "wind-feed-l3-v1:icon",
+      "path": "items/wind/feed/l3/wind-feed-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 75609,
+      "sha256Base64": "qDewCrM/TuGqgJO/SboBX8Qq7jWwsf73ikMAaREVZ+w="
+    },
+    {
+      "key": "wind-feed-l3-v1:preview",
+      "path": "items/wind/feed/l3/wind-feed-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 279417,
+      "sha256Base64": "o1kMes9dFaXQdIgAQtS1mfYYQzh3rqV4liaqzVKg3Mo="
+    },
+    {
+      "key": "wind-feed-l4-v1:icon",
+      "path": "items/wind/feed/l4/wind-feed-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 67208,
+      "sha256Base64": "KFHWL1284eRQalyJD/uk/9etJUn2az/IKU04sFRskko="
+    },
+    {
+      "key": "wind-feed-l4-v1:preview",
+      "path": "items/wind/feed/l4/wind-feed-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 243025,
+      "sha256Base64": "qtPW+2LvsxfR0/EFAqMaN7jwLg2jDDzY8z52Jb1AyHI="
+    },
+    {
+      "key": "wind-feed-l5-v1:icon",
+      "path": "items/wind/feed/l5/wind-feed-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 67416,
+      "sha256Base64": "z5cZ3Cj+h9jYjnqP+uReGWXkwsLx7YdexOK58tnZ3wI="
+    },
+    {
+      "key": "wind-feed-l5-v1:preview",
+      "path": "items/wind/feed/l5/wind-feed-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 251273,
+      "sha256Base64": "JWCDwdA+0S1dykWXEpXM3z34nR0k/S6UmFu55BUjV8w="
+    },
+    {
+      "key": "wind-dress-l0-v1:icon",
+      "path": "items/wind/dress/l0/wind-dress-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 58151,
+      "sha256Base64": "HIDqhWw24t0d4vuF97liqTWSlOAmVvM8pxChaWT0xcM="
+    },
+    {
+      "key": "wind-dress-l0-v1:preview",
+      "path": "items/wind/dress/l0/wind-dress-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 201510,
+      "sha256Base64": "5NLZcCLJNYaPugOD8cxgGWy/NbjMTAJMZcsGfIAzW9Y="
+    },
+    {
+      "key": "wind-dress-l0-v1-f1-back",
+      "path": "wearables/wind/wind-dress-l0-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 256456,
+      "sha256Base64": "faiL0jagNin9O+sGdM2aIfAbK5sAKSYUm13Euby+k30="
+    },
+    {
+      "key": "wind-dress-l0-v1-f1-front",
+      "path": "wearables/wind/wind-dress-l0-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 894802,
+      "sha256Base64": "/5gZZkekQ2mAVzQrC47CY6VrJAQTOIQjDrtKSbmMdTk="
+    },
+    {
+      "key": "wind-dress-l0-v1-f2-back",
+      "path": "wearables/wind/wind-dress-l0-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 224897,
+      "sha256Base64": "y1lLegjwN8njxTaMzE/mms2hdHQMDh5ZUDzFF37wjqw="
+    },
+    {
+      "key": "wind-dress-l0-v1-f2-front",
+      "path": "wearables/wind/wind-dress-l0-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 899321,
+      "sha256Base64": "CAF7kAlXCuWhGam0ZSP8QeAc6EUO2SGy3KybleCGrrw="
+    },
+    {
+      "key": "wind-dress-l0-v1-f3-back",
+      "path": "wearables/wind/wind-dress-l0-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 213411,
+      "sha256Base64": "LfvE3ILPXLB/Opxdq7WiQ9tkEJlhsknYNQnjaWKyw5g="
+    },
+    {
+      "key": "wind-dress-l0-v1-f3-front",
+      "path": "wearables/wind/wind-dress-l0-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1020784,
+      "sha256Base64": "karlROuQ7l3y8gAVkPeND7P9OTiJeT6tZmbAw6XAe7w="
+    },
+    {
+      "key": "wind-dress-l0-v1-f4-back",
+      "path": "wearables/wind/wind-dress-l0-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 400599,
+      "sha256Base64": "kY2OjmHE6sLeVMdpJSDEueI/vYNByY0w3lYpqmyojIc="
+    },
+    {
+      "key": "wind-dress-l0-v1-f4-front",
+      "path": "wearables/wind/wind-dress-l0-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 734719,
+      "sha256Base64": "uuem5c/G+6gblIhUhQQ6veHhYSbOcsA1mWaT/Hx36pw="
+    },
+    {
+      "key": "wind-dress-l1-v1:icon",
+      "path": "items/wind/dress/l1/wind-dress-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 45989,
+      "sha256Base64": "XKPu8crtxtW6p1ZoqjCOsqRZ+4cD2Tuy5QzvO3wf78A="
+    },
+    {
+      "key": "wind-dress-l1-v1:preview",
+      "path": "items/wind/dress/l1/wind-dress-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 162631,
+      "sha256Base64": "bATmG3JVUyqKE6OyZ9hEMUkQ8QvEPqL4XVeYbXKPdl4="
+    },
+    {
+      "key": "wind-dress-l1-v1-f1-back",
+      "path": "wearables/wind/wind-dress-l1-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 470460,
+      "sha256Base64": "wj83nk6Ujy7iLYTLojVVNdFexlOEmv2Ljxe9+eTtOKE="
+    },
+    {
+      "key": "wind-dress-l1-v1-f1-front",
+      "path": "wearables/wind/wind-dress-l1-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 540622,
+      "sha256Base64": "x726GXMrzfKVx2sv4zkAxkF0jtsmfgHrHTyOA6ptD5U="
+    },
+    {
+      "key": "wind-dress-l1-v1-f2-back",
+      "path": "wearables/wind/wind-dress-l1-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 506135,
+      "sha256Base64": "nMEX3iQOgPaoEgdFRRvZoGFcbRWP6NkMTjC6UMKwLHU="
+    },
+    {
+      "key": "wind-dress-l1-v1-f2-front",
+      "path": "wearables/wind/wind-dress-l1-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 702587,
+      "sha256Base64": "oV6FmsziOvi0G6812ZR9Ac2U3p52+0H80lahIXKolpc="
+    },
+    {
+      "key": "wind-dress-l1-v1-f3-back",
+      "path": "wearables/wind/wind-dress-l1-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 315504,
+      "sha256Base64": "o38OGGGBqQy4b06V0HJwEglCtmDpKEBNccIZqzT25eI="
+    },
+    {
+      "key": "wind-dress-l1-v1-f3-front",
+      "path": "wearables/wind/wind-dress-l1-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 861389,
+      "sha256Base64": "MJrx4/kgjo+9ZX11s5pvxLdVWl5rpjNDUXsKDHk4CQE="
+    },
+    {
+      "key": "wind-dress-l1-v1-f4-back",
+      "path": "wearables/wind/wind-dress-l1-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 335776,
+      "sha256Base64": "0z9TaNOR+1ZmBbDysWyfAUe3VhVOrq7yrQn5xR3iddg="
+    },
+    {
+      "key": "wind-dress-l1-v1-f4-front",
+      "path": "wearables/wind/wind-dress-l1-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 762006,
+      "sha256Base64": "ZK6oorugDvf7AkJj8ZNFH/wibZDpTjbVD9xHiVhLHuE="
+    },
+    {
+      "key": "wind-dress-l2-v1:icon",
+      "path": "items/wind/dress/l2/wind-dress-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 68707,
+      "sha256Base64": "L0XpIEMXBCgpaknrbdRheqQeTiHZWUIEPRCYguJFEJ0="
+    },
+    {
+      "key": "wind-dress-l2-v1:preview",
+      "path": "items/wind/dress/l2/wind-dress-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 254860,
+      "sha256Base64": "qCenmogAUXrpbcBnK/UJOhKXHs4CPC6JLIeV36DN+UA="
+    },
+    {
+      "key": "wind-dress-l2-v1-f1-back",
+      "path": "wearables/wind/wind-dress-l2-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 396505,
+      "sha256Base64": "2/CFZQETcqMZt4hQ5AopMy34gBH5yYfESEDRkU4g7Hs="
+    },
+    {
+      "key": "wind-dress-l2-v1-f1-front",
+      "path": "wearables/wind/wind-dress-l2-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 812025,
+      "sha256Base64": "ujgSXrD51sEn1hzUa7xUsZubyyEAJEKZHgRUSCZOsys="
+    },
+    {
+      "key": "wind-dress-l2-v1-f2-back",
+      "path": "wearables/wind/wind-dress-l2-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 460615,
+      "sha256Base64": "nbGRd4dgMZM2aMnjIp3TZ2V/f537D+o0gSXQwbxMf5g="
+    },
+    {
+      "key": "wind-dress-l2-v1-f2-front",
+      "path": "wearables/wind/wind-dress-l2-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 998102,
+      "sha256Base64": "sqGS46H1Pf/Su51/ftTW3o9JjXWWr7rxAuBk/LIXqi4="
+    },
+    {
+      "key": "wind-dress-l2-v1-f3-back",
+      "path": "wearables/wind/wind-dress-l2-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 420129,
+      "sha256Base64": "NATHXtA4TyajfZ1L7neU9DRdzmPCARUPTHF5qdZTLeQ="
+    },
+    {
+      "key": "wind-dress-l2-v1-f3-front",
+      "path": "wearables/wind/wind-dress-l2-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 938493,
+      "sha256Base64": "R3lZ90wkON47+RXqvQkITEzukkiur0+9EJTTtHXIi8k="
+    },
+    {
+      "key": "wind-dress-l2-v1-f4-back",
+      "path": "wearables/wind/wind-dress-l2-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 448278,
+      "sha256Base64": "VUdtILNV+8zkG3pwlBJqopWFZXK30PrE1Bw0vvy0Jmg="
+    },
+    {
+      "key": "wind-dress-l2-v1-f4-front",
+      "path": "wearables/wind/wind-dress-l2-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1106485,
+      "sha256Base64": "+2ZnLlydXhIXvlT+UPwbdilTfe+3rqn3SFu45mgA+rI="
+    },
+    {
+      "key": "wind-dress-l3-v1:icon",
+      "path": "items/wind/dress/l3/wind-dress-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 53826,
+      "sha256Base64": "dXcq13E622Y5Z0enjretPzBhCCo3a6AmCbZ3MFJDspU="
+    },
+    {
+      "key": "wind-dress-l3-v1:preview",
+      "path": "items/wind/dress/l3/wind-dress-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 197710,
+      "sha256Base64": "d+Cazze23zbCfpbkJ90PdFTdD/K3tvQY3adNWv+VoiI="
+    },
+    {
+      "key": "wind-dress-l3-v1-f1-back",
+      "path": "wearables/wind/wind-dress-l3-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 789126,
+      "sha256Base64": "f8nmM0Apezt3rSbdwR/10uHRCsxl9dYHDqcI+tHrbr8="
+    },
+    {
+      "key": "wind-dress-l3-v1-f1-front",
+      "path": "wearables/wind/wind-dress-l3-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 911887,
+      "sha256Base64": "KeFXGcdrMAVfY+vHFMfWanEC6QImQv44ZbI12iWwbAI="
+    },
+    {
+      "key": "wind-dress-l3-v1-f2-back",
+      "path": "wearables/wind/wind-dress-l3-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 916971,
+      "sha256Base64": "o+FoBaJ5XJ1DVIUCS9a5L/eHSu9zZGdrCFUe3nPxX6k="
+    },
+    {
+      "key": "wind-dress-l3-v1-f2-front",
+      "path": "wearables/wind/wind-dress-l3-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 906412,
+      "sha256Base64": "UkaIrZz1gZo/yRGgvpjhVHiaRvsdi1wN8Kr8xLYb/S4="
+    },
+    {
+      "key": "wind-dress-l3-v1-f3-back",
+      "path": "wearables/wind/wind-dress-l3-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1132606,
+      "sha256Base64": "gDnQGk0i7KSSXP1vxNRNNGFSj+x7LZigF0lu700340E="
+    },
+    {
+      "key": "wind-dress-l3-v1-f3-front",
+      "path": "wearables/wind/wind-dress-l3-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 850770,
+      "sha256Base64": "ezEejHdsA/bTGoPKJfN+GB97NvTgMftKvUHM7W8xmuo="
+    },
+    {
+      "key": "wind-dress-l3-v1-f4-back",
+      "path": "wearables/wind/wind-dress-l3-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 884856,
+      "sha256Base64": "7yVuHVfApM31g8w5Jmjh3BqQCTpinJ0+us/YNhHHvQA="
+    },
+    {
+      "key": "wind-dress-l3-v1-f4-front",
+      "path": "wearables/wind/wind-dress-l3-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 951251,
+      "sha256Base64": "J0RbS4lNsklLDMYl2ZfttHocwnWIj8Ud4rcJnJC8Zp0="
+    },
+    {
+      "key": "wind-dress-l4-v1:icon",
+      "path": "items/wind/dress/l4/wind-dress-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 69628,
+      "sha256Base64": "NZN4cPWe53LCSTpPcIqkaN6oLzcR36MFZLkCfve2JNo="
+    },
+    {
+      "key": "wind-dress-l4-v1:preview",
+      "path": "items/wind/dress/l4/wind-dress-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 256101,
+      "sha256Base64": "r55A74uJGHvd2ZBHqFoFnt4pZhWzuASu2Uod1AZsP8Y="
+    },
+    {
+      "key": "wind-dress-l4-v1-f1-front",
+      "path": "wearables/wind/wind-dress-l4-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1259505,
+      "sha256Base64": "D4Cx4QKCEeSNOlpBayX4EF8+OXKopc/6QwvFBth9Zdw="
+    },
+    {
+      "key": "wind-dress-l4-v1-f2-front",
+      "path": "wearables/wind/wind-dress-l4-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1267691,
+      "sha256Base64": "k+SYe2p/y0ftAFRYf87QmRWiufAvLBz0dtX8c0YbO5c="
+    },
+    {
+      "key": "wind-dress-l4-v1-f3-front",
+      "path": "wearables/wind/wind-dress-l4-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1297388,
+      "sha256Base64": "C5j4rb7j70IEqHU1tza3ga1XPtGRan/LdvcVQ79eI/I="
+    },
+    {
+      "key": "wind-dress-l4-v1-f4-front",
+      "path": "wearables/wind/wind-dress-l4-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 1264561,
+      "sha256Base64": "B/zG4rUnbxVlVGEwCoGsg9NZCkSlOhxbxwchAS50YJ8="
+    },
+    {
+      "key": "wind-dress-l5-v1:icon",
+      "path": "items/wind/dress/l5/wind-dress-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 48760,
+      "sha256Base64": "jvIIb/BRGxIDQC3S8vhxnaPFrvLFKr0tBIbhTd4E7XA="
+    },
+    {
+      "key": "wind-dress-l5-v1:preview",
+      "path": "items/wind/dress/l5/wind-dress-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 178345,
+      "sha256Base64": "sA3gWZ5kHvK2/2iH2nmd0vVMbm2RzEyTtGpCu9v9IZw="
+    },
+    {
+      "key": "wind-dress-l5-v1-f1-back",
+      "path": "wearables/wind/wind-dress-l5-v1/f1-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 572790,
+      "sha256Base64": "Zwspny2CaEYcyEkZu0HDWc9fozPR90Q2f2JK3Sl/RJg="
+    },
+    {
+      "key": "wind-dress-l5-v1-f1-front",
+      "path": "wearables/wind/wind-dress-l5-v1/f1-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 851216,
+      "sha256Base64": "4eCF01EBNNg4fp7m9dlpcWAXLwJSBZfhK1YAPZs+Gi4="
+    },
+    {
+      "key": "wind-dress-l5-v1-f2-back",
+      "path": "wearables/wind/wind-dress-l5-v1/f2-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 787815,
+      "sha256Base64": "8+uzuCBm9v6C30hxvXs1DAR30G/H5TsGBOXQ2X1YxUw="
+    },
+    {
+      "key": "wind-dress-l5-v1-f2-front",
+      "path": "wearables/wind/wind-dress-l5-v1/f2-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 821876,
+      "sha256Base64": "oSKs7QD4XCghRAi22G2Vpvp/g3Qu7sCarrcOQ6EeM/Q="
+    },
+    {
+      "key": "wind-dress-l5-v1-f3-back",
+      "path": "wearables/wind/wind-dress-l5-v1/f3-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 611992,
+      "sha256Base64": "9rBQAQbI9lWyjb0aJ5Gi4t9NA2qJ/VFGIfPEQRlDem4="
+    },
+    {
+      "key": "wind-dress-l5-v1-f3-front",
+      "path": "wearables/wind/wind-dress-l5-v1/f3-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 865915,
+      "sha256Base64": "P+Hx7s9o1kJAT/S8AoFgjO3gaGy22oWYrP5NjwlLTNI="
+    },
+    {
+      "key": "wind-dress-l5-v1-f4-back",
+      "path": "wearables/wind/wind-dress-l5-v1/f4-back.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 662497,
+      "sha256Base64": "KFhZqbi3VQD9Ffl2SzUA45Cn5XvoYrubQpYG/5NgrMA="
+    },
+    {
+      "key": "wind-dress-l5-v1-f4-front",
+      "path": "wearables/wind/wind-dress-l5-v1/f4-front.png",
+      "width": 960,
+      "height": 1280,
+      "bytes": 831798,
+      "sha256Base64": "267FBrNrdNsw1zkiHIGdM2A/VpqC1GJUgx2wmiPbQac="
+    },
+    {
+      "key": "wind-furniture-l0-v1:icon",
+      "path": "items/wind/furniture/l0/wind-furniture-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 53771,
+      "sha256Base64": "c2L7C/sW4U51/LUZpq4puD6ZNC1s8GvkGLj1h/RHetw="
+    },
+    {
+      "key": "wind-furniture-l0-v1:preview",
+      "path": "items/wind/furniture/l0/wind-furniture-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 194319,
+      "sha256Base64": "kOdr3Sttpim4A90puAWFY85O4SQuCY9y/cFZiviNH14="
+    },
+    {
+      "key": "wind-furniture-l1-v1:icon",
+      "path": "items/wind/furniture/l1/wind-furniture-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 50034,
+      "sha256Base64": "tavD4pgfliDuexgOtvHRbSYBev6+5PPFi2MV6tacthg="
+    },
+    {
+      "key": "wind-furniture-l1-v1:preview",
+      "path": "items/wind/furniture/l1/wind-furniture-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 178143,
+      "sha256Base64": "j1satfK72A6xNWrFDoaLXPS2Gz3BnvaKO1fVpncUubo="
+    },
+    {
+      "key": "wind-furniture-l2-v1:icon",
+      "path": "items/wind/furniture/l2/wind-furniture-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 60044,
+      "sha256Base64": "rvOf8kCwdmwmcPLc+vp4Q2WZ0unPPec8PnXhyQob62E="
+    },
+    {
+      "key": "wind-furniture-l2-v1:preview",
+      "path": "items/wind/furniture/l2/wind-furniture-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 213029,
+      "sha256Base64": "iOoQ4ie5G1Jk88muSPy/iZ7KoTKmkyEZGb+U0g8mOxQ="
+    },
+    {
+      "key": "wind-furniture-l3-v1:icon",
+      "path": "items/wind/furniture/l3/wind-furniture-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 56689,
+      "sha256Base64": "RphER62pVfQSI86rdrgemAcA53Q6Oo29gJet4qpGPVo="
+    },
+    {
+      "key": "wind-furniture-l3-v1:preview",
+      "path": "items/wind/furniture/l3/wind-furniture-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 201025,
+      "sha256Base64": "gkfDHx9JQjBfdNnLV9kZTLIDroqD3RE75pmr+wHPduA="
+    },
+    {
+      "key": "wind-furniture-l4-v1:icon",
+      "path": "items/wind/furniture/l4/wind-furniture-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 53704,
+      "sha256Base64": "BLR4hrtjzZXufWDJ5JQDxrJwUVwEPt6/MmN9sL99FHA="
+    },
+    {
+      "key": "wind-furniture-l4-v1:preview",
+      "path": "items/wind/furniture/l4/wind-furniture-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 193513,
+      "sha256Base64": "kr5o08nOHGe441xWDyjtySbKCkp6np3g3N4N41uporI="
+    },
+    {
+      "key": "wind-furniture-l5-v1:icon",
+      "path": "items/wind/furniture/l5/wind-furniture-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 67158,
+      "sha256Base64": "+DyY2/NUDgI/CmNDddpq8ro56RMTLVEluf0BG2aDwf4="
+    },
+    {
+      "key": "wind-furniture-l5-v1:preview",
+      "path": "items/wind/furniture/l5/wind-furniture-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 240954,
+      "sha256Base64": "Bk3ep06fvJo//njJrei0aAJA9U2HQQ7uyISYl/hpwbo="
+    },
+    {
+      "key": "wind-decor-l0-v1:icon",
+      "path": "items/wind/decor/l0/wind-decor-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 54420,
+      "sha256Base64": "vs9yyfM3RuNzbCHsOU/Ex/ld8RrdrLrbbTkxSwdkvk0="
+    },
+    {
+      "key": "wind-decor-l0-v1:preview",
+      "path": "items/wind/decor/l0/wind-decor-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 207153,
+      "sha256Base64": "WeDtDrMzDDcE1RcYpuEKvriX+iVKfnHk5BBqUQZqGBc="
+    },
+    {
+      "key": "wind-decor-l1-v1:icon",
+      "path": "items/wind/decor/l1/wind-decor-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 61492,
+      "sha256Base64": "DFA/OopdSJznyQnpyzwh8+K0HzeUP5J/hVdV+jKePoI="
+    },
+    {
+      "key": "wind-decor-l1-v1:preview",
+      "path": "items/wind/decor/l1/wind-decor-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 214675,
+      "sha256Base64": "ZVMuAGRQjS28lOn6Z5DtsCBk7N+6kROkQTEpzWD83X0="
+    },
+    {
+      "key": "wind-decor-l2-v1:icon",
+      "path": "items/wind/decor/l2/wind-decor-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 51712,
+      "sha256Base64": "UWx+EU0+ZCmC5srpVfn+I5kOmN7+Te/Mg8CaN/1wbH0="
+    },
+    {
+      "key": "wind-decor-l2-v1:preview",
+      "path": "items/wind/decor/l2/wind-decor-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 184436,
+      "sha256Base64": "Iud146XFOLCL6VsjlwqwUtTaZpwiGnfCkSxFy8RcIXs="
+    },
+    {
+      "key": "wind-decor-l3-v1:icon",
+      "path": "items/wind/decor/l3/wind-decor-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 41578,
+      "sha256Base64": "MEVzmxj8iw6x6SiSZgxraIJDEFwnz5jQSPPCW9CYA+g="
+    },
+    {
+      "key": "wind-decor-l3-v1:preview",
+      "path": "items/wind/decor/l3/wind-decor-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 149275,
+      "sha256Base64": "ynk1/M9heHdTQUmGpwRsMiETYEHIHLNrDoZ3TLp2918="
+    },
+    {
+      "key": "wind-decor-l4-v1:icon",
+      "path": "items/wind/decor/l4/wind-decor-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 66210,
+      "sha256Base64": "FU+zHOSFDL/flBHycFtaNNQukYoFpc8dhpTcwIKzU+Q="
+    },
+    {
+      "key": "wind-decor-l4-v1:preview",
+      "path": "items/wind/decor/l4/wind-decor-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 242803,
+      "sha256Base64": "ooQtBVd425XKij1O6Xtcvmx1TsUdDUA251YRJzx2gb8="
+    },
+    {
+      "key": "wind-decor-l5-v1:icon",
+      "path": "items/wind/decor/l5/wind-decor-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 58372,
+      "sha256Base64": "bNHLj3FMmfuEUZr/0WRnJXhWvHGEdUgVR0uOHLp+RHA="
+    },
+    {
+      "key": "wind-decor-l5-v1:preview",
+      "path": "items/wind/decor/l5/wind-decor-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 212146,
+      "sha256Base64": "yWRrzFuWs/3BcC0p15TwGWLFoGJUpYHRwOWlFuAaGwI="
+    },
+    {
+      "key": "wind-courtyard-l0-v1:icon",
+      "path": "items/wind/courtyard/l0/wind-courtyard-l0-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 72505,
+      "sha256Base64": "DLFV9tZ9GQNPR6WA1l8aZEpcB4i9cRB192wRMsFaMV8="
+    },
+    {
+      "key": "wind-courtyard-l0-v1:preview",
+      "path": "items/wind/courtyard/l0/wind-courtyard-l0-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 261353,
+      "sha256Base64": "qUIpxotBsj4X/hs9UuKs5iGrPQoBLdUFLASPNjaXm+E="
+    },
+    {
+      "key": "wind-courtyard-l1-v1:icon",
+      "path": "items/wind/courtyard/l1/wind-courtyard-l1-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 66694,
+      "sha256Base64": "JMCBzuykL8qomL+seUEDp6em4xqM9BIoX3DvfaIG5U4="
+    },
+    {
+      "key": "wind-courtyard-l1-v1:preview",
+      "path": "items/wind/courtyard/l1/wind-courtyard-l1-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 239462,
+      "sha256Base64": "T4rDPVVkJsZ0miboshE16D1iYGMZH1jTNVLS+XsNbTk="
+    },
+    {
+      "key": "wind-courtyard-l2-v1:icon",
+      "path": "items/wind/courtyard/l2/wind-courtyard-l2-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 57919,
+      "sha256Base64": "bmITM8E1p21Do1TAeP10/ViqwCAZhm3vw6AKVqVVr68="
+    },
+    {
+      "key": "wind-courtyard-l2-v1:preview",
+      "path": "items/wind/courtyard/l2/wind-courtyard-l2-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 209117,
+      "sha256Base64": "EJU0s/cxltPPdQtXEjDCt0DywXQQsvZNfUSNdxFbD4M="
+    },
+    {
+      "key": "wind-courtyard-l3-v1:icon",
+      "path": "items/wind/courtyard/l3/wind-courtyard-l3-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 77443,
+      "sha256Base64": "Y6LNGsJKvpqAP8UcbJJiz1sDMS3Nx7OWIn6UYp9Xf6Y="
+    },
+    {
+      "key": "wind-courtyard-l3-v1:preview",
+      "path": "items/wind/courtyard/l3/wind-courtyard-l3-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 286823,
+      "sha256Base64": "gpH/QKpqBotLuh043u6xVNS06lmAxLnK7lkWOyr6XNQ="
+    },
+    {
+      "key": "wind-courtyard-l4-v1:icon",
+      "path": "items/wind/courtyard/l4/wind-courtyard-l4-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 69553,
+      "sha256Base64": "HGs10h+aAps889H2m8L8AQPdo6mOensEtu1H/UO/Af4="
+    },
+    {
+      "key": "wind-courtyard-l4-v1:preview",
+      "path": "items/wind/courtyard/l4/wind-courtyard-l4-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 253480,
+      "sha256Base64": "5sNrgvYAd+uuzzycAJV2q2SjrB9OD3yO+9cEKNKed9s="
+    },
+    {
+      "key": "wind-courtyard-l5-v1:icon",
+      "path": "items/wind/courtyard/l5/wind-courtyard-l5-v1-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 75554,
+      "sha256Base64": "yOjkgRQ+4Ppia9CiWyvnfsEN6rLjNGJiqjHirKVyJbE="
+    },
+    {
+      "key": "wind-courtyard-l5-v1:preview",
+      "path": "items/wind/courtyard/l5/wind-courtyard-l5-v1-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 279932,
+      "sha256Base64": "9Aj96EuLGFfrfROllItQE80nUtk6w2smZzrxFns6J8Y="
+    },
+    {
+      "key": "room-water-l0:stage",
+      "path": "rooms/water/l0.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 231943,
+      "sha256Base64": "YhQjnBZWYx/4LAEh+xs9vGNQOrPDsFVoaCO25PqH9dg="
+    },
+    {
+      "key": "room-water-l0:thumbnail",
+      "path": "rooms/water/l0-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 19954,
+      "sha256Base64": "ZgkrCV5qkKesou0lhx8scO2FL+MrGM9DpvjWgYDYRC8="
+    },
+    {
+      "key": "room-water-l1:stage",
+      "path": "rooms/water/l1.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 167309,
+      "sha256Base64": "/SbvrxnHiNtfMG7Z/SQBWnqHiG615XuPCdUj3oRjjD4="
+    },
+    {
+      "key": "room-water-l1:thumbnail",
+      "path": "rooms/water/l1-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 18653,
+      "sha256Base64": "vgJSYXgTJWHI5AxY4eEhIVQNDuva+IUJLF0qcgZLx0c="
+    },
+    {
+      "key": "room-water-l2:stage",
+      "path": "rooms/water/l2.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 208808,
+      "sha256Base64": "pI6DsQmJgrRdiKx804dqj8EPVD0XHBwGGiCEmcm+GPo="
+    },
+    {
+      "key": "room-water-l2:thumbnail",
+      "path": "rooms/water/l2-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 22881,
+      "sha256Base64": "s38/+3UYQhNjcDxe7gDbLWIJyv9KJO49MCaDyscbWsk="
+    },
+    {
+      "key": "room-water-l3:stage",
+      "path": "rooms/water/l3.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 232785,
+      "sha256Base64": "SLrr6N9aQERcIIqM5+3Ant0J7dy4c5J1yrRObUknq5E="
+    },
+    {
+      "key": "room-water-l3:thumbnail",
+      "path": "rooms/water/l3-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 22944,
+      "sha256Base64": "w5f+Zpc0lm2nQ16l7Hdzht2/YhhkO+e2NY6xmh4fDI0="
+    },
+    {
+      "key": "room-water-l4:stage",
+      "path": "rooms/water/l4.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 306708,
+      "sha256Base64": "pamjk3uQr7edYHyEOgkDNcUJmkwURp95HH6QyBLrPk8="
+    },
+    {
+      "key": "room-water-l4:thumbnail",
+      "path": "rooms/water/l4-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 30416,
+      "sha256Base64": "8d+Esr0VNw9EBvjmHAqsV02EHhtUsX7dCF3qOWVnnjI="
+    },
+    {
+      "key": "room-water-l5:stage",
+      "path": "rooms/water/l5.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 250774,
+      "sha256Base64": "RJOhMLERI1zAjOy7e+l0L3M/8DX/DuIfMt+AVL44o6c="
+    },
+    {
+      "key": "room-water-l5:thumbnail",
+      "path": "rooms/water/l5-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 24867,
+      "sha256Base64": "HNeRgXgs8119VJpBFcmjokPjLTk8mH81DskG191lXww="
+    },
+    {
+      "key": "shared-water-window:icon",
+      "path": "shared/water/window-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 54678,
+      "sha256Base64": "8EEI5ZDF8JXEdXhbg77loc99z4o3lt+Fk7H2mLr5MGA="
+    },
+    {
+      "key": "shared-water-window:preview",
+      "path": "shared/water/window-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 202005,
+      "sha256Base64": "6o7xhtsY9ODYGevhxYqR82fuSFJGqAwPI/3OuQlrR/o="
+    },
+    {
+      "key": "room-fire-l0:stage",
+      "path": "rooms/fire/l0.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 161686,
+      "sha256Base64": "d+xm77fVzvl07rN2QalA0GyIOk6KzJsYpk5AwzqCuLc="
+    },
+    {
+      "key": "room-fire-l0:thumbnail",
+      "path": "rooms/fire/l0-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 16767,
+      "sha256Base64": "zpPcEQTQlJ1ad5nYKamf1IkVuoaPGY7gy+Gyw+0AOh8="
+    },
+    {
+      "key": "room-fire-l1:stage",
+      "path": "rooms/fire/l1.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 152039,
+      "sha256Base64": "mbsEadx8erpqFV8lMiNMCFbvbl/M/O0Ux6C0rQgRwpk="
+    },
+    {
+      "key": "room-fire-l1:thumbnail",
+      "path": "rooms/fire/l1-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 17540,
+      "sha256Base64": "1gkBXmyKXV8+pJmmIW9/oDUA/SrzQMKqLjYnxUhPWQ0="
+    },
+    {
+      "key": "room-fire-l2:stage",
+      "path": "rooms/fire/l2.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 154191,
+      "sha256Base64": "cbiQ/sUt4SGKUTc19LzKE1CpkbBrSwsX1+3ACTDdjUM="
+    },
+    {
+      "key": "room-fire-l2:thumbnail",
+      "path": "rooms/fire/l2-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 18455,
+      "sha256Base64": "uefZUuKtlrxROxsjOXoVLibg6UAPyfhwyKmDdCRG6ZA="
+    },
+    {
+      "key": "room-fire-l3:stage",
+      "path": "rooms/fire/l3.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 152322,
+      "sha256Base64": "UqDshkrXhmIlww+DV78QTy4CR8n5UFWyWU6qRKRzboE="
+    },
+    {
+      "key": "room-fire-l3:thumbnail",
+      "path": "rooms/fire/l3-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 18360,
+      "sha256Base64": "LcUXrGTD2FwbEPHVOH9mhuiMN0WvlbjDsSjiJGrLBj0="
+    },
+    {
+      "key": "room-fire-l4:stage",
+      "path": "rooms/fire/l4.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 215268,
+      "sha256Base64": "z3CzjJEVGfqxCDDxJxp8HQo8+7l2q8GQgHSRHkqLmgk="
+    },
+    {
+      "key": "room-fire-l4:thumbnail",
+      "path": "rooms/fire/l4-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 25549,
+      "sha256Base64": "BSOtFYQvc4YXVmeUN/4DLVlk4Wk5o7ZWKs4Kh+b+1xg="
+    },
+    {
+      "key": "room-fire-l5:stage",
+      "path": "rooms/fire/l5.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 200840,
+      "sha256Base64": "yJWLK2NSv7Nq4tJLTxcX4SfiXqRTSaGTdE/olg4CxDw="
+    },
+    {
+      "key": "room-fire-l5:thumbnail",
+      "path": "rooms/fire/l5-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 21396,
+      "sha256Base64": "y3URnahaF+2KPncMChqtOekiZLdt2wskHWfwO49/7MU="
+    },
+    {
+      "key": "shared-fire-window:icon",
+      "path": "shared/fire/window-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 58513,
+      "sha256Base64": "nCeDA6H4cgsihKhkTdInrU4E5JIdY3u3w8KpmNPXjJ4="
+    },
+    {
+      "key": "shared-fire-window:preview",
+      "path": "shared/fire/window-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 205732,
+      "sha256Base64": "gbHPFxh/G8rg4FkMKDhtDvk1NTn+eJH0L/wvcnOx2WM="
+    },
+    {
+      "key": "room-earth-l0:stage",
+      "path": "rooms/earth/l0.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 237106,
+      "sha256Base64": "TbnhI43CuPEYSRHB/7QzZPnEWzN5PqBvNkWCsQaGK7c="
+    },
+    {
+      "key": "room-earth-l0:thumbnail",
+      "path": "rooms/earth/l0-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 26157,
+      "sha256Base64": "EbsvS2iGUgGVQVLAlaRwKLj98ArpjW6g8HmIKVOGiNg="
+    },
+    {
+      "key": "room-earth-l1:stage",
+      "path": "rooms/earth/l1.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 165534,
+      "sha256Base64": "3FJmGQop+WqxjmKfXiOc/h2seNFvApVnwPy8RxYl9e0="
+    },
+    {
+      "key": "room-earth-l1:thumbnail",
+      "path": "rooms/earth/l1-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 19028,
+      "sha256Base64": "PIfAd25P8Ag5xO/o11qvWOSlzG8s9kHvRY/GYpnCiIY="
+    },
+    {
+      "key": "room-earth-l2:stage",
+      "path": "rooms/earth/l2.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 177879,
+      "sha256Base64": "SHPoC2x4Nn04NEylFtjoj0UOz6LjHHACga9YX3hN3o8="
+    },
+    {
+      "key": "room-earth-l2:thumbnail",
+      "path": "rooms/earth/l2-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 20994,
+      "sha256Base64": "gpZfRQ1VHH7xSmGnQKlwB6HuwLW52g8+nxMyAHfg8Mo="
+    },
+    {
+      "key": "room-earth-l3:stage",
+      "path": "rooms/earth/l3.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 207796,
+      "sha256Base64": "j9IAVTtkVTilsUpFjnMLo5sfLnKtay5RE06bffR+OjI="
+    },
+    {
+      "key": "room-earth-l3:thumbnail",
+      "path": "rooms/earth/l3-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23108,
+      "sha256Base64": "dvZ/ZPiQOLfZMCupDV+sHOf2YRkw6OMl9bsKL7f7G/Y="
+    },
+    {
+      "key": "room-earth-l4:stage",
+      "path": "rooms/earth/l4.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 248379,
+      "sha256Base64": "LjDVVY49wBbJ0BNqvdXG9GY+G+nwEf0K49dz/xVNXGg="
+    },
+    {
+      "key": "room-earth-l4:thumbnail",
+      "path": "rooms/earth/l4-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 25826,
+      "sha256Base64": "rNl+mDYqNKAiKz5i82rRwMUMdvrsjyqvPght98sT2x8="
+    },
+    {
+      "key": "room-earth-l5:stage",
+      "path": "rooms/earth/l5.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 212730,
+      "sha256Base64": "EzYY9tttTbF4kmUs240wAtLQpc/pTd/M6B0yuK/bOQY="
+    },
+    {
+      "key": "room-earth-l5:thumbnail",
+      "path": "rooms/earth/l5-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 23729,
+      "sha256Base64": "yF21ZUM70ZflUq74IfhNkJCbxZFyjlJzCWTGR64zILA="
+    },
+    {
+      "key": "shared-earth-window:icon",
+      "path": "shared/earth/window-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 56547,
+      "sha256Base64": "o4c6jpI5c4Xu0F7BDtVB7AAzKwWmTTEfTJpwhfrdP/8="
+    },
+    {
+      "key": "shared-earth-window:preview",
+      "path": "shared/earth/window-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 197401,
+      "sha256Base64": "1pgFRbhPYhO1MhgPvL6ZIc489qqgycNzRLa/SyDEJa4="
+    },
+    {
+      "key": "room-wind-l0:stage",
+      "path": "rooms/wind/l0.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 231046,
+      "sha256Base64": "dU9QUhLzjzUiIlZvySKRztSpxtmBwpnq6NELGR+Cibo="
+    },
+    {
+      "key": "room-wind-l0:thumbnail",
+      "path": "rooms/wind/l0-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 24156,
+      "sha256Base64": "4ZGzo4RpPIbJvWUA/Fn8jstQuKN50K9GTGTigtGuO2U="
+    },
+    {
+      "key": "room-wind-l1:stage",
+      "path": "rooms/wind/l1.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 143807,
+      "sha256Base64": "Ji+Rfa8bXf5DKirfJoymybRPmMCBr9BDGH8xB0WlsN8="
+    },
+    {
+      "key": "room-wind-l1:thumbnail",
+      "path": "rooms/wind/l1-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 17052,
+      "sha256Base64": "Jyhk8nnqIudoUn4JqB3ezh/y4QrjF7X2wudNQbEN0MU="
+    },
+    {
+      "key": "room-wind-l2:stage",
+      "path": "rooms/wind/l2.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 165479,
+      "sha256Base64": "u/ZN7ChZMjr6xcqTbeett/rCLKWSCYfgmq4FaVJd1OY="
+    },
+    {
+      "key": "room-wind-l2:thumbnail",
+      "path": "rooms/wind/l2-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 19741,
+      "sha256Base64": "iYkz91ytkDPSMgsOwluucnorlcX1dp56LVlWUyxkp+A="
+    },
+    {
+      "key": "room-wind-l3:stage",
+      "path": "rooms/wind/l3.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 181606,
+      "sha256Base64": "d5W2w5WQQZ+MH+WGVhSkepfv87GvUUQjRUfFJN9T+CE="
+    },
+    {
+      "key": "room-wind-l3:thumbnail",
+      "path": "rooms/wind/l3-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 21198,
+      "sha256Base64": "FXlPiZnkdjQVSA/ToS52NwS1fjBMD9CKpdz1r9ucs/o="
+    },
+    {
+      "key": "room-wind-l4:stage",
+      "path": "rooms/wind/l4.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 208845,
+      "sha256Base64": "jhb/7jkoqp9/lWLf+dr/wOVVGpwMY7Her5XoZqulJNE="
+    },
+    {
+      "key": "room-wind-l4:thumbnail",
+      "path": "rooms/wind/l4-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 24602,
+      "sha256Base64": "c7C6r27G6I3/yaxejYHObOydG6sIeJuxzzuFJkoUSkI="
+    },
+    {
+      "key": "room-wind-l5:stage",
+      "path": "rooms/wind/l5.jpg",
+      "width": 1536,
+      "height": 1024,
+      "bytes": 241874,
+      "sha256Base64": "RJa/Xf+l0UtKfayRn3i59FaNbqMnGdtQ0JBVmqQxMsQ="
+    },
+    {
+      "key": "room-wind-l5:thumbnail",
+      "path": "rooms/wind/l5-384.jpg",
+      "width": 384,
+      "height": 256,
+      "bytes": 26032,
+      "sha256Base64": "X0GSgBGUF2OLmrJs0AZEh3RxS7P7CSc6x8Fk70k9j+k="
+    },
+    {
+      "key": "shared-wind-window:icon",
+      "path": "shared/wind/window-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 67394,
+      "sha256Base64": "Fun2UeSdNTQYTHWlMgIT/9+abnEwceEiFUmGZUbuFZM="
+    },
+    {
+      "key": "shared-wind-window:preview",
+      "path": "shared/wind/window-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 236952,
+      "sha256Base64": "C1tsPPQITTBWY4v+ceqsDfPunszfiUl4WuNrzXm9otA="
+    }
+  ]
+}

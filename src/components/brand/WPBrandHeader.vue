@@ -1,6 +1,6 @@
 <template>
  <view class="wp-brand-header topbar">
-  <view class="compact-brand"><image class="brand-logo" src="/static/icons/logo-256.png" mode="aspectFit" aria-label="WordPal 元素魔法书标志"/><view class="header-brand-copy"><text class="brand-name">WordPal</text><text class="brand-subtitle">{{subtitles[page]}}</text></view></view>
+  <view class="compact-brand"><image class="brand-logo" src="/static/icons/logo-256.png" mode="aspectFit" aria-label="WordPal 元素魔法书标志"/><view class="header-brand-copy"><text class="brand-name" :class="{'page-title':page==='pet'}">{{page==='pet'?'四象精灵屋':'WordPal'}}</text><text class="brand-subtitle">{{subtitles[page]}}</text></view></view>
   <view class="topbar-actions">
    <!-- #ifdef H5 -->
    <WPButton kind="quiet" class="install-trigger" label="安装 WordPal" aria-haspopup="dialog" :aria-expanded="installOpen" @click="stoneOpen=false;installOpen=true"><text aria-hidden="true">📲</text><text class="install-trigger-label">安装</text></WPButton>

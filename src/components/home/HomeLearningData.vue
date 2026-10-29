@@ -1,14 +1,14 @@
 <template>
  <WPCard class="home-data home-learning-data-clay" role="region" aria-label="学习数据">
   <view ref="contentElement" class="learning-data-content" :class="{'learning-data-wide':wide,'learning-data-large':large,'learning-metrics-stacked':stacked}" :style="{'--learning-count-width':countWidth,'--learning-ring-size':ringSize+'px'}">
-   <view class="learning-data-heading"><view class="learning-data-title"><image v-if="!failed.has('heading')" class="learning-heading-icon" :src="icons.heading" mode="aspectFit" aria-hidden="true" @error="failed.add('heading')"/><text v-else class="learning-icon-fallback" aria-hidden="true">▥</text><text>学习数据</text></view><WPChip class="learning-data-source">真实记录</WPChip></view>
+   <view class="learning-data-heading"><view class="learning-data-title"><image v-if="!failed.has('heading')" class="learning-heading-icon" :src="icons.heading" mode="aspectFit" aria-hidden="true" @error="failed.add('heading')"/><text v-else class="learning-icon-fallback" aria-hidden="true">▥</text><text>学习数据</text></view><WPChip class="learning-data-source">全局正式记录</WPChip></view>
    <text v-if="unreadable" class="learning-data-unavailable" role="status">学习统计暂不可用，请在设置中恢复档案后再试。</text>
    <view class="learning-data-body">
     <view class="learning-data-rate">
-     <view class="learning-data-ring" :role="accuracy===null?'img':'progressbar'" :aria-label="accuracy===null?'今日正确率，'+(unreadable?'统计暂不可用':'暂无答题记录'):'今日正确率'" :aria-valuenow="accuracy===null?undefined:accuracy" :aria-valuemin="accuracy===null?undefined:0" :aria-valuemax="accuracy===null?undefined:100" :aria-valuetext="accuracy===null?undefined:accuracy+'%'" :style="{'--learning-ring-angle':(accuracy===null?0:accuracy*3.6)+'deg'}">
-      <view class="learning-ring-face" aria-hidden="true"><view class="learning-rate-reading"><text class="learning-rate-number">{{accuracy===null?'—':accuracy}}</text><text v-if="accuracy!==null" class="learning-rate-percent">%</text></view><text v-if="!large" class="learning-rate-label">今日正确率</text><image v-if="!large&&!failed.has('accuracy')" class="learning-rate-book" :src="icons.accuracy" mode="aspectFit" @error="failed.add('accuracy')"/></view>
+     <view class="learning-data-ring" :role="accuracy===null?'img':'progressbar'" :aria-label="accuracy===null?'正式评估正确率，'+(unreadable?'统计暂不可用':'暂无答题记录'):'正式评估正确率'" :aria-valuenow="accuracy===null?undefined:accuracy" :aria-valuemin="accuracy===null?undefined:0" :aria-valuemax="accuracy===null?undefined:100" :aria-valuetext="accuracy===null?undefined:accuracy+'%'" :style="{'--learning-ring-angle':(accuracy===null?0:accuracy*3.6)+'deg'}">
+      <view class="learning-ring-face" aria-hidden="true"><view class="learning-rate-reading"><text class="learning-rate-number">{{accuracy===null?'—':accuracy}}</text><text v-if="accuracy!==null" class="learning-rate-percent">%</text></view><text v-if="!large" class="learning-rate-label">正式评估正确率</text><image v-if="!large&&!failed.has('accuracy')" class="learning-rate-book" :src="icons.accuracy" mode="aspectFit" @error="failed.add('accuracy')"/></view>
      </view>
-     <text v-if="large" class="learning-rate-label">今日正确率</text><image v-if="large&&!failed.has('accuracy')" class="learning-rate-book" :src="icons.accuracy" mode="aspectFit" aria-hidden="true" @error="failed.add('accuracy')"/>
+     <text v-if="large" class="learning-rate-label">正式评估正确率</text><image v-if="large&&!failed.has('accuracy')" class="learning-rate-book" :src="icons.accuracy" mode="aspectFit" aria-hidden="true" @error="failed.add('accuracy')"/>
      <text v-if="!unreadable&&accuracy===null" class="learning-rate-empty">今天还没有答题记录</text>
     </view>
     <view class="learning-data-metrics">
@@ -18,6 +18,7 @@
     </view>
    </view>
   </view>
+ <text class="small muted block">当日全部教材正式评估 {{stats?.samples||0}} 次，不包含教学重试。</text>
  </WPCard>
 </template>
 <script setup lang="ts">

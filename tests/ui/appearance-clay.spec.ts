@@ -1,6 +1,7 @@
 import {test,expect,type Page} from '@playwright/test'
 import {go,app,setAppearance,seedDatabase,database,waitForArtwork} from './helpers'
 import {goldenDatabase} from './fixtures'
+import {petInfo,elements} from '../../packages/pet_engine'
 
 const screens=['home','learn','pet','review','settings'] as const
 const themeButton=(page:Page,id:string)=>page.locator(`[data-theme-choice="${id}"]`)
@@ -12,7 +13,7 @@ for(const theme of ['swiss','clay'])for(const mode of ['light','dark'])test(`${t
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)
   await waitForArtwork(page)
   await page.screenshot({path:test.info().outputPath(`${theme}-${mode}-${screen}.png`),fullPage:true,animations:'disabled'})
-  if(theme==='clay'){const card=page.locator('.wp-card').first();await expect(card).toHaveCSS('border-radius',screen==='home'||screen==='learn'?'28px':'24px');const shadow=await card.evaluate(el=>getComputedStyle(el).boxShadow);if((screen==='home'||screen==='learn')&&mode==='dark')expect(shadow).toBe('none');else expect(shadow).not.toBe('none')}
+  if(theme==='clay'){if(screen==='pet'){const panel=page.locator('.lh-action-panel');await expect(panel).toHaveCSS('border-radius','24px');await expect(panel).toHaveCSS('background-color',mode==='dark'?'rgb(37, 60, 73)':'rgb(255, 254, 251)')}else{const card=page.locator('.wp-card').first();await expect(card).toHaveCSS('border-radius',screen==='home'||screen==='learn'?'28px':'24px');const shadow=await card.evaluate(el=>getComputedStyle(el).boxShadow);if((screen==='home'||screen==='learn')&&mode==='dark')expect(shadow).toBe('none');else expect(shadow).not.toBe('none')}}
  }
  expect(await database(page)).toEqual(before);expect(errors).toEqual([])
 })
@@ -41,7 +42,8 @@ test('深浅系统模式与四象场景独立，主题保存失败可恢复',asy
  await page.emulateMedia({colorScheme:'dark'});await expect(app(page)).toHaveAttribute('data-mode','dark');await page.emulateMedia({colorScheme:'light'});await expect(app(page)).toHaveAttribute('data-mode','light')
  await page.evaluate(()=>{const original=Storage.prototype.setItem;Storage.prototype.setItem=function(key,value){if(key==='wordpal.appearance.v1')throw new DOMException('Full','QuotaExceededError');return original.call(this,key,value)}})
  await themeButton(page,'swiss').click();await expect(app(page)).toHaveAttribute('data-theme','swiss');await expect(page.getByRole('status')).toContainText('外观暂时无法保存');await page.reload();await expect(app(page)).toHaveAttribute('data-theme','clay')
- for(const scene of ['水之主题','火之主题','土之主题','风之主题']){await go(page,'pet');await page.getByRole('button',{name:scene,exact:true}).click();const saved=await page.evaluate(()=>localStorage.getItem('wordpal.pethouse.appearance.v1'));await go(page,'settings');await themeButton(page,'swiss').click();await themeButton(page,'clay').click();expect(await page.evaluate(()=>localStorage.getItem('wordpal.pethouse.appearance.v1'))).toBe(saved)}
+ for(const element of elements){await go(page,'pet');await page.getByRole('button',{name:'选择'+petInfo[element].name,exact:true}).click();await expect(page.locator('.lh-stage')).toHaveAttribute('data-element',element);const selected=await database(page);await go(page,'settings');await themeButton(page,'swiss').click();await themeButton(page,'clay').click();expect(await database(page)).toEqual(selected)}
+ await go(page,'pet');await page.getByRole('button',{name:'选择'+petInfo[before.companion as keyof typeof petInfo].name,exact:true}).click()
  expect(await database(page)).toEqual(before)
 })
 

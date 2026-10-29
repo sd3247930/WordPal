@@ -13,9 +13,10 @@
 <script setup lang="ts">
 import {computed,ref,watch,nextTick,onUnmounted} from 'vue'
 import WPButton from '../wp-button/WPButton.vue'
+import {spiritStoneAsset} from '../../services/ui/SpiritStoneAsset'
 import {spiritStoneDisplay} from '../../services/ui/SpiritStoneDisplay'
 const props=defineProps<{open:boolean;balance?:number;unavailable?:boolean;loading?:boolean}>(),emit=defineEmits<{close:[]}>(),failed=ref(false)
-const iconSource='/static/brand/spirit-stone-192.png'
+const iconSource=spiritStoneAsset('medium')
 const display=computed(()=>spiritStoneDisplay(props.balance,props.unavailable,props.loading))
 // #ifdef H5
 let previousOverflow='',locked=false

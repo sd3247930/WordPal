@@ -1,4 +1,7 @@
 import type {LearningMode,Word} from '../../../packages/core_learning'
+export function studyHintKind(word:Pick<Word,'pos'>,mode:LearningMode):'answer'|'encouragement'{
+ return ['spell','dictation'].includes(mode)||mode==='connect'&&/^(?:n\.|v\.|adj\.)/.test(word.pos?.trim()||'')?'answer':'encouragement'
+}
 /** Clues guide recall without returning the meaning or the complete hidden answer. */
 export function studyHint(word:Pick<Word,'word'|'pos'>,mode:LearningMode):string {
  const letters=Array.from(word.word).filter(char=>/[a-z]/i.test(char)),parts=word.word.trim().split(/\s+/).filter(Boolean).length

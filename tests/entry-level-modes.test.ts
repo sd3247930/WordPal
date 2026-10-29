@@ -22,7 +22,7 @@ test('L1–L5 题型数量符合等级矩阵，且与能力说明一致',()=>{
 })
 
 test('availableModes 按等级收窄，但不会放开词条本身不支持的活动',()=>{
- const word=wordById.cat,pool=[wordById.cat,wordById.dog]
+ const word=wordById.cat,pool=[wordById.cat,wordById.dog,wordById.fish]
  const level1=availableModes(word,pool,true,1)
  assert.deepEqual(level1,['flash','connect'])
  assert.equal(availableModes(word,pool,true,3).includes('dictation'),false)

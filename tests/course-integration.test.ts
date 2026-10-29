@@ -83,7 +83,7 @@ test('ZIP路径/大小/摘要/文件签名与未知文件受控，媒体写入�
  const wrong=audio.slice();wrong[30]^=1;assert.throws(()=>readZip(makeZip(p,{'audio/cat.wav':wrong})));await assert.rejects(installTextCourse(p));await assert.rejects(installMediaCourse(p,files));assert.equal(courseRegistry[p.courseId],undefined)
 })
 test('备份摘要与引用校验，恢复切指针失败仍保留最新档案，成功恢复可继续正式队列',()=>{
- reset();const profile=useProfileStore(),learning=useLearningStore();startLegacyRound(learning);learning.setMode('spell');learning.patch({input:'ca'});const text=makeLearningBackup(profile.db),candidate=previewLearningBackup(text),before=JSON.stringify(profile.db)
+ reset();const profile=useProfileStore(),learning=useLearningStore();startLegacyRound(learning);learning.setMode('spell');learning.patch({input:'ca'});assert(learning.flushDraft());const text=makeLearningBackup(profile.db),candidate=previewLearningBackup(text),before=JSON.stringify(profile.db)
  const altered=JSON.parse(text);altered.database.gems=123;assert.throws(()=>previewLearningBackup(JSON.stringify(altered)));failKey=POINTER_KEY;assert.equal(profile.restore(candidate),false);assert.equal(JSON.stringify(profile.db),before)
  failKey='';assert.equal(profile.restore(candidate),true);setActivePinia(createPinia());assert.equal(useLearningStore().session?.input,'ca');assert.equal(useProfileStore().db.version,2)
 })

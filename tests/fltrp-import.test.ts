@@ -35,8 +35,9 @@ test('精确同义复用旧 ID 与词性，避免迁移既有 SRS；资源缺失
  const reused=generateCourses(raw,[known]).courses
  assert.equal(reused[0].vocabulary[0].id,known.id);assert.equal(reused[0].vocabulary[0].pos,known.pos)
  const word=entryWord(courses[0].vocabulary[0],courses[0]),other=entryWord(courses[0].vocabulary[2],courses[0])
- assert.deepEqual(availableModes(word,[word,other],true,1),['flash','connect'])
- assert.deepEqual(availableModes(word,[word,other],true,5).sort(),['connect','flash','spell'])
+ const pool=[word,other,{...other,id:'third-choice',word:'third',meaning:'第三种合成释义'}]
+ assert.deepEqual(availableModes(word,pool,true,1),['flash','connect'])
+ assert.deepEqual(availableModes(word,pool,true,5).sort(),['connect','flash','spell'])
  assert.ok(!word.phonics.length&&!word.example&&!word.audio)
 })
 test('实际 Store 跨册保留 Card/历史/奖励，立即切册并恢复原会话；正式评分仍由原 FSRS 计算',()=>{

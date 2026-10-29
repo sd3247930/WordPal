@@ -8,9 +8,10 @@
 <script setup lang="ts">
 import {computed,ref} from 'vue'
 import WPActionTile from '../button/WPActionTile.vue'
+import {spiritStoneAsset} from '../../services/ui/SpiritStoneAsset'
 import {spiritStoneDisplay} from '../../services/ui/SpiritStoneDisplay'
 const props=defineProps<{balance?:number;unavailable?:boolean;loading?:boolean;open:boolean}>(),failed=ref(false)
-const iconSource='/static/brand/spirit-stone-128.png'
+const iconSource=spiritStoneAsset('small')
 const display=computed(()=>spiritStoneDisplay(props.balance,props.unavailable,props.loading))
 defineEmits<{toggle:[]}>()
 </script>

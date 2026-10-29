@@ -1,0 +1,1068 @@
+{
+  "assetVersion": 1,
+  "style": "Original high resolution 3D cream clay artwork",
+  "palette": [
+    "cream",
+    "mint",
+    "sky blue",
+    "peach pink"
+  ],
+  "metadata": "Re-encoded without source metadata or content credentials",
+  "sources": [
+    {
+      "id": "room-0",
+      "width": 1448,
+      "height": 1086,
+      "sha256Base64": "TFmOI/Mx7qElnOr5493Qto/5rEWpxYGm4eFlMFgkPiM="
+    },
+    {
+      "id": "room-1",
+      "width": 1448,
+      "height": 1086,
+      "sha256Base64": "i2A13KDVTzTMVJ/6T0TqtMefMnoYOObKO6DpdFVKNIw="
+    },
+    {
+      "id": "room-2",
+      "width": 1448,
+      "height": 1086,
+      "sha256Base64": "hw6wilOKZf/ZCBYiSHh+LLcNuWV4+Hf6WIogNy3x3QU="
+    },
+    {
+      "id": "room-3",
+      "width": 1448,
+      "height": 1086,
+      "sha256Base64": "W814f2dDnPSg9snUZcxqYFoEqspGsG+iP0S4ZSgA/AU="
+    },
+    {
+      "id": "room-4",
+      "width": 1448,
+      "height": 1086,
+      "sha256Base64": "wvL64G2zjOhPLVcqiOamhWhoyGkEsooBIN9BWWeifQA="
+    },
+    {
+      "id": "room-5",
+      "width": 1448,
+      "height": 1086,
+      "sha256Base64": "2snofCll1eoY4gjPoqIvUwnTFrtdnLcH4z/zprC7lF4="
+    },
+    {
+      "id": "water-bed",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "pTvKc88zjRL/QEM5/KRmwbhpm4NsgMjTPVxgBEwQFeI="
+    },
+    {
+      "id": "water-shelf",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "UC5opcMLkkGEejwwjglLnBv+bS3qoIZmwAHY06qXRSk="
+    },
+    {
+      "id": "water-rug",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "Xxp0PPGNe5luDHs4jDTY3j6MNjEbLFM6jffNC6dEfck="
+    },
+    {
+      "id": "water-lamp",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "rsW8T2bsh3EObym6qp5s4wySw4Xfq56ncfXIHViWxGs="
+    },
+    {
+      "id": "fire-bed",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "EBZrLJdHK7CigQFUM2vOW0kgtVyhbZxlSqK88x1nJkw="
+    },
+    {
+      "id": "fire-shelf",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "jzpLKLRbPPikh2l77Y8bTiqUWHBVxZ3llPdoIa/FDGc="
+    },
+    {
+      "id": "fire-rug",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "Jp5QD3KtZOzr0o20Ghw786G4F9dt4kAGKuppQx8IFEM="
+    },
+    {
+      "id": "fire-lamp",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "OQb91cRKBBqUdJ6nN3WgXCGgYeN1oz+AElcfsEulsuo="
+    },
+    {
+      "id": "earth-bed",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "okyBjEeeLsfdzBkMA4PwPq99FQL8VSzPo5T2KQ/Zq8E="
+    },
+    {
+      "id": "earth-shelf",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "kIqdGSDLRh+cE0kUiwzCNQOPSAbGUyahLazKezvDBkE="
+    },
+    {
+      "id": "earth-rug",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "KitdRquuT7xLqaxeLi6SLdMZvqJ4k7s709/8laEvDSM="
+    },
+    {
+      "id": "earth-lamp",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "8bhIcjX/WYzkd3f0jAv2iEtXup0LvY+nr5eWFSwYERU="
+    },
+    {
+      "id": "wind-bed",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "rpaTOZp6sQklB9IKx0LFWBMGaYv14rEmNDNiQIIDV+c="
+    },
+    {
+      "id": "wind-shelf",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "PTL/6Yb+cNH6HvDfGTToed5zId+iVf65Snv8p0Ptas4="
+    },
+    {
+      "id": "wind-rug",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "7sH+K7H3oPcj5XPhXnqBuyzhwOcxePWYRrbQiLBJe5o="
+    },
+    {
+      "id": "wind-lamp",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "iozc/GOaGH3Jke//C0wTFV6yyG2IaePFfI/5L632Ono="
+    },
+    {
+      "id": "common-plant",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "CMZOg83OvMzazgLJI0ZdYNSIo0E3cdlBb3v7fvjtyg0="
+    },
+    {
+      "id": "common-garden",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "ZnuqaroXfhmIkkPpK+lzdNPVW7091mzmz94SGHURIQ8="
+    },
+    {
+      "id": "common-table",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "6gE3x6bFmSn1NzIueKWDM1j0GyHFTB9zSllIpUGftiY="
+    },
+    {
+      "id": "common-chime",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "5BwmG7Lx5AiuP3OAQ59rh0vGbQK9MdjPj05P8emSLEE="
+    },
+    {
+      "id": "starter-bed",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "GBoGDFdhlGqai5TWrzMK5M1LAylL0mopeCTicZ4klEQ="
+    },
+    {
+      "id": "starter-shelf",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "5gvMKJb51VZ/OMvATozd6mRZRcFbxbAg6OM0mNTO2Xg="
+    },
+    {
+      "id": "starter-window",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "L54zuq0xAYvLgNQeJphqp1iUMEQ0HGchev9SW1sJBnk="
+    },
+    {
+      "id": "ui-home",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "Ot9ogODkdMLjQudRDycpNGqtI5FPVGX98baZKpqoxOg="
+    },
+    {
+      "id": "ui-feed",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "ZyRsds0Fl2MXBzjhs9NDllnnWYy5h713umzi+7xNj8o="
+    },
+    {
+      "id": "ui-growth",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "awDjxo6z/xhbeThdQ1mVPTjfW+4D0qH6KHCllf+kxYw="
+    },
+    {
+      "id": "ui-dress",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "Grr91GHVAsyxoBD9FxyhZ/QlV1ZEoRDxW9d96hhvNT4="
+    },
+    {
+      "id": "ui-album",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "cBKXPd3dcnkL/ZKPso7CjUJzgdumxp2zXPez5IeSVDM="
+    },
+    {
+      "id": "food-water",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "Q4wQavKX6tC6iTZkHcYS8Y3gTJmw51H2/c5WU0zJR3c="
+    },
+    {
+      "id": "food-pearl",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "HzteUgP9JMV5Uhai2rczGBswhWXvdfDoaIRuARSf52E="
+    },
+    {
+      "id": "food-leaf",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "4GcVcDoeWmAsgWv3Qmz87ZWhJjTcoxm1axVLTLk9ORE="
+    },
+    {
+      "id": "food-feather",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "IB+iDsTfe3zIWzNPqgHhQdrmSeH+Vd04yeomcUln6ts="
+    },
+    {
+      "id": "dress-ribbon",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "NDjP8L+uEKYUHVZ1PRcGRhB7ifFsHE6Kgy6r+e5nqcU="
+    },
+    {
+      "id": "dress-scarf",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "Lc9sM2YcpNgZ7V8ZPLwiJ+v5IT/8vwemX5V6FI4Qr8k="
+    },
+    {
+      "id": "dress-star",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "FHSMRHUPD9G5uRu58njdyd3TV5eEduBaKtmZPnn3utM="
+    },
+    {
+      "id": "metric-experience",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "nXGQlEKTJD0bNfhc7s5lZJYg3nFCfiPFp7Bh6gMO6IU="
+    },
+    {
+      "id": "metric-affection",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "Qctv0w0s7ipOyFdjkMUOgDl/P/Q/r4XKrltpP2RcOpk="
+    },
+    {
+      "id": "metric-book",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "2A1u1+6Q5yJ3AECpeshatgFnuxYOgaPthQf7QpbhxrU="
+    },
+    {
+      "id": "water-motif",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "sXjTjXPXUOU1AqcBB8rnNlpghmLyLTY4P40v1jPi+lg="
+    },
+    {
+      "id": "fire-motif",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "XMvipKPaxayWv+td5hngwZnxq5xfsaSmaTzXMjhmEis="
+    },
+    {
+      "id": "earth-motif",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "xzVSUL/Fkqxssx6mTf8EUXMgwdtiAscR/EDWwn0N7Lw="
+    },
+    {
+      "id": "wind-motif",
+      "width": 1254,
+      "height": 1254,
+      "sha256Base64": "Zy2zFhi/1ZtfitAUyW/DEtxzV+I/51mc/+LUIGUClkQ="
+    }
+  ],
+  "files": [
+    {
+      "path": "rooms/room-0.jpg",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 125037,
+      "sha256Base64": "BtYX5yPF7Vj1SyoWEFpGM9N3vlgWwEQXcsSGAGwHVLY="
+    },
+    {
+      "path": "rooms/room-0-256.jpg",
+      "width": 256,
+      "height": 192,
+      "bytes": 10094,
+      "sha256Base64": "vSI/IfTlS2LhhOQ7CtjbzdgwLdfIjz72Q2rYo6+xEAk="
+    },
+    {
+      "path": "rooms/room-1.jpg",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 66848,
+      "sha256Base64": "j/8HAY2ZA1xEnPoJ+Rlh6EU2qhpBCQOXF1TTC/wCil8="
+    },
+    {
+      "path": "rooms/room-1-256.jpg",
+      "width": 256,
+      "height": 192,
+      "bytes": 4988,
+      "sha256Base64": "srkQAgH6SzXuTmnRi07v4DkxLxtdFAxDVSK1B5qBMnI="
+    },
+    {
+      "path": "rooms/room-2.jpg",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 79537,
+      "sha256Base64": "SWtJZuCaLmehXPZRj0Sh2H+vaUYPtB/2HyPjnYiKncM="
+    },
+    {
+      "path": "rooms/room-2-256.jpg",
+      "width": 256,
+      "height": 192,
+      "bytes": 5449,
+      "sha256Base64": "F4D+qlWus5Nqnsq8DfZkauB7WPThy5P1rGYUKp8Zr4M="
+    },
+    {
+      "path": "rooms/room-3.jpg",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 83914,
+      "sha256Base64": "kxpJujInDUlbTsC7lgXbzojR/MWXiP9RBPH0Nl3V5sI="
+    },
+    {
+      "path": "rooms/room-3-256.jpg",
+      "width": 256,
+      "height": 192,
+      "bytes": 5907,
+      "sha256Base64": "VZhgzZtmsLGoWouHyXWLFWl85nB2hzGAkLAJA6vjYgw="
+    },
+    {
+      "path": "rooms/room-4.jpg",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 113971,
+      "sha256Base64": "jSpysYnQ6PpLSpFNxgZk2frVJp6fKaS4XYCPcsOH0LE="
+    },
+    {
+      "path": "rooms/room-4-256.jpg",
+      "width": 256,
+      "height": 192,
+      "bytes": 8547,
+      "sha256Base64": "EkPmVpsyouIefEuqSJX2ANlBON1R4AMW9XEPLS3SU08="
+    },
+    {
+      "path": "rooms/room-5.jpg",
+      "width": 1448,
+      "height": 1086,
+      "bytes": 188323,
+      "sha256Base64": "TPDORXV7uB8Xta3UjKTnktJmVc7c3XCczoEqD4vByZ8="
+    },
+    {
+      "path": "rooms/room-5-256.jpg",
+      "width": 256,
+      "height": 192,
+      "bytes": 11937,
+      "sha256Base64": "7ZqI+iVyeJT2ABOzKJGQhAGvQ4tSXU+PvuLh3lmwRx0="
+    },
+    {
+      "path": "furniture/water-bed-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 26117,
+      "sha256Base64": "6/8TJlfl/f0EYdJxieZa615wjfqmRmJxhQGlnajidOg="
+    },
+    {
+      "path": "furniture/water-bed-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 75707,
+      "sha256Base64": "C9KexvuNaIxaFMLS0qtZPsnyi5ydWqo5TkAXe52Rl74="
+    },
+    {
+      "path": "furniture/water-shelf-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 30009,
+      "sha256Base64": "S09h2r1nHn1tm2N4NmqBNBnjlb7y0X2qT1Y35ena1KE="
+    },
+    {
+      "path": "furniture/water-shelf-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 90756,
+      "sha256Base64": "1DrMN754RpFH+DI+RSYbmu5N1ttVAebZDBWtM69HFZM="
+    },
+    {
+      "path": "furniture/water-rug-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 24479,
+      "sha256Base64": "xApxwgY0HjDe9+c0+mOnoWeT39xg1AGAoycnrWX0Poc="
+    },
+    {
+      "path": "furniture/water-rug-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 85491,
+      "sha256Base64": "EaoE+xFMJeOgLYiOaVMf53RFv+v1qnUJOlhIHmbzimc="
+    },
+    {
+      "path": "furniture/water-lamp-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 17357,
+      "sha256Base64": "uCNZ00QlvoAZ2eG+5gHa2vmXm+fJ81xKOo1qu3Bj8wc="
+    },
+    {
+      "path": "furniture/water-lamp-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 49377,
+      "sha256Base64": "eliIc+4cuJzDzcSUPrtdvajkCWiP7ZLACAAfDTj9zPU="
+    },
+    {
+      "path": "furniture/fire-bed-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 20748,
+      "sha256Base64": "DLEcxH7WUz0q+ttnkz/aB25snpUMBhsxA0LqFcOXIbI="
+    },
+    {
+      "path": "furniture/fire-bed-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 62854,
+      "sha256Base64": "P/vWSajfSpVTuDjOpApKajJuP6SxmX6Oy9Lv2dheepo="
+    },
+    {
+      "path": "furniture/fire-shelf-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 20319,
+      "sha256Base64": "/Lmg3we3tBTyDmlVcTfPHdEyoBDj00nLnvfv4d9RTSI="
+    },
+    {
+      "path": "furniture/fire-shelf-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 59807,
+      "sha256Base64": "H4sJkXodJwAlYJWqSXFGoRjoVX+TK+xkeJ4W2RjW/Ow="
+    },
+    {
+      "path": "furniture/fire-rug-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 24164,
+      "sha256Base64": "/6VOYV/KTQmgjW9BCpjnoiB2U0aJBNWiteqGMObKyTg="
+    },
+    {
+      "path": "furniture/fire-rug-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 82128,
+      "sha256Base64": "ja2CYYXrZHxnXw4Ky2o6rqfDtNGdXMDGD5OzUrbZHhs="
+    },
+    {
+      "path": "furniture/fire-lamp-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 16645,
+      "sha256Base64": "OuoKlgxR7R9IbDw2VgxW5sAvw6bi/rAXru49/mTj3Qs="
+    },
+    {
+      "path": "furniture/fire-lamp-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 46833,
+      "sha256Base64": "LKPz2JgJmDU4+UP3+C2qwKkOUGVWH3ft3JopmVjfK10="
+    },
+    {
+      "path": "furniture/earth-bed-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 22496,
+      "sha256Base64": "0NnAdEAau40mtGYnXOV3JhYArtATCYVb3ZZw20+7Kds="
+    },
+    {
+      "path": "furniture/earth-bed-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 65019,
+      "sha256Base64": "BOolwp/VYV6XJHEgNFKcgK0VxdxDuGOivTXBFYfJ/GE="
+    },
+    {
+      "path": "furniture/earth-shelf-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 25259,
+      "sha256Base64": "/OK66RDGHzJ7W+N3K/POg3o6k31laHfQAFogsM5rNgE="
+    },
+    {
+      "path": "furniture/earth-shelf-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 73533,
+      "sha256Base64": "UQBCnSGgpR8eKOP1WchdJoNzcfDMKEW0u0YOigJIdYU="
+    },
+    {
+      "path": "furniture/earth-rug-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 30530,
+      "sha256Base64": "DedevkaWqOXlGVJfkyTjgEOtW59+ZhmwNN+iAecjOac="
+    },
+    {
+      "path": "furniture/earth-rug-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 112055,
+      "sha256Base64": "3JZpeGwqpkFwsiHUtZp098iHRGa7PwwRaeXbyQKmtSk="
+    },
+    {
+      "path": "furniture/earth-lamp-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 15335,
+      "sha256Base64": "ZLMjCOj+BqWVXJhysOwv0o/mW3I0FII39v1iBBC3Jfk="
+    },
+    {
+      "path": "furniture/earth-lamp-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 43515,
+      "sha256Base64": "nBaa+7fmMhIHEeXnJhNqlu67k/L0nhQzE8Jtcbgn16k="
+    },
+    {
+      "path": "furniture/wind-bed-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 17765,
+      "sha256Base64": "FJjfIfb+77/6hm8wINX9WCCBzpksnBlOjYyAP4i5XlM="
+    },
+    {
+      "path": "furniture/wind-bed-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 50467,
+      "sha256Base64": "aD3R9w4HN0QC4OWksog2dN8fAgqpOVAOTku63963ibw="
+    },
+    {
+      "path": "furniture/wind-shelf-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 22559,
+      "sha256Base64": "lIZSTNuT2nn3kiy5OlGOEiAVou5xBlQGQu7x9zUmRyY="
+    },
+    {
+      "path": "furniture/wind-shelf-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 67199,
+      "sha256Base64": "V5JOxagpBPZXv1PD/bJDYuAizzLGBAy+QBS4KSAVkxQ="
+    },
+    {
+      "path": "furniture/wind-rug-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 25488,
+      "sha256Base64": "LBA0ES9Lwy9MzlozXUnGjebQKKNuZDo6Zg4TMDtAaw8="
+    },
+    {
+      "path": "furniture/wind-rug-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 83901,
+      "sha256Base64": "joA31hQ6fFynD3T7iLtew6XhMwtd2Yj1GI/45pRgv7Q="
+    },
+    {
+      "path": "furniture/wind-lamp-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 13015,
+      "sha256Base64": "VSvNEC0vT5yQM63YvzrCSLMcpee4WOhhuqnSyAlzhfM="
+    },
+    {
+      "path": "furniture/wind-lamp-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 39075,
+      "sha256Base64": "e/8ki8pa6H8PwEWhfK4aff3bgTeD/a8Pk2mwhPSrjI4="
+    },
+    {
+      "path": "furniture/common-plant-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 21419,
+      "sha256Base64": "353HLCPFjmCS8cVnzmpZKhyWZEu5EKbGHUrLb4B/6G0="
+    },
+    {
+      "path": "furniture/common-plant-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 63601,
+      "sha256Base64": "w9xosHMEfIwe8vSacX8oS9F2ZDBpD+J3J0OkIAj/uQE="
+    },
+    {
+      "path": "furniture/common-garden-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 27142,
+      "sha256Base64": "l7o3EKpJaytprO0r/QMKgpsZnN3j9fsK0UMZjviN5W4="
+    },
+    {
+      "path": "furniture/common-garden-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 79450,
+      "sha256Base64": "sRAnYpEYvifLJ2ep1Je0uUfd/Xpg5oRiZYYVXhbElG4="
+    },
+    {
+      "path": "furniture/common-table-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 18031,
+      "sha256Base64": "0w65v1vtrGYPpfDB0mRbRijGeV5apeiJRhm2AGL5Xgc="
+    },
+    {
+      "path": "furniture/common-table-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 52943,
+      "sha256Base64": "PjNkhMYp1pl/2Y2EflcSPupjrjwI3cK+SOotOC5wJtw="
+    },
+    {
+      "path": "furniture/common-chime-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 11349,
+      "sha256Base64": "gkKDWrx9y6lcG0UxZHWkeaIl7XDSShh3db0iyXCwu+M="
+    },
+    {
+      "path": "furniture/common-chime-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 31834,
+      "sha256Base64": "WAfmThCldnqBUffTmG05O+aPLUnPYyVRfUmqjucihmM="
+    },
+    {
+      "path": "furniture/starter-bed-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 21385,
+      "sha256Base64": "ooGfw6eeQCF6nEbTnqSzkoVFXGLjuIXXYL4MphQYT7Y="
+    },
+    {
+      "path": "furniture/starter-bed-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 68811,
+      "sha256Base64": "ZUYBASWsRUOA6WG6Oma7wb3UV/+sBbch2XHQOJG6Fv4="
+    },
+    {
+      "path": "furniture/starter-shelf-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 25004,
+      "sha256Base64": "Zx4IBQ/famx/fWxoZjE9pn4XVZ8BahFVUrtys8iKUsY="
+    },
+    {
+      "path": "furniture/starter-shelf-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 83616,
+      "sha256Base64": "oLkKnyb/K4aIEMDI0PdISx7ZdSxkle0m0xPcUBX8RQA="
+    },
+    {
+      "path": "furniture/starter-window-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 19353,
+      "sha256Base64": "Vd2G54UGyudqhsxCcFF854820fLQ7ymDxXk6ip4Xz0E="
+    },
+    {
+      "path": "furniture/starter-window-512.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 59429,
+      "sha256Base64": "eT/PzQ9VkSM6aKFYTPZb/1mxUmB4eNBfHhjVPjyP2eY="
+    },
+    {
+      "path": "ui/ui-home-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 24780,
+      "sha256Base64": "OiOkOgNn/cswPKpHhO9aVgF0kUBu5oeiJSLudga+yck="
+    },
+    {
+      "path": "ui/ui-feed-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 18770,
+      "sha256Base64": "f8Z6c7A4wCvGQLvVBSlP9URZwVrlhNU0llbPN7pep+w="
+    },
+    {
+      "path": "ui/ui-growth-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 21481,
+      "sha256Base64": "+S2uJpKMfTEhsmhO3Gm70V0CrP8YzJ6J6PgDocdSpME="
+    },
+    {
+      "path": "ui/ui-dress-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 21091,
+      "sha256Base64": "ZRom+UDbkX1rndUu981y9OwU6/xh7JPDI5XkRe2ktc0="
+    },
+    {
+      "path": "ui/ui-album-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 24543,
+      "sha256Base64": "vQDuYLjIxZ1+gohaRk7Uw2+80p4ICN/OC2wrmIuNf9M="
+    },
+    {
+      "path": "ui/food-water-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 18647,
+      "sha256Base64": "szSKRJnDnV32jQl1/xTiBH/8ZIh3A7LRau81G+5A5ys="
+    },
+    {
+      "path": "ui/food-pearl-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 24033,
+      "sha256Base64": "yBztRbI2zUx9t8LL/P1KUtJgytLZaechNm1lMSWuSF4="
+    },
+    {
+      "path": "ui/food-leaf-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 23710,
+      "sha256Base64": "NrXpURi6vffD4RkfUr0Bv+adNYTuz9fCWLDqvT9ueEs="
+    },
+    {
+      "path": "ui/food-feather-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 17784,
+      "sha256Base64": "rleL0LzNhuzT4RXqCihlnXrqHYq8XaQL320BbryU2aM="
+    },
+    {
+      "path": "ui/dress-ribbon-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 21272,
+      "sha256Base64": "29EYS/2pNo+gaLfjkYUOlDv2OEjRGwHsigoDrzUdDlU="
+    },
+    {
+      "path": "ui/dress-scarf-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 22854,
+      "sha256Base64": "L9tv/7G1ezYK4tO1Ky/8yzot73tfVjkt1yiVxqAjj7c="
+    },
+    {
+      "path": "ui/dress-star-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 18984,
+      "sha256Base64": "eQjJZDHDz5gH3OIt2U3CWswemTB9jBjJIPQ+UzwyDLY="
+    },
+    {
+      "path": "ui/metric-experience-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 18147,
+      "sha256Base64": "PkNZYuJ/AW87OdaARlIJgRpYoVyIhDQz9Jm9WkVBKhk="
+    },
+    {
+      "path": "ui/metric-affection-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 17320,
+      "sha256Base64": "zgimDzFC+Hz97Ly36K71lAGwemCDmC0h5zROtFsIX2w="
+    },
+    {
+      "path": "ui/metric-book-256.png",
+      "width": 256,
+      "height": 256,
+      "bytes": 18536,
+      "sha256Base64": "svbD3eVzVe+O1h/wfTvsXrSYLsAEKNz4RLBxpMEmb5g="
+    },
+    {
+      "path": "decor/water-motif.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 42697,
+      "sha256Base64": "Bh4egMrUSg5K+5VkPGDV+mt3z2DEsyz1lB+Dd1Iydnk="
+    },
+    {
+      "path": "decor/fire-motif.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 61133,
+      "sha256Base64": "VNlQvDImdau/6phnPjB4ErnK+jk4+R20NvqE8BmzdAk="
+    },
+    {
+      "path": "decor/earth-motif.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 42957,
+      "sha256Base64": "M/BMlZ4HO3Oo99TXQrmz8TcOX9jRoxGPEPgelJV81cY="
+    },
+    {
+      "path": "decor/wind-motif.png",
+      "width": 512,
+      "height": 512,
+      "bytes": 45651,
+      "sha256Base64": "rN+4rMj6Cmq2lZbNCP+bVi+NcAW8PpQO6CFcRKEiYvk="
+    },
+    {
+      "path": "companions/water-1-256.png",
+      "width": 192,
+      "height": 256,
+      "bytes": 28092,
+      "sha256Base64": "xeiIzmIMM2ooP0xVvDM3ddpAwCl7Sv1q8GgDuo1A6vw="
+    },
+    {
+      "path": "companions/water-2-256.png",
+      "width": 192,
+      "height": 256,
+      "bytes": 32786,
+      "sha256Base64": "kmPlkYnaCOAGQ8Yx4xxxxhY9NVKOgqrtQ665oi4tRvE="
+    },
+    {
+      "path": "companions/water-3-256.png",
+      "width": 192,
+      "height": 256,
+      "bytes": 32970,
+      "sha256Base64": "6yIatWieUUSrnMrvSSZdNvH1kGti51AxOEH318EjCY0="
+    },
+    {
+      "path": "companions/water-4-256.png",
+      "width": 192,
+      "height": 256,
+      "bytes": 34935,
+      "sha256Base64": "SwH57Iv+EG2i/x7VOws83hW1sZBaDjttAykQev8xFEA="
+    },
+    {
+      "path": "companions/fire-1-256.png",
+      "width": 192,
+      "height": 256,
+      "bytes": 29965,
+      "sha256Base64": "qIL53bZxbW8izFcqoKKmVyiAaCbx0RHRiPmFPWkIFBM="
+    },
+    {
+      "path": "companions/fire-2-256.png",
+      "width": 192,
+      "height": 256,
+      "bytes": 31737,
+      "sha256Base64": "wbgueBf0Tl9n0z+9wKGmtlMSLDRSKZRAKcJX0gIAwI0="
+    },
+    {
+      "path": "companions/fire-3-256.png",
+      "width": 192,
+      "height": 256,
+      "bytes": 33730,
+      "sha256Base64": "hnt9TAwRfMAxsLneNYMw6HMJhxaryb0mTNPJfqal+og="
+    },
+    {
+      "path": "companions/fire-4-256.png",
+      "width": 192,
+      "height": 256,
+      "bytes": 34201,
+      "sha256Base64": "VT84HyKWf6dzvFaajmOMolvySgWamolYKb+6OGKo5ws="
+    },
+    {
+      "path": "companions/earth-1-256.png",
+      "width": 192,
+      "height": 256,
+      "bytes": 26014,
+      "sha256Base64": "ydFVwsLGyMrlW1E4wHWNgfGC5dBkeiCh7YK63FPzb34="
+    },
+    {
+      "path": "companions/earth-2-256.png",
+      "width": 192,
+      "height": 256,
+      "bytes": 28842,
+      "sha256Base64": "Rgk8hAkIGri2AWWiaZn+euGoKnn5xn3YPPPcnVHhQ9g="
+    },
+    {
+      "path": "companions/earth-3-256.png",
+      "width": 192,
+      "height": 256,
+      "bytes": 29189,
+      "sha256Base64": "fmHyCwQr0+/kEeGl2nni7MbNIGyy5HXHPjjwmanOI9Y="
+    },
+    {
+      "path": "companions/earth-4-256.png",
+      "width": 192,
+      "height": 256,
+      "bytes": 33561,
+      "sha256Base64": "AM190hFblRSUzusmRBVZt0/Lqdsrc4BuWRblx/OKkrU="
+    },
+    {
+      "path": "companions/wind-1-256.png",
+      "width": 192,
+      "height": 256,
+      "bytes": 29468,
+      "sha256Base64": "dCKhR9rDgi73W6XL1PqJz6AvH3yPsI2wo5Hyv2g+VLE="
+    },
+    {
+      "path": "companions/wind-2-256.png",
+      "width": 192,
+      "height": 256,
+      "bytes": 31651,
+      "sha256Base64": "dzKG4vApSi97TVPX5/5h9KEI/KC0zRYyhO0i/GmpH6c="
+    },
+    {
+      "path": "companions/wind-3-256.png",
+      "width": 192,
+      "height": 256,
+      "bytes": 34106,
+      "sha256Base64": "QytVeyVJo/1CCaRYJ9S0spRpgVZqjZU572u7ShR83RY="
+    },
+    {
+      "path": "companions/wind-4-256.png",
+      "width": 192,
+      "height": 256,
+      "bytes": 35374,
+      "sha256Base64": "9Cy+cvo9GIFJymAcdr1kuBmD7H5UPnCv/6Dm8hOqlR4="
+    }
+  ],
+  "companionSources": [
+    {
+      "element": "water",
+      "form": 1,
+      "width": 960,
+      "height": 1280,
+      "sha256Base64": "zN0u3gqgng+LhOfNjLWHDAOpRroWHxjCTIuB/nxMKr8="
+    },
+    {
+      "element": "water",
+      "form": 2,
+      "width": 960,
+      "height": 1280,
+      "sha256Base64": "T3DqDDED2rtjcbHHKEL/9O6CUzhgQKzPfYr/JrwOMLc="
+    },
+    {
+      "element": "water",
+      "form": 3,
+      "width": 960,
+      "height": 1280,
+      "sha256Base64": "VlNpJ07rWUexLuZW1WPYEod2ozJ3QtZ1hySwvz6iBBE="
+    },
+    {
+      "element": "water",
+      "form": 4,
+      "width": 960,
+      "height": 1280,
+      "sha256Base64": "QfES+YxAqyCtUWpWeEQP19vnYD9K5DzCQF9+4ra9qKU="
+    },
+    {
+      "element": "fire",
+      "form": 1,
+      "width": 960,
+      "height": 1280,
+      "sha256Base64": "FwfsQ6MkAweZ0ymGYp7c5aV5gBwCa8QBqeFCIACh0N8="
+    },
+    {
+      "element": "fire",
+      "form": 2,
+      "width": 960,
+      "height": 1280,
+      "sha256Base64": "Lkgggia1vr61q256I5S9g6j7gmGVaQcEDMM8TyehHqE="
+    },
+    {
+      "element": "fire",
+      "form": 3,
+      "width": 960,
+      "height": 1280,
+      "sha256Base64": "A1qWFXv+ftKeLn+yFO2kYIdwCg6STxKcI2ZPXkeP7kE="
+    },
+    {
+      "element": "fire",
+      "form": 4,
+      "width": 960,
+      "height": 1280,
+      "sha256Base64": "n/S8h2D3s7GEeXTWgZlY3dU+tTOD+sT0p6++ASZ9+zA="
+    },
+    {
+      "element": "earth",
+      "form": 1,
+      "width": 960,
+      "height": 1280,
+      "sha256Base64": "m9YRTZnxu05V3FFAQbTohOU7Zd/7PGQH6W2SnaRgpN0="
+    },
+    {
+      "element": "earth",
+      "form": 2,
+      "width": 960,
+      "height": 1280,
+      "sha256Base64": "wae4YL3ea1R8DfM4t4tNrexd2RY0oOLUavyVY69GCew="
+    },
+    {
+      "element": "earth",
+      "form": 3,
+      "width": 960,
+      "height": 1280,
+      "sha256Base64": "PLBiMxrlv6PwTme4CRPvhLUz0z+1N2Et5oa1jPr16wQ="
+    },
+    {
+      "element": "earth",
+      "form": 4,
+      "width": 960,
+      "height": 1280,
+      "sha256Base64": "bmQbhAdyJHX/diR+XJEuf+stV5rzzoYaQmlLRhxaeTc="
+    },
+    {
+      "element": "wind",
+      "form": 1,
+      "width": 960,
+      "height": 1280,
+      "sha256Base64": "qC5DsLo7JKotSRfDl4XG4YacjvI2e7E7rLBVOnY7krw="
+    },
+    {
+      "element": "wind",
+      "form": 2,
+      "width": 960,
+      "height": 1280,
+      "sha256Base64": "S02sWuxfdoS0NuPYUedNFzh6an+V0YtvwLfUFiYcSoI="
+    },
+    {
+      "element": "wind",
+      "form": 3,
+      "width": 960,
+      "height": 1280,
+      "sha256Base64": "OQ6Csr8gUt0oQ5xOU+CxgAWgVls/HFjPbuqktT2DONE="
+    },
+    {
+      "element": "wind",
+      "form": 4,
+      "width": 960,
+      "height": 1280,
+      "sha256Base64": "g6wo5Za5/fdjONIDOU2zCZmUsbZ7qqMnFwQwfsDkIN0="
+    }
+  ]
+}
