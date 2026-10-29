@@ -1,3 +1,4 @@
+import {startIndependentStudy} from './helpers'
 import {previewSnack} from './helpers'
 import {answerParentGate,unlockParent as openParentSettings} from './helpers'
 import {openCustomPractice} from './helpers'
@@ -7,7 +8,7 @@ import {freshDatabase} from '../../src/stores/profile'
 import {newCard} from '../../packages/srs_fsrs'
 
 test('学习输入在旋转、五档缩放、切换明暗及异常退出后保留',async({page})=>{
- await go(page,'home');await page.locator('.hero-cta').click();await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'拼写'}).click()
+ await go(page,'home');await startIndependentStudy(page);await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'拼写'}).click()
  await page.locator('.spelling-input input').fill('ca')
  const original=await database(page)
  for(const width of [390,700,1000,1400,1800,768,390]){await page.setViewportSize({width,height:900});await expect(page.locator('.spelling-input input')).toHaveValue('ca');expect((await database(page)).session.id).toBe(original.session.id)}
@@ -28,7 +29,7 @@ test('教材首轮保持词序，并保留历史到期词来源与已有排程',
 test('独立错题保留练习证据，提示不产生负灵石或正式学习奖励',async({page})=>{
  // Daily pool is whole-course now; pin the round to 5 new words so five wrong answers finish it.
  await seedDatabase(page,{...freshDatabase(),abilityLevel:'L3'})
- await go(page,'home');await page.locator('.hero-cta').click()
+ await go(page,'home');await startIndependentStudy(page)
  for(let i=0;i<5;i++){
   await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'拼写'}).click();await page.locator('.spelling-input input').fill('wrong')
   await page.locator('.answer-actions [role=button]').filter({hasText:/提示/}).click()
@@ -49,7 +50,7 @@ test('宠物切换和喂养不影响 SRS，数据删除需家长验证与明确�
 test('键盘快捷键与焦点行为，大字体和减少动效',async({page})=>{
  await setAppearance(page,'swiss','light',{largeText:true,reducedMotion:true});await go(page,'home');await expect(app(page)).toHaveClass(/large-text/);await expect(app(page)).toHaveClass(/reduce-motion/)
  await page.locator('.hero-cta').click();await expect(page.locator('.learn-workspace')).toBeVisible();await page.locator('body').click({position:{x:5,y:5}});await expect(page.locator('.rating-grid')).toBeVisible();await page.keyboard.press('Enter');await expect(page.locator('.answer-feedback')).toBeVisible();await page.keyboard.press('ArrowRight');expect((await database(page)).courseProgress.starter.dailyPlan.index).toBe(1)
- await page.keyboard.press('Control+3');await expect(page.locator('.lh-workspace')).toBeVisible()
+ await page.keyboard.press('Control+3');await expect(page.locator('.uni-modal')).toContainText('本轮进度会保存');await page.locator('.uni-modal').getByText('保存并离开',{exact:true}).click();await expect(page.locator('.lh-workspace')).toBeVisible()
 })
 test('五档窗口与手机平板横竖屏无水平溢出，导航合适',async({page})=>{
  for(const [width,height,size] of [[320,720,'compact'],[390,844,'compact'],[844,390,'expanded'],[768,1024,'medium'],[1024,768,'expanded'],[1280,800,'large'],[1800,1000,'extraLarge']] as const){

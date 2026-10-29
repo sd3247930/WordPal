@@ -26,11 +26,23 @@ export async function selectWordbookScope(page:Page,scope:'当前教材'|'全部
  const target=page.getByRole('group',{name:'单词本课程范围'}).getByRole('button',{name:scope==='当前教材'?'当前教材':'全部单词',exact:true});if(await target.getAttribute('aria-pressed')!=='true')await target.click()
  if(scope!=='当前教材'){const toggle=page.getByRole('button',{name:'只看已学',exact:true});if((await toggle.getAttribute('aria-pressed')==='true')!==(scope==='只看已学'))await toggle.click()}
 }
-/** Existing question-component regressions use the retained current-round tools. */
+/** Set up an allowed independent session for legacy question-component regressions. */
+export async function startIndependentStudy(page:Page,flashRevealed=false){
+ await page.evaluate(async(flashRevealed)=>{
+  const {useLearningStore}=await import('/src/stores/learning.ts' as string)
+  const learning=useLearningStore()
+  if(learning.isSessionLocked)throw new Error('A formal six-step session must finish before independent practice.')
+  if(!learning.startPractice())throw new Error('Independent practice setup failed.')
+  if(flashRevealed){learning.setMode('flash');learning.reveal()}
+  await new Promise<void>((resolve,reject)=>uni.redirectTo({url:'/pages/learn/index',success:()=>resolve(),fail:reject}))
+ },flashRevealed)
+ await expect(page.locator('.wp-brand-header .brand-subtitle')).toHaveText('Study')
+}
+/** Existing question-component regressions use the retained independent-session tools. */
 export async function openCustomPractice(page:Page){
  await page.locator('.study-modes,.study-ready').first().waitFor({state:'visible'})
  const current=page.locator('.study-round-tools'),toggle=page.locator('.study-practice-toggle')
- if(!await current.count()&&!await toggle.count()){const begin=page.getByRole('button',{name:'开始今日学习',exact:true});if(await begin.count())await begin.click()}
+ if(!await current.count()&&!await toggle.count())await startIndependentStudy(page)
  if(await current.count()){await current.click();return}
  if(await toggle.count()){if(await toggle.getAttribute('aria-expanded')!=='true')await toggle.click();return}
  await page.getByRole('button',{name:'自定义练习，不计今日任务',exact:true}).first().click()
@@ -79,4 +91,9 @@ export async function completeDaily(page:Page){
 
 /** Focused practice keeps contextual cards behind the explicit overview action. */
 export async function openStudyOverview(page:Page){const button=page.getByRole('button',{name:'查看学习概览',exact:true});if(await button.count())await button.click()}
-export async function openCourseGallery(page:Page){await openStudyOverview(page);await page.getByRole('button',{name:'选择教材',exact:true}).click()}
+export async function openCourseGallery(page:Page){
+ await openStudyOverview(page)
+ const db=await database(page),plan=db.courseProgress?.[db.currentCourseId||'starter']?.dailyPlan
+ await page.getByRole('button',{name:'选择教材',exact:true}).click()
+ if(plan?.flow?.begunAt&&!plan.completedAt){await expect(page.locator('.uni-modal')).toContainText('本轮进度会保存');await page.locator('.uni-modal').getByText('保存并离开',{exact:true}).click()}
+}

@@ -19,6 +19,14 @@ function example():CoursePack{return {schemaVersion:2,courseId:'ordered-example'
 function records(profile:ReturnType<typeof useProfileStore>){return JSON.stringify([profile.db.cards,profile.db.history,profile.db.practiceAnswers,profile.db.gems,profile.db.pets,profile.db.rewardIds])}
 function oldSession(ids:string[],owner='starter'):LearningSession{return {id:'old-mixed',courseId:owner,contentVersion:'1.0.0',date:'2026-10-16',startedAt:'2026-10-16T08:00:00Z',kind:'review_due',wordIds:ids,index:0,mode:'spell',input:'old',selected:'',revealed:false,answers:[],wordSnapshot:Object.fromEntries(ids.map(id=>[id,JSON.parse(JSON.stringify(wordById[id]))]))}}
 
+test('正式六环节期间教材选择与旧待切换队列都不能绕过本轮锁定，结算后可切换',async()=>{
+ reset();await installTextCourse(example());const profile=useProfileStore(),course=useCourseStore(),learning=useLearningStore()
+ profile.transact(d=>{d.abilityLevel='L1';d.pendingCourseId='ordered-example'});assert(learning.start());const before=JSON.stringify(profile.db)
+ assert.equal(course.applyCourseSelection('ordered-example').ok,false);assert.equal(course.applyPending(),false)
+ assert.equal(course.currentId,'starter');assert.equal(JSON.stringify(profile.db),before)
+ finishDaily(learning);assert.equal(course.applyCourseSelection('ordered-example').ok,true);assert.equal(course.currentId,'ordered-example')
+})
+
 test('外国词的到期记录不进入当前教材，旧章节游标不会使首词偏离 cat',async()=>{
  reset();await installTextCourse(example());const profile=useProfileStore(),course=useCourseStore(),learning=useLearningStore()
  profile.transact(db=>{db.cards['order-plate']=newCard('order-plate',new Date('2000-01-01'));db.cards.dog=newCard('dog',new Date('2000-01-01'));db.lessonIndex=3;db.courseProgress!.starter=initialProgress('starter',3)})
@@ -54,7 +62,7 @@ test('无法保存时教材介绍游标和 SRS 均不推进，不会跳过首词
 
 test('旧版未作答的跳章新词队列回到教材首词，显式单词复习保持可恢复',()=>{
  reset();const profile=useProfileStore(),learning=useLearningStore();const queued=oldSession(['book','pen']);queued.kind='new_word';queued.input='';profile.transact(db=>{db.session=queued});const before=records(profile);profile.reconcileCourseMemory();assert.equal(profile.db.session,null);assert(learning.start());assert.equal(learning.current?.id,'cat');assert.equal(records(profile),before)
- profile.transact(db=>{db.session=null;db.cards.dog=newCard('dog',new Date('2000-01-01'))});assert(learning.startDue(['dog']));const review=JSON.stringify(learning.session);setActivePinia(createPinia());assert.equal(JSON.stringify(useLearningStore().session),review);assert.equal(useLearningStore().current?.id,'dog')
+ finishDaily(learning);profile.transact(db=>{db.session=null;db.cards.dog=newCard('dog',new Date('2000-01-01'))});assert(learning.startDue(['dog']));const review=JSON.stringify(learning.session);setActivePinia(createPinia());assert.equal(JSON.stringify(useLearningStore().session),review);assert.equal(useLearningStore().current?.id,'dog')
 })
 
 test('旧单环节会话完整保留为历史，不能冒充六环节完成而跳过教材首词',()=>{

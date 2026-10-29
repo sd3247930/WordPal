@@ -10,6 +10,7 @@ import {isCorrectSpelling,normalizeSpelling} from '../../packages/phonics'
 import {spellingInputReady,type LetterBlockDraft,type SpellingInputChange} from '../../packages/phonics/letter-blocks'
 import type {Word} from '../../packages/core_learning'
 import {activityAvailability} from '../services/course/ActivityAvailability'
+import {dailySessionLocked,DAILY_SESSION_LOCK_MESSAGE} from '../services/learning/DailySessionLock'
 export type ActivityKind='check'|'pair'|'letters'|'sentence'|'cloze'|'story'|'picture'|'listen-picture'|'phonics'|'challenge'|'speed'
 export interface ActivityState {id:string;courseId:string;contentVersion:string;lessonId:string;kind:ActivityKind;wordIds:string[];words:Record<string,Word>;index:number;input:string;selected:string;answers:{wordId:string;correct:boolean}[];completed:boolean;recorded:boolean;storyId?:string;storySnapshot?:{title:string;sentences:string[];questions?:{question:string;options:string[];answer:number}[]};revealed:boolean;hinted:boolean;timer?:{remainingMs:number;runningSince:number|null};letterDraft?:LetterBlockDraft;inputAssistance?:'tiles';retrying?:boolean;retryAnswer?:{wordId:string;correct:boolean}|null;retryAttempts?:{wordId:string;correct:boolean;input:string}[]}
 import {ACTIVITY_KEY as key,hasCourseMemory} from '../services/learning/CourseProgressMemory'
@@ -36,6 +37,7 @@ export const useActivitiesStore=defineStore('activities',()=>{
  const total=computed(()=>state.value?.kind==='story'?Math.max(1,state.value.storySnapshot?.questions?.length||0):state.value?.wordIds.length||0)
  const choices=computed(()=>{if(!current.value||!state.value)return [];const used=new Set<string>(),pool=[current.value,...Object.values(state.value.words).map(w=>resolveFrozenWord(w,state.value!.courseId,state.value!.contentVersion)!).filter(w=>w.id!==current.value!.id&&w.meaning!==current.value!.meaning)];return pool.filter(w=>{if(used.has(w.meaning))return false;used.add(w.meaning);return true}).slice(0,4).sort((a,b)=>a.id.localeCompare(b.id))})
  function start(kind:ActivityKind){
+  if(dailySessionLocked(course.progress.dailyPlan)){error.value=DAILY_SESSION_LOCK_MESSAGE;return false}
   const lesson=course.lesson,pack=course.current
   if(!lesson)return false
   if(kind==='check')review.refresh()

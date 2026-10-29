@@ -1,9 +1,10 @@
+import {startIndependentStudy} from './helpers'
 import {test,expect,type Page} from '@playwright/test'
 import {go,database,seedDatabase,setAppearance,openCustomPractice} from './helpers'
 import {freshDatabase} from '../../src/stores/profile'
 
 async function practice(page:Page,level='L5'){
- await seedDatabase(page,{...freshDatabase(),abilityLevel:level});await go(page,'home');await page.locator('.hero-cta').click();await openCustomPractice(page)
+ await seedDatabase(page,{...freshDatabase(),abilityLevel:level});await go(page,'home');await startIndependentStudy(page);await openCustomPractice(page)
 }
 const group=(page:Page)=>page.getByRole('group',{name:'选择学习方式',exact:true})
 

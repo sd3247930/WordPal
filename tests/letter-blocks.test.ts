@@ -5,7 +5,7 @@ import {isCorrectSpelling} from '../packages/phonics'
 
 for(const [word,counts,total]of [['doctor',[6],6],['food group',[4,5],9],['a few',[1,3],4],["that's enough",[5,6],11],['Merry Christmas!',[5,9],14],['be late for school',[2,4,3,6],15],['well-known',[4,5],9]] as const)test('分组、固定符号与字母总数：'+word,()=>{
  const challenge=normalizeSpellingWord(word,'frozen-key'),draft=makeBlockDraft(challenge,'word','frozen-key')
- assert.equal(challenge.supported,true);assert.equal(challenge.tiles.length,total);assert.equal(new Set(challenge.tiles.map(tile=>tile.id)).size,total)
+ assert.equal(challenge.supported,true);assert.equal(challenge.slots.length,total);assert(challenge.tiles.length>=total+3&&challenge.tiles.length<=total+5);assert.equal(new Set(challenge.tiles.map(tile=>tile.id)).size,challenge.tiles.length)
  assert.deepEqual([...new Set(challenge.slots.map(slot=>slot.group))].map(group=>challenge.slots.filter(slot=>slot.group===group).length),counts)
  assert(challenge.tiles.every(tile=>/^\p{Script=Latin}/u.test(tile.char)));assert.equal(composeBlockAnswer(challenge,draft),'');assert.equal(blocksComplete(challenge,draft),false)
  let current=draft
@@ -32,7 +32,7 @@ test('池字母顺序不是正确答案，填满不自动判正确，空格和�
 })
 
 test('支持 NFC 附加符号，异常字符显式键盘降级，数字不伪装成字母',()=>{
- const accent=normalizeSpellingWord('cafe\u0301');assert.equal(accent.tiles.length,4);assert(accent.tiles.some(tile=>tile.char==='é'));assert.equal(isCorrectSpelling('café',{word:'cafe\u0301'} as any),true)
+ const accent=normalizeSpellingWord('cafe\u0301');assert.equal(accent.slots.length,4);assert(accent.tiles.some(tile=>tile.char==='é'));assert.equal(isCorrectSpelling('café',{word:'cafe\u0301'} as any),true)
  for(const word of ['room 1','hello 😀','', 'q'.repeat(30)]){const challenge=normalizeSpellingWord(word);assert.equal(challenge.supported,false);assert(challenge.reason)}
  const phrase=normalizeSpellingWord('one two three four five six seven eight nine ten');assert.equal(phrase.supported,true);assert(phrase.tiles.length>24)
 })

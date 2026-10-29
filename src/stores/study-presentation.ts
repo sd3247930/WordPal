@@ -68,7 +68,7 @@ export const useStudyPresentation=defineStore('study-presentation',()=>{
  const completed=computed(()=>!!learning.session?.completedAt&&!revisiting.value&&state.value.finished)
  const earnedExp=computed(()=>state.value.rewardTracked?Math.max(0,pet.all.reduce((sum,item)=>sum+item.exp,0)-state.value.startExp):null)
  function chooseMode(value:LearningMode){if(learning.isDaily||retrying.value)return;if(!revisiting.value&&!answer.value&&learning.current&&availableModes(learning.current,Object.values(learning.session?.wordSnapshot||wordById),readFeedbackSettings().sound,learning.session?.plannerConfig?.entryLevel).includes(value)&&patch({manual:true}))learning.setMode(value)}
- function automatic(){if(!revisiting.value&&!retrying.value&&!answer.value&&patch({manual:false})){learning.patch({input:'',selected:'',revealed:false,letterDraft:undefined,inputAssistance:undefined});sync()}}
+ function automatic(){if(learning.isSessionLocked)return;if(!revisiting.value&&!retrying.value&&!answer.value&&patch({manual:false})){learning.patch({input:'',selected:'',revealed:false,letterDraft:undefined,inputAssistance:undefined});sync()}}
  function updateSpellingInput(value:SpellingInputChange){if(answer.value)return;if(revisiting.value||retrying.value)patch(value);else learning.patch(value)}
  function updateInput(value:string){if(answer.value)return;if(revisiting.value||retrying.value)patch({input:value});else learning.patch({input:value})}
  function select(value:string){if(!answer.value&&!revisiting.value)learning.patch({selected:value})}

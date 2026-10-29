@@ -1,3 +1,4 @@
+import {startIndependentStudy} from './helpers'
 import {openCustomPractice} from './helpers'
 import {test,expect} from '@playwright/test'
 import {app,go,setAppearance,seedDatabase} from './helpers'
@@ -19,7 +20,6 @@ for(const theme of ['swiss'])for(const mode of ['light','dark'])for(const reduce
  })
 }
 test('实际输入和按钮有名称，键盘聚焦可见并能激活',async({page})=>{
- await go(page,'home');await page.locator('.hero-cta').focus();await expect(page.locator('.hero-cta')).toBeFocused();await page.keyboard.press('Enter')
- await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'拼写'}).click();await expect(page.getByRole('textbox',{name:'输入中文对应的英文单词'})).toBeVisible()
+ await go(page,'home');await startIndependentStudy(page);await openCustomPractice(page);const spell=page.locator('.mode-button').filter({hasText:'拼写'});await spell.focus();await expect(spell).toBeFocused();await page.keyboard.press('Enter');await expect(page.getByRole('textbox',{name:'输入中文对应的英文单词'})).toBeVisible()
  await expect(page.getByRole('button',{name:'播放当前单词的标准发音'})).toBeVisible()
 })

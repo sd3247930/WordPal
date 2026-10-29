@@ -1,3 +1,4 @@
+import {confusingLetters} from './confusing-letters'
 /** Presentation data only. Final correctness stays in the existing spelling service. */
 export interface BlockUnit {id:string;kind:'letter'|'fixed'|'space';char:string;group:number;letterIndex?:number}
 export interface LetterTile {id:string;char:string;group:number}
@@ -21,8 +22,10 @@ export function normalizeSpellingWord(originalWord:string,seed:string|number='')
  }
  if(!tiles.length)reason='这个词条暂无可拼装字母，请使用键盘输入。'
  if(source.length>240||tiles.some(tile=>tiles.filter(other=>other.group===tile.group).length>24))reason='这个词条较长，请使用键盘完整输入。'
- const pool=[...tiles];let random=seedOf(String(seed)+':'+source)
+ const pool=[...tiles,...(reason?[]:confusingLetters(tiles.map(tile=>tile.char)).map((char,index)=>({id:'distractor-'+index,char,group:-1})))];let random=seedOf(String(seed)+':'+source)
  for(let i=pool.length-1;i>0;i--){random=(Math.imul(random,1664525)+1013904223)>>>0;const j=random%(i+1);[pool[i],pool[j]]=[pool[j],pool[i]]}
+ // A chance shuffle must not print the answer as the pool's leading run.
+ if(pool.length>tiles.length&&pool.slice(0,tiles.length).map(tile=>tile.char).join('')===tiles.map(tile=>tile.char).join('')){const index=pool.findIndex(tile=>tile.char!==tiles[0]?.char);if(index>0)[pool[0],pool[index]]=[pool[index],pool[0]]}
  return {originalWord,normalizedWord:canonicalSpelling(source).toLowerCase(),wordsArray:source.split(' '),units,slots:units.filter(unit=>unit.kind==='letter'),tiles:pool,letterPool:pool.map(tile=>tile.char),supported:!reason,reason}
 }
 export function validBlockDraft(challenge:SpellingChallenge,draft:LetterBlockDraft|undefined,wordId:string,key:string):draft is LetterBlockDraft{

@@ -1,6 +1,7 @@
 <template>
  <CustomPracticeWorkspace v-if="custom.isOpen"/>
  <template v-else>
+ <text v-if="learning.isSessionLocked" class="daily-session-lock small muted block" role="status">完成本轮六环节后解锁切换</text>
  <StudySessionHeading v-if="focusPractice" :title="view.revisiting?'错词回看 · '+modeTitles[view.mode]:learning.session?.flow?.step==='consolidate'?'复习巩固':modeTitles[view.mode]" :mode="view.mode" :index="view.index+1" :total="view.total" :value="view.index+(view.answer?1:0)" :position="currentPosition" :caption="learning.isDaily?'今日任务':'额外练习'" @custom="independentPractice"/>
  <view v-show="!focusPractice||overviewOpen" class="page-heading study-heading"><view><text class="page-title">今日学习</text><text class="page-subtitle">今天，记住一点点。</text><text class="small muted block">{{headingSourceLabel}}</text></view><text class="study-estimate small muted">{{view.revisiting?'本轮错词回看':'预计 '+estimate+' 分钟'}}</text><CustomPracticeEntry v-if="!focusPractice" @click="independentPractice"/></view>
  <StudyPetCompanion v-if="!view.completed" v-show="!focusPractice||overviewOpen" :pet="profile.db.pets[profile.db.companion]" :unavailable="!!profile.bootError"><template v-if="!learning.session&&!extraActive" #default><view class="study-ready"><text class="section-title">{{learning.studyWords.length||learning.due.length?'和单词，见一面':'今天的任务已经完成'}}</text><text class="small muted">{{learning.studyWords.length?'按教材顺序逐词学习，题型会自动安排。':'只复习当前教材中的单词。'}}</text><WPButton v-if="learning.studyWords.length||learning.due.length||learning.needsConsolidation" @click="beginReady">开始今日学习</WPButton><WPButton v-else kind="secondary" @click="activities.start('check')">整课检查</WPButton></view></template></StudyPetCompanion>
@@ -18,7 +19,7 @@
   <view class="learn-main study-main"><view v-if="learning.isDaily" class="daily-step-list" aria-label="六环节学习进度"><view v-for="(title,step) in learning.stepTitles" :key="step" class="daily-step" :class="{active:learning.session?.flow?.step===step,done:learning.session?.flow?.completed[step].length===view.total}"><text>{{title}}</text><text>{{learning.session?.flow?.completed[step].length}}/{{view.total}}</text></view></view><view v-if="!focusPractice" class="practice-round-card"><view class="session-header"><text class="element-chip"><image v-if="theme.settings.themeId==='clay'&&learning.currentSource==='practice'" class="easy-practice-badge" :src="practiceBadge" mode="aspectFit" aria-hidden="true"/>{{view.revisiting?'错词回看':learning.session?.sequenceWordIds?.includes(view.current.id)?'本册学习':learning.currentSource==='review_due'?'到期复习':learning.currentSource==='practice'?'轻松练习':'今日新词'}}</text><text class="small muted">本轮 {{view.index+1}} / {{view.total}}</text></view><text v-if="currentPosition" class="study-word-position small muted block" role="status" aria-live="polite">教材词序：第 {{currentPosition.index}} / {{currentPosition.total}} 词</text><WPProgress :value="view.index+(view.answer?1:0)" :total="view.total" label="本轮学习进度"/></view>
    <WPWordCard :correct="view.answer?.correct" :practice="theme.settings.themeId==='clay'" :mode="view.mode" :word="view.current" :heading="learning.session?.flow?.step==='consolidate'?'复习巩固':modeTitles[view.mode]" :variant="view.mode==='flash'?'flash':'default'" :entry-level="sessionLevel" :prompt-picture="false" :data-phase="view.answer?'rated':view.revealed?'revealed':'prompting'" :conceal="conceal" :show-meaning="view.revealed&&!conceal" :reveal-meaning="view.mode==='spell'" :phonics="resolvedPhonics?.data" :active-chunk-index="activeChunkIndex" :playback-state="playbackState"><WPAudioButton class="practice-audio" :icon-src="practiceSpeaker" :url="view.current.audio" :text="['listen','dictation'].includes(view.mode)?'再听一次':systemVoice?'系统朗读':'听发音'" :label="systemVoice?'播放当前单词的离线系统朗读':'播放当前单词的标准发音'" @click="play"/><text v-if="systemVoice" class="muted audio-source-note">离线系统朗读 · 美式英语</text></WPWordCard>
    <view class="answer-panel">
-    <template v-if="!view.answer&&!view.revisiting&&!view.retrying&&learning.resourceProblem"><text v-if="learning.capability.status==='ready'&&!audioError" class="small muted block" role="status">{{learning.resourceProblem}}</text><view v-else class="notice" role="status"><text>{{learning.resourceProblem}}</text><WPButton v-if="learning.isDaily&&learning.capability.status==='unavailable'" kind="quiet" @click="learning.refreshResources()">重新检查素材</WPButton><WPButton kind="quiet" @click="independentPractice">先练其他内容</WPButton></view></template>
+    <template v-if="!view.answer&&!view.revisiting&&!view.retrying&&learning.resourceProblem"><text v-if="learning.capability.status==='ready'&&!audioError" class="small muted block" role="status">{{learning.resourceProblem}}</text><view v-else class="notice" role="status"><text>{{learning.resourceProblem}}</text><WPButton v-if="learning.isDaily&&learning.capability.status==='unavailable'" kind="quiet" @click="learning.refreshResources()">重新检查素材</WPButton><WPButton v-if="!learning.isSessionLocked" kind="quiet" @click="independentPractice">先练其他内容</WPButton></view></template>
     <text v-if="learning.submitNotice" class="small muted block" role="status">{{learning.submitNotice}}</text>
     <text v-if="finalTeachingRetry" class="small muted block" role="status">已经记下这次回忆，放心再试，不重复计分。</text>
     <view v-if="view.mode==='connect'||view.mode==='listen'" class="choice-grid study-choice-options" :class="{'choice-locked':choiceLocked,'long-choices':longChoices}" role="group" :aria-label="view.mode==='connect'?'选择对应词义':'选择听到的单词'"><WPActionTile v-for="(choice,i) in learning.choices" :key="choice.id" toggle-highlight class="answer-choice study-card-feedback" hover-class="study-card-pressed" :hover-start-time="0" :hover-stay-time="120" :selected="view.selected===choice.id" :aria-pressed="view.selected===choice.id" :disabled="!!view.answer||choiceLocked" @click="guardChoice(()=>view.select(choice.id))" @cancel="guardChoice(()=>view.select(''))"><text class="choice-index">{{i+1}}</text><text>{{view.mode==='connect'?choice.meaning:choice.word}}</text></WPActionTile></view>
@@ -31,7 +32,7 @@
   </view>
   <view class="learn-modes study-modes" aria-label="学习题型与设置">
    <WPButton kind="quiet" class="study-overview-toggle" :aria-expanded="overviewOpen" @click="overviewOpen=!overviewOpen">{{overviewOpen?'收起学习概览':'查看学习概览'}}</WPButton>
-   <WPButton v-if="learning.isDaily" kind="quiet" class="study-round-tools" @click="openRoundTools">本轮题型工具</WPButton>
+   <WPButton v-if="learning.isDaily" kind="quiet" class="study-round-tools" :disabled="learning.isSessionLocked" @click="openRoundTools">本轮题型工具</WPButton>
    <template v-else>
     <WPButton kind="quiet" class="study-practice-toggle" :aria-expanded="customOpen" aria-controls="study-custom-practice" @click="toggleCustomPractice">切换题型 · {{modeTitles[view.mode]}} {{customOpen?'⌃':'⌄'}}</WPButton>
     <view v-show="customOpen" id="study-custom-practice" class="custom-practice compact-mode-settings" role="region" aria-label="自定义练习内容">
@@ -181,10 +182,10 @@ async function scrollPracticeIntoView(){
   if(bounds&&viewport)uni.pageScrollTo?.({scrollTop:Math.max(0,viewport.scrollTop+bounds.top-windowLayout.safeTop-12),duration:theme.reduced?0:150})
  })
 }
-function independentPractice(){if(!flushInputDraft())return;clearStepTimer();stopQuestionAudio();custom.openConfig();uni.pageScrollTo?.({scrollTop:0,duration:0})}
+function independentPractice(){if(learning.isSessionLocked)return;if(!flushInputDraft())return;clearStepTimer();stopQuestionAudio();custom.openConfig();uni.pageScrollTo?.({scrollTop:0,duration:0})}
 // Retain the existing current-word-group tools for legacy independent/review sessions.
-function openRoundTools(){if(!flushInputDraft())return;clearStepTimer();phonicsController.stop();stopAudio();if(learning.startPractice()){customOpen.value=true;view.sync();void scrollPracticeIntoView()}}
-function toggleCustomPractice(){customOpen.value=!customOpen.value;if(customOpen.value)void scrollPracticeIntoView()}
+function openRoundTools(){if(learning.isSessionLocked)return;if(!flushInputDraft())return;clearStepTimer();phonicsController.stop();stopAudio();if(learning.startPractice()){customOpen.value=true;view.sync();void scrollPracticeIntoView()}}
+function toggleCustomPractice(){if(learning.isSessionLocked)return;customOpen.value=!customOpen.value;if(customOpen.value)void scrollPracticeIntoView()}
 function beginStudy(){if(!flushInputDraft())return;courseStore.applyPending();learning.start()}
 function beginReady(){beginStudy()}
 const course=computed(()=>learning.lesson)
@@ -229,7 +230,7 @@ watch(()=>[view.current?.audio,learning.session?.index].join('\u001f'),()=>{cons
 watch(()=>[learning.session?.id,view.index,view.current?.id,view.current?.audio,view.mode].join('\u001f'),()=>{stopQuestionAudio();audioError.value='';if(pageActive.value&&!custom.isOpen&&['listen','dictation'].includes(view.mode)&&!view.answer)void play()})
 // onShow may run immediately during setup when arriving from the pet practice link.
 let playEpoch=0
-onShow(()=>{pageActive.value=true;learning.prepareDaily();if(practiceEntry&&!practiceEntryHandled){practiceEntryHandled=true;independentPractice()}view.sync()})
+onShow(()=>{pageActive.value=true;if(learning.isSessionLocked&&!learning.isDaily)learning.start();learning.prepareDaily();if(practiceEntry&&!practiceEntryHandled){practiceEntryHandled=true;independentPractice()}view.sync()})
 onHide(()=>{pageActive.value=false;stopQuestionAudio();activities.pauseTimer();custom.leave()})
 watch(()=>view.answer,answer=>{if(answer?.correct)successHaptic(theme.reduced)})
 const questionAudioKey=()=>[learning.session?.id,view.current?.id,view.mode,view.index].join(':')

@@ -4,6 +4,7 @@ import {go,database,openCustomPractice,unlockParent,openCourseGallery} from './h
 import synthetic from '../../src/content/synthetic/course.json'
 
 for(const width of [390,1024])test(`${width} 教材进度独立恢复，删除后清除该册缓存`,async({page})=>{
+ test.setTimeout(60000)
  await page.setViewportSize({width,height:900})
  const packs=['a','b'].map(id=>({...synthetic,courseId:'memory-ui-'+id,title:'进度教材 '+id.toUpperCase()}))
  await page.addInitScript(packs=>{

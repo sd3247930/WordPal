@@ -1,3 +1,4 @@
+import {startIndependentStudy} from './helpers'
 import {flushStudyInput} from './helpers'
 import {test,expect,type Page} from '@playwright/test'
 import {go,database,seedDatabase,openCustomPractice,openCourseGallery} from './helpers'
@@ -22,7 +23,7 @@ test('四卡片操作真实有效：卸载清理专属记录并保留其他教�
 })
 
 test('返回学习保留当前草稿，独立打开的教材页也可返回学习',async({page})=>{
- await go(page,'learn');await page.getByRole('button',{name:'开始今日学习',exact:true}).click();await openCustomPractice(page);await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^拼写，/}).click();await page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true}).fill('ca');await flushStudyInput(page);const before=await database(page);await openCourseGallery(page);await tool(page,'返回学习').click();await expect(page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true})).toHaveValue('ca');expect(await database(page)).toEqual(before)
+ await go(page,'learn');await startIndependentStudy(page);await openCustomPractice(page);await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^拼写，/}).click();await page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true}).fill('ca');await flushStudyInput(page);const before=await database(page);await openCourseGallery(page);await tool(page,'返回学习').click();await expect(page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true})).toHaveValue('ca');expect(await database(page)).toEqual(before)
  await go(page,'course');await tool(page,'返回学习').click();await expect(page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true})).toHaveValue('ca');expect(await database(page)).toEqual(before)
 })
 

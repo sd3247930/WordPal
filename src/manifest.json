@@ -2,8 +2,8 @@
   "name": "WordPal 单词小搭子",
   "appid": "__UNI__B07BDFA",
   "description": "自然拼读、科学复习、四象伙伴陪伴学习",
-  "versionName": "1.2.8",
-  "versionCode": "128",
+  "versionName": "1.2.9",
+  "versionCode": "129",
   "transformPx": false,
   "vueVersion": "3",
   "app-plus": {

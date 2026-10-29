@@ -11,6 +11,7 @@
    </view>
    <view class="letter-bank" :class="{'short-bank':visibleTiles.length<=6}" role="group" aria-label="可选择的字母积木"><WPButton v-for="(tile,index) in visibleTiles" :key="tile.id" kind="secondary" class="letter-tile" :class="'tile-color-'+index%6" :data-tile-id="tile.id" :data-letter="tile.char" :disabled="disabled||draft.assignments.includes(tile.id)" :label="'选择字母 '+tile.char+'，第 '+(challenge.tiles.indexOf(tile)+1)+' 块'" @click="add(tile.id)">{{tile.char}}</WPButton></view>
    <text v-if="challenge.tiles.length>24" class="small muted block">长短语分组拼装，当前字母池对应第 {{activeGroup+1}} 组。</text>
+   <text class="block-help">{{mode==='dictation'?'听清发音再选，字母池里有易混字母。':'字母池里有易混字母，选错可以退一格。'}}</text>
    <view class="block-edit-tools"><WPButton kind="quiet" :disabled="disabled||!draft.history.length" @click="undo">退一格</WPButton><WPButton kind="quiet" :disabled="disabled||!draft.assignments.some(Boolean)" @click="clear">重新拼</WPButton><WPButton kind="quiet" :disabled="disabled" @click="switchInput('keyboard')">键盘输入</WPButton></view>
    <text v-if="!compact||challenge.units.some(unit=>unit.kind!=='letter')" class="block-help">空格与标点会自动处理，点已填字母可以退回。</text>
    <text v-if="conversionNotice" class="notice" role="status">{{conversionNotice}}</text>
@@ -37,7 +38,7 @@ const draft=computed(()=>local.value||makeBlockDraft(challenge.value,props.word.
 const inputMode=computed(()=>challenge.value.supported?draft.value.inputMode:'keyboard'),firstEmpty=computed(()=>draft.value.assignments.indexOf(null)),slotId=(index:number)=>'letter-slot-'+uid+'-'+index,activeSlotId=computed(()=>firstEmpty.value<0?'':slotId(firstEmpty.value))
 const activeGroup=computed(()=>(firstEmpty.value<0?challenge.value.slots[challenge.value.slots.length-1]:challenge.value.slots[firstEmpty.value])?.group||0)
 const groups=computed(()=>[...new Set(challenge.value.units.filter(unit=>unit.kind!=='space').map(unit=>unit.group))].map(id=>({id,units:challenge.value.units.filter(unit=>unit.group===id&&unit.kind!=='space'),active:activeGroup.value===id,hyphen:id>0&&challenge.value.units.some(unit=>unit.group===id-1&&/[-‐‑]/u.test(unit.char))})))
-const visibleTiles=computed(()=>challenge.value.tiles.filter(tile=>challenge.value.tiles.length<=24||tile.group===activeGroup.value))
+const visibleTiles=computed(()=>challenge.value.tiles.filter(tile=>challenge.value.tiles.length<=24||tile.group===activeGroup.value||tile.group===-1))
 const letters=computed(()=>new Map(challenge.value.tiles.map(tile=>[tile.id,tile.char])))
 function letterAt(index:number){return letters.value.get(draft.value.assignments[index]||'')||''}
 function send(next:LetterBlockDraft,input=composeBlockAnswer(challenge.value,next)){local.value=next;emit('change',{input,letterDraft:next,...(next.inputMode==='tiles'?{inputAssistance:'tiles' as const}:{})})}

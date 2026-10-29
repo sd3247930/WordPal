@@ -31,6 +31,7 @@ import {useCustomPracticeStore} from '../stores/custom-practice'
 import {navigation,navigate,type PageId} from '../services/navigation'
 import {studyInput} from '../services/study-input'
 import {registerParentBackHandler,handleParentBack} from '../services/parent/ParentGateNavigation'
+import {handleDailyStudyBack} from '../services/learning/DailyStudyNavigation'
 import KeyboardBridge from '../components/KeyboardBridge.vue'
 import WPBrandHeader from '../components/brand/WPBrandHeader.vue'
 import WPSidebar from '../components/wp-sidebar/WPSidebar.vue'
@@ -45,9 +46,10 @@ const emit=defineEmits<{'close-parent-tools':[]}>()
 let releaseParentBack:(()=>void)|undefined
 onMounted(()=>{if(props.page==='parent')releaseParentBack=registerParentBackHandler(()=>{if(brandHeader.value?.closePanels())return true;if(props.parentToolsOpen){uni.hideKeyboard();emit('close-parent-tools');return true}return false})})
 onUnmounted(()=>releaseParentBack?.())
-onBackPress(()=>{
+onBackPress(event=>{
  if(props.page==='parent'&&handleParentBack())return true
  if(brandHeader.value?.closePanels())return true
+ if(props.page==='learn'&&event.from!=='navigateBack'&&handleDailyStudyBack())return true
  if(props.page==='learn'&&custom.back())return true
  if(props.page==='parent'&&props.parentToolsOpen){emit('close-parent-tools');return true}
  if(props.page==='parent'){navigate('settings');return true}

@@ -15,6 +15,7 @@ import {courseRemovalScope} from '../services/content/CourseRemovalData'
 import {isUserDeleted} from '../services/content/ContentRegistry'
 import {stopAudio} from '../services/audio'
 import {warmUpcomingAudio} from '../services/audio/AudioPreload'
+import {dailySessionLocked} from '../services/learning/DailySessionLock'
 function toast(message?:string){if(message)uni.showToast?.({title:message,icon:'none'})}
 export const useCourseStore=defineStore('course',()=>{
  const profile=useProfileStore()
@@ -53,6 +54,7 @@ export const useCourseStore=defineStore('course',()=>{
  }
  /** Single entry point used by the gallery, the quick picker and the parent screen. */
  function applyCourseSelection(id:string):CourseSelectionResult{
+  if(id!==currentId.value&&dailySessionLocked(progress.value.dailyPlan)){const result:CourseSelectionResult={ok:false,reason:'unknown',message:'完成本轮六环节后才能切换教材。'};toast(result.message);return result}
   const result=choose(id)
   const pack=courseRegistry[id]
   if(result.ok&&pack){
@@ -69,7 +71,7 @@ export const useCourseStore=defineStore('course',()=>{
   try{setArchived(id,false);return {ok:true}}
   catch{return {ok:false,reason:'unknown',message:'课程恢复失败，请稍后重试。'}}
  }
- function applyPending(){const id=profile.db.pendingCourseId;if(!id)return false;if(!isCourseInstalled(id))return profile.transact(d=>{d.pendingCourseId=undefined})&&false;return choose(id).ok}
+ function applyPending(){if(dailySessionLocked(progress.value.dailyPlan))return false;const id=profile.db.pendingCourseId;if(!id)return false;if(!isCourseInstalled(id))return profile.transact(d=>{d.pendingCourseId=undefined})&&false;return choose(id).ok}
  async function uninstall(id:string,confirmed:boolean,replacement?:string){
   if(!confirmed)throw new Error('请先确认删除教材及本册专属记录。')
   if(profile.readOnly)throw new Error('学习档案只读，暂不能移除教材。')

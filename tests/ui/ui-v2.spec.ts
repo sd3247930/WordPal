@@ -1,3 +1,4 @@
+import {startIndependentStudy} from './helpers'
 import {openCustomPractice} from './helpers'
 import {test,expect} from '@playwright/test'
 import {go,setAppearance,seedDatabase,database} from './helpers'
@@ -34,7 +35,7 @@ for(const theme of ['swiss'])test(theme+' 首页首屏能看到任务行和主�
 
 test('学习模式一行排列，词卡与主动作可滚动完整显示',async({page})=>{
  await seedDatabase(page,{...freshDatabase(),abilityLevel:'L5'})
- await page.setViewportSize({width:390,height:844});await go(page,'home');await page.locator('.hero-cta').click()
+ await page.setViewportSize({width:390,height:844});await go(page,'home');await startIndependentStudy(page)
  // Custom flash practice keeps the primary action and word card deterministic.
  await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'闪现'}).click()
  await expect(page.locator('.study-mode-selector .mode-button')).toHaveCount(5)

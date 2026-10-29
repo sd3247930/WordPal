@@ -80,10 +80,10 @@ test('写入失败不能跨环节；听写完成后冷启动继续巩固，不�
  setActivePinia(createPinia());learning=useLearningStore();profile=useProfileStore();assert.equal(learning.session!.flow!.step,'consolidate');finishDaily(learning);assert.equal(profile.db.history.length,5);assert.equal(profile.db.pets.water.exp,70)
 })
 
-test('独立练习和整课检查不推进六环节游标，返回今日任务逐字恢复',()=>{
+test('六环节未完成时拒绝独立练习，完成后可练习且不改正式记录',()=>{
  const {profile,learning}=reset();learning.start();for(let i=0;i<3;i++)answerDailyWord(learning);const saved=JSON.stringify(learning.session)
- assert(learning.startPractice());assert.equal(learning.isDaily,false);learning.setMode('spell');learning.patch({input:learning.current!.word});assert(learning.submit());assert.equal(profile.db.history.length,0)
- profile.transact(d=>{d.courseProgress!.starter.completedLessons=courseRegistry.starter.units.flatMap(u=>u.lessons.map(l=>l.id))});assert.equal(learning.textbookProgress.learned,0);assert(learning.start());assert.equal(JSON.stringify(learning.session),saved)
+ assert.equal(learning.startPractice(),false);assert.equal(learning.setMode('spell'),false);assert.equal(JSON.stringify(learning.session),saved);assert.equal(profile.db.history.length,0)
+ finishDaily(learning);const formal=JSON.stringify([profile.db.history,profile.db.cards,profile.db.gems,profile.db.pets]);assert(learning.startPractice());assert.equal(learning.isDaily,false);learning.setMode('spell');learning.patch({input:learning.current!.word});assert(learning.submit());assert.equal(JSON.stringify([profile.db.history,profile.db.cards,profile.db.gems,profile.db.pets]),formal)
 })
 
 test('课程外部删除只移除本册计划，内容改版缺词时保留旧任务并明确阻止学习',async()=>{

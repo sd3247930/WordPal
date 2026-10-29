@@ -1,9 +1,10 @@
+import {startIndependentStudy} from './helpers'
 import {test,expect} from '@playwright/test'
 import {freshDatabase} from '../../src/stores/profile'
 import {go,seedDatabase,setAppearance,openCustomPractice,database} from './helpers'
 
 for(const large of [false,true])test(`左右卡大字作用域与提示关闭输入保持，系统缩放=${!large} 大字=${large}`,async({page})=>{
- await page.setViewportSize({width:320,height:800});await setAppearance(page,'swiss','light',{largeText:large});await seedDatabase(page,{...freshDatabase(),abilityLevel:'L5',gems:10});await go(page,'home');await page.locator('.hero-cta').click();const daily=(await database(page)).courseProgress.starter.dailyPlan
+ await page.setViewportSize({width:320,height:800});await setAppearance(page,'swiss','light',{largeText:large});await seedDatabase(page,{...freshDatabase(),abilityLevel:'L5',gems:10});await go(page,'home');await startIndependentStudy(page);const daily=(await database(page)).courseProgress.starter.dailyPlan
  await openCustomPractice(page);await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^拼写，/}).click()
  if(!large)await page.evaluate(async()=>{const {windowLayout}=await import('/src/services/window/index.ts' as string);windowLayout.fontScale=1.6})
  await expect.poll(async()=>(await page.locator('.wp-app').boundingBox())!.width).toBe(320)

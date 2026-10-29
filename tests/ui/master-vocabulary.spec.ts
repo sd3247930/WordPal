@@ -1,3 +1,4 @@
+import {startIndependentStudy} from './helpers'
 import {answerParentGate,unlockParent as openParentSettings} from './helpers'
 import {openCustomPractice} from './helpers'
 import {test,expect,type Page} from '@playwright/test'
@@ -29,7 +30,7 @@ test('本机12册筛选、6单元和独立起点可用，手机平板不溢出',
 test('本机离线音频听写、拼写、错误回看刷新恢复，正式记录仅写一次',async({page,context,baseURL})=>{
  await seedDatabase(page,{...freshDatabase(),abilityLevel:'L5'})
  const external:string[]=[];page.on('request',r=>{if(/^https?:/.test(r.url())&&new URL(r.url()).origin!==new URL(baseURL!).origin)external.push(r.url())})
- await primary(page);await page.getByRole('button',{name:'开始今日学习',exact:true}).click();const audio=page.getByRole('button',{name:'播放当前单词的标准发音'});await expect(audio).toBeEnabled();await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'听写'}).click();await expect(audio).toContainText('正在播放');await expect(audio).toContainText('再听一次',{timeout:5000})
+ await primary(page);await startIndependentStudy(page);const audio=page.getByRole('button',{name:'播放当前单词的标准发音'});await expect(audio).toBeEnabled();await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'听写'}).click();await expect(audio).toContainText('正在播放');await expect(audio).toContainText('再听一次',{timeout:5000})
  await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'拼写'}).click();await page.getByRole('textbox',{name:'输入中文对应的英文单词'}).fill('wrong');await page.reload();await expect(page.getByRole('textbox',{name:'输入中文对应的英文单词'})).toHaveValue('wrong')
  // Load the packaged clip once, then verify playback without network access.
  await audio.click();await expect(audio).toContainText('正在播放');await expect(audio).toContainText('听发音',{timeout:5000});await context.setOffline(true);await audio.click();await expect(audio).toContainText('正在播放');await expect(audio).toContainText('听发音',{timeout:5000});await context.setOffline(false)

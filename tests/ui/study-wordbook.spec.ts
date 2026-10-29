@@ -1,11 +1,13 @@
+import {startIndependentStudy} from './helpers'
 import {test,expect} from '@playwright/test'
 import {go,seedDatabase,setAppearance,database,openCustomPractice,waitForArtwork} from './helpers'
 import {goldenDatabase} from './fixtures'
 import {freshDatabase} from '../../src/stores/profile'
 test('独立自动练习轮换五种题型，错词回看刷新保留且不推进正式任务或奖励',async({page})=>{
- test.setTimeout(120000);await seedDatabase(page,{...freshDatabase(),abilityLevel:'L5'});await go(page,'home');await page.locator('.hero-cta').click();const daily=(await database(page)).courseProgress.starter.dailyPlan;await openCustomPractice(page);await expect(page.locator('.auto-mode-button')).toContainText('自动编排中')
+ test.setTimeout(120000);await seedDatabase(page,{...freshDatabase(),abilityLevel:'L5'});await go(page,'home');await startIndependentStudy(page);const daily=(await database(page)).courseProgress.starter.dailyPlan;await openCustomPractice(page);await expect(page.locator('.auto-mode-button')).toContainText('自动编排中')
  for(let i=0;i<20;i++){
   const db=await database(page),session=db.session,word=session.wordSnapshot[session.wordIds[i]];expect(session.mode).toBe(['dictation','spell','listen','connect','flash'][i%5])
+  if(['listen','dictation'].includes(session.mode)){const audio=page.getByRole('button',{name:'播放当前单词的标准发音',exact:true});await audio.click();await expect(audio).toHaveClass(/playing/);await expect(audio).not.toHaveClass(/playing/)}
   if(['spell','dictation'].includes(session.mode)){await page.locator('.spelling-input input').fill(word.word);await page.getByRole('button',{name:'确认答案 →',exact:true}).click()}
   else if(['listen','connect'].includes(session.mode)){await page.locator('.answer-choice').filter({has:page.getByText(session.mode==='connect'?word.meaning:word.word,{exact:true})}).first().click();await page.getByRole('button',{name:'确认答案 →',exact:true}).click()}
   else{await page.getByRole('button',{name:'开始自评',exact:true}).click();await page.locator('.rating-grid').getByRole('button').nth(i===4?0:2).click()}
@@ -32,7 +34,7 @@ test('导航高清图标五种语义独立、主题切换稳定且资源完整',
 })
 const windows=[{name:'phone-portrait',width:390,height:844},{name:'phone-landscape',width:844,height:390},{name:'tablet-portrait',width:768,height:1024},{name:'tablet-landscape',width:1024,height:768},{name:'tablet-wide',width:1280,height:800},{name:'split-narrow',width:600,height:900},{name:'split-wide',width:900,height:900}]
 test('手机滚动到连接提交与闪现评分后完整可见，不被导航覆盖',async({page})=>{
- await page.setViewportSize({width:390,height:844});await go(page,'home');await page.locator('.hero-cta').click()
+ await page.setViewportSize({width:390,height:844});await go(page,'home');await startIndependentStudy(page,true)
  await page.locator('.rating-grid').evaluate(el=>el.scrollIntoView({block:'center'}));const nav=await page.locator('.bottom-nav').boundingBox();const ratings=await page.locator('.rating-grid').boundingBox();expect(ratings!.y+ratings!.height).toBeLessThanOrEqual(nav!.y)
  await openCustomPractice(page);await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^连接，/}).click();await page.locator('.answer-choice').filter({hasText:'猫'}).click();await page.getByRole('button',{name:'确认答案 →',exact:true}).evaluate(el=>el.scrollIntoView({block:'center'}));const action=await page.locator('.answer-actions .wp-button').filter({hasText:'确认答案'}).boundingBox();expect(action!.y+action!.height).toBeLessThanOrEqual(nav!.y)
 })

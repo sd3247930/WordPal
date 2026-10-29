@@ -1,8 +1,10 @@
 <template>
- <WPButton kind="secondary" class="study-practice-entry-button study-card-feedback" hover-class="study-card-pressed" :hover-start-time="0" :hover-stay-time="120" label="自定义练习，不计今日任务" @click="$emit('click')"><image class="custom-practice-entry-icon" :src="customPracticeIcon" mode="aspectFit" aria-hidden="true"/><text class="custom-practice-entry-label">自定义练习</text><text class="custom-practice-entry-arrow" aria-hidden="true">›</text></WPButton>
+ <WPButton v-if="!learning.isSessionLocked" kind="secondary" class="study-practice-entry-button study-card-feedback" hover-class="study-card-pressed" :hover-start-time="0" :hover-stay-time="120" label="自定义练习，不计今日任务" @click="$emit('click')"><image class="custom-practice-entry-icon" :src="customPracticeIcon" mode="aspectFit" aria-hidden="true"/><text class="custom-practice-entry-label">自定义练习</text><text class="custom-practice-entry-arrow" aria-hidden="true">›</text></WPButton>
 </template>
 <script setup lang="ts">
 import WPButton from '../wp-button/WPButton.vue'
+import {useLearningStore} from '../../stores/learning'
+const learning=useLearningStore()
 import {customPracticeIcon} from '../../services/study-mode-icons'
 defineEmits<{click:[]}>()
 </script>

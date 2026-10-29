@@ -21,12 +21,14 @@ import {studyCapability,planCapabilities,questionKey} from '../services/learning
 import type {AudioProgress} from '../services/audio/AudioPlaybackService'
 import type {AudioEvidence,Word} from '../../packages/core_learning'
 import {studyHintKind} from '../services/learning/StudyHint'
+import {dailySessionLocked,DAILY_SESSION_LOCK_MESSAGE} from '../services/learning/DailySessionLock'
 export const modes:{id:LearningMode;name:string;description:string}[]=[{id:'flash',name:'闪现',description:'看看单词，回想它的意思'},{id:'connect',name:'连接',description:'为单词找到正确的中文意思'},{id:'listen',name:'听音',description:'听发音，选出对应的单词'},{id:'spell',name:'拼写',description:'看中文，用字母拼出单词'},{id:'dictation',name:'听写',description:'听发音，写出这个单词'}]
 export const useLearningStore=defineStore('learning',()=>{
  const profile=useProfileStore(),review=useReviewStore(),course=useCourseStore(),parent=useParentSettingsStore()
  const clock=ref(Date.now())
  const todayPlan=computed(()=>selectDailyPlan(profile.db,course.current,new Date(clock.value)))
  const isDaily=computed(()=>course.progress.studyActivity==='daily'&&!!course.progress.dailyPlan?.flow?.begunAt)
+ const isSessionLocked=computed(()=>dailySessionLocked(course.progress.dailyPlan))
  const storedSession=computed(()=>isDaily.value?course.progress.dailyPlan!:profile.db.session&&sessionInCourse(profile.db.session,course.currentId)?profile.db.session:null)
  const session=computed(()=>{const saved=storedSession.value,pending=profile.learningDraft;return saved&&pending?.key===questionKey(saved)?{...saved,...pending.fields}:saved})
  const submitNotice=ref('')
@@ -89,6 +91,7 @@ export const useLearningStore=defineStore('learning',()=>{
   return snapshot
  }
  function startIndependent(request?:string[],scopedDue=false,selection?:{unitId?:string;wordId?:string},practiceOnly=false){
+  if(isSessionLocked.value){submitNotice.value=DAILY_SESSION_LOCK_MESSAGE;return false}
   review.refresh()
   if(profile.db.session&&!profile.db.session.completedAt&&sessionInCourse(profile.db.session,course.currentId))return profile.transact(d=>{d.courseProgress![course.currentId].studyActivity='independent'})
   let ids:string[],kind:LearningSession['kind'],wordSources:LearningSession['wordSources'],sequenceWordIds:string[]|undefined
@@ -160,7 +163,7 @@ export const useLearningStore=defineStore('learning',()=>{
   if(saved&&refreshed)audioGate.value=null
   return saved&&refreshed
  }
- function setMode(mode:LearningMode){if(isDaily.value)return session.value?.mode===mode;if(session.value?.answers[session.value.index]||!current.value||!availableModes(current.value,Object.values(session.value?.wordSnapshot||wordById),readFeedbackSettings().sound,session.value?.plannerConfig?.entryLevel).includes(mode))return false;return patch({mode,input:'',selected:'',revealed:false,hinted:false,hintKind:undefined,letterDraft:undefined,inputAssistance:undefined})}
+ function setMode(mode:LearningMode){if(isSessionLocked.value||isDaily.value)return session.value?.mode===mode;if(session.value?.answers[session.value.index]||!current.value||!availableModes(current.value,Object.values(session.value?.wordSnapshot||wordById),readFeedbackSettings().sound,session.value?.plannerConfig?.entryLevel).includes(mode))return false;return patch({mode,input:'',selected:'',revealed:false,hinted:false,hintKind:undefined,letterDraft:undefined,inputAssistance:undefined})}
  function reveal(){return patch({revealed:true})}
  function hint(){
   const s=session.value
@@ -237,6 +240,7 @@ export const useLearningStore=defineStore('learning',()=>{
   if(isDaily.value){const s=session.value,owner=s.courseId!,step=s.flow!.step,index=s.index;return profile.transact(d=>{
    const p=d.courseProgress![owner],target=p.dailyPlan!
    if(target.id!==s.id||target.flow?.step!==step||target.index!==index||!advanceDailyPlan(target))return
+   p.studyActivity='daily'
    if(target.completedAt){const at=target.completedAt;p.fullLearnedWords??={};p.introducedWords??={};for(const id of target.wordIds){p.fullLearnedWords[id]=at;p.introducedWords[id]??=at}const nextId=courseWordPool.value[completedPrefix(d,course.current)]||target.wordIds[target.wordIds.length-1];const nextLesson=course.lessons.find(l=>l.wordIds.includes(nextId!));if(nextLesson)p.currentLessonId=nextLesson.id}
   })}
   return profile.transact(d=>{
@@ -268,5 +272,5 @@ export const useLearningStore=defineStore('learning',()=>{
  const remainingCount=computed(()=>course.wordIds.filter(id=>!profile.db.cards[id]).length)
  const positionFor=(id?:string)=>{const index=courseWordPool.value.indexOf(id||'');return index<0?null:{index:index+1,total:courseWordPool.value.length}}
  const currentPosition=computed(()=>positionFor(current.value?.id))
- return {session,current,currentSource,choices,todayAnswers,newToday,newTodayWordIds,newWords,studyWords,due,dailyPlan,todayPlan,todayTaskWordIds,tasks,isDaily,planProblem,textbookProgress,canContinue,continueLearning,prepareDaily,refreshDay,startPractice:()=>startIndependent(todayPlan.value?.wordIds||lesson.value.wordIds,false,undefined,true),stepTitles:STEP_TITLES,lesson,needsConsolidation,learnedCount,remainingCount,currentPosition,positionFor,start,startSelected:(unitId?:string,wordId?:string)=>start(undefined,false,{unitId,wordId}),startDue:(ids:string[])=>start(ids,true),patch,setMode,reveal,hint,submit,next,previous,capability,resourceProblem,refreshResources,beginQuestionAudio,observeQuestionAudio,submitNotice,flushDraft:profile.flushLearningDraft}
+ return {session,current,currentSource,choices,todayAnswers,newToday,newTodayWordIds,newWords,studyWords,due,dailyPlan,todayPlan,todayTaskWordIds,tasks,isDaily,isSessionLocked,planProblem,textbookProgress,canContinue,continueLearning,prepareDaily,refreshDay,startPractice:()=>startIndependent(todayPlan.value?.wordIds||lesson.value.wordIds,false,undefined,true),stepTitles:STEP_TITLES,lesson,needsConsolidation,learnedCount,remainingCount,currentPosition,positionFor,start,startSelected:(unitId?:string,wordId?:string)=>start(undefined,false,{unitId,wordId}),startDue:(ids:string[])=>start(ids,true),patch,setMode,reveal,hint,submit,next,previous,capability,resourceProblem,refreshResources,beginQuestionAudio,observeQuestionAudio,submitNotice,flushDraft:profile.flushLearningDraft}
 })

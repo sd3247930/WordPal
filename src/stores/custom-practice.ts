@@ -9,11 +9,13 @@ import {courseRegistry,isCourseInstalled,resolveFrozenWord} from '../services/co
 import {stopAudio} from '../services/audio'
 import {warmUpcomingAudio} from '../services/audio/AudioPreload'
 import {orderedCourseUnits} from '../services/learning/CourseStudySequence'
+import {dailySessionLocked,DAILY_SESSION_LOCK_MESSAGE} from '../services/learning/DailySessionLock'
 import {customPracticeBatch,recordCustomSequence} from '../services/learning/CustomPracticeSequence'
 import {CUSTOM_MODES,wholeBook,practiceCountError,defaultPracticeCount,customModeProblems,createCustomPractice,customResumeProblem,customToken,runCustom,pauseCustom,endCustom,recordCustomAnswer,advanceCustom,customProgress,customChoices,customMatchGroup} from '../services/learning/CustomPractice'
 
 export const useCustomPracticeStore=defineStore('custom-practice',()=>{
  const profile=useProfileStore(),courses=useCourseStore(),feedback=useFeedbackStore()
+ const dailyLocked=computed(()=>dailySessionLocked(courses.progress.dailyPlan))
  // A persisted running checkpoint belongs to a previous process; its offline interval is not practice time.
  let recoveredRunningId=profile.db.customPractice?.status==='running'?profile.db.customPractice.id:''
  const screen=ref<'closed'|'config'|'overview'|'training'|'paused'|'summary'>('closed'),error=ref(''),notice=ref(''),heardToken=ref(''),confirmation=ref<'end'|'replace'|''>('')
@@ -43,6 +45,7 @@ export const useCustomPracticeStore=defineStore('custom-practice',()=>{
  function stop(){heardToken.value='';stopAudio();warmUpcomingAudio([])}
  function pause(){stop();if(session.value?.status!=='running')return true;const ok=save(db=>{const s=db.customPractice!;if(s.id===recoveredRunningId)delete s.activeSince;return pauseCustom(s)});if(ok){recoveredRunningId='';if(screen.value==='training')screen.value='paused'}return ok}
  function openConfig(){
+  if(dailyLocked.value){error.value=DAILY_SESSION_LOCK_MESSAGE;return false}
   if(!pause())return false
   const completed=session.value?.status==='completed'&&!resumeProblem.value?session.value:null
   courseId.value=completed?.courseId||(installed.value.some(pack=>pack.courseId===courses.currentId)?courses.currentId:installed.value[0]?.courseId||'')
@@ -59,6 +62,7 @@ export const useCustomPracticeStore=defineStore('custom-practice',()=>{
  function toggleUnit(id:string){const selected=scope.value.unitIds;scope.value={type:'units',unitIds:selected.includes(id)?selected.filter(item=>item!==id):[...selected,id]};clamp()}
  function step(amount:number){const value=Number(count.value);count.value=String(Math.min(total.value,Math.max(1,(Number.isSafeInteger(value)?value:1)+amount)));notice.value=''}
  function start(replace=false):'started'|'confirm'|'failed'{
+  if(dailyLocked.value){error.value=DAILY_SESSION_LOCK_MESSAGE;return 'failed'}
   if(screen.value!=='config')return 'failed'
   if(startProblem.value){error.value=startProblem.value;return 'failed'}
   if(recoverable.value&&!replace)return 'confirm'
@@ -72,6 +76,7 @@ export const useCustomPracticeStore=defineStore('custom-practice',()=>{
  }
  function showPaused(){stop();screen.value='paused';error.value=''}
  function resume(){
+  if(dailyLocked.value){error.value=DAILY_SESSION_LOCK_MESSAGE;return false}
   if(screen.value==='training'&&session.value?.status==='running')return true
   if(resumeProblem.value){error.value=resumeProblem.value;return false}
   const s=session.value!,availability=customModeProblems(s.courseId,s.wordIds,feedback.settings.sound),unavailable=s.modes.slice(s.modeIndex).map(mode=>availability[mode]).find(Boolean)
@@ -80,15 +85,18 @@ export const useCustomPracticeStore=defineStore('custom-practice',()=>{
   recoveredRunningId='';stop();screen.value='training';return true
  }
  function patch(values:Partial<Pick<NonNullable<typeof session.value>,'input'|'selected'|'revealed'|'letterDraft'|'inputAssistance'>>){
+  if(dailyLocked.value)return false
   if(!session.value||session.value.status!=='running'||session.value.answer||resumeProblem.value)return false
   const expected=token.value;return save(db=>{const s=db.customPractice;if(!s||customToken(s)!==expected||s.status!=='running'||s.answer)return false;Object.assign(s,values);s.updatedAt=new Date().toISOString();return true})
  }
  function submit(rating?:ReviewRating){
+  if(dailyLocked.value)return false
   if(resumeProblem.value){error.value=resumeProblem.value;return false}
   if(['listen','dictation'].includes(mode.value)&&heardToken.value!==token.value){error.value='请先播放当前单词的发音，再确认答案。';return false}
   const expected=token.value;return save(db=>recordCustomAnswer(db,expected,rating,heardToken.value===expected))
  }
  function next(){
+  if(dailyLocked.value)return false
   if(resumeProblem.value){error.value=resumeProblem.value;return false}
   const expected=token.value
   const ok=save(db=>{const s=db.customPractice;if(!s||!advanceCustom(s,expected))return false;if(s.status==='completed')recordCustomSequence(db,s);return true})
@@ -98,5 +106,6 @@ export const useCustomPracticeStore=defineStore('custom-practice',()=>{
  function back(){if(confirmation.value){confirmation.value='';return true}if(screen.value==='closed')return false;if(screen.value==='training'){if(pause())screen.value='paused'}else{if(pause())screen.value='closed'}return true}
  function leave(){if(screen.value==='closed')return true;if(!pause())return false;confirmation.value='';screen.value='closed';return true}
  watch(()=>session.value,session=>{if(!session&&!['closed','config'].includes(screen.value)){stop();screen.value='closed';confirmation.value='';notice.value='原教材已移除，自定义练习已停止。'}})
- return {screen,isOpen:computed(()=>screen.value!=='closed'),error,notice,confirmation,courseId,scope,count,singleMode,continuous,installed,pack,units,total,rangeTotal,sequenceHint,countError,problems,selectedModes,startProblem,session,recoverable,resumeProblem,mode,current,progress,choices,matchGroup,token,heardToken,openConfig,chooseCourse,chooseScope,toggleUnit,toggleMode,step,start,showPaused,resume,patch,submit,next,pause,end,back,leave}
+ watch(dailyLocked,locked=>{if(locked&&screen.value!=='closed')leave()})
+ return {screen,isOpen:computed(()=>screen.value!=='closed'&&!dailyLocked.value),error,notice,confirmation,courseId,scope,count,singleMode,continuous,installed,pack,units,total,rangeTotal,sequenceHint,countError,problems,selectedModes,startProblem,session,recoverable,resumeProblem,mode,current,progress,choices,matchGroup,token,heardToken,openConfig,chooseCourse,chooseScope,toggleUnit,toggleMode,step,start,showPaused,resume,patch,submit,next,pause,end,back,leave}
 })
