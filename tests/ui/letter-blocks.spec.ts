@@ -5,6 +5,7 @@ import {normalizeSpellingWord} from '../../packages/phonics/letter-blocks'
 
 async function tile(page:Page,char:string){for(const candidate of await page.locator('.letter-tile').filter({hasText:new RegExp('^'+char+'$','i')}).all())if(await candidate.isEnabled())return candidate;throw Error('No unused tile: '+char)}
 async function spell(page:Page,word:string){for(const unit of normalizeSpellingWord(word).slots)await(await tile(page,unit.char)).click()}
+async function hear(page:Page){const button=page.getByRole('button',{name:'播放当前单词的标准发音',exact:true});await button.click();await expect(button).toHaveClass(/playing/);await expect(button).not.toHaveClass(/playing/)}
 const confirm=(page:Page)=>page.getByRole('button',{name:'确认答案 →',exact:true})
 const formal=(db:any)=>({history:db.history,cards:db.cards,courseProgress:db.courseProgress,gems:db.gems,pets:db.pets})
 
@@ -21,7 +22,7 @@ test('重复字母独立积木，点击任意槽退回、撤销与刷新原位�
 })
 
 test('听写字母池为空槽、固定符号可见，不提前显示完整答案和中文',async({page})=>{
- await setAppearance(page,'clay','light');await seedSpellingPractice(page,'dictation','Merry Christmas!','圣诞快乐');await go(page,'learn');await expect(page.locator('.block-slot')).toHaveCount(14);await expect(page.locator('.block-slot.filled')).toHaveCount(0);await expect(page.locator('.word-picture,.meaning,.ipa,.phonics-word,.word-placeholder')).toHaveCount(0);await expect(page.locator('.block-fixed')).toHaveText('!');await expect(page.locator('.letter-block-input')).not.toContainText('Merry Christmas');await expect(page.locator('.letter-block-input')).toContainText('字母积木辅助');await expect(page.locator('.listening-wave')).toBeVisible();await spell(page,'Merry Christmas!');await confirm(page).click();await expect(page.locator('.answer-feedback')).toContainText('很棒')
+ await setAppearance(page,'clay','light');await seedSpellingPractice(page,'dictation','Merry Christmas!','圣诞快乐');await go(page,'learn');await expect(page.locator('.block-slot')).toHaveCount(14);await expect(page.locator('.block-slot.filled')).toHaveCount(0);await expect(page.locator('.word-picture,.meaning,.ipa,.phonics-word,.word-placeholder')).toHaveCount(0);await expect(page.locator('.block-fixed')).toHaveText('!');await expect(page.locator('.letter-block-input')).not.toContainText('Merry Christmas');await expect(page.locator('.letter-block-input')).toContainText('字母积木辅助');await expect(page.locator('.listening-wave')).toBeVisible();await spell(page,'Merry Christmas!');await hear(page);await confirm(page).click();await expect(page.locator('.answer-feedback')).toContainText('很棒')
 })
 
 test('辅助后切键盘仍保留辅助证据，模式切换不带入字母或完整答案',async({page})=>{

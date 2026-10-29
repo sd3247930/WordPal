@@ -29,7 +29,7 @@ for(const mode of ['light','dark'])for(const largeText of [false,true])test(`${m
  test.setTimeout(240000);await page.setViewportSize({width:390,height:1000});await fixture(page);await setAppearance(page,'swiss',mode,{largeText,highContrast:largeText});await go(page,'pet');const before=learningOnly(await database(page)),errors:string[]=[];page.on('pageerror',e=>errors.push(e.message))
  const washes=[]
  for(const element of elements){
-  await go(page,'pet');await page.locator('.pet-choice').filter({hasText:petInfo[element].name}).click()
+  await go(page,'pet');await page.locator('.lh-companion').filter({hasText:petInfo[element].name}).click()
   for(const [index,stage]of ['juvenile','growing','evolved','unknown'].entries()){
    await openPetAction(page,'成长');await page.locator('.pet-growth-panel .pet-form-card').nth(index).click()
    for(const [screen,selector]of [['learn','.study-pet-companion']]){
@@ -53,7 +53,7 @@ test('手机、平板、横竖屏及200%字体下图片完整，设置导航与�
   }
  }
  await page.setViewportSize({width:320,height:667});await page.locator('.wp-app').evaluate(el=>{for(const [name,size]of Object.entries({caption:24,small:28,card:34,section:44})) (el as HTMLElement).style.setProperty('--wp-font-'+name,size+'px')});await expect(page.locator('.settings-pet,.settings-summary')).toHaveCount(0);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)
- await page.getByRole('navigation',{name:'底部导航'}).getByRole('button',{name:'宠物屋',exact:true}).click();await expect(page.locator('.pet-current-hero')).toBeVisible();expect(await database(page)).toEqual(before)
+ await page.getByRole('navigation',{name:'底部导航'}).getByRole('button',{name:'宠物屋',exact:true}).click();await expect(page.locator('.lh-stage')).toBeVisible();expect(await database(page)).toEqual(before)
  await overview(page,'learn');await expect(page.locator('.study-space')).toBeVisible();expect(await database(page)).toEqual(before)
  await page.setViewportSize({width:1280,height:800});await go(page,'settings');await expect(page.locator('.settings-summary')).toHaveCount(0);await page.getByRole('navigation',{name:'主要导航'}).getByRole('button',{name:'首页',exact:true}).click();await expect(page.locator('.home-grid')).toBeVisible();expect(await database(page)).toEqual(before)
 })

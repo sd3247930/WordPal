@@ -28,7 +28,7 @@ test('五个紧凑区块、真实版本、完整图标与五项导航，设置�
  await expect(page.locator('.settings-page')).not.toContainText('录音不上传');await expect(page.locator('.settings-page')).not.toContainText('不使用广告');await expect(page.locator('.settings-page')).not.toContainText('当前使用中');await expect(page.locator('.settings-page')).not.toContainText('点击切换')
  for(const image of await page.locator('.settings-artwork img').all())await expect(image).toHaveJSProperty('naturalWidth',256)
  const nav=page.getByRole('navigation',{name:'底部导航'});expect(await nav.getByRole('button').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('aria-label')))).toEqual(['首页','学习','宠物屋','单词本','设置']);await expect(nav.getByRole('button',{name:'设置',exact:true})).toHaveAttribute('aria-current','page')
- await nav.getByRole('button',{name:'宠物屋',exact:true}).click();await expect(page.locator('.pet-current-hero')).toBeVisible();await nav.getByRole('button',{name:'设置',exact:true}).click();expect(await database(page)).toEqual(before)
+ await nav.getByRole('button',{name:'宠物屋',exact:true}).click();await expect(page.locator('.lh-stage')).toBeVisible();await nav.getByRole('button',{name:'设置',exact:true}).click();expect(await database(page)).toEqual(before)
 })
 
 test('整行开关一次触发并持久化，视觉辅助和声音触感相互独立',async({page})=>{

@@ -16,6 +16,9 @@ export async function seedDatabase(page:Page,db:object){
  await page.addInitScript(db=>{if(!localStorage.getItem('wordpal.database.v1'))localStorage.setItem('wordpal.database.v1',JSON.stringify(db))},db)
 }
 export async function database(page:Page){return page.evaluate(()=>{const pointer=JSON.parse(localStorage.getItem('wordpal.database.active.v2')||'null'),key=pointer==='v2'?'wordpal.database.v2':pointer?.version===2?pointer.key:'wordpal.database.v1';return JSON.parse(localStorage.getItem(key)!)} )}
+/** Persist through the same public blur boundary used before navigation; no store hooks. */
+export async function flushStudyInput(page:Page){const input=page.locator('.spelling-input input');if(await input.count())await input.evaluate((node:HTMLInputElement)=>node.blur())}
+export async function previewSnack(page:Page,index=0){const designs=page.locator('.pet-feed-panel .lh-design-card');if(await designs.count()){await designs.nth(index).click();await page.getByRole('button',{name:'选这份点心 · 5 灵石',exact:true}).click()}else await page.locator('.food-choice').nth(index).click();await expect(page.locator('.feed-preview')).toBeVisible()}
 export async function selectCustomModes(page:Page,modes:readonly string[]){
  for(const mode of ['flash','connect','listen','spell','dictation']){const tile=page.locator(`.custom-config [data-mode="${mode}"]`);if((await tile.getAttribute('aria-pressed')==='true')!==modes.includes(mode))await tile.click()}
 }

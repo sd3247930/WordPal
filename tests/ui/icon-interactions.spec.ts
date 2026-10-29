@@ -1,3 +1,4 @@
+import {previewSnack} from './helpers'
 import {test,expect,type Locator} from '@playwright/test'
 import {go,database,seedDatabase,setAppearance,openCustomPractice} from './helpers'
 import {freshDatabase} from '../../src/stores/profile'
@@ -29,7 +30,7 @@ test('学习题型保留有效模式、选择题可真正取消，取消不会�
  const answer=page.locator('.answer-choice').first();await answer.click();await expect(answer).toHaveAttribute('aria-pressed','true');expect((await database(page)).session.selected).not.toBe('');await answer.click();await expect(answer).toHaveAttribute('aria-pressed','false');expect((await database(page)).session.selected).toBe('');await expect(page.getByRole('button',{name:'确认答案 →',exact:true})).toBeDisabled()
  const after=await database(page);for(const field of ['cards','history','practiceAnswers','gems','pets','rewardIds'])expect(after[field]).toEqual(before[field])
 })
-test('宠物屋当前功能重复点击保持选中，取消点心预览不会扣费',async({page})=>{const db=freshDatabase();db.gems=20;await seedDatabase(page,db);await go(page,'pet');const before=await database(page),feed=page.getByRole('group',{name:'宠物屋功能'}).getByRole('button',{name:'喂食',exact:true});await feed.click();await page.locator('.food-choice').nth(1).click();await page.getByRole('button',{name:'取消',exact:true}).click();await expect(page.locator('.feed-preview')).toHaveCount(0);await feed.click();await expect(feed).toHaveAttribute('aria-pressed','true');await expect(page.locator('.pet-feed-panel')).toBeVisible();expect(await database(page)).toEqual(before)})
+test('宠物屋当前功能重复点击保持选中，取消点心预览不会扣费',async({page})=>{const db=freshDatabase();db.gems=20;await seedDatabase(page,db);await go(page,'pet');const before=await database(page),feed=page.getByRole('group',{name:'宠物屋功能'}).getByRole('button',{name:'喂食',exact:true});await feed.click();await previewSnack(page,1);await page.getByRole('button',{name:'取消',exact:true}).click();await expect(page.locator('.feed-preview')).toHaveCount(0);await feed.click();await expect(feed).toHaveAttribute('aria-pressed','true');await expect(page.locator('.pet-feed-panel')).toBeVisible();expect(await database(page)).toEqual(before)})
 
 test('单词本统计图标及已学条件可反选，取消高亮不改变统计与课程',async({page})=>{
  await go(page,'review');const before=await database(page),counts=await page.locator('.familiarity-state-count').allTextContents();for(const tile of await page.locator('.familiarity-state').all())await toggleImage(tile)

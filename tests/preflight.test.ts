@@ -37,6 +37,7 @@ test('内置音频 SHA 仅豁免已核对的清单整行，其他数字及位置
 test('穿戴清单坐标豁免绑定已审核整文件，改动内容、其他路径与其他秘密仍阻断',()=>{
  const name='src/static/pet-house/lifehouse/v2/manifest.json',data=fs.readFileSync(name),text=data.toString(),digits=text.match(/\d{16,19}/)![0]
  assert.deepEqual(scanBytes(name,data),[])
+ assert.deepEqual(scanBytes(name,Buffer.from(text.replace(/\r?\n/g,'\r\n'))),[])
  assert.ok(scanBytes('other.json',data).some((hit:any)=>hit.category==='identity/account digits'))
  assert.ok(scanBytes(name,Buffer.from(text+'\naccount = '+digits)).some((hit:any)=>hit.category==='identity/account digits'))
  assert.ok(scanBytes(name,Buffer.from(text+'\n'+secret())).some((hit:any)=>hit.category==='service credential'))
@@ -47,6 +48,15 @@ function fixture(action:(root:string)=>void){
 }
 function git(root:string,args:string[],input?:string){const result=spawnSync('git',args,{cwd:root,input,encoding:'utf8',windowsHide:true});assert.equal(result.status,0,result.stderr);return result.stdout.trim()}
 function stage(root:string,name:string,data:string){const oid=git(root,['hash-object','-w','--stdin'],data);git(root,['update-index','--add','--cacheinfo','100644',oid,name])}
+test('历史复用仅限同路径同Git对象，重复秘密在各提交和新路径均被报告',()=>fixture(root=>{
+ git(root,['init','-q']);git(root,['config','user.name','WordPal Test']);git(root,['config','user.email','fixture@example.invalid'])
+ const commit=(parent?:string)=>{const tree=git(root,['write-tree']),sha=git(root,['commit-tree',tree,...(parent?['-p',parent]:[]),'-m','synthetic fixture']);git(root,['update-ref','refs/heads/main',sha]);return sha}
+ stage(root,'.gitignore','docs/\nprivate/\n');stage(root,'first.txt','safe fixture');const first=commit()
+ const value=secret();stage(root,'first.txt',value);const second=commit(first);stage(root,'second.txt',value);const third=commit(second)
+ const report=runAudit({root,history:true}),hits=report.findings.filter((hit:any)=>hit.category==='service credential')
+ assert.equal(report.counts.commits,3);assert.equal(hits.filter((hit:any)=>hit.path==='first.txt').length,2);assert.equal(hits.filter((hit:any)=>hit.path==='second.txt').length,1)
+ assert.ok(hits.some((hit:any)=>hit.commit===third.slice(0,12)));assert.ok(hits.some((hit:any)=>hit.commit===second.slice(0,12)))
+}))
 function init(root:string){git(root,['init','-q']);fs.writeFileSync(path.join(root,'.gitignore'),'/docs/\n/private/\n');stage(root,'.gitignore','/docs/\n/private/\n')}
 
 test('纯净检查识别短密码、服务凭据、正反斜杠路径和隐私，不打印原始值',()=>{

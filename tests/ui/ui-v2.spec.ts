@@ -8,7 +8,7 @@ test('五页 Header、设置命名和底栏图标胶囊统一',async({page})=>{
  await page.setViewportSize({width:390,height:844})
  for(const [screen,subtitle]of [['home','Home'],['learn','Study'],['pet','PetHouse'],['review','Wordbook'],['settings','Settings']]){
   await go(page,screen)
-  await expect(page.locator('.topbar .brand-name')).toHaveText('WordPal')
+  await expect(page.locator('.topbar .brand-name')).toHaveText(screen==='pet'?'四象精灵屋':'WordPal')
   await expect(page.locator('.brand-subtitle')).toHaveText(subtitle)
   expect(await page.locator('.bottom-item').evaluateAll(items=>items.map(i=>i.getAttribute('aria-label')))).toEqual(['首页','学习','宠物屋','单词本','设置'])
   const active=page.locator('.bottom-item.active')
@@ -48,14 +48,14 @@ test('学习模式一行排列，词卡与主动作可滚动完整显示',async(
 
 test('宠物主列表使用紧凑头像，点击更新当前伙伴与成长入口',async({page})=>{
  await page.setViewportSize({width:390,height:844});await go(page,'pet')
- await expect(page.locator('.wp-pet-card .avatar')).toHaveCount(4)
- await expect(page.locator('.pet-scene')).toBeVisible()
- const heights=await page.locator('.wp-pet-card').evaluateAll(items=>items.map(i=>i.getBoundingClientRect().height))
+ await expect(page.locator('.lh-companion-art')).toHaveCount(4)
+ await expect(page.locator('.lh-scene-canvas')).toBeVisible()
+ const heights=await page.locator('.lh-companion').evaluateAll(items=>items.map(i=>i.getBoundingClientRect().height))
  expect(Math.max(...heights)).toBeLessThan(180)
- await page.locator('.pet-choice').filter({hasText:'祝融'}).click()
- await expect(page.locator('.current-pet-hero')).toBeVisible()
+ await page.locator('.lh-companion').filter({hasText:'祝融'}).click()
+ await expect(page.locator('.lh-stage')).toBeVisible()
  expect((await database(page)).companion).toBe('fire')
- await expect(page.locator('.current-pet-hero')).toContainText('祝融')
+ await expect(page.locator('.lh-stage')).toContainText('祝融')
 })
 
 test('零到期词本禁用练习动作，分类仍能浏览全部单词',async({page})=>{

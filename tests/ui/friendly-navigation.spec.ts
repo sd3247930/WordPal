@@ -1,3 +1,4 @@
+import {flushStudyInput} from './helpers'
 import {test,expect} from '@playwright/test'
 import {go,app,setAppearance,seedDatabase,database,openCustomPractice,openCourseGallery} from './helpers'
 import {goldenDatabase} from './fixtures'

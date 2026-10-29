@@ -6,6 +6,7 @@ for(const screen of [{width:320,height:700,largeText:true},{width:390,height:844
  await page.setViewportSize(screen);await setAppearance(page,theme,'light',{largeText:screen.largeText});await seedDatabase(page,freshDatabase())
  for(const route of ['home','learn','pet','review','settings']){
   await go(page,route)
+  if(route==='pet'&&screen.width<600){await expect(page.getByRole('button',{name:'安装 WordPal',exact:true})).toBeHidden();continue}
   const trigger=page.getByRole('button',{name:'安装 WordPal',exact:true}),gem=page.locator('.spirit-stone-badge'),buttonBox=await trigger.boundingBox(),gemBox=await gem.boundingBox()
   expect(buttonBox!.x+buttonBox!.width).toBeLessThanOrEqual(gemBox!.x+1)
   expect(buttonBox!.height).toBeGreaterThanOrEqual(48)

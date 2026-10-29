@@ -39,7 +39,7 @@ for(const mode of ['light','dark'])for(const largeText of [false,true])test(`cla
 for(const mode of ['light','dark'])test(`clay ${mode} 四元素四形态切换，等级与已选择阶段来自真实状态`,async({page})=>{
  test.setTimeout(120000);await fixture(page,{complete:true,level:8});await setAppearance(page,'clay',mode);await page.setViewportSize({width:390,height:900});await go(page,'learn');await openStudyOverview(page);const before=await database(page)
  for(const element of elements){
-  await go(page,'pet');await page.locator('.pet-choice').filter({hasText:petInfo[element].name}).click()
+  await go(page,'pet');await page.locator('.lh-companion').filter({hasText:petInfo[element].name}).click()
   for(const [index,file]of ['juvenile','growing','evolved','unknown'].entries()){
    await openPetAction(page,'成长');await page.locator('.pet-growth-panel .pet-form-card').nth(index).click();await page.locator('.pet-study-link').click();await openStudyOverview(page)
    const card=page.locator('.study-pet-companion');await expect(card).toHaveAttribute('data-element',element);await expect(card).toHaveAttribute('data-form',String(index+1));await expect(card.locator('.companion-card-title')).toHaveText(petInfo[element].name+'陪你一起学习');await expect(card.locator('.companion-card-status')).toContainText(petInfo[element].elementName+'精灵 · Lv.8');await expect(card.locator('img')).toHaveAttribute('src',new RegExp(element+'-'+file+'[.]png$'));await inspect(page)
@@ -67,7 +67,7 @@ for(const complete of [false,true])test(`原有${complete?'整课检查':'开始
 test('配图失败保留文字与尺寸，切换伙伴会重新载入；装饰不产生额外焦点',async({page})=>{
  await fixture(page);await page.setViewportSize({width:390,height:900});await setAppearance(page,'clay','light');await page.route('**/static/pet-house/growth/water-*.png',route=>route.abort());await go(page,'learn');await openStudyOverview(page);const before=await database(page),card=page.locator('.study-companion-card'),height=(await card.boundingBox())!.height
  await expect(card.locator('.study-companion-placeholder')).toHaveText('伙伴配图暂不可用');await expect(card.locator('.companion-card-title')).toHaveText('玄冥陪你一起学习');expect((await card.boundingBox())!.height).toBe(height);await expect(card.locator('[tabindex],button,[role=button]')).toHaveCount(0);await expect(card.locator('.companion-portrait')).toHaveAttribute('aria-hidden','true')
- await card.locator('.companion-form-label').click();expect(await database(page)).toEqual(before);await go(page,'pet');await page.locator('.pet-choice').filter({hasText:'祝融'}).click();await page.locator('.bottom-nav').getByRole('button',{name:'学习',exact:true}).click();await inspect(page);await expect(card.locator('.companion-card-title')).toHaveText('祝融陪你一起学习')
+ await card.locator('.companion-form-label').click();expect(await database(page)).toEqual(before);await go(page,'pet');await page.locator('.lh-companion').filter({hasText:'祝融'}).click();await page.locator('.bottom-nav').getByRole('button',{name:'学习',exact:true}).click();await inspect(page);await expect(card.locator('.companion-card-title')).toHaveText('祝融陪你一起学习')
 })
 
 test('异常档案不展示默认玄冥且不覆盖原始档案',async({page})=>{

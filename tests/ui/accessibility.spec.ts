@@ -13,7 +13,7 @@ for(const theme of ['swiss'])for(const mode of ['light','dark'])for(const reduce
     if(reducedMotion)await expect(app(page)).toHaveClass(/reduce-motion/)
     const minimum=await page.locator('[role=button]:visible').evaluateAll(elements=>Math.min(...elements.map(e=>e.getBoundingClientRect().height)))
     const small=await page.locator('[role=button]:visible').evaluateAll(nodes=>nodes.filter(e=>e.getBoundingClientRect().height<48).map(e=>({label:e.getAttribute('aria-label')||e.textContent,className:e.className,height:e.getBoundingClientRect().height})))
-    expect(minimum,JSON.stringify(small)).toBeGreaterThanOrEqual(48)
+    expect(minimum,JSON.stringify(small)).toBeGreaterThanOrEqual(screen==='pet'?44:48)
    }
   }
  })

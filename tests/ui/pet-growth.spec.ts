@@ -21,7 +21,7 @@ for(const level of [3,4,7,8])test('Lv.'+level+' 形态解锁边界、默认幼�
   if(i<3&&(i===0||level>=[1,4,8][i]))await expect(cards.nth(i)).toBeEnabled();else await expect(cards.nth(i)).toBeDisabled()
   const art=cards.nth(i).locator('.pet-cutout'),image=art.locator('.pet-cutout-image')
   await expect(image.locator('img')).toHaveJSProperty('naturalWidth',960)
-  const sizes=await image.evaluate(el=>({width:el.getBoundingClientRect().width/Math.max(1,el.parentElement!.getBoundingClientRect().width),height:el.getBoundingClientRect().height/Math.max(1,el.parentElement!.getBoundingClientRect().height)}))
+  const sizes=await image.evaluate(el=>({width:el.getBoundingClientRect().width/Math.max(1,el.closest('.pet-cutout')!.getBoundingClientRect().width),height:el.getBoundingClientRect().height/Math.max(1,el.closest('.pet-cutout')!.getBoundingClientRect().height)}))
   expect(sizes.width).toBeCloseTo(petStages[i].scale,2);expect(sizes.height).toBeCloseTo(petStages[i].scale,2)
  }
  await expect(cards.nth(3).locator('img')).toHaveCount(1);await expect(cards.nth(3)).toBeDisabled();expect(await database(page)).toEqual(before)

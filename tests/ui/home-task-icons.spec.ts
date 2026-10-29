@@ -1,3 +1,4 @@
+import {flushStudyInput} from './helpers'
 import {test,expect} from '@playwright/test'
 import {go,setAppearance,seedDatabase,database,openCustomPractice} from './helpers'
 import {freshDatabase} from '../../src/stores/profile'
@@ -24,11 +25,11 @@ test('已完成闪现保留图标和标识，复习入口继续当前环节而�
  await expect(page.locator('.task').filter({hasText:'新学单词'}).locator('.task-symbol img')).toHaveJSProperty('complete',true)
  await expect(page.getByRole('button',{name:'去学习新学单词',exact:true})).toHaveCount(0)
  await page.getByRole('button',{name:'去学习复习巩固',exact:true}).click();await expect(page.locator('.learn-workspace')).toBeVisible()
- const after=await database(page),continued=after.courseProgress.starter.dailyPlan;expect(continued.wordIds).toEqual(plan.wordIds);expect(continued.flow).toEqual(plan.flow);expect(continued.index).toBe(plan.index);expect(after.history).toEqual(before.history);expect(after.cards).toEqual(before.cards)
+ const after=await database(page),continued=after.courseProgress.starter.dailyPlan;expect(continued.wordIds).toEqual(plan.wordIds);expect(continued.flow).toEqual({...plan.flow,capabilities:expect.any(Object)});expect(continued.index).toBe(plan.index);expect(after.history).toEqual(before.history);expect(after.cards).toEqual(before.cards)
 })
 
 test('已有会话从任务入口继续，模式、草稿、排程和奖励均不被重置',async({page})=>{
- await go(page,'home');await page.locator('.hero-cta').click();await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'拼写'}).click();await page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true}).fill('ca');const before=await database(page)
+ await go(page,'home');await page.locator('.hero-cta').click();await openCustomPractice(page);await page.locator('.mode-button').filter({hasText:'拼写'}).click();await page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true}).fill('ca');await flushStudyInput(page);const before=await database(page)
  for(const title of ['新学单词','听音辨义','拼写练习']){await go(page,'home');await page.getByRole('button',{name:'去学习'+title,exact:true}).click();await expect(page.locator('.daily-step.active')).toContainText('闪现');expect((await database(page)).session).toEqual(before.session);expect((await database(page)).cards).toEqual(before.cards);expect((await database(page)).history).toEqual(before.history);await openCustomPractice(page);await expect(page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true})).toHaveValue('ca')}
 })
 

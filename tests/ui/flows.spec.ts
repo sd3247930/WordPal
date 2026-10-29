@@ -1,3 +1,4 @@
+import {previewSnack} from './helpers'
 import {answerParentGate,unlockParent as openParentSettings} from './helpers'
 import {openCustomPractice} from './helpers'
 import {test,expect} from '@playwright/test'
@@ -39,7 +40,7 @@ test('独立错题保留练习证据，提示不产生负灵石或正式学习�
 })
 test('宠物切换和喂养不影响 SRS，数据删除需家长验证与明确文字',async({page})=>{
  const db=freshDatabase();db.gems=10;db.cards.cat=newCard('cat',new Date('2040-01-01T00:00:00Z'))
- await seedDatabase(page,db);await go(page,'pet');await page.locator('.pet-choice').filter({hasText:'祝融'}).click();await page.locator('.pet-action-tab').filter({hasText:'喂食'}).click();await page.locator('.pet-growth [role=button]').filter({hasText:'预览分享小点心'}).click();await page.locator('.confirm-feed').click()
+ await seedDatabase(page,db);await go(page,'pet');await page.locator('.lh-companion').filter({hasText:'祝融'}).click();await page.locator('.pet-action-tab').filter({hasText:'喂食'}).click();await previewSnack(page);await page.locator('.confirm-feed').click()
  const saved=await database(page);expect(saved.companion).toBe('fire');expect(saved.gems).toBe(5);expect(saved.pets.fire.exp).toBe(0);expect(saved.pets.fire.affection).toBe(5);expect(saved.cards).toEqual(db.cards)
  await page.evaluate(()=>{localStorage.setItem('wordpal.wordbook.preferences.v1',JSON.stringify({favorites:['cat'],later:['cat']}));localStorage.setItem('wordpal.study.presentation.v1',JSON.stringify({sessionId:'old',input:'ca'}))});await go(page,'parent');await answerParentGate(page)
  await page.getByRole('button',{name:'教材与数据工具',exact:true}).click();await expect(page.locator('.parent-data-management>.danger')).toBeDisabled();await page.locator('.parent-data-management .spelling-input input').fill('删除学习数据');await page.locator('.parent-data-management>.danger').click();await page.getByRole('button',{name:'确认清理学习数据',exact:true}).click()
@@ -48,7 +49,7 @@ test('宠物切换和喂养不影响 SRS，数据删除需家长验证与明确�
 test('键盘快捷键与焦点行为，大字体和减少动效',async({page})=>{
  await setAppearance(page,'swiss','light',{largeText:true,reducedMotion:true});await go(page,'home');await expect(app(page)).toHaveClass(/large-text/);await expect(app(page)).toHaveClass(/reduce-motion/)
  await page.locator('.hero-cta').click();await expect(page.locator('.learn-workspace')).toBeVisible();await page.locator('body').click({position:{x:5,y:5}});await expect(page.locator('.rating-grid')).toBeVisible();await page.keyboard.press('Enter');await expect(page.locator('.answer-feedback')).toBeVisible();await page.keyboard.press('ArrowRight');expect((await database(page)).courseProgress.starter.dailyPlan.index).toBe(1)
- await page.keyboard.press('Control+3');await expect(page.locator('.pet-workspace')).toBeVisible()
+ await page.keyboard.press('Control+3');await expect(page.locator('.lh-workspace')).toBeVisible()
 })
 test('五档窗口与手机平板横竖屏无水平溢出，导航合适',async({page})=>{
  for(const [width,height,size] of [[320,720,'compact'],[390,844,'compact'],[844,390,'expanded'],[768,1024,'medium'],[1024,768,'expanded'],[1280,800,'large'],[1800,1000,'extraLarge']] as const){

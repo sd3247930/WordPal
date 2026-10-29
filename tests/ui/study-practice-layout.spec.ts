@@ -1,3 +1,4 @@
+import {flushStudyInput} from './helpers'
 import {test,expect} from '@playwright/test'
 import {go,seedDatabase,setAppearance,database,openCustomPractice} from './helpers'
 import {freshDatabase} from '../../src/stores/profile'
@@ -12,7 +13,7 @@ for(const screen of [{width:359,height:780,theme:'clay',largeText:false},{width:
  await page.addInitScript(pack=>{const key='wordpal.content.pack.layout-long-course.0123456789abcdef';localStorage.setItem(key,JSON.stringify(pack));localStorage.setItem('wordpal.content.catalog.v2',JSON.stringify([{courseId:pack.courseId,key,archived:false,aliases:{}}]))},longCourse)
  await go(page,'learn');await openCustomPractice(page)
  const panel=page.getByRole('region',{name:'自定义练习内容',exact:true})
- const original=await database(page),baseline=await panel.boundingBox()
+ await flushStudyInput(page);if(await page.locator('[data-block-mode=tiles]').count())await expect.poll(async()=>(await database(page)).session?.letterDraft?.inputMode).toBe('tiles');const original=await database(page),baseline=await panel.boundingBox()
  if(await page.getByRole('button',{name:'查看学习概览',exact:true}).count())await page.getByRole('button',{name:'查看学习概览',exact:true}).click()
  await page.getByRole('button',{name:'选择教材',exact:true}).click()
  await page.locator('.course-gallery-card').filter({hasText:longCourse.title}).click()
@@ -31,7 +32,7 @@ for(const screen of [{width:359,height:780,theme:'clay',largeText:false},{width:
   expect(geometry.every(tile=>Math.abs(tile.y-geometry[0].y)<1&&Math.abs(tile.width-geometry[0].width)<1&&Math.abs(tile.height-geometry[0].height)<1)).toBe(true)
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1)).toBe(true)
  }
- const selected=(await database(page)).session
+ await flushStudyInput(page);const selected=(await database(page)).session
  if(await page.getByRole('button',{name:'查看学习概览',exact:true}).count())await page.getByRole('button',{name:'查看学习概览',exact:true}).click()
  await page.getByRole('button',{name:'选择教材',exact:true}).click()
  await page.locator('.course-gallery-card').filter({hasText:'原创启蒙课程'}).click()

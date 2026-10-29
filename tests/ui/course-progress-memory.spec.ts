@@ -1,3 +1,4 @@
+import {flushStudyInput} from './helpers'
 import {test,expect} from '@playwright/test'
 import {go,database,openCustomPractice,unlockParent,openCourseGallery} from './helpers'
 import synthetic from '../../src/content/synthetic/course.json'
@@ -11,7 +12,7 @@ for(const width of [390,1024])test(`${width} 教材进度独立恢复，删除�
   localStorage.setItem('wordpal.content.catalog.v2',JSON.stringify(catalog))
  },packs)
  async function choose(title:string){await openCourseGallery(page);await page.locator('.course-gallery-card').filter({hasText:title}).click();await expect(page.locator('.current-course-card')).toContainText(title)}
- async function draft(text:string){await openCustomPractice(page);await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^拼写，/}).click();await page.getByRole('textbox',{name:'输入中文对应的英文单词'}).fill(text)}
+ async function draft(text:string){await openCustomPractice(page);await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^拼写，/}).click();await page.getByRole('textbox',{name:'输入中文对应的英文单词'}).fill(text);await flushStudyInput(page)}
  await go(page,'learn');await choose('进度教材 A');await draft('draft-a');const a=(await database(page)).session
  await choose('进度教材 B');await expect(page.locator('.study-ready')).toBeVisible();await expect(page.locator('.spelling-input input')).toHaveCount(0);await draft('draft-b');const b=(await database(page)).session
  await choose('进度教材 A');await expect(page.locator('.spelling-input input')).toHaveValue('draft-a');expect((await database(page)).session).toEqual(a)

@@ -18,7 +18,7 @@ const publicVocabularyRevision=['5dd252c7df0e698','76442492814428','c5fc6d63880'
 // Verified against the existing wind.wav bytes; this exact SHA field is not an account number.
 const publicStarterWindDigest=['4ae0b08b8d27e788','f8ee96b148473','286542441411','eb33e760af1c7413f388e08'].join('')
 // Reviewed generated fitting coordinates: 182 long fractional runs, no account data.
-// Pin the entire artifact so any edit must be reviewed again; other rules still apply.
+// Pin canonical text so CRLF checkouts remain equivalent; content edits still need review.
 const publicLifehouseFitManifestDigest='2hHvgJGuYuQfK57zFJvBcNFnzKisIhfi4UNBtxPm32A='
 const rules = [
  ['credential assignment', /["']?\b(?:api[_-]?key|access[_-]?key|secret[_-]?key|app[_-]?secret|client[_-]?secret|private[_-]?key|auth[_-]?token|access[_-]?token|refresh[_-]?token|_authToken|password|passwd|pwd|pin)\b["']?\s*[:=]\s*(["'])([^"'\r\n]+)\1/gi],
@@ -45,7 +45,7 @@ export function forbiddenPath(name) {
 }
 
 function exempt(label,match,name) {
- if(label==='identity/account digits'&&name==='src/static/pet-house/lifehouse/v2/manifest.json')return createHash('sha256').update(match.input).digest('base64')===publicLifehouseFitManifestDigest
+ if(label==='identity/account digits'&&name==='src/static/pet-house/lifehouse/v2/manifest.json')return createHash('sha256').update(match.input.replaceAll('\r\n','\n')).digest('base64')===publicLifehouseFitManifestDigest
  if(label==='identity/account digits'&&name==='src/content/starter-media.json'){const start=match.input.lastIndexOf('\n',match.index)+1,end=match.input.indexOf('\n',match.index);return match.input.slice(start,end<0?undefined:end).trim()==='"sha256": "'+publicStarterWindDigest+'",'}
  if(label==='identity/account digits'&&name==='tools/master-vocabulary/index.ts'){const start=match.input.lastIndexOf('\n',match.index)+1,end=match.input.indexOf('\n',match.index);return match.input.slice(start,end<0?undefined:end).trim()==="const revision='"+publicVocabularyRevision+"'"}
  if(label==='email address')return /@(?:example\.(?:com|org)|[^@]*\.invalid|users\.noreply\.github\.com)$/i.test(match[0])
@@ -142,10 +142,10 @@ function ignorePolicy(data,findings) {
  const text=data?.toString('utf8')||''
  for(const name of localDirs)if(!new RegExp('^/?'+name+'/\\s*$','m').test(text))findings.push({path:'.gitignore',category:'missing '+name+' exclusion'})
 }
-function auditSnapshot(root,revision,maxBytes) {
+function auditSnapshot(root,revision,maxBytes,reviewCache=new Map()) {
  const findings=[],entries=indexEntries(root,revision);let bytes=0
  const blobs=new Map()
- const valid=entries.filter(e=>e.stage===0&&['100644','100755'].includes(e.mode))
+ const valid=entries.filter(e=>e.stage===0&&['100644','100755'].includes(e.mode)&&!reviewCache.has(e.name+'\0'+e.oid))
  for(let offset=0;offset<valid.length;offset+=32){
   const batch=valid.slice(offset,offset+32),buffer=git(root,['cat-file','--batch'],{input:batch.map(e=>e.oid).join('\n')+'\n'});let position=0
   for(const entry of batch){const end=buffer.indexOf(10,position);if(end<0)throw new Error('Incomplete Git blob header');const [oid,kind,sizeText]=buffer.toString('ascii',position,end).split(' '),size=Number(sizeText);if(oid!==entry.oid||kind!=='blob'||!Number.isSafeInteger(size)||size<0||end+size+2>buffer.length)throw new Error('Invalid Git blob');blobs.set(entry.oid,buffer.subarray(end+1,end+1+size));position=end+size+2}
@@ -153,9 +153,10 @@ function auditSnapshot(root,revision,maxBytes) {
  for(const entry of entries){
   if(entry.stage!==0){findings.push({path:entry.name,category:'unmerged index entry'});continue}
   if(!['100644','100755'].includes(entry.mode)){findings.push({path:entry.name,category:'symlink or embedded repository'});continue}
-  const data=blobs.get(entry.oid);bytes+=data.length
-  findings.push(...scanBytes(entry.name,data,{maxBytes}))
-  if(entry.name==='.gitignore')ignorePolicy(data,findings)
+  const key=entry.name+'\0'+entry.oid
+  let review=reviewCache.get(key)
+  if(!review){const data=blobs.get(entry.oid),hits=scanBytes(entry.name,data,{maxBytes});if(entry.name==='.gitignore')ignorePolicy(data,hits);review={bytes:data.length,findings:hits};reviewCache.set(key,review)}
+  bytes+=review.bytes;findings.push(...review.findings)
  }
  if(!entries.some(e=>e.name==='.gitignore'))ignorePolicy(null,findings)
  return {files:entries.length,bytes,findings}
@@ -167,8 +168,8 @@ export function runAudit({root,staged=false,history=false,includeLocalOnly=false
  const inGit=git(root,['rev-parse','--is-inside-work-tree'],{optional:true})?.toString().trim()==='true'
  if(staged || history){
   if(!inGit)throw new Error('Git repository is required for snapshot auditing')
-  const revisions=history?git(root,['rev-list','--all']).toString().trim().split('\n').filter(Boolean):[undefined]
-  for(const revision of revisions){const audit=auditSnapshot(root,revision,maxBytes);counts.publicFiles+=audit.files;counts.publicBytes+=audit.bytes;if(revision)counts.commits++;findings.push(...audit.findings.map(hit=>revision?{...hit,commit:revision.slice(0,12)}:hit));if(revision)findings.push(...scanBytes('<commit-metadata>',git(root,['show','-s','--format=%B%n%an%n%ae%n%cn%n%ce',revision]),{maxBytes}))}
+  const revisions=history?git(root,['rev-list','--all']).toString().trim().split('\n').filter(Boolean):[undefined],reviewCache=new Map()
+  for(const revision of revisions){const audit=auditSnapshot(root,revision,maxBytes,reviewCache);counts.publicFiles+=audit.files;counts.publicBytes+=audit.bytes;if(revision)counts.commits++;findings.push(...audit.findings.map(hit=>revision?{...hit,commit:revision.slice(0,12)}:hit));if(revision)findings.push(...scanBytes('<commit-metadata>',git(root,['show','-s','--format=%B%n%an%n%ae%n%cn%n%ce',revision]),{maxBytes}))}
  }else{
   const names=inGit?[...new Set(git(root,['ls-files','--cached','--others','--exclude-standard','-z']).toString('utf8').split('\0').filter(Boolean))]:walk(root)
   for(const name of names){const file=path.join(root,name);if(!fs.existsSync(file)){findings.push({path:name,category:'tracked file missing from working tree'});continue}const stat=fs.lstatSync(file);if(!stat.isFile()){findings.push({path:name,category:'symlink or unsupported archive entry'});continue}const data=fs.readFileSync(file);counts.publicFiles++;counts.publicBytes+=data.length;findings.push(...scanBytes(name,data,{maxBytes}))}

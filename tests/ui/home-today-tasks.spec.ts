@@ -1,3 +1,4 @@
+import {flushStudyInput} from './helpers'
 import {test,expect,type Page,type Locator} from '@playwright/test'
 import {go,setAppearance,database,waitForArtwork,completeDaily,unlockParent,openCustomPractice} from './helpers'
 import {freshDatabase,type Database} from '../../src/stores/profile'
@@ -80,11 +81,11 @@ test('听音辨义按连接与听音的共同完成词数统计，入口保留�
  const db=fresh(),plan=selectDailyPlan(db,starterPack,time)!,step:StudyStep='listen';plan.flow!.begunAt=time.toISOString();plan.flow!.step=step;plan.mode=stepMode(step);plan.index=2;plan.revealed=false
  for(const old of STUDY_STEPS.slice(0,STUDY_STEPS.indexOf(step)))plan.flow!.completed[old]=[...plan.wordIds]
  plan.flow!.completed.listen=plan.wordIds.slice(0,2);plan.answers=plan.wordIds.slice(0,2).map((wordId,index)=>({id:'partial-listen-'+index,wordId,courseId:'starter',mode:'listen',source:'practice',correct:true,rating:3,input:'',at:time.toISOString()}));plan.flow!.attempts=[...plan.answers];plan.wordSnapshot={...wordById};db.courseProgress!.starter.dailyPlan=plan;db.courseProgress!.starter.studyActivity='daily'
- await prepare(page,'light',false,db);const before=await database(page);await expect(card(page).locator('.task-value')).toHaveText(['5 / 5','2 / 5','0 / 5','0 / 5']);await expect(card(page).locator('.task-count')).toHaveText('1 / 4');await expect(card(page).locator('.hero-cta')).toHaveText('继续今日学习');await card(page).locator('.task-action').last().click();await expect(page.locator('.daily-step.active')).toContainText('听音');const after=await database(page);expect(after.courseProgress.starter.dailyPlan.flow).toEqual(before.courseProgress.starter.dailyPlan.flow);expect(after.courseProgress.starter.dailyPlan.index).toBe(2);for(const field of ['history','cards','pets','gems'])expect(after[field]).toEqual(before[field])
+ await prepare(page,'light',false,db);const before=await database(page);await expect(card(page).locator('.task-value')).toHaveText(['5 / 5','2 / 5','0 / 5','0 / 5']);await expect(card(page).locator('.task-count')).toHaveText('1 / 4');await expect(card(page).locator('.hero-cta')).toHaveText('继续今日学习');await card(page).locator('.task-action').last().click();await expect(page.locator('.daily-step.active')).toContainText('听音');const after=await database(page);expect(after.courseProgress.starter.dailyPlan.flow).toEqual({...before.courseProgress.starter.dailyPlan.flow,capabilities:expect.any(Object)});expect(after.courseProgress.starter.dailyPlan.index).toBe(2);for(const field of ['history','cards','pets','gems'])expect(after[field]).toEqual(before[field])
 })
 
 test('家长等级更新只影响未开始任务，已开始后的目标和自定义草稿保持',async({page})=>{
- test.setTimeout(60000);await prepare(page);await unlockParent(page,false);await page.getByRole('radio',{name:/L4/}).click();await go(page,'home');await expect(card(page).locator('.task-value')).toHaveText(Array(4).fill('0 / 15'));await card(page).locator('.hero-cta').click();await openCustomPractice(page);await page.getByRole('group',{name:'选择学习方式'}).locator('[data-mode="spell"]').click();await page.getByRole('button',{name:'键盘输入',exact:true}).click();await page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true}).fill('ca');const saved=await database(page)
+ test.setTimeout(60000);await prepare(page);await unlockParent(page,false);await page.getByRole('radio',{name:/L4/}).click();await go(page,'home');await expect(card(page).locator('.task-value')).toHaveText(Array(4).fill('0 / 15'));await card(page).locator('.hero-cta').click();await openCustomPractice(page);await page.getByRole('group',{name:'选择学习方式'}).locator('[data-mode="spell"]').click();await page.getByRole('button',{name:'键盘输入',exact:true}).click();await page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true}).fill('ca');await flushStudyInput(page);const saved=await database(page)
  await unlockParent(page,false);await page.getByRole('radio',{name:/L5/}).click();await go(page,'home');await expect(card(page).locator('.task-value')).toHaveText(Array(4).fill('0 / 15'));await card(page).locator('.hero-cta').click();await openCustomPractice(page);await expect(page.getByRole('textbox',{name:'输入中文对应的英文单词',exact:true})).toHaveValue('ca');const after=await database(page);expect(after.session).toEqual(saved.session);for(const field of ['history','cards','pets','gems'])expect(after[field]).toEqual(saved[field])
 })
 
@@ -95,7 +96,7 @@ test('图标支持点击高亮与取消，资源故障仍有文字和正式学�
 })
 
 test('无任务时显示真实0/0和原因，不创建学习记录',async({page})=>{
- const db=fresh();db.courseProgress!.starter.fullLearnedWords=Object.fromEntries(starterPack.vocabulary.map(word=>[word.id,time.toISOString()]));await prepare(page,'light',false,db);const before=await database(page);await expect(card(page).locator('.task-value')).toHaveText(Array(4).fill('0 / 0'));await expect(card(page).locator('.task-unavailable')).toContainText('暂无今日任务');for(const button of await card(page).locator('.hero-cta,.task-action').all())await expect(button).toBeDisabled();expect(await database(page)).toEqual(before)
+ const db=fresh();db.courseProgress!.starter.fullLearnedWords=Object.fromEntries(starterPack.vocabulary.map(word=>[word.id,time.toISOString()]));await prepare(page,'light',false,db);const before=await database(page);await expect(card(page).locator('.task-value')).toHaveText(Array(4).fill('0 / 0'));await expect(card(page).locator('.task-unavailable')).toContainText('本册六环节已完成');for(const button of await card(page).locator('.hero-cta,.task-action').all())await expect(button).toBeDisabled();expect(await database(page)).toEqual(before)
 })
 
 test('档案读取失败显示未知进度和恢复说明，保护故障原始档案',async({page})=>{
