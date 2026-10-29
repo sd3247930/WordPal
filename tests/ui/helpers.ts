@@ -17,7 +17,7 @@ export async function seedDatabase(page:Page,db:object){
 }
 export async function database(page:Page){return page.evaluate(()=>{const pointer=JSON.parse(localStorage.getItem('wordpal.database.active.v2')||'null'),key=pointer==='v2'?'wordpal.database.v2':pointer?.version===2?pointer.key:'wordpal.database.v1';return JSON.parse(localStorage.getItem(key)!)} )}
 /** Persist through the same public blur boundary used before navigation; no store hooks. */
-export async function flushStudyInput(page:Page){const input=page.locator('.spelling-input input');if(await input.count())await input.evaluate((node:HTMLInputElement)=>node.blur())}
+export async function flushStudyInput(page:Page){const input=page.locator('.spelling-input input');if(await input.count())await input.evaluate((node:HTMLInputElement)=>node.blur());else if(await page.locator('[data-block-mode="tiles"]').count())await expect.poll(async()=>{const db=await database(page),progress=db.courseProgress?.[db.currentCourseId||'starter'];return(progress?.studyActivity==='daily'?progress.dailyPlan:db.session)?.letterDraft?.inputMode}).toBe('tiles')}
 export async function previewSnack(page:Page,index=0){const designs=page.locator('.pet-feed-panel .lh-design-card');if(await designs.count()){await designs.nth(index).click();await page.getByRole('button',{name:'选这份点心 · 5 灵石',exact:true}).click()}else await page.locator('.food-choice').nth(index).click();await expect(page.locator('.feed-preview')).toBeVisible()}
 export async function selectCustomModes(page:Page,modes:readonly string[]){
  for(const mode of ['flash','connect','listen','spell','dictation']){const tile=page.locator(`.custom-config [data-mode="${mode}"]`);if((await tile.getAttribute('aria-pressed')==='true')!==modes.includes(mode))await tile.click()}
@@ -43,6 +43,9 @@ export async function waitForArtwork(page:Page){
  const original=await page.evaluate(()=>({x:scrollX,y:scrollY})),height=await page.evaluate(()=>document.documentElement.scrollHeight),step=await page.evaluate(()=>Math.max(200,innerHeight*.8))
  // uni-image may paint an off-screen background only after entering the viewport.
  for(let y=0;y<height;y+=step){await page.evaluate(y=>scrollTo(0,y),y);await page.waitForTimeout(60)}
+ // uni-image appends its transparent img only after loading its painted background.
+ // Waiting for existing img nodes alone can accept an empty, not-yet-loaded icon.
+ await expect.poll(()=>page.locator('uni-image').evaluateAll(nodes=>nodes.filter(node=>{const rect=node.getBoundingClientRect();return rect.width>0&&rect.height>0&&getComputedStyle(node).visibility!=='hidden'&&(!node.querySelector('img')?.naturalWidth||!node.firstElementChild||getComputedStyle(node.firstElementChild).backgroundImage==='none')}).length),{message:'Every rendered uni-image must finish loading its painted artwork.'}).toBe(0)
  await page.locator('img').evaluateAll(images=>Promise.all(images.map(async image=>{if(image instanceof HTMLImageElement){image.loading='eager';try{await image.decode()}catch{}}})))
  await expect.poll(()=>page.locator('img').evaluateAll(images=>images.filter(image=>image instanceof HTMLImageElement&&image.getAttribute('src')&&!image.naturalWidth).length),{message:'All screenshot artwork must load before accepting a baseline.'}).toBe(0)
  await page.evaluate(({x,y})=>scrollTo(x,y),original);await page.waitForTimeout(100)
@@ -63,6 +66,7 @@ export async function completeDaily(page:Page){
   if(plan.completedAt)return
   const word=plan.wordSnapshot[plan.wordIds[plan.index]]
   if(!plan.answers[plan.index]){
+   if(['listen','dictation'].includes(plan.mode)){const audio=page.getByRole('button',{name:'播放当前单词的标准发音',exact:true});await audio.click();await expect(audio).toHaveClass(/playing/);await expect(audio).not.toHaveClass(/playing/)}
    if(['connect','listen'].includes(plan.mode)){await page.locator('.answer-choice').filter({has:page.getByText(plan.mode==='connect'?word.meaning:word.word,{exact:true})}).first().click();await page.getByRole('button',{name:'确认答案 →',exact:true}).click()}
    else if(['spell','dictation'].includes(plan.mode)){await page.locator('.spelling-input input').fill(word.word);await page.getByRole('button',{name:'确认答案 →',exact:true}).click()}
    else{if(!plan.revealed)await page.getByRole('button',{name:'开始自评',exact:true}).click();await page.locator('.rating-grid').getByRole('button').nth(2).click()}

@@ -10,7 +10,7 @@ for(const theme of ['swiss','clay'])for(const mode of ['light','dark'])test(`${t
   await go(page,screen);await expect(page.locator('.wp-brand-header')).toHaveCount(1);await expect(page.locator('.spirit-stone-badge')).toHaveAttribute('aria-label','灵石余额 13，查看灵石说明')
   await page.locator('.wp-brand-header img').evaluateAll(images=>Promise.all(images.map(image=>(image as HTMLImageElement).decode().catch(()=>{}))))
   await expect(page.locator('.spirit-stone-icon img')).toHaveJSProperty('naturalWidth',128)
-  await expect(page.locator('.wp-blue-diamond-fallback')).toHaveCount(0)
+  await expect(page.locator('.spirit-stone-fallback')).toHaveCount(0)
   await page.locator('.wp-brand-header').screenshot({path:test.info().outputPath(`${screen}-${theme}-${mode}-390.png`)})
  }
  const before=await database(page)
@@ -38,7 +38,7 @@ test('点击水晶和整个徽章统一高亮，连续点击不叠层，Esc/遮�
 
 test('零余额可查看，图标缺失回退仍可点击；读取错误不显示假零',async({page})=>{
  await page.route('**/static/brand/blue-diamond-*.png',route=>route.abort());await seedDatabase(page,{...goldenDatabase(),gems:0});await go(page,'settings');const before=await database(page)
- await expect(page.locator('.wp-blue-diamond-fallback')).toBeVisible();await expect(page.locator('.spirit-stone-count')).toHaveText('0');await page.locator('.spirit-stone-badge').click();await expect(page.locator('.spirit-stone-full-balance')).toHaveText('0');await page.getByRole('button',{name:'关闭灵石说明'}).click()
+ await expect(page.locator('.spirit-stone-fallback')).toBeVisible();await expect(page.locator('.spirit-stone-count')).toHaveText('0');await page.locator('.spirit-stone-badge').click();await expect(page.locator('.spirit-stone-full-balance')).toHaveText('0');await page.getByRole('button',{name:'关闭灵石说明'}).click()
  expect(await database(page)).toEqual(before)
  await page.evaluate(async()=>{const {useProfileStore}=await import('/src/stores/profile.ts' as string);useProfileStore().readOnly=true})
  await expect(page.locator('.spirit-stone-count')).toHaveText('—');await page.locator('.spirit-stone-badge').click();await expect(page.locator('.spirit-stone-full-balance')).toHaveText('暂时无法读取');expect(await database(page)).toEqual(before)

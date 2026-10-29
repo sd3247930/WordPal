@@ -3,6 +3,7 @@ import {go,setAppearance,database,seedDatabase,openPetAction,openStudyOverview} 
 import {goldenDatabase} from './fixtures'
 import {elements,petInfo} from '../../packages/pet_engine'
 import {starterPack} from '../../src/services/content/ContentRegistry'
+import {completeDaily} from './helpers'
 
 async function fixture(page:Page,options:{complete?:boolean;ready?:boolean;level?:number}={}){
  const db=goldenDatabase();db.version=2;db.currentCourseId='starter';db.auxiliaryRecords=[]
@@ -41,7 +42,7 @@ for(const mode of ['light','dark'])test(`clay ${mode} 四元素四形态切换�
  for(const element of elements){
   await go(page,'pet');await page.locator('.lh-companion').filter({hasText:petInfo[element].name}).click()
   for(const [index,file]of ['juvenile','growing','evolved','unknown'].entries()){
-   await openPetAction(page,'成长');await page.locator('.pet-growth-panel .pet-form-card').nth(index).click();await page.locator('.pet-study-link').click();await openStudyOverview(page)
+   await openPetAction(page,'成长');await page.locator('.pet-growth-panel .pet-form-card').nth(index).click();await page.getByRole('navigation',{name:'底部导航'}).getByRole('button',{name:'学习',exact:true}).click();await openStudyOverview(page)
    const card=page.locator('.study-pet-companion');await expect(card).toHaveAttribute('data-element',element);await expect(card).toHaveAttribute('data-form',String(index+1));await expect(card.locator('.companion-card-title')).toHaveText(petInfo[element].name+'陪你一起学习');await expect(card.locator('.companion-card-status')).toContainText(petInfo[element].elementName+'精灵 · Lv.8');await expect(card.locator('img')).toHaveAttribute('src',new RegExp(element+'-'+file+'[.]png$'));await inspect(page)
    const current=await database(page);expect({...current,companion:before.companion}).toEqual(before);await go(page,'pet')
   }
@@ -49,11 +50,12 @@ for(const mode of ['light','dark'])test(`clay ${mode} 四元素四形态切换�
  await go(page,'learn');await openStudyOverview(page);await page.locator('.study-pet-companion').screenshot({path:test.info().outputPath(`clay-${mode}-wind.png`)})
 })
 
-test('Lv.5 不硬编码成年期；已有复习答题升级后卡片立即刷新且不重复发奖',async({page})=>{
- const db=goldenDatabase();db.pets.water.level=5;db.pets.water.exp=499;await page.setViewportSize({width:390,height:900})
+test('Lv.5 形态独立；正式任务结算后首页伙伴刷新且不重复发奖',async({page})=>{
+ test.setTimeout(90000)
+ const db=goldenDatabase();db.session=null;db.abilityLevel='L1';db.pets.water.level=5;db.pets.water.exp=499;await page.setViewportSize({width:390,height:900})
  await setAppearance(page,'clay','light');await seedDatabase(page,db);await go(page,'learn');await openStudyOverview(page);await expect(page.locator('.companion-form-label')).toHaveText('幼年期');await expect(page.locator('.companion-card-status')).toContainText('Lv.5')
- const before=await database(page);await page.locator('.answer-choice').filter({hasText:'狗'}).click();await page.getByRole('button',{name:'确认答案 →',exact:true}).click();await expect(page.locator('.companion-card-status')).toContainText('Lv.6');const after=await database(page);expect(after.history).toHaveLength(before.history.length+1);expect(after.pets.water.exp).toBe(before.pets.water.exp+12)
- await page.locator('.companion-card-title').click();await page.locator('.companion-form-label').click();await page.getByRole('navigation',{name:'底部导航'}).getByRole('button',{name:'首页',exact:true}).click();await page.getByRole('navigation',{name:'底部导航'}).getByRole('button',{name:'学习',exact:true}).click();await expect(page.locator('.companion-card-status')).toContainText('Lv.6');expect(await database(page)).toEqual(after)
+ const before=await database(page);await page.getByRole('button',{name:'开始今日学习',exact:true}).first().click();const plan=(await database(page)).courseProgress.starter.dailyPlan;await completeDaily(page);const after=await database(page);expect(after.history).toHaveLength(before.history.length+plan.wordIds.length);expect(after.pets.water.exp).toBeGreaterThan(before.pets.water.exp);expect(after.pets.water.level).toBeGreaterThan(5);await expect(page.getByRole('region',{name:'今日六环节完成结果'})).toBeVisible()
+ await page.getByRole('button',{name:'回到今日任务',exact:true}).click();const card=page.locator('.home-companion-lite');await expect(card.locator('.companion-level')).toHaveText('Lv.'+after.pets.water.level);await expect(card).toHaveAttribute('data-form','1');await card.locator('.companion-name').click();await card.locator('.companion-level').click();await page.getByRole('navigation',{name:'底部导航'}).getByRole('button',{name:'学习',exact:true}).click();await expect(page.getByRole('region',{name:'今日六环节完成结果'})).toBeVisible();await page.getByRole('button',{name:'回到今日任务',exact:true}).click();await expect(card.locator('.companion-level')).toHaveText('Lv.'+after.pets.water.level);expect(await database(page)).toEqual(after)
 })
 
 for(const complete of [false,true])test(`原有${complete?'整课检查':'开始今日学习'}入口分离保留`,async({page})=>{

@@ -27,7 +27,7 @@ test('默认 CI 五题型能实际运行，跨册立即切换并恢复冻结 Ses
  await page.getByRole('button',{name:'开始今日学习',exact:true}).click()
  await openCustomPractice(page);for(const name of ['闪现','连接','听音','拼写','听写']){const button=page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:new RegExp('^'+name+'，')});await expect(button).toBeEnabled();await button.click()}
  await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^拼写，/}).click()
- await page.locator('.spelling-input input').fill('draft')
+ await page.locator('.spelling-input input').fill('draft');await flushStudyInput(page)
  const frozen=JSON.stringify((await database(page)).session)
  await choose(page,'g4a');await expect(page.getByRole('dialog',{name:'排队切换教材'})).toHaveCount(0)
  const switched=await database(page);expect(switched.currentCourseId).toBe('fltrp-3start-g4a');expect(switched.pendingCourseId).toBeUndefined();expect(JSON.stringify(switched.courseSessions['fltrp-3start-g5b'])).toBe(frozen)
