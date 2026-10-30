@@ -3,6 +3,9 @@ import {selectCustomModes,go,database,seedDatabase,setAppearance,waitForArtwork}
 import {freshDatabase} from '../../src/stores/profile'
 import {customCourse} from '../helpers/custom-course'
 import {CUSTOM_MODES,CUSTOM_MODE_NAMES} from '../../src/services/learning/CustomPractice'
+import {initialProgress} from '../../src/services/storage/MigrationV1toV2'
+import {selectDailyPlan} from '../../src/services/learning/DailyLearningPlan'
+import {starterPack} from '../../src/services/content/ContentRegistry'
 
 async function openConfig(page:Page){await page.getByRole('button',{name:'自定义练习，不计今日任务',exact:true}).first().click();await expect(page.locator('[data-custom-screen="config"]')).toBeVisible()}
 async function count(page:Page,value:string){await page.locator('.custom-count-input input').fill(value)}
@@ -31,7 +34,10 @@ test('全书真实上限、任意整数、快捷数量和单元范围都在原�
 
 test('完整五模式用相同快照自动衔接，重复发音有效且正式日计划和奖励不变',async({page})=>{
  await page.setViewportSize({width:390,height:844})
- await fakeAudio(page);await go(page,'home');await page.locator('.hero-cta').click();const before=protectedFields(await database(page));await openConfig(page);await count(page,'1');await page.getByRole('button',{name:'全选五项',exact:true}).click();await page.getByRole('button',{name:/^开始(?:连续训练|练习)$/}).click();await expect(page.locator('[data-custom-screen="overview"]')).toBeVisible();await expect(page.locator('.custom-route-number').first()).toBeVisible();await waitForArtwork(page);await page.screenshot({path:test.info().outputPath('custom-overview-phone.png'),fullPage:true});const initial=(await database(page)).customPractice;await page.getByRole('button',{name:'开始连续训练',exact:true}).click()
+ const db={...freshDatabase(),version:2 as const,currentCourseId:'starter',courseProgress:{starter:initialProgress('starter')},auxiliaryRecords:[]}
+ db.courseProgress.starter.dailyPlan=selectDailyPlan(db,starterPack)!
+ await page.addInitScript(db=>{if(localStorage.getItem('wordpal.database.active.v2'))return;localStorage.setItem('wordpal.database.v2',JSON.stringify(db));localStorage.setItem('wordpal.database.active.v2',JSON.stringify('v2'))},db)
+ await fakeAudio(page);await go(page,'learn');const before=protectedFields(await database(page));await openConfig(page);await count(page,'1');await page.getByRole('button',{name:'全选五项',exact:true}).click();await page.getByRole('button',{name:/^开始(?:连续训练|练习)$/}).click();await expect(page.locator('[data-custom-screen="overview"]')).toBeVisible();await expect(page.locator('.custom-route-number').first()).toBeVisible();await waitForArtwork(page);await page.screenshot({path:test.info().outputPath('custom-overview-phone.png'),fullPage:true});const initial=(await database(page)).customPractice;await page.getByRole('button',{name:'开始连续训练',exact:true}).click()
  await waitForArtwork(page)
  for(const mode of CUSTOM_MODES){
   await expect(page.locator('.study-session-heading')).toContainText(CUSTOM_MODE_NAMES[mode]);expect((await database(page)).customPractice.wordIds).toEqual(initial.wordIds)
