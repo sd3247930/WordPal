@@ -86,7 +86,7 @@ test('听音辨义按连接与听音的共同完成词数统计，入口保留�
 
 test('家长等级更新只影响未开始任务，已开始后的目标与正式检查点保持',async({page})=>{
  test.setTimeout(60000);await prepare(page);await unlockParent(page,false);await page.getByRole('radio',{name:/L4/}).click();await go(page,'home');await expect(card(page).locator('.task-value')).toHaveText(Array(4).fill('0 / 15'));await card(page).locator('.hero-cta').click();await page.locator('.rating-grid').getByRole('button').nth(2).click();await page.locator('.answer-feedback').getByRole('button').click();const saved=await database(page)
- await unlockParent(page,false);await page.getByRole('radio',{name:/L5/}).click();await go(page,'home');await expect(card(page).locator('.task-value')).toHaveText(Array(4).fill('0 / 15'));await card(page).locator('.hero-cta').click();await expect(page.locator('.daily-session-lock')).toBeVisible();const after=await database(page);expect(after.courseProgress.starter.dailyPlan).toEqual(saved.courseProgress.starter.dailyPlan);for(const field of ['history','cards','pets','gems'])expect(after[field]).toEqual(saved[field])
+ await unlockParent(page,false);await page.getByRole('radio',{name:/L5/}).click();await go(page,'home');await expect(card(page).locator('.task-value')).toHaveText(['1 / 15','0 / 15','0 / 15','0 / 15']);await card(page).locator('.hero-cta').click();await expect(page.locator('.daily-session-lock')).toBeVisible();const after=await database(page);expect(after.courseProgress.starter.dailyPlan).toEqual(saved.courseProgress.starter.dailyPlan);for(const field of ['history','cards','pets','gems'])expect(after[field]).toEqual(saved[field])
 })
 
 test('图标支持点击高亮与取消，资源故障仍有文字和正式学习入口',async({page})=>{

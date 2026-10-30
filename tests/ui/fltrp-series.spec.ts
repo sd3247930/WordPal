@@ -1,3 +1,4 @@
+import {startIndependentStudy} from './helpers'
 import {flushStudyInput} from './helpers'
 import {openCustomPractice,selectWordbookScope,openCourseGallery} from './helpers'
 import {test,expect,type Page} from '@playwright/test'
@@ -24,7 +25,7 @@ test('默认 CI 六册合成课程：点击立即使用，不显示待核对，�
 
 test('默认 CI 五题型能实际运行，跨册立即切换并恢复冻结 Session，Scope 不改学习目标',async({page})=>{
  const db=freshDatabase();db.abilityLevel='L5';await seedDatabase(page,db);await setup(page);await choose(page,'g5b')
- await page.getByRole('button',{name:'开始今日学习',exact:true}).click()
+ await startIndependentStudy(page)
  await openCustomPractice(page);for(const name of ['闪现','连接','听音','拼写','听写']){const button=page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:new RegExp('^'+name+'，')});await expect(button).toBeEnabled();await button.click()}
  await page.getByRole('group',{name:'选择学习方式'}).getByRole('button',{name:/^拼写，/}).click()
  await page.locator('.spelling-input input').fill('draft');await flushStudyInput(page)
