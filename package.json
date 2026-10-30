@@ -1,6 +1,6 @@
 {
   "name": "wordpal",
-  "version": "1.2.9",
+  "version": "1.2.10",
   "private": true,
   "description": "离线优先的自然拼读与四象伙伴学习应用",
   "scripts": {
@@ -34,7 +34,8 @@
     "fltrp:import": "tsx tools/import-fltrp/index.ts",
     "fltrp:validate": "tsx tools/import-fltrp/validate-cli.ts",
     "check:app-icons": "node tools/check-app-icons.mjs",
-    "postbuild:app": "node tools/check-app-icons.mjs --output dist/build/app"
+    "postbuild:app": "node tools/check-app-icons.mjs --output dist/build/app",
+    "test:production": "playwright test --config playwright.production.config.ts"
   },
   "dependencies": {
     "@dcloudio/uni-app": "3.0.0-5020620260917001",

@@ -38,7 +38,16 @@ export function installDailyStudyNavigation(){
   lockedSession:()=>{const learning=useLearningStore();return learning.isSessionLocked?learning.todayPlan?.id||'':''},
   flush:()=>useLearningStore().flushDraft(),
   confirm:done=>uni.showModal({title:'本轮学习还未完成',content:'当前学习还未完成，确定要暂时离开吗？本轮进度会保存，回来后继续六环节。',confirmText:'保存并离开',cancelText:'继续学习',success:result=>done(!!result.confirm),fail:()=>done(false)}),
-  replay:(method,options)=>(uni[method] as (options:NavigationRequest)=>unknown)(options)
+  // Static API access is required by the H5 production compiler's imports.
+  replay:(method,options)=>{
+   switch(method){
+    case 'navigateTo':return uni.navigateTo(options as UniApp.NavigateToOptions)
+    case 'redirectTo':return uni.redirectTo(options as UniApp.RedirectToOptions)
+    case 'reLaunch':return uni.reLaunch(options as UniApp.ReLaunchOptions)
+    case 'switchTab':return uni.switchTab(options as UniApp.SwitchTabOptions)
+    case 'navigateBack':return uni.navigateBack(options as UniApp.NavigateBackOptions)
+   }
+  }
  })
  for(const method of ['navigateTo','redirectTo','reLaunch','switchTab','navigateBack'] as const)uni.addInterceptor(method,{invoke:options=>guard?.invoke(method,options)})
 }

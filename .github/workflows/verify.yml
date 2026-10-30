@@ -20,6 +20,11 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build:h5
+        env:
+          WORDPAL_BASE_PATH: /WordPal/
+          VITE_WORDPAL_LOCAL_CONTENT: '0'
+      - run: npx playwright install chromium
+      - run: npm run test:production
       - run: npm run build:app
       - run: npm run check:compiler
       - run: npm run build:mp-weixin
